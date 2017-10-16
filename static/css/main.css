@@ -1,0 +1,39 @@
+.app-title {
+    font-size: 1.3rem;
+}
+
+.app-subtitle {
+    font-size: 1.1rem;
+    font-weight: 300;
+    margin-left: 1.6rem;
+}
+
+.user-topbar {
+    margin: 0.6rem;
+}
+
+.btn-main-menu {
+    margin: 0.7rem;
+}
+
+.logo_img {
+    height: 1.5rem;
+    margin: 0 1rem;
+}
+
+.login_img {
+    height: 3rem;
+    display: block;
+    margin: 0 auto;
+}
+
+.not-found-text {
+    font-size: 2rem;
+    margin: 3rem !important;
+    text-align: center;
+}
+
+.left-button {
+    left: 23px;
+    right: auto;
+}

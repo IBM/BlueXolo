@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+    Delete Argument {{ object.name }}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12 offset-l3 l6 card">
+                <div class="card-content">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <p class="card-title">Are you sure you want to delete the follow Argument?</p>
+                        <ul>
+                            <li><b>Name:</b> {{ object.name }}</li>
+                            <li><b>Description:</b> {{ object.description }}</li>
+                        </ul>
+                        <div class="center">
+                            <input type="submit" value="Confirm" class="btn red"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "edit-argument" object.pk %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

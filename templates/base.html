@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CTA - {% block  title %}{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Styles-->
+    <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/toastr.min.css" %}">
+    <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
+    {% block extraStyles %}{% endblock extraStyles %}
+    <!-- End Styles -->
+    <!-- Scripts -->
+    <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+    <script src="{% static "js/materialize.min.js" %}"></script>
+    <script src="{% static "js/toastr.min.js" %}"></script>
+    <script src="{% static "js/main.js" %}"></script>
+</head>
+<body>
+<!-- messages  -->
+{% include "messages.html" %}
+<a data-activates="slide-out"
+   class="btn-floating btn-large waves-effect waves-light blue-grey button-collapse  btn-main-menu"><i
+        class="material-icons">menu</i></a>
+<a class="title blue-grey-text app-title" href="{% url "home" %}">Common Test Automation </a>
+<span class="app-subtitle blue-grey-text"> {% block subtitle %}{% endblock subtitle %} </span>
+<div class="right user-topbar">
+    <a class='dropdown-button btn-flat blue-text' href='#' data-activates='dropdownUser'>
+        {% if user.first_name %}
+            {{ user.first_name }} {{ user.last_name }}
+        {% else %}
+            {{ user.email }}
+        {% endif %}
+    </a>
+</div>
+<ul id='dropdownUser' class='dropdown-content'>
+    <li><a class="waves-effect" href="{% url "logout" %}"><i class="material-icons">exit_to_app</i> Logout</a></li>
+</ul>
+
+{% include "navigation.html" %}
+
+<!-- main content -->
+{% block content %}
+{% endblock %}
+<!-- end main content -->
+
+<script>
+    $(document).ready(function () {
+        $(".button-collapse").sideNav();
+        $('.tooltipped').tooltip({delay: 50});
+        $('select').material_select();
+        $('.materialize-textarea').characterCounter();
+    });
+</script>
+{% block extraScripts %}{% endblock extraScripts %}
+<!-- End Scripts -->
+</body>
+</html>

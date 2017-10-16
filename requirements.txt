@@ -1,0 +1,14 @@
+celery==4.1.0
+distro==1.0.4
+Django==1.11.4
+django-datatables-view==1.14.0
+djangorestframework==3.6.4
+django-filter==1.0.4
+drfdocs==0.0.11
+ldap3==2.3
+paramiko==2.3.1
+psycopg2==2.7.3.1
+pexpect==4.2.1
+pyasn1==0.3.4
+pytz==2017.2
+scp==0.10.2

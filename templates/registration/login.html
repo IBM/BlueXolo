@@ -1,0 +1,40 @@
+{% extends "registration/base_registration.html" %}
+{% load staticfiles %}
+{% block content %}
+    <div class="container">
+        <div class="section">
+            <div class="row">
+                <div class="col s12 offset-l4 l4">
+                    <img src="{% static "img/IBM_logo.svg" %}" alt="logo_ibm" class="login_img">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 offset-l3 l6 card">
+                    <div class="card-content">
+                        {% if next %}
+                            {% if user.is_authenticated %}
+                                <p>Your account doesn't have access to this page. To proceed,
+                                    please login with an account that has access.</p>
+                            {% else %}
+                                <p>Please login to see this page.</p>
+                            {% endif %}
+                        {% endif %}
+
+                        <form action="{% url "login" %}" method="post">
+                            {% csrf_token %}
+                            {{ form }}
+                            <div class="center">
+                                <a href="{% url "index" %}" class="btn blue-grey">Back</a>
+                                <input type="submit" value="Login" class="btn"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="center">
+            <a href="{% url "request-access" %}" class="blue-grey-text">Request Access</a>
+        </div>
+    </div>
+{% endblock %}

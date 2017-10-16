@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}Edit Server Template{% endblock %}
+{% block subtitle %}Edit Server Template{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row card">
+            <div class="col s12 l6">
+                <div class="card-content">
+                    <form method="POST" id="form_template">
+                        <div class="input-field col s12">
+                            <input type="text" data-length="30" id="name"
+                                   value="{{ object.name }}">
+                            <label for="name">Name</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <textarea class="materialize-textarea"
+                                      data-length="120" id="description">{{ object.description }}</textarea>
+                            <label for="description">Description</label>
+                        </div>
+
+                        <div class="input-field col s12 l6">
+                            <input type="text" id="parameter">
+                            <label for="parameter">Parameter</label>
+                        </div>
+
+                        <div class="input-field col s12 l6">
+                            <input id="help_text" type="text">
+                            <label for="help_text">Help Text</label>
+                        </div>
+
+
+                        <div class="input-field col s12 l6">
+                            <select id="category">
+                                <option value="1">Global Variable</option>
+                                <option value="2">Node Launcher</option>
+                            </select>
+                            <label for="value_type">Category</label>
+                        </div>
+
+                        <div class="input-field col s12 l6">
+                            <select id="value_type">
+                                <option value="1">String</option>
+                                <option value="2">List</option>
+                            </select>
+                            <label for="value_type">Value Type</label>
+                        </div>
+                        <div class="center">
+                            <button class="btn" name="btn_add" type="button" onclick="populateParams()">Add</button>
+                        </div>
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+            <div class="col s12 l6">
+                <div class="card-content">
+                    <div class="row">
+                        <div class="col s12">
+                            <table>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Help</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Option</th>
+                                </tr>
+                                <tbody id="params_table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="center">
+                            <button class="btn" type="button" id="btn_create" onclick="saveTemplate()">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "servers-templates" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
+           data-tooltip="Back to Templates List">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+
+{% endblock %}
+{% block extraScripts %}
+    <script type="text/javascript">
+
+        getTemplateData();
+        var objParam = [];
+        var template_name = document.getElementById('name');
+        var template_desc = document.getElementById('description');
+        var _param = document.getElementById('parameter');
+        var _help_text = document.getElementById('help_text');
+        var _value_type = document.getElementById('value_type');
+        var _category = document.getElementById('category');
+        var _objCont;
+        var _categories = ['Global Variable', 'Node Launcher'];
+        var _types = ['String', 'List'];
+
+
+        function getTemplateData() {
+            $.ajax({
+                url: "{% url "api-templates" object.pk %}",
+                type: "GET",
+                success: function (data) {
+                    var _params = JSON.parse(data.parameters);
+                    _params.forEach(function (v) {
+                        objParam.push({
+                            'parameter': v.parameter,
+                            'help_text': v.help_text,
+                            'category': v.category,
+                            'value_type': v.value_type
+                        });
+                    });
+                    if (!_objCont) {
+                        _objCont = 0;
+                    }
+                    if (objParam.length) {
+                        objParam.forEach(function (v) {
+                            addParams(objParam);
+                        });
+                    }
+                }, error: function (err) {
+                    console.log(err)
+                }
+            })
+        }
+
+        function populateParams() {
+            if (_param.value) {
+                if (!_objCont) {
+                    _objCont = 0;
+                }
+                objParam.push({
+                    'parameter': _param.value,
+                    'help_text': _help_text.value,
+                    'category': _category.value,
+                    'value_type': _value_type.value
+                });
+
+                addParams(objParam);
+                _param.value = _param.defaultValue;
+                _help_text.value = _help_text.defaultValue;
+            }
+        }
+
+
+        function deleteParam(id) {
+            /* Delete the param row (tr)*/
+            var _element = document.getElementById(id);
+            objParam.splice(id, 1);
+            _objCont--;
+            _element.parentNode.removeChild(_element);
+        }
+
+        function addParams(obj) {
+            var _tr_params = document.createElement('tr');
+            var _td_param = document.createElement('td');
+            var _td_help = document.createElement('td');
+            var _td_type = document.createElement('td');
+            var _td_category = document.createElement('td');
+            var _td_option = document.createElement('td');
+            var _delete_icon = document.createElement('i');
+
+            _tr_params.setAttribute('id', _objCont);
+
+            _delete_icon.setAttribute('class', 'material-icons red-text');
+            _delete_icon.setAttribute('onClick', 'deleteParam(' + _objCont + ')');
+            _delete_icon.appendChild(document.createTextNode('close'));
+
+            _td_param.appendChild(document.createTextNode(obj[_objCont].parameter));
+            _td_help.appendChild(document.createTextNode(obj[_objCont].help_text));
+            _td_category.appendChild(document.createTextNode(_categories[obj[_objCont].category - 1]));
+            _td_type.appendChild(document.createTextNode(_types[obj[_objCont].value_type - 1]));
+            _td_option.appendChild(_delete_icon);
+
+            _tr_params.appendChild(_td_param);
+            _tr_params.appendChild(_td_help);
+            _tr_params.appendChild(_td_type);
+            _tr_params.appendChild(_td_category);
+            _tr_params.appendChild(_td_option);
+
+            document.getElementById('params_table').appendChild(_tr_params);
+            _objCont++;
+
+
+        }
+
+        function saveTemplate() {
+            $.ajax({
+                url: "{% url "api-templates" object.pk %}",
+                type: "PUT",
+                data: {
+                    name: template_name.value,
+                    description: template_desc.value,
+                    parameters: JSON.stringify(objParam)
+                }, success: function (data) {
+                    window.location.replace("{% url "servers-templates" %}");
+                }, error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+    </script>
+{% endblock %}

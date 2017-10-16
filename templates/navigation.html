@@ -1,0 +1,58 @@
+{% load staticfiles %}
+<ul id="slide-out" class="side-nav ">
+    <li>
+        <div class="user-view">
+            <div class="logo">
+                <a href="{% url "home" %}">
+                    <img src="{% static "img/IBM_logo.svg" %}" class="responsive-img ">
+                </a>
+            </div>
+        </div>
+    </li>
+    <li><a class="subheader blue-grey-text">Testing</a></li>
+    <li><a class="waves-effect" href="{% url "collections" %}"><i
+            class="material-icons">navigate_next</i>Collections</a></li>
+    <li><a class="waves-effect" href="{% url "keywords" %}"><i class="material-icons">navigate_next</i>Keywords</a></li>
+    {#    <li><a class="waves-effect" href="#!"><i class="material-icons">navigate_next</i> Test Cases</a></li>#}
+    {#    <li><a class="waves-effect" href="#!"><i class="material-icons">navigate_next</i> Test Suites</a></li>#}
+    <li>
+
+    </li>
+    <li><a class="subheader blue-grey-text">Servers</a></li>
+    <li><a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
+    <li><a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
+        {#    <li><a class="waves-effect" href="{% url "jenkins-servers-profiles" %}"><i class="material-icons">navigate_next</i>Jenkins Servers</a>#}
+    </li>
+    <li>
+
+    <li><a class="subheader blue-grey-text">Sources</a></li>
+    <li>
+        <a class="waves-effect" href="{% url "source-list" "products" %}"><i class="material-icons">navigate_next</i>Products</a>
+    </li>
+    <li>
+        <a class="waves-effect" href="{% url "source-list" "robot" %}"><i class="material-icons">navigate_next</i>Robot
+            Framework</a>
+    </li>
+    <li>
+        <a class="waves-effect" href="{% url "source-list" "libraries" %}"><i class="material-icons">navigate_next</i>Libraries</a>
+    </li>
+    <li>
+        <a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i> Commands</a>
+    </li>
+
+    {#    <li><a class="waves-effect" href="{% url "os" %}"><i class="material-icons">navigate_next</i>Operations Systems</a>#}
+    {#    </li>#}
+
+    {#    <li><a class="waves-effect" href="{% url "arguments" %}"><i class="material-icons">navigate_next</i>Arguments</a>#}
+    {#    </li>#}
+    {#    <li><a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i>Commands</a></li>#}
+
+    {% if user.is_staff %}
+
+        <li><a class="subheader blue-grey-text">Admin</a></li>
+        <li><a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
+        <li>
+    {% endif %}
+    </li>
+
+</ul>

@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="row">
+        <div class="col s12 offset-l3 l6 card">
+            <div class="card-content">
+                <form method="POST" enctype="multipart/form-data">
+
+                    {% include "form-snippet.html" %}
+                    <div class="center">
+                        {% if object %}
+                            <input type="submit" class="btn" value="Save">
+                        {% else %}
+                            <input type="submit" class="btn" value="Create">
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

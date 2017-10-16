@@ -1,0 +1,245 @@
+.ui.table.dataTable thead th
+{
+    border-left: 1px solid rgba(34, 36, 38, 0.15);
+    color: rgba(0, 0, 0, 0.87);
+    cursor: pointer;
+    white-space: nowrap;
+}
+.ui.table.dataTable thead th:first-child
+{
+    border-left: none;
+}
+.ui.table.dataTable thead .sorting,
+.ui.table.dataTable thead .sorting_asc ,
+.ui.table.dataTable thead .sorting_desc ,
+.ui.table.dataTable thead .sorting_asc_disabled ,
+.ui.table.dataTable thead .sorting_desc_disabled,
+.ui.table.dataTable thead .sorting:hover,
+.ui.table.dataTable thead .sorting_asc:hover ,
+.ui.table.dataTable thead .sorting_desc:hover ,
+.ui.table.dataTable thead .sorting_asc_disabled:hover ,
+.ui.table.dataTable thead .sorting_desc_disabled:hover
+{
+    moz-user-select: none;
+    ms-user-select: none;
+    user-select: none;
+    webkit-user-select: none;
+}
+.ui.table.dataTable thead th:after
+{
+    content: '';
+    display: none;
+    font-family: 'Icons';
+    font-style: normal;
+    font-weight: normal;
+    height: 1em;
+    margin: 0em 0em 0em 0.5em;
+    opacity: 0.8;
+    text-decoration: inherit;
+    width: auto;
+}
+.ui.table.dataTable thead th.sorting_asc:after
+{
+    content: '\f160';
+}
+.ui.table.dataTable thead th.sorting_desc:after
+{
+    content: '\f161';
+}
+.ui.table.dataTable th.disabled:hover
+{
+    color: rgba(40, 40, 40, 0.3);
+    cursor: auto;
+}
+.ui.table.dataTable thead th:hover
+{
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.8);
+}
+.ui.table.dataTable thead .sorting_asc ,
+.ui.table.dataTable thead .sorting_desc ,
+.ui.table.dataTable thead .sorting_asc_disabled ,
+.ui.table.dataTable thead .sorting_desc_disabled
+{
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.95);
+}
+.ui.table.dataTable thead .sorting_asc:after ,
+.ui.table.dataTable thead .sorting_desc:after ,
+.ui.table.dataTable thead .sorting_asc_disabled:after ,
+.ui.table.dataTable thead .sorting_desc_disabled:after
+{
+    display: inline-block;
+}
+.ui.table.dataTable thead .sorting_asc:hover ,
+.ui.table.dataTable thead .sorting_desc:hover ,
+.ui.table.dataTable thead .sorting_asc_disabled:hover ,
+.ui.table.dataTable thead .sorting_desc_disabled:hover
+{
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.95);
+}
+.dataTables_length select
+{
+    background:#ffffff none repeat scroll 0 0;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    border-radius: 0.285714rem;
+    box-shadow: none;
+    color: rgba(0, 0, 0, 0.87);
+    cursor: pointer;
+    display: inline-block;
+    line-height: 1.2142em;
+    min-height: 0.714286em;
+    outline: 0 none;
+    padding: 0.3em;
+    transform: rotateZ(0deg);
+    transition: box-shadow 0.1s ease 0s, width 0.1s ease 0s;
+    white-space: normal;
+    word-wrap: break-word;
+}
+.dataTables_wrapper .dataTables_filter
+{
+    color: rgba(0, 0, 0, 0.87);
+    display: inline-flex;
+    position: relative;
+    text-align: right;
+}
+.dataTables_wrapper .dataTables_filter input
+{
+    margin-left: 0.5em;
+}
+.dataTables_wrapper .dataTables_info
+{
+    clear: both;
+    padding-top: 0.755em;
+}
+.dataTables_paginate:after
+{
+    clear: both;
+    content: "";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.dataTables_paginate
+{
+    display: inline-flex;
+    margin: 0;
+    vertical-align: middle;
+}
+.dataTables_paginate:last-child
+{
+    margin-bottom: 0;
+}
+.dataTables_paginate:first-child
+{
+    margin-top: 0;
+}
+.dataTables_paginate
+{
+    font-size: 1rem;
+}
+.dataTables_paginate
+{
+    background:#ffffff none repeat scroll 0 0;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    border-radius: 0.285714rem;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+    font-family: Lato,"Helvetica Neue",Arial,Helvetica,sans-serif;
+    font-weight: 400;
+    margin: 1rem 0;
+    min-height: 2.85714em;
+}
+.dataTables_paginate .paginate_button:before
+{
+    background: rgba(34, 36, 38, 0.1) none repeat scroll 0 0;
+    content: "";
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1px;
+}
+.dataTables_paginate .paginate_button
+{
+    min-width: 3em;
+    text-align: center;
+}
+.dataTables_paginate .paginate_button .disabled, .ui.paginate_button .paginate_button .disabled:hover
+{
+    background-color: transparent !important;
+    color: rgba(40, 40, 40, 0.3);
+    cursor: default;
+}
+.dataTables_paginate .paginate_button
+{
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+    color: rgba(0, 0, 0, 0.87);
+    font-weight: 400;
+    line-height: 1;
+    moz-user-select: none;
+    padding: 0.928571em 1.14286em;
+    position: relative;
+    text-decoration: none;
+    text-transform: none;
+    transition: background 0.1s ease 0s, box-shadow 0.1s ease 0s, color 0.1s ease 0s;
+    vertical-align: middle;
+}
+.dataTables_paginate span
+{
+    display: inherit;
+}
+.dataTables_paginate > .paginate_button:last-child
+{
+    border-radius: 0 0.285714rem 0.285714rem 0;
+}
+.dataTables_paginate > .paginate_button:last-child:before
+{
+    display: none;
+}
+.dataTables_paginate .paginate_button
+{
+    min-width: 3em;
+    text-align: center;
+}
+.dataTables_paginate.icon.paginate_button i.icon
+{
+    vertical-align: top;
+}
+.dataTables_paginate .current.paginate_button
+{
+    background-color: rgba(0, 0, 0, 0.05);
+    border-top: medium none;
+    box-shadow: none;
+    color: rgba(0, 0, 0, 0.95);
+    padding-top: 0.928571em;
+}
+.dataTables_paginate .paginate_button.disabled, .dataTables_paginate .paginate_button.disabled:hover
+{
+    background-color: transparent !important;
+    color: rgba(40, 40, 40, 0.3);
+    cursor: default;
+}
+.dataTables_paginate a.paginate_button:hover
+{
+    background: rgba(0, 0, 0, 0.03);
+    color: rgba(0, 0, 0, 0.95);
+    cursor: pointer;
+}
+.dataTables_filter input
+{
+    background:#ffffff none repeat scroll 0 0;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    border-radius: 0.285714rem;
+    box-shadow: none;
+    color: rgba(0, 0, 0, 0.87);
+    flex: 1 0 auto;
+    font-family: Lato,"Helvetica Neue",Arial,Helvetica,sans-serif;
+    height:1em;
+        margin: 0;
+        max-width: 100%;
+        outline: 0 none;
+        padding: .4em;
+    text-align: left;
+    transition: background-color 0.1s ease 0s, box-shadow 0.1s ease 0s, border-color 0.1s ease 0s;
+}

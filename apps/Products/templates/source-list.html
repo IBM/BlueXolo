@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}{% block subtitle %}{{ title }}{% endblock %}
+{% block content %}
+    <div class="container">
+        <table class="datatable">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>Options</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="fixed-action-btn">
+            <a href="{% url "new-source" slug %}"
+               class="btn-floating btn-large waves-effect waves-light blue-grey"><i class="material-icons">add</i></a>
+        </div>
+    </div>
+{% endblock %}
+{% load staticfiles %}
+{% block extraStyles %}
+    <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
+{% endblock %}
+{% block extraScripts %}
+    <script src="{% static "js/datatables.min.js" %}"></script>
+    <script src="{% static "js/DTBoilerPlate.js" %}"></script>
+    <script>
+        $(document).ready(function () {
+            var config = [{
+                "targets": 2,
+                data: function (row) {
+                    return "<div>" +
+                        "<a class='btn' href='/sources/" + row[2] + "/edit/'><i class='material-icons'>edit</i></a>" +
+                        "<a class='btn red' href='/sources/" + row[2] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                        "</div>";
+                }
+            }];
+            var _ajax = {
+                url: "{% url "api-sources-list" %}",
+                data: {
+                    category: {{ category }}
+                }
+            };
+            dtStart(_ajax, config)
+        });
+    </script>
+{% endblock %}

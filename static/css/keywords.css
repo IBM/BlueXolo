@@ -1,0 +1,136 @@
+.drag-drop-item {
+    font-weight: bold;
+    margin-left: 0em;
+    cursor: pointer;
+}
+
+.drop-area {
+    font-weight: bold;
+    margin-left: 0em;
+    cursor: pointer;
+}
+
+.drop-0 {
+    font-weight: bold;
+    margin-left: 0em;
+    cursor: pointer;
+}
+
+.drop-1 {
+    font-weight: bold;
+    margin-left: 2em;
+    cursor: pointer;
+    color: #2866ed;
+}
+
+.drop-2 {
+    font-weight: bold;
+    margin-left: 4em;
+    cursor: pointer;
+    color: #28edd6;
+}
+
+.drop-3 {
+    font-weight: bold;
+    margin-left: 6em;
+    cursor: pointer;
+    color: #28ed38;
+}
+
+.drop-4 {
+    font-weight: bold;
+    margin-left: 8em;
+    cursor: pointer;
+    color: #a1ed28;
+}
+
+.drop-5 {
+    font-weight: bold;
+    margin-left: 10em;
+    cursor: pointer;
+    color: #edb528;
+}
+
+.drop-6 {
+    font-weight: bold;
+    margin-left: 12em;
+    cursor: pointer;
+    color: #fc7b02;
+}
+
+.drop-7 {
+    font-weight: bold;
+    margin-left: 14em;
+    cursor: pointer;
+    color: #f7390e;
+}
+
+.parameter {
+    margin-left: 2em;
+    color: black !important;
+}
+
+table {
+    border: 1px dotted #60666a;
+}
+
+#propertiesPannel {
+    display: none;
+    max-height: 80vh;
+    overflow: auto;
+}
+
+#toggleProperties {
+    height: 235px;
+    z-index: 2;
+}
+
+.propertiesPanelContainer {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: end;
+    justify-content: end;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.temporaryRow {
+    height: 1.5em;
+    width: 100%;
+    border: 2px solid gray;
+    border-style: dotted;
+}
+
+#floatingDiv {
+    visibility: hidden;
+    position: absolute;
+    background: white;
+    border: 2px solid #3c3c3c;
+    z-index: 100;
+    padding: 20px;
+}
+
+.lightsOff {
+    background: #000;
+    position: absolute;
+    opacity: .5;
+    top: 0;
+    z-index: 99;
+}
+
+#terminal, .terminal {
+    min-height: 30vh;
+    max-height: 80vh;
+    font-weight: 600;
+    line-height: 2rem;
+    color: #4f565c;
+    overflow: auto;
+}
+
+.black_terminal {
+    background-color: #1d1f1f;
+    color: #c7d4d4;
+    padding: 1rem;
+    font-weight: 500;
+}

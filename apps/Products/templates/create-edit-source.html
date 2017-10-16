@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} {{ slug }}{% endblock %}
+{% block subtitle %}{{ title }} {{ slug }}{% endblock %}
+{% block content %}
+    {% if extra %}
+        <div class="row">
+            <div class="col s12 offset-l3 l6">
+                <h4 class="app-subtitle center-align">{{ extra }} {{ slug }}</h4>
+            </div>
+        </div>
+    {% endif %}
+    {% include "base-new-form.html" %}
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "source-list" slug %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

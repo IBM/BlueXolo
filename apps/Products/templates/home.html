@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block subtitle %}Home{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12 l6">
+                <form>
+                    {% csrf_token %}
+                    <div class="input-field">
+                        <i class="material-icons prefix">search</i>
+                        <input type="text" name="product_search" placeholder="S/N, Name, Category">
+                        <label for="product_search">Product Search</label>
+                    </div>
+                </form>
+            </div>
+            <div class="col s12 l6">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">Tasks</span>
+                        <ul>
+                            {% for script in user_tasks %}
+                                <li><span>{{ script.name }}
+                                    <p class="blue-grey-text">{{ script.state }}{% if script.task_info %}
+                                        : {{ script.task_info }}
+                                    {% endif %}
+                                </p>
+                                    <p class="blue-grey-text"> Start at: {{ script.created_at }}
+                                        {% if script.state == "SUCCESS" or script.state == "FAILURE" %}
+                                            Completed at:
+                                            {{ script.updated_at }} {% endif %}
+                                </p>
+                                </span>
+                                    <div class="progress">
+                                        {% if script.state == "SUCCESS" %}
+                                            <div class="determinate green"
+                                                 style="width: 100%"></div>
+                                            <p></p>
+                                        {% elif script.state == "PENDING" or script.state == "STARTED" %}
+                                            <div class="indeterminate blue"
+                                                 style="width: 100%"></div>
+                                        {% elif script.state == "FAILURE" %}
+                                            <div class="determinate red"
+                                                 style="width: 100%"></div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

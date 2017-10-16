@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block subtitle %}{{ title }}{% endblock %}
+{% block content %}
+    {% include "base-new-form.html" with url="/commands" %}
+    {% if delete %}
+        <div class="fixed-action-btn right-button ">
+            <a href="{% url "delete-command" object.pk %}" id="btn_play"
+               class="btn-floating btn-large waves-effect waves-light red">
+                <i class="material-icons">delete</i></a>
+        </div>
+    {% endif %}
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "commands" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CTA Framework {% block  title %}{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Styles-->
+    <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
+    <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
+
+    <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
+    <!-- End Styles -->
+</head>
+<body>
+<div class="navbar-fixed">
+    <nav class="white">
+        <div class="nav-wrapper">
+            <a href="{% url "index" %}" class="brand-logo">
+                <img src="{% static "img/IBM_logo.svg" %}" class="logo_img" alt="ibm_logo">
+            </a>
+            <ul class="right ">
+                <li><a class="blue-grey-text " href="{% url "login" %}">
+                    <i class="material-icons right">keyboard_arrow_right</i>Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<!-- main content -->
+<div class="">
+    <div class="section">
+        <div class="row">
+            <div class="col s12 offset-l4 l4">
+                <label for="command-search">Command Search</label>
+                <div class="input-field col s12">
+                    <select id="command-search">
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div id="results"></div>
+        <div id="results_container" class="row hide">
+            <div class="s12 offset-l1 l10 card  col">
+                <div class="card-content">
+                    <table id="resultTable" class="centered">
+                        <thead class="blue-grey-text">
+                        <tr>
+                            <th width="90">Command</th>
+                            <th width="350">Description</th>
+                            <th>Arguments</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    <div class="center-align">
+                        <code class="grey-text">*To see arguments description move the mouse over its name.</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="fixed-action-btn left-button ">
+    <span class="grey-text">
+    Platform Version <code>{{ PLATFORM_VERSION }}</code>
+    </span>
+</div>
+<!-- end main content -->
+<!-- Scripts -->
+<script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+<script src="{% static "js/materialize.min.js" %}"></script>
+<script src="{% static "js/select2.full.min.js" %}"></script>
+
+<script type="text/javascript">
+    $('document').ready(function () {
+        $('#command-search').select2({
+            ajax: {
+                url: "{% url "api-commands" %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        name: params.term, // search term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            },
+            placeholder: "Command Search",
+            escapeMarkup: function (markup) {
+                return markup;
+            }, // let our custom formatter work
+            minimumInputLength: 2,
+            templateResult: function (results) {
+                return results.name
+            },
+            templateSelection: function (selection) {
+                return selection.name;
+            }
+        });
+    });
+
+    $('#command-search').on("select2:select", function (e) {
+        printInfo($('#command-search').select2('data')[0])
+    });
+
+    function printInfo(data) {
+        $.ajax({
+            url: '/apis/commands/' + data.id + '/',
+            type: 'GET',
+            data: {extra: 1},
+            success: function (data) {
+                var _table = $('#resultTable');
+                _table.find('tbody').innerHTML = '';
+                _table.find('tbody').empty();
+                var _argument_list = [];
+                _table.find('tbody')
+                    .append($('<tr>')
+                        .append($('<td>')
+                            .text(data.name)
+                        )
+                        .append($('<td>')
+                            .text(data.description)
+                        )
+                        .append($('<td class="args">')
+                        )
+                    );
+                if (data.arguments.length > 0) {
+                    $.each(data.arguments, function (k, v) {
+                        _argument_list.push('<span class="tooltipped" data-position="bottom" data-tooltip="' + v.description + '">' +
+                            '[  ' + v.name + '  ] ' + '</span>')
+                    });
+                }
+                else {
+                    _argument_list.push('<span>No Arguments </span>');
+                }
+                $('.args').append(_argument_list);
+                $('.tooltipped').tooltip({delay: 150});
+                $('#results_container').removeClass('hide');
+            }, error: function (err) {
+                console.log(err)
+            }
+        });
+    }
+
+</script>
+<!-- End Scripts -->
+</body>
+</html>

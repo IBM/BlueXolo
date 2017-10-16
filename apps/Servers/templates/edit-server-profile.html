@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Edit Server Profile{% endblock %}
+{% block subtitle %}Edit Server Profile{% endblock %}
+{% block content %}
+    <div class="container">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col s12 l6 card">
+                <div class="card-content">
+                    <form method="PUT">
+                        {% include "form-snippet.html" %}
+                    </form>
+                </div>
+            </div>
+            <div class="col s12 l1">
+
+            </div>
+            <div class="col s12 l4 card">
+                <div class="card-content">
+                    <div class="row">
+                        <div class="col s12 ">
+                            <h4 class="card-title">Parameters</h4>
+                            <ul id="paramsList"></ul>
+                            <code class="grey-text">* Only the parameters with value will saved</code>
+                        </div>
+                    </div>
+                    <div class="section">
+
+                        <div class="center">
+                            <button class="btn" type="button" disabled id="btn_create" onclick="saveProfile()">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "servers-profiles" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
+           data-tooltip="Back to Profile List">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}
+
+{% block extraScripts %}
+    <script type="text/javascript">
+        var _objPk = {{ object.template_id }};
+        var _select = document.getElementById('id_template');
+        var _inputs = document.getElementsByClassName('param_val');
+        var _name = document.getElementById('id_name');
+        var _desc = document.getElementById('id_description');
+        var _categories = ['Global Variable', 'Node Launcher'];
+
+        getParams();
+
+        _select.onchange = getParams;
+
+        function getParams() {
+            $.ajax({
+                url: "/apis/templates/" + _select.value,
+                type: "GET",
+                success: function (data) {
+                    showParams(JSON.parse(data.parameters))
+                }, error: function (err) {
+                    console.log(err)
+                }
+            })
+        }
+
+        function getParamsValues() {
+            $.ajax({
+                url: "{% url "api-profiles" object.pk %}",
+                type: "GET",
+                success: function (data) {
+                    if (data.config.length > 2) {
+                        var _result = JSON.parse(data.config);
+                        _result.forEach(function (v, k) {
+                            if (Array.isArray(v.value)) {
+                                var _tagArray = [];
+                                var _chipContainer = document.getElementById(v.parameter);
+                                _chipContainer.setAttribute('class', 'chips param_val');
+                                v.value.forEach(function (v, k) {
+                                    _tagArray.push(v)
+                                });
+                                $('#' + v.parameter + '').material_chip({
+                                    data: _tagArray
+                                });
+                            } else {
+                                _inputs[k].value = v.value;
+                            }
+                        });
+                    }
+                }, error: function (err) {
+                    console.log(err)
+                }
+            });
+        }
+
+        function showParams(params) {
+            var _containerList = document.getElementById('paramsList');
+            _containerList.innerHTML = '';
+            if (_objPk === parseInt(_select.value)) {
+                getParamsValues();
+            }
+            params.forEach(function (v, k) {
+                var _listElement = document.createElement('li');
+                var _txtParam = document.createElement('span');
+
+
+                _txtParam.innerHTML = v.parameter;
+
+                _listElement.appendChild(_txtParam);
+                if (v.help_text) {
+                    var _help_icon = document.createElement('i');
+                    _help_icon.setAttribute('class', 'material-icons tiny blue-grey-text');
+                    _txtParam.setAttribute('data-tooltip', v.help_text);
+                    _txtParam.setAttribute('class', 'tooltipped');
+                    _help_icon.innerHTML = 'help';
+                    _txtParam.appendChild(_help_icon);
+                }
+                var _categoryTxt = document.createElement('span');
+                _categoryTxt.setAttribute('class', 'blue-grey-text');
+                _categoryTxt.innerHTML = _categories[v.category - 1];
+                _txtParam.appendChild(_categoryTxt);
+                if (v.value_type === '2') {
+                    var _chip = createChips(v);
+                    _listElement.appendChild(_chip);
+                } else {
+                    var _input_value = document.createElement('input');
+
+
+                    _input_value.setAttribute('type', 'Text');
+
+                    _input_value.setAttribute('class', 'param_val');
+                    _input_value.setAttribute('placeholder', 'put a ' + v.parameter + ' value');
+                    _input_value.setAttribute('id', v.parameter);
+                    _listElement.appendChild(_input_value);
+                }
+                _containerList.appendChild(_listElement)
+            });
+            document.getElementById('btn_create').disabled = false;
+            $('.tooltipped').tooltip({delay: 20});
+
+            $('.chips').material_chip();
+        }
+
+        function createChips(data) {
+            var _chipContainer = document.createElement('div');
+            _chipContainer.setAttribute('id', data.parameter);
+            _chipContainer.setAttribute('class', 'chips param_val');
+            return _chipContainer;
+        }
+
+        function saveProfile() {
+            /*First we obtain every value from inputs parameters*/
+            var _values;
+            var _params = [];
+            var _cont;
+
+
+            for (_cont = 0; _cont < _inputs.length; _cont++) {
+                if (_inputs[_cont].classList.contains('chips')) {
+                    var _chips_values = [];
+                    var _chipId = _inputs[_cont].getAttribute('id');
+                    var _chipData = $('#' + _chipId + '').material_chip('data');
+                    _chipData.forEach(function (v, k) {
+                        _chips_values.push(v);
+                    });
+                    if (_chips_values.length) {
+                        _params.push({
+                            parameter: _chipId,
+                            value: _chips_values
+                        });
+                    }
+                } else {
+                    if (_inputs[_cont].value) {
+                        /*Save only if user write a value on parameter*/
+                        _params.push({
+                            parameter: _inputs[_cont].id,
+                            value: _inputs[_cont].value
+                        })
+                    }
+                }
+
+            }
+            _values = {
+                "name": _name.value,
+                "description": _desc.value,
+                "template": _select.value,
+                "config": JSON.stringify(_params)
+            };
+            $.ajax({
+                url: "{% url "api-profiles" object.pk %}",
+                type: "PUT",
+                data: _values,
+                success: function (data) {
+                    window.location.replace("{% url "servers-profiles" %}");
+                }, error: function (err) {
+                    console.log(err)
+                }
+            });
+        }
+    </script>
+{% endblock %}
