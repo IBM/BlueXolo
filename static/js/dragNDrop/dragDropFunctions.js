@@ -181,9 +181,13 @@ function drop(ev){
 	var elementID = ev.dataTransfer.getData("text");
 	nodeCopy.id = getNewID(elementID);         
 	var targetID = ev.target.id;
+	
+	var newClass = getNewClass(ev.target.className);	
+	if(!newClass){
+		return;
+	}
 
-
-	nodeCopy.className = getNewClass(ev.target.className);
+	nodeCopy.className = newClass;
 	var commandID = elementID.split("-")[0];
 	var indentation = nodeCopy.className.split("-")[1];	
 
