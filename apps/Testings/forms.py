@@ -12,7 +12,10 @@ class CollectionForm(forms.ModelForm):
             'description',
             'product',
         ]
-
+        widgets = {
+            'product': forms.Select(attrs={'required': True})
+        }
+        
     def __init__(self, *args, **kwargs):
         """This filter only for sources in the category 3(products)"""
         super(CollectionForm, self).__init__(*args, **kwargs)
