@@ -94,11 +94,16 @@
                 } else {
                     var _input_value = document.createElement('input');
                     _input_value.setAttribute('type', 'Text');
-                    _input_value.setAttribute('class', 'param_val');
+                    if (v.category === '1') {
+                        _input_value.setAttribute('class', 'category1 param_val');
+                    } else {
+                        _input_value.setAttribute('class', 'category2 param_val');
+                    }
                     _input_value.setAttribute('placeholder', 'put a ' + v.parameter + ' value');
                     _input_value.setAttribute('id', v.parameter);
                     _listElement.appendChild(_input_value);
                 }
+
                 _containerList.appendChild(_listElement)
             });
             document.getElementById('btn_create').disabled = false;
@@ -110,7 +115,11 @@
         function createChips(data) {
             var _chipContainer = document.createElement('div');
             _chipContainer.setAttribute('id', data.parameter);
-            _chipContainer.setAttribute('class', 'chips param_val');
+            if (data.category === '1') {
+                _chipContainer.setAttribute('class', 'category1 chips param_val');
+            } else {
+                _chipContainer.setAttribute('class', 'category2 chips param_val');
+            }
             _chipContainer.setAttribute('placeholder', 'Press Enter after write a value');
             return _chipContainer;
         }
@@ -124,6 +133,10 @@
 
 
             for (_cont = 0; _cont < _inputs.length; _cont++) {
+                var _category = 2;
+                if (_inputs[_cont].classList.contains('category1')) {
+                    _category = 1;
+                }
                 if (_inputs[_cont].classList.contains('chips')) {
                     var _chips_values = [];
                     var _chipId = _inputs[_cont].getAttribute('id');
@@ -134,6 +147,7 @@
                     if (_chips_values.length) {
                         _params.push({
                             parameter: _chipId,
+                            category: _category,
                             value: _chips_values
                         });
                     }
@@ -142,6 +156,7 @@
                     /*Save only if user write a value on parameter*/
                     _params.push({
                         parameter: _inputs[_cont].id,
+                        category: _category,
                         value: _inputs[_cont].value
                     })
                 }
@@ -152,7 +167,6 @@
                 "template": _select.value,
                 "config": JSON.stringify(_params)
             };
-            console.log(_values)
             $.ajax({
                 url: "{% url "api-profiles" %}",
                 type: "POST",
