@@ -11,7 +11,7 @@ def first_template_server(apps, schema_editor):
     TemplateServer.objects.get_or_create(
         name="SSH Connection",
         description="",
-        parameters="[{\"parameter\":\"host\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"},{\"parameter\":\"user\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"},{\"parameter\":\"passwd\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"},{\"parameter\":\"$HOST\",\"help_text\":\"\",\"category\":\"2\",\"value_type\":\"1\"},{\"parameter\":\"$USERNAME\",\"help_text\":\"\",\"category\":\"2\",\"value_type\":\"1\"},{\"parameter\":\"$PASSWORD\",\"help_text\":\"\",\"category\":\"2\",\"value_type\":\"1\"}]"
+        parameters="[{\"parameter\":\"host\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"},{\"parameter\":\"user\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"},{\"parameter\":\"passwd\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"},{\"parameter\":\"$HOST\",\"help_text\":\"\",\"category\":\"2\",\"value_type\":\"1\"},{\"parameter\":\"$USERNAME\",\"help_text\":\"\",\"category\":\"2\",\"value_type\":\"1\"},{\"parameter\":\"$PASSWORD\",\"help_text\":\"\",\"category\":\"2\",\"value_type\":\"1\"}, {\"parameter\":\"path\",\"help_text\":\"\",\"category\":\"1\",\"value_type\":\"1\"}]"
     )
     print('\n  --------------------------------------- Server Template :D  --------------------------')
 
