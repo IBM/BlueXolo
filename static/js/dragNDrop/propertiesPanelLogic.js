@@ -62,7 +62,9 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
-    propPanel = addExtraTextInput(propPanel, droppedElementIndex);
+    if(droppedElement.category !== 1){
+        propPanel = addExtraTextInput(propPanel, droppedElementIndex);
+    }    
 
     // Add arguments in the properties panel
     for (var i = 0; i < arguments.length; i++) {
