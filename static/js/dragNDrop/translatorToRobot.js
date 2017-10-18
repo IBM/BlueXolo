@@ -42,8 +42,14 @@ function translateExternCommand(commandData){
 	var scriptLine = commandData.name;
 	var arguments = commandData.arguments;
 
+/*	Elements are not translated like this
+	if(commandData.extraValue !== undefined){
+		scriptLine += "\n...    " + commandData.extraValue;
+		scriptLine += "\n";
+	}
+*/	
+
 	for(var i=0; i<arguments.length; i++){
-		// We give priority to man than user definition (if not change OR for AND)
 		if(arguments[i].visible === true){
 			scriptLine += " " + arguments[i].name;
 		}
@@ -53,6 +59,11 @@ function translateExternCommand(commandData){
 		}
 	
 	}
+
+	if(commandData.extraValue !== undefined){
+		scriptLine += " " + commandData.extraValue;
+	}		
+
 	return scriptLine;
 }
 
@@ -69,8 +80,8 @@ function translateComment(parameters){
 }
 
 function translateForIn(parameters){
-	var start = parameters[1].value;
-	var end = parameters[0].value;
+	var start = parameters[0].value;
+	var end = parameters[1].value;
 
 	start = removeAllSpacesBeforeValue(start);
 	end = removeAllSpacesBeforeValue(end);
@@ -79,8 +90,8 @@ function translateForIn(parameters){
 }
 
 function translateForInRange(parameters){
-	var start = parameters[1].value;
-	var end = parameters[0].value;
+	var start = parameters[0].value;
+	var end = parameters[1].value;
 
 	start = removeAllSpacesBeforeValue(start);
 	end = removeAllSpacesBeforeValue(end);
@@ -114,10 +125,6 @@ function translateTag(parameters){
 
 	var scriptLine = '['+tagName+'] ';
 	scriptLine += tagValue;
-	/*
-	for(var i=0; i<parameters.length ; i++){
-		scriptLine += "  " + parameters[i].value;
-	}
-	*/
+
 	return scriptLine;
 }

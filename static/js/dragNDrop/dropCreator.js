@@ -139,7 +139,18 @@ function drawParameterList(droppedElementIndex, elementID) {
 	var arguments = droppedElement.arguments;
 
     // Deletes all elements in list to populate it again
-    listParent.innerHTML = "";    	
+    listParent.innerHTML = "";
+
+	// Adds to the list the extra value
+	if(droppedElement.extraValue !== undefined){
+        var li = document.createElement('li');
+        var textToDisplayInList = droppedElement.extraValue;
+
+        textNode = document.createTextNode(textToDisplayInList);
+        li.appendChild(textNode);
+        listParent.appendChild(li);	
+	}
+
     for (var i = 0; i < arguments.length; i++) {
 
         if (arguments[i].visible === undefined && (arguments[i].value === undefined || arguments[i].value === "")) {
