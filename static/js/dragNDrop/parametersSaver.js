@@ -111,12 +111,9 @@ function saveFromInput(droppedElementIndex, elementID){
 	}
 	var droppedElement = droppedElements[droppedElementIndex];
     if(droppedElement.category === 1){
-    	console.log("?")
-    	var values = getInputs(droppedElementIndex);
-        
+    	var values = getInputs(droppedElementIndex);        
     }
 	else{
-		console.log("ok")
         var values = getInputsExtraInput(droppedElementIndex);
     }	
 	saveValuesInJSON(droppedElementIndex, values);

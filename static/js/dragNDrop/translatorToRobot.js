@@ -47,8 +47,7 @@ function translateExternCommand(commandData){
 		scriptLine += "\n...    " + commandData.extraValue;
 		scriptLine += "\n";
 	}
-*/
-	scriptLine += "     " + commandData.extraValue;
+*/	
 
 	for(var i=0; i<arguments.length; i++){
 		if(arguments[i].visible === true){
@@ -60,6 +59,11 @@ function translateExternCommand(commandData){
 		}
 	
 	}
+
+	if(commandData.extraValue !== undefined){
+		scriptLine += " " + commandData.extraValue;
+	}		
+
 	return scriptLine;
 }
 
@@ -121,10 +125,6 @@ function translateTag(parameters){
 
 	var scriptLine = '['+tagName+'] ';
 	scriptLine += tagValue;
-	/*
-	for(var i=0; i<parameters.length ; i++){
-		scriptLine += "  " + parameters[i].value;
-	}
-	*/
+
 	return scriptLine;
 }
