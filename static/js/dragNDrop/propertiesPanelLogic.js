@@ -20,6 +20,25 @@ function handleVisualization() {
     }
 }
 
+function addExtraTextInput(propPanelNode, droppedElementIndex){
+    var droppedElement = droppedElements[droppedElementIndex];
+    var tempForm = document.createElement("form");
+
+    var inputNode = document.createElement("input");
+    inputNode.setAttribute('placeholder', 'Write an extra value');
+    
+    if(droppedElement.extraValue!== undefined){
+        inputNode.setAttribute('value', droppedElement.extraValue);
+    }      
+
+    // Now it doesn't refresh the website if you press enter while typing on the form
+    inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
+    tempForm.appendChild(inputNode);
+    propPanelNode.appendChild(tempForm);
+
+    return propPanelNode;
+}
+
 function drawPropertiesPanel(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var arguments = droppedElement.arguments;
@@ -42,6 +61,8 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     titleNode.innerText = "Currently editing: " + commandName;
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
+
+    propPanel = addExtraTextInput(propPanel, droppedElementIndex);
 
     // Add arguments in the properties panel
     for (var i = 0; i < arguments.length; i++) {

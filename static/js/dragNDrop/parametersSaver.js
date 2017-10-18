@@ -4,24 +4,30 @@ function getInputs(droppedElementIndex) {
 	var inputValues = [];
 
 	for(var i=0; i<propertiesPannel.length; i++){
-		var parameterChecked = undefined;
-		var parameterValue = undefined;	
 
-		var formNode = propertiesPannel[i];
-		//There is a checkbox
-		var checkboxNode = formNode[0];
-		var parameterChecked = checkboxNode.checked;
-		
-		if(droppedElement.arguments[i].needs_value){
-			var parameterValue = formNode[1].value;
+		if(i===0){
+			var formNode = propertiesPannel[i];	
+			droppedElements[droppedElementIndex].extraValue = formNode[0].value;
 		}
+		else{
+			var parameterChecked = undefined;
+			var parameterValue = undefined;	
 
-	    var inputValue = {
-	        "checked": parameterChecked,
-	        "value": parameterValue,
-	    };
-	    inputValues.push(inputValue);
+			var formNode = propertiesPannel[i];
+			//There is a checkbox
+			var checkboxNode = formNode[0];
+			var parameterChecked = checkboxNode.checked;
+			
+			if(droppedElement.arguments[i-1].needs_value){
+				var parameterValue = formNode[1].value;
+			}
 
+		    var inputValue = {
+		        "checked": parameterChecked,
+		        "value": parameterValue,
+		    };
+		    inputValues.push(inputValue);
+		}
 	}
 	return inputValues;
 }
@@ -54,7 +60,7 @@ function getTagInputs(droppedElementIndex) {
 		 			var chipNode = data.children[j];
 		 			parameterValue += chipNode.firstChild.data;
 		 			if(j+1 < data.children.length-1){
-						parameterValue += ", ";
+						parameterValue += "\t";
 		 			}		 			
 		 		}
 			}
