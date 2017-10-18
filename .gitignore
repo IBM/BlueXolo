@@ -10,6 +10,7 @@
 *.stTheme.cache
 media/zips/*
 media/test_keywords/*
+media/test_result/*
 
 *.zip
 
