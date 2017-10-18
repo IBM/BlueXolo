@@ -271,11 +271,21 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             profile = ServerProfile.objects.get(pk=_config.get('profile'))
             params = json.loads(profile.config)
             _values = []
+            _host = ""
+            _username = ""
+            _passwd = ""
             for p in params:
-                _values.append(p.get('value'))
+                if p.get('parameter') == 'host':
+                    _host = p.get('value')
+                if p.get('parameter') == 'user':
+                    _username = p.get('value')
+                if p.get('parameter') == 'passwd':
+                    _passwd = p.get('value')
+                if p.get('category') == 2:
+                    _values.append(p.get('value'))
 
             try:
-                result = run_keyword(_values[0], _values[1], _values[2], kwd.name, kwd.script, _values[-3:])
+                result = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=result.task_id,
