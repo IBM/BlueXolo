@@ -120,7 +120,7 @@ class SshConnect(LoginRequiredMixin):
         ssh.login(host, user, passwd)
         dia = time.strftime("%y_%m_%d")
         hora = time.strftime("%H:%M:%S")
-        run_path = 'cd /home/root/Desktop/Pruebas/PruebaKeyword'
+        run_path = 'cd /home/Pruebas/PruebaKeyword'
         run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {3}_testcase.robot'.format(
             dia,
             hora,
@@ -139,11 +139,11 @@ class SshConnect(LoginRequiredMixin):
         t = paramiko.Transport((host, 22))
         t.connect(username=user, password=passwd)
         scp = SCPClient(t)
-        scp.get('/home/root/Desktop/Pruebas/PruebaKeyword/{0}_log.html'.format(filename),
+        scp.get('/home/Pruebas/PruebaKeyword/{0}_log.html'.format(filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('/home/root/Desktop/Pruebas/PruebaKeyword/{0}_report.html'.format(filename),
+        scp.get('/home/Pruebas/PruebaKeyword/{0}_report.html'.format(filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('/home/root/Desktop/Pruebas/PruebaKeyword/{0}_output.xml'.format(filename),
+        scp.get('/home/Pruebas/PruebaKeyword/{0}_output.xml'.format(filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
         scp.close()
         t.close()
