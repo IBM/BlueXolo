@@ -8,7 +8,7 @@ from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.Products.models import Command, Source
+from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile
 from apps.Servers.views import run_keyword
 
@@ -17,9 +17,9 @@ from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer
+    TaskSerializer, ArgumentsSerializer
 from .api_pagination import CommandsPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -312,6 +312,22 @@ class TasksApiView(LoginRequiredMixin,
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     filter_class = TaskFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class ArgumentsApiView(LoginRequiredMixin,
+                   mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   generics.GenericAPIView
+                   ):
+    queryset = Argument.objects.all()
+    serializer_class = ArgumentsSerializer
+    filter_class = ArgumentFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

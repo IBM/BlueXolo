@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from apps.Products.models import Source
+from apps.Products.models import Source, Argument
 from apps.Testings.models import Collection
 from apps.Users.models import Task
 
@@ -21,3 +21,9 @@ class TaskFilter(filters.FilterSet):
     class Meta:
         model = Task
         fields = ('name', 'id', 'task_id')
+
+
+class ArgumentFilter(filters.FilterSet):
+    class Meta:
+        model = Argument
+        fields = ('name', 'id')
