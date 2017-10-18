@@ -42,13 +42,15 @@ function translateExternCommand(commandData){
 	var scriptLine = commandData.name;
 	var arguments = commandData.arguments;
 
+/*	Elements are not translated like this
 	if(commandData.extraValue !== undefined){
 		scriptLine += "\n...    " + commandData.extraValue;
 		scriptLine += "\n";
 	}
+*/
+	scriptLine += "     " + commandData.extraValue;
 
 	for(var i=0; i<arguments.length; i++){
-		// We give priority to man than user definition (if not change OR for AND)
 		if(arguments[i].visible === true){
 			scriptLine += " " + arguments[i].name;
 		}
