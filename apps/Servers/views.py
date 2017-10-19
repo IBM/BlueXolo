@@ -86,20 +86,20 @@ def run_keyword(host, user, passwd, filename, script, values):
     ssh.create_testcase_robotFile(filename, values)
     ssh.send_file_user_pass(filename, host, user, passwd)
     result = ssh.run_file_named(filename, host, user, passwd)
-    ssh.send_results_named(host, user, passwd, result)
+    ssh.send_results_named(host, user, passwd, filename)
     return result
 
 
 class SshConnect(LoginRequiredMixin):
     def send_file_user_pass(self, filename, host, user, passwd):
         name = filename.replace(" ", "")
-        command_keyword = 'scp -o StrictHostKeyChecking=no {0}/test_keywords/{1}_keyword.robot {2}@{3}:~/home/Pruebas/PruebaKeyword'.format(
+        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:/home/Pruebas/PruebaKeyword'.format(
             settings.MEDIA_ROOT,
             name,
             user,
             host,
         )
-        command_testcase = 'scp -o StrictHostKeyChecking=no {0}/test_keywords/{1}_testcase.robot {2}@{3}:~/home/Pruebas/PruebaKeyword'.format(
+        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:/home/Pruebas/PruebaKeyword'.format(
             settings.MEDIA_ROOT,
             name,
             user,
@@ -120,7 +120,7 @@ class SshConnect(LoginRequiredMixin):
         ssh.login(host, user, passwd)
         dia = time.strftime("%y_%m_%d")
         hora = time.strftime("%H:%M:%S")
-        run_path = 'cd /root/home/Pruebas/PruebaKeyword'
+        run_path = 'cd /home/Pruebas/PruebaKeyword'
         run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {3}_testcase.robot'.format(
             dia,
             hora,
@@ -139,11 +139,11 @@ class SshConnect(LoginRequiredMixin):
         t = paramiko.Transport((host, 22))
         t.connect(username=user, password=passwd)
         scp = SCPClient(t)
-        scp.get('/root/home/Pruebas/PruebaKeyword/{0}_log.html'.format(filename),
+        scp.get('/home/Pruebas/PruebaKeyword/{0}_log.html'.format(filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('/root/home/Pruebas/PruebaKeyword/{0}_report.html'.format(filename),
+        scp.get('/home/Pruebas/PruebaKeyword/{0}_report.html'.format(filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('/root/home/Pruebas/PruebaKeyword/{0}_output.xml'.format(filename),
+        scp.get('/home/Pruebas/PruebaKeyword/{0}_output.xml'.format(filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
         scp.close()
         t.close()

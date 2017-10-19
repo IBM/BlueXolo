@@ -285,7 +285,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     _values.append(p.get('value'))
 
             try:
-                result = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values)
+                result = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=result.task_id,
@@ -295,12 +295,18 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 request.user.save()
                 # run_key(host, user, passwd, filename, script, values):
                 _data = {
-                    'report': "{0}/media/test_result/{1}_report.html".format(settings.SITE_DNS, result)
+                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_ROOT, kwd.name)
                 }
             except Exception as errorConnection:
-                pass
+                _status=500
+                _data = {
+                    'text': "{0}".format(errorConnection)
+                }
         except Exception as Error:
-            pass
+            _status = 500
+            _data = {
+                'text': "{0}".format(Error)
+            }
         return Response(status=_status, data=_data)
 
 
