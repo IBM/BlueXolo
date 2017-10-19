@@ -287,18 +287,17 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
             try:
-                result = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path)
-                ssh_result = result.get('ssh_result')
-                task = Task.objects.create(
-                    name="Run Keyword -  {0}".format(kwd.name),
-                    task_id=ssh_result.task_id,
-                    state=ssh_result.state
-                )
-                request.user.tasks.add(task)
-                request.user.save()
+                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path)
+                # task = Task.objects.create(
+                #     name="Run Keyword -  {0}".format(kwd.name),
+                #     task_id=result.task_id,
+                #     state=result.state
+                # )
+                # request.user.tasks.add(task)
+                # request.user.save()
                 # run_key(host, user, passwd, filename, script, values):
                 _data = {
-                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, result.get('filename'))
+                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, filename)
                 }
             except Exception as errorConnection:
                 _status = 500
