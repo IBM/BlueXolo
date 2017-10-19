@@ -87,7 +87,7 @@
             });
         }
 
-        function addElementToJSON(indentation, commandID){
+        function addElementToJSON(indentation, commandID) {
 
             $.ajax({
                 url: "{% url 'api-commands' %}",
@@ -101,9 +101,9 @@
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
 
-                    droppedElements.push({              
-                        id:     commandID,  
-                        name:   commandName,
+                    droppedElements.push({
+                        id: commandID,
+                        name: commandName,
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
@@ -120,7 +120,7 @@
             });
         }
 
-        function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition){
+        function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition) {
 
             $.ajax({
                 url: "{% url 'api-commands' %}",
@@ -134,9 +134,9 @@
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
 
-                    var droppedElement = {              
-                        id:     commandID,  
-                        name:   commandName,
+                    var droppedElement = {
+                        id: commandID,
+                        name: commandName,
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
@@ -270,35 +270,35 @@
             });
         }
 
-/*
-        function translateToRobot(callBackFunction) {
-            var dragNDrop = document.getElementById("dragDropSpace");
-            var rowsInTable = dragNDrop.children;
+        /*
+                function translateToRobot(callBackFunction) {
+                    var dragNDrop = document.getElementById("dragDropSpace");
+                    var rowsInTable = dragNDrop.children;
 
-            var terminal = document.getElementById("terminal");
-            terminal.value = "";
+                    var terminal = document.getElementById("terminal");
+                    terminal.value = "";
 
-            var translation = [];
+                    var translation = [];
 
-            var inForLoop = false;
-            var identationForLoop = 1;
+                    var inForLoop = false;
+                    var identationForLoop = 1;
 
-            for (var i = 0; i < rowsInTable.length; i++) {
+                    for (var i = 0; i < rowsInTable.length; i++) {
 
-                (function (i) {
+                        (function (i) {
 
-                    var currentElement = rowsInTable[i].lastChild;
-                    // Avoid analyzing the button
-                    if (currentElement.type === 'submit') {
-                        return;
-                    }
+                            var currentElement = rowsInTable[i].lastChild;
+                            // Avoid analyzing the button
+                            if (currentElement.type === 'submit') {
+                                return;
+                            }
 
-                    var elementType = currentElement.id.split("-")[0];
-                    var identationLevel = currentElement.className.split("-")[1];
-                    var parameters = getValuesByID(currentElement.id);
+                            var elementType = currentElement.id.split("-")[0];
+                            var identationLevel = currentElement.className.split("-")[1];
+                            var parameters = getValuesByID(currentElement.id);
 
-                    $.ajax({
-                        url: "{% url 'api-commands' %}",
+                            $.ajax({
+                                url: "{% url 'api-commands' %}",
                         type: 'GET',
                         data: {
                             id: elementType,
@@ -787,10 +787,19 @@
                     },
                     success: function (data) {
                         $('#modalPreview').modal('close');
-                        $('#black_terminal').empty();
-
-                        $('#black_terminal').append('<iframe src="' + data.report + '" style="widht:100%"></iframe>\n');
-                        $('#modal-run').modal('open');
+                        alert('Success');
+                        var win = window.open('/' + data.report +'',  '_blank');
+                        if (win) {
+                            //Browser has allowed it to be opened
+                            win.focus();
+                        } else {
+                            //Browser has blocked it
+                            alert('Please allow popups for this website');
+                        }
+                        {#                        $('#black_terminal').empty();#}
+                        {##}
+                        {#                        $('#black_terminal').append('<iframe src="' + data.report + '" style="widht:100%"></iframe>\n');#}
+                        {#                        $('#modal-run').modal('open');#}
 
                     }, error: function (err) {
                         console.log('error on run script: ' + err)
