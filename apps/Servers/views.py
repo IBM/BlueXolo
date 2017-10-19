@@ -88,7 +88,7 @@ def run_keyword(host, user, passwd, filename, script, values, path):
     ssh.create_testcase_robotFile(filename, values)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
     result = ssh.run_file_named(filename, host, user, passwd, path)
-    ssh.send_results_named(host, user, passwd, result, path)
+    ssh.send_results_named(host, user, passwd, result.get('filename'), path)
     return result
 
 
@@ -135,9 +135,13 @@ class SshConnect(LoginRequiredMixin):
             ssh.sendline(run_path)
             ssh.sendline(run_keyword)
             ssh.prompt()
-            result = ssh.before
+            ssh_result = ssh.before
             ssh.logout()
-            return "{0}_{1}_{2}".format(today, random_string, name)
+            result = {
+                "filename": "{0}_{1}_{2}".format(today, random_string, name),
+                "ssh_result": ssh_result
+            }
+            return result
         except Exception as error:
             return error
 
