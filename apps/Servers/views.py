@@ -126,7 +126,7 @@ class SshConnect(LoginRequiredMixin):
         run_path = 'cd {0}'.format(path)
         today = time.strftime("%y_%m_%d")
         try:
-            run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {1}_testcase.robot'.format(
+            run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {0}_testcase.robot'.format(
                 name,
                 random_string,
                 today
