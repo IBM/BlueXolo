@@ -274,6 +274,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _host = ""
             _username = ""
             _passwd = ""
+            _path = ""
             for p in params:
                 if p.get('parameter') == 'host':
                     _host = p.get('value')
@@ -281,11 +282,12 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     _username = p.get('value')
                 if p.get('parameter') == 'passwd':
                     _passwd = p.get('value')
+                if p.get('parameter') == 'path':
+                    _path = p.get('value')
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
-
             try:
-                result = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values)
+                result = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=result.task_id,
@@ -298,7 +300,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_ROOT, kwd.name)
                 }
             except Exception as errorConnection:
-                _status=500
+                _status = 500
                 _data = {
                     'text': "{0}".format(errorConnection)
                 }
@@ -327,10 +329,10 @@ class TasksApiView(LoginRequiredMixin,
 
 
 class ArgumentsApiView(LoginRequiredMixin,
-                   mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   generics.GenericAPIView
-                   ):
+                       mixins.ListModelMixin,
+                       mixins.CreateModelMixin,
+                       generics.GenericAPIView
+                       ):
     queryset = Argument.objects.all()
     serializer_class = ArgumentsSerializer
     filter_class = ArgumentFilter
