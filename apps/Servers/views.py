@@ -8,7 +8,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from pexpect import pxssh
+from random import choice
 from scp import SCPClient
+from string import digits, ascii_lowercase
 
 from .forms import ServerProfileForm, NewJenkinsServerprofileForm
 from .models import TemplateServer, ServerProfile
@@ -86,7 +88,7 @@ def run_keyword(host, user, passwd, filename, script, values, path):
     ssh.create_testcase_robotFile(filename, values)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
     result = ssh.run_file_named(filename, host, user, passwd, path)
-    ssh.send_results_named(host, user, passwd, filename, path)
+    ssh.send_results_named(host, user, passwd, result, path)
     return result
 
 
@@ -120,23 +122,22 @@ class SshConnect(LoginRequiredMixin):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
         ssh.login(host, user, passwd)
-        dia = time.strftime("%y_%m_%d")
-        hora = time.strftime("%H:%M:%S")
+        random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
         run_path = 'cd {0}'.format(path)
+        today = time.strftime("%y_%m_%d")
         try:
-            run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {3}_testcase.robot'.format(
-                dia,
-                hora,
-                name,
-                name,
+            run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {2}_testcase.robot'.format(
+                today,
+                random_string,
+                name
             )
+            print(run_keyword)
             ssh.sendline(run_path)
             ssh.sendline(run_keyword)
             ssh.prompt()
             result = ssh.before
             ssh.logout()
-            namefile = dia + "_" + hora + "_" + name
-            return namefile
+            return "{0}_{1}_{2}".format(today, random_string, name)
         except Exception as error:
             return error
 
