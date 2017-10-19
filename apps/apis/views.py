@@ -297,7 +297,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 request.user.save()
                 # run_key(host, user, passwd, filename, script, values):
                 _data = {
-                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_ROOT, kwd.name)
+                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, result)
                 }
             except Exception as errorConnection:
                 _status = 500
