@@ -56,3 +56,8 @@ class Command(models.Model):
     def __str__(self):
         """Return the name command"""
         return "{}".format(self.name)
+
+    def delete(self, using=None, keep_parents=False):
+        for arg in self.arguments.all():
+            arg.delete()
+        return super(Command, self).delete()

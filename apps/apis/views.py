@@ -8,7 +8,7 @@ from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.Products.models import Command, Source
+from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile
 from apps.Servers.views import run_keyword
 
@@ -17,9 +17,9 @@ from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer
+    TaskSerializer, ArgumentsSerializer
 from .api_pagination import CommandsPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -274,6 +274,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _host = ""
             _username = ""
             _passwd = ""
+            _path = ""
             for p in params:
                 if p.get('parameter') == 'host':
                     _host = p.get('value')
@@ -281,26 +282,33 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     _username = p.get('value')
                 if p.get('parameter') == 'passwd':
                     _passwd = p.get('value')
+                if p.get('parameter') == 'path':
+                    _path = p.get('value')
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
-
             try:
-                result = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values)
-                task = Task.objects.create(
-                    name="Run Keyword -  {0}".format(kwd.name),
-                    task_id=result.task_id,
-                    state=result.state
-                )
-                request.user.tasks.add(task)
-                request.user.save()
+                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path)
+                # task = Task.objects.create(
+                #     name="Run Keyword -  {0}".format(kwd.name),
+                #     task_id=result.task_id,
+                #     state=result.state
+                # )
+                # request.user.tasks.add(task)
+                # request.user.save()
                 # run_key(host, user, passwd, filename, script, values):
                 _data = {
-                    'report': "{0}/media/test_result/{1}_report.html".format(settings.SITE_DNS, result)
+                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, filename)
                 }
             except Exception as errorConnection:
-                pass
+                _status = 500
+                _data = {
+                    'text': "{0}".format(errorConnection)
+                }
         except Exception as Error:
-            pass
+            _status = 500
+            _data = {
+                'text': "{0}".format(Error)
+            }
         return Response(status=_status, data=_data)
 
 
@@ -312,6 +320,22 @@ class TasksApiView(LoginRequiredMixin,
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     filter_class = TaskFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class ArgumentsApiView(LoginRequiredMixin,
+                       mixins.ListModelMixin,
+                       mixins.CreateModelMixin,
+                       generics.GenericAPIView
+                       ):
+    queryset = Argument.objects.all()
+    serializer_class = ArgumentsSerializer
+    filter_class = ArgumentFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

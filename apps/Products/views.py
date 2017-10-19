@@ -231,14 +231,19 @@ class DeleteSourceView(LoginRequiredMixin, DeleteView):
     template_name = "delete-source.html"
 
     def get_success_url(self):
-        _category = self.object.category
-        if _category == 3:
-            slug = 'products'
-        if _category == 4:
-            slug = 'robot'
-        if _category == 5:
-            slug = 'libraries'
-        return reverse_lazy('source-list', kwargs={'slug': slug})
+        messages.success(self.request, 'Robot Framework Source and his commands deleted')
+        return reverse_lazy('commands')
+
+    def delete(self, request, *args, **kwargs):
+        object = self.get_object()
+        commands = Command.objects.filter(source=object.pk)
+        for command in commands:
+            arguments = command.arguments.all()
+            
+            if command.source.count() <= 1:
+                command.delete()
+        object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super(DeleteSourceView, self).get_context_data()

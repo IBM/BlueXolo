@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import json
 import os
-import platform
 import re
 import subprocess
 import time
@@ -385,7 +384,7 @@ class RExtract():
                 lib_dict = json.loads(line.split('=', 1)[1])
                 for keyword in lib_dict['keywords']:
                     try:
-                        rbt_keyw, created = Command.objects.update_or_create(
+                        rbt_keyw, created = Command.objects.get_or_create(
                             name=keyword['name'],
                             description=keyword['shortdoc']
                         )
@@ -394,20 +393,20 @@ class RExtract():
                     except Exception as error:
                         print(error)
                     for arg in keyword['args']:
-                        needsValue = False
+                        # needsValue = True
                         isRequired = True
-                        if '=' in arg:
-                            needsValue = True
+                        # if '=' in arg:
+                        #     needsValue = True
                         arg_split = arg.split('=')
                         arg_name = arg_split[0]
                         if len(arg_split) > 1:
                             isRequired = False
                         try:
-                            keyw_opt, created = Argument.objects.update_or_create(
+                            keyw_opt, created = Argument.objects.get_or_create(
                                 name=arg_name,
                                 description=rbt_keyw,
                                 requirement=isRequired,
-                                needs_value=needsValue
+                                needs_value=True
                             )
                             rbt_keyw.arguments.add(keyw_opt)
                             rbt_keyw.save()
