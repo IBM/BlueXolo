@@ -1,6 +1,16 @@
 from django import forms
 
-from .models import ServerProfile
+from .models import ServerProfile, TemplateServer
+
+
+class ServerTemplateForm(forms.ModelForm):
+    class Meta:
+        model = TemplateServer
+        fields = [
+            'name',
+            'category',
+            'description'
+        ]
 
 
 class ServerProfileForm(forms.ModelForm):

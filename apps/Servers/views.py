@@ -12,7 +12,7 @@ from random import choice
 from scp import SCPClient
 from string import digits, ascii_lowercase
 
-from .forms import ServerProfileForm
+from .forms import ServerProfileForm, ServerTemplateForm
 from .models import TemplateServer, ServerProfile
 
 from celery import shared_task
@@ -22,8 +22,11 @@ class ServerTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "servers-templates.html"
 
 
-class NewServerTemplate(LoginRequiredMixin, TemplateView):
+class NewServerTemplate(LoginRequiredMixin, CreateView):
     template_name = "create-server-template.html"
+    model = TemplateServer
+    success_url = reverse_lazy('servers-templates')
+    form_class = ServerTemplateForm
 
 
 class EditServerTemplate(LoginRequiredMixin, DetailView):
