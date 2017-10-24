@@ -12,7 +12,7 @@ from random import choice
 from scp import SCPClient
 from string import digits, ascii_lowercase
 
-from .forms import ServerProfileForm, NewJenkinsServerprofileForm
+from .forms import ServerProfileForm
 from .models import TemplateServer, ServerProfile
 
 from celery import shared_task
@@ -64,21 +64,6 @@ class DeleteServerProfile(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Profile Deleted")
         return reverse_lazy('servers-profiles')
-
-
-class JenkinsServerProfileView(LoginRequiredMixin, TemplateView):
-    template_name = "jenkins-server-profiles.html"
-
-
-class NewJenkinsServerProfileView(LoginRequiredMixin, CreateView):
-    template_name = "create-edit-jenkins-server-profile.html"
-    form_class = NewJenkinsServerprofileForm
-    success_url = reverse_lazy('jenkins-servers-profiles')
-
-    def get_context_data(self, **kwargs):
-        context = super(NewJenkinsServerProfileView, self).get_context_data(**kwargs)
-        context['title'] = 'New Jenkins Profile'
-        return context
 
 
 @shared_task

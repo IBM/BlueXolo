@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import ServerProfile, JenkinsServerProfile
+from .models import ServerProfile
 
 
 class ServerProfileForm(forms.ModelForm):
@@ -11,9 +11,3 @@ class ServerProfileForm(forms.ModelForm):
             'description',
             'template'
         ]
-
-
-class NewJenkinsServerprofileForm(forms.ModelForm):
-    class Meta:
-        model = JenkinsServerProfile
-        fields = '__all__'
