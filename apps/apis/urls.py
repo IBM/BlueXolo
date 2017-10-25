@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson
-from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson
+from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
