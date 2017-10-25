@@ -27,9 +27,11 @@
                         <br>
                     </div>
                     <div class="center">
-                        <button type="button" class="btn-flat teal-text waves-effect" onclick="openParameterModal()">Add
+
+                        <!-- Modal Trigger -->
+                        <a href="#modalParameter" class="btn-flat teal-text waves-effect btn modal-trigger">Add
                             Parameter
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <div class="col s12 l1"></div>
@@ -45,8 +47,32 @@
                     </table>
                 </div>
             </div>
-
+            <div class="center section">
+                <button type="button" class="btn  waves-effect" onclick="createTemplate()">Create Template</button>
+            </div>
         </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modalParameter" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4>Modal Header</h4>
+            <form novalidate>
+                {% include "form-snippet.html" with form=ParametersForm %}
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</button>
+            <button type="button" href="#!" class="waves-effect waves-green btn" onclick="createParameter()">Create
+            </button>
+        </div>
+    </div>
+
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "servers-templates" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
+           data-tooltip="Back to Templates List">
+            <i class="material-icons">arrow_back</i></a>
     </div>
 {% endblock %}
 {% load staticfiles %}
@@ -57,12 +83,14 @@
 {% block extraScripts %}
     <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
     <script type="text/javascript">
+        $('.modal').modal();
         var global_params = [];
         var _objCont;
         var _types = ['String', 'List'];
         var _table_containenr = document.getElementById('tableContainer');
+        var _select_input = $('#parameter-search');
 
-        $('#parameter-search').select2({
+        _select_input.select2({
             ajax: {
                 url: "{% url "api-parameters" %}",
                 dataType: 'json',
@@ -92,8 +120,8 @@
             }
         });
 
-        $('#parameter-search').on("select2:select", function (e) {
-            populateObj($('#parameter-search').select2('data')[0])
+        _select_input.on("select2:select", function (e) {
+            populateObj(_select_input.select2('data')[0])
         });
 
 
@@ -128,7 +156,7 @@
 
             _td_param.appendChild(document.createTextNode(data.name));
             _td_help.appendChild(document.createTextNode(data.help_text));
-            _td_type.appendChild(document.createTextNode(data.value_type));
+            _td_type.appendChild(document.createTextNode(_types[data.value_type - 1]));
             _td_option.appendChild(_delete_icon);
 
             _tr_params.appendChild(_td_param);
@@ -159,8 +187,48 @@
             }
         }
 
-        function openParameterModal() {
-            alert('Cuando sea grande quiero ser un modal!')
+        function createParameter() {
+            var _msg;
+            $.ajax({
+                url: "{% url "api-parameters" %}",
+                type: "POST",
+                data: {
+                    name: document.getElementById('param_name').value,
+                    help_text: document.getElementById('id_help_text').value,
+                    category: document.getElementById('category_group').value,
+                    value_type: document.getElementById('id_value_type').value,
+                }, success: function (data) {
+                    drawMessage("Parameter '" + data.name + "' Created", 'lime-text');
+                    $('#modalParameter').modal('close');
+                }, error: function (err) {
+                    drawMessage(err, 'red-text');
+                }
+            });
+            $('#modalParameter').modal('close');
+        }
+
+        function createTemplate() {
+            var _params = [];
+            global_params.forEach(function (v) {
+                _params.push(parseInt(v.id));
+            });
+            $.ajax({
+                url: "{% url "api-templates" %}",
+                type: 'POST',
+                data: {
+                    "name": document.getElementById('id_name').value,
+                    "description": document.getElementById('id_description').value,
+                    "category": document.getElementById('id_category').value,
+                    "params": JSON.stringify(_params)
+                }, success: function (data) {
+{#                    drawMessage("Template '" + data.name + "' Created", 'lime-text');#}
+                  
+                        window.location.href = '{% url "servers-templates" %}';
+
+                }, error: function (err) {
+                    drawMessage(err, 'red-text');
+                }
+            })
         }
     </script>
 {% endblock %}

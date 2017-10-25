@@ -12,7 +12,7 @@ from random import choice
 from scp import SCPClient
 from string import digits, ascii_lowercase
 
-from .forms import ServerProfileForm, ServerTemplateForm
+from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
 from .models import TemplateServer, ServerProfile
 
 from celery import shared_task
@@ -27,6 +27,11 @@ class NewServerTemplate(LoginRequiredMixin, CreateView):
     model = TemplateServer
     success_url = reverse_lazy('servers-templates')
     form_class = ServerTemplateForm
+
+    def get_context_data(self, **kwargs):
+        context = super(NewServerTemplate, self).get_context_data(**kwargs)
+        context['ParametersForm'] = ParametersForm
+        return context
 
 
 class EditServerTemplate(LoginRequiredMixin, DetailView):

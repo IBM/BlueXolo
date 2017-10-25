@@ -1,7 +1,19 @@
 {% if messages %}
     {% for message in messages %}
         <script type="text/javascript">
-            toastr.{{ message.tags }}('{{ message }}', '{{ message.tags }}'.toUpperCase())
+            var _class = '';
+            if ("{{ message.tags }}" === "ERROR") {
+                _class = "red-text"
+            } else if ("{{ message.tags }}" === "WARNING") {
+                _class = "yellow-text"
+            } else if ("{{ message.tags }}" === "success") {
+                _class = "lime-text"
+            } else if ("{{ message.tags }}" === "INFO") {
+                _class = "blue-text"
+            }
+            var $toastContent = $('<span' + _class + '>{{ message }}</span>');
+            Materialize.toast($toastContent, 10000);
+
         </script>
     {% endfor %}
 {% endif %}

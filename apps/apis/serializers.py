@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import serializers
 
 from apps.Products.models import Command, Argument, Source
@@ -37,10 +39,28 @@ class BasicCommandsSerializer(serializers.ModelSerializer):
         ]
 
 
+class ParametersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Parameters
+        fields = '__all__'
+
+
 class TemplateServerSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateServer
         fields = '__all__'
+
+    def create(self, validated_data):
+        params = json.loads(self.initial_data['params'])
+        template = TemplateServer.objects.create(
+            name=validated_data['name'],
+            description=validated_data['description'],
+            category=validated_data['category']
+        )
+        for param in params:
+            template.parameters.add(param)
+        template.save()
+        return template
 
 
 class KeywordsSerializer(serializers.ModelSerializer):
@@ -66,10 +86,4 @@ class CollectionSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = '__all__'
-
-
-class ParametersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Parameters
         fields = '__all__'

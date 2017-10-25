@@ -67,6 +67,9 @@ class ServerTemplateApiView(LoginRequiredMixin,
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        messages.success(self.request, "{0} Created".format(serializer.data['name']))
+
 
 class ServerTemplateDetailApiView(LoginRequiredMixin,
                                   mixins.RetrieveModelMixin,
@@ -344,12 +347,11 @@ class ArgumentsApiView(LoginRequiredMixin,
         return self.create(request, *args, **kwargs)
 
 
-
 class ParametersApiView(LoginRequiredMixin,
-                       mixins.ListModelMixin,
-                       mixins.CreateModelMixin,
-                       generics.GenericAPIView
-                       ):
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin,
+                        generics.GenericAPIView
+                        ):
     queryset = Parameters.objects.all()
     serializer_class = ParametersSerializer
     filter_class = ParametersFilter
