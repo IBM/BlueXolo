@@ -291,7 +291,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
             try:
-                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path)
+                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, profile.name, params)
                 # task = Task.objects.create(
                 #     name="Run Keyword -  {0}".format(kwd.name),
                 #     task_id=result.task_id,

@@ -75,10 +75,11 @@ class DeleteServerProfile(LoginRequiredMixin, DeleteView):
 
 
 @shared_task
-def run_keyword(host, user, passwd, filename, script, values, path):
+def run_keyword(host, user, passwd, filename, script, values, path, profilename, variables):
     ssh = SshConnect()
     ssh.create_robot_file(filename, script)
     ssh.create_testcase_robotFile(filename, values)
+    ssh.create_profile_file(profilename, variables)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
     result, result_filename = ssh.run_file_named(filename, host, user, passwd, path)
     ssh.send_results_named(host, user, passwd, result_filename, path)
@@ -173,4 +174,12 @@ class SshConnect(LoginRequiredMixin):
         for i in range(0, len(values)):
             f = '{}\t'.format(values[i])
             a.write(f)
+        a.close()
+
+    def create_profile_file(self, profilename, variables):
+        name = profilename.replace(" ", "")
+        a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
+        a.write("#      {0}      #\n".format(name))
+        for p in variables:
+            a.write('{0} = "{1}"\n'.format(p.get("parameter"), p.get("value")))
         a.close()
