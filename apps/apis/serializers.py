@@ -62,6 +62,21 @@ class TemplateServerSerializer(serializers.ModelSerializer):
         template.save()
         return template
 
+    def update(self, instance, validated_data):
+        try:
+            params = json.loads(self.initial_data['params'])
+            instance.name = validated_data.get('name')
+            instance.description = validated_data.get('description')
+            instance.category = validated_data.get('category')
+            for p in instance.parameters.all():
+                instance.parameters.remove(p)
+            for param in params:
+                instance.parameters.add(param)
+                instance.save()
+            return instance
+        except Exception as error:
+            raise RuntimeError('`update()` have error {0}.'.format(error))
+
 
 class KeywordsSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())

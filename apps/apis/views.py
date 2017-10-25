@@ -81,6 +81,7 @@ class ServerTemplateDetailApiView(LoginRequiredMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(self.request, "Template Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
