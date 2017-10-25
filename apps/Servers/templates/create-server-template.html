@@ -3,79 +3,68 @@
 {% block subtitle %}Create Server Template{% endblock %}
 {% block content %}
     <div class="container">
-        <div class="row card">
-            <div class="col s12 l6">
-                <div class="card-content">
-                    <form method="POST" id="form_template">
-                        {% csrf_token %}
-                        <div class="input-field col s12">
-                            <input name="name_template" type="text" data-length="30" id="name" onblur="checkValues()">
-                            <label for="name">Name</label>
-                        </div>
-                        <div class="input-field col s12">
-                            <textarea name="description_template" class="materialize-textarea"
-                                      data-length="120" id="description"></textarea>
-                            <label for="description">Description</label>
-                        </div>
-
-                        <div class="input-field col s12 l6">
-                            <input name="param" type="text" id="parameter">
-                            <label for="parameter">Parameter</label>
-                        </div>
-
-                        <div class="input-field col s12 l6">
-                            <input name="help" id="help_text" type="text">
-                            <label for="help_text">Help Text</label>
-                        </div>
-
-                        <div class="input-field col s12 l6">
-                            <select id="category">
-                                <option value="1">Global Variable</option>
-                                <option value="2">Node Launcher</option>
-                            </select>
-                            <label for="value_type">Category</label>
-                        </div>
-
-                        <div class="input-field col s12 l6">
-                            <select id="value_type">
-                                <option value="1">String</option>
-                                <option value="2">List</option>
-                            </select>
-                            <label for="value_type">Value Type</label>
-                        </div>
-
-                        <div class="center">
-                            <button class="btn" name="btn_add" type="button" onclick="populateParams()">Add</button>
-                        </div>
-
-                    </form>
-                </div>
+        <div class="row">
+            <div class="col s12">
+                <form novalidate>
+                    {% csrf_token %}
+                    {% include "form-snippet-horizontal.html" %}
+                </form>
             </div>
-            <div class="col s12 l6">
-                <div class="card-content">
-                    <div class="row">
-                        <div class="col s12">
-                            <table>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Help</th>
-                                    <th>Type</th>
-                                    <th>Category</th>
-                                    <th>Option</th>
-                                </tr>
-                                <tbody id="params_table"></tbody>
-                            </table>
-                        </div>
+        </div>
+
+        <div class="row card">
+            <div class="col s12 card-content">
+                <h4 class="card-title">Parameters</h4>
+                <div class="col s12 l4">
+                    <div class="input-field">
+                        <select id="parameter-search">
+                        </select>
                     </div>
                     <div class="section">
+                        <code class="blue-grey-text">
+                            * You can add parameters if not found.
+                        </code>
+                        <br>
+                    </div>
+                    <div class="center">
 
-                        <div class="center">
-                            <button class="btn" type="button" disabled id="btn_create" onclick="saveTemplate()">Create
-                            </button>
-                        </div>
+                        <!-- Modal Trigger -->
+                        <a href="#modalParameter" class="btn-flat teal-text waves-effect btn modal-trigger">Add
+                            Parameter
+                        </a>
                     </div>
                 </div>
+                <div class="col s12 l1"></div>
+                <div class="col s12 l7 hide" id="tableContainer">
+                    <table>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Help</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                        <tbody id="params_table"></tbody>
+                    </table>
+                </div>
             </div>
+            <div class="center section">
+                <button type="button" class="btn  waves-effect" onclick="createTemplate()">Create Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modalParameter" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4>Modal Header</h4>
+            <form novalidate>
+                {% include "form-snippet.html" with form=ParametersForm %}
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</button>
+            <button type="button" href="#!" class="waves-effect waves-green btn" onclick="createParameter()">Create
+            </button>
         </div>
     </div>
 
@@ -86,96 +75,158 @@
             <i class="material-icons">arrow_back</i></a>
     </div>
 {% endblock %}
+{% load staticfiles %}
+{% block extraStyles %}
+    <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+{% endblock %}
+
 {% block extraScripts %}
+    <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
     <script type="text/javascript">
-        var objParam = [];
-        var _btn_create = document.getElementById('btn_create');
-        var _param = document.getElementById('parameter');
-        var _help_text = document.getElementById('help_text');
-        var _value_type = document.getElementById('value_type');
-        var _category = document.getElementById('category');
+        $('.modal').modal();
+        var global_params = [];
         var _objCont;
-        var _categories = ['Global Variable', 'Node Launcher'];
         var _types = ['String', 'List'];
+        var _table_containenr = document.getElementById('tableContainer');
+        var _select_input = $('#parameter-search');
 
-        function deleteParam(id) {
-            /* Delete the param row (tr)*/
-            var _element = document.getElementById(id);
-            objParam.splice(id, 1);
-            _objCont--;
-            _element.parentNode.removeChild(_element);
-        }
-
-        function populateParams() {
-            if (_param.value) {
-                if (!_objCont) {
-                    _objCont = 0;
+        _select_input.select2({
+            ajax: {
+                url: "{% url "api-parameters" %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        name: params.term,// search term
+                        category: document.getElementById('id_category').value
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
                 }
-                objParam.push({
-                    'parameter': _param.value,
-                    'help_text': _help_text.value,
-                    'category': _category.value,
-                    'value_type': _value_type.value,
-                });
-                addParams(objParam);
-                /* clean inputs */
-                _param.value = _param.defaultValue;
-                _help_text.value = _help_text.defaultValue;
-                checkValues()
+            },
+            placeholder: "Command Search",
+            escapeMarkup: function (markup) {
+                return markup;
+            }, // let our custom formatter work
+            minimumInputLength: 2,
+            templateResult: function (data) {
+                return data.name
+            },
+            templateSelection: function (data) {
+                return data.name
             }
+        });
+
+        _select_input.on("select2:select", function (e) {
+            populateObj(_select_input.select2('data')[0])
+        });
+
+
+        function populateObj(data) {
+            global_params.push({
+                "id": data.id,
+                "name": data.name,
+                "help_text": data.help_text,
+                "category": data.category,
+                "value_type": data.value_type
+            });
+            if (!_objCont) {
+                _objCont = 0;
+            }
+            _table_containenr.classList.remove("hide");
+            drawParamter(data);
         }
 
-
-        function checkValues() {
-            if (document.getElementById('name').value && objParam.length) {
-                _btn_create.disabled = false;
-            }
-        }
-
-        function addParams(obj) {
+        function drawParamter(data) {
             var _tr_params = document.createElement('tr');
             var _td_param = document.createElement('td');
             var _td_help = document.createElement('td');
             var _td_type = document.createElement('td');
-            var _td_category = document.createElement('td');
             var _td_option = document.createElement('td');
             var _delete_icon = document.createElement('i');
 
             _tr_params.setAttribute('id', _objCont);
 
-            _delete_icon.setAttribute('class', 'material-icons red-text ');
+            _delete_icon.setAttribute('class', 'material-icons red-text');
             _delete_icon.setAttribute('onClick', 'deleteParam(' + _objCont + ')');
             _delete_icon.appendChild(document.createTextNode('close'));
 
-            _td_param.appendChild(document.createTextNode(obj[_objCont].parameter));
-            _td_help.appendChild(document.createTextNode(obj[_objCont].help_text));
-            _td_category.appendChild(document.createTextNode(_categories[obj[_objCont].category - 1]));
-            _td_type.appendChild(document.createTextNode(_types[obj[_objCont].value_type - 1]));
+            _td_param.appendChild(document.createTextNode(data.name));
+            _td_help.appendChild(document.createTextNode(data.help_text));
+            _td_type.appendChild(document.createTextNode(_types[data.value_type - 1]));
             _td_option.appendChild(_delete_icon);
 
             _tr_params.appendChild(_td_param);
             _tr_params.appendChild(_td_help);
             _tr_params.appendChild(_td_type);
-            _tr_params.appendChild(_td_category);
             _tr_params.appendChild(_td_option);
 
             document.getElementById('params_table').appendChild(_tr_params);
             _objCont++;
-
         }
 
-        function saveTemplate() {
+        function deleteParam(id) {
+            /* Delete the param row (tr)*/
+            var _element = document.getElementById(id);
+            global_params.splice(id, 1);
+            _objCont--;
+            _element.parentNode.removeChild(_element);
+        }
+
+        document.getElementById("id_category").onchange = cleanGlobalParams;
+
+
+        function cleanGlobalParams() {
+            global_params = [];
+            var table = document.getElementById('params_table');
+            while (table.firstChild) {
+                table.removeChild(table.firstChild);
+            }
+        }
+
+        function createParameter() {
+            var _msg;
             $.ajax({
-                url: "{% url "api-templates" %}",
+                url: "{% url "api-parameters" %}",
                 type: "POST",
                 data: {
-                    name: document.getElementById('name').value,
-                    description: document.getElementById('description').value,
-                    parameters: JSON.stringify(objParam)
+                    name: document.getElementById('param_name').value,
+                    help_text: document.getElementById('id_help_text').value,
+                    category: document.getElementById('category_group').value,
+                    value_type: document.getElementById('id_value_type').value,
                 }, success: function (data) {
-                    window.location.replace("{% url "servers-templates" %}");
-                }, error: function (error) {
-                    console.log(error);
+                    drawMessage("Parameter '" + data.name + "' Created", 'lime-text');
+                    $('#modalParameter').modal('close');
+                }, error: function (err) {
+                    drawMessage(err, 'red-text');
+                }
+            });
+            $('#modalParameter').modal('close');
+        }
+
+        function createTemplate() {
+            var _params = [];
+            global_params.forEach(function (v) {
+                _params.push(parseInt(v.id));
+            });
+            $.ajax({
+                url: "{% url "api-templates" %}",
+                type: 'POST',
+                data: {
+                    "name": document.getElementById('id_name').value,
+                    "description": document.getElementById('id_description').value,
+                    "category": document.getElementById('id_category').value,
+                    "params": JSON.stringify(_params)
+                }, success: function (data) {
+{#                    drawMessage("Template '" + data.name + "' Created", 'lime-text');#}
+                  
+                        window.location.href = '{% url "servers-templates" %}';
+
+                }, error: function (err) {
+                    drawMessage(err, 'red-text');
                 }
             })
         }

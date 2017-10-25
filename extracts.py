@@ -7,7 +7,7 @@ import time
 import urllib.request
 import zipfile
 from pexpect import pxssh
-import distro
+#import distro
 
 from celery import shared_task
 
@@ -256,14 +256,14 @@ class MExtract:
     def _getSource(self, category):
 
         if category is 2:
-            if self.api_config.get('host'):
-                name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
-                version = self.api_config.get('host')
-            else:
-                name = distro.linux_distribution()[0]
-                version = distro.linux_distribution()[1]
-            # name = "dummy"
-            # version = "dummy"
+            # if self.api_config.get('host'):
+            #     name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
+            #     version = self.api_config.get('host')
+            # else:
+            #     name = distro.linux_distribution()[0]
+            #     version = distro.linux_distribution()[1]
+            name = "dummy"
+            version = "dummy"
             try:
                 source, created = Source.objects.get_or_create(
                     name=name,
@@ -344,7 +344,8 @@ class RExtract():
         """ R-Extract initialization
             Opens zip file and get libs names and inner paths for later parsing
         """
-        self.r_version = Source.objects.get(id=config.get("source"))
+        robot_version = Source.objects.get(id=config.get("source"))
+        self.r_version = robot_version
         self.libraries = list()
         self.extra_libraries = list()
         _category = int(config.get('category'))
@@ -357,6 +358,14 @@ class RExtract():
                         'name': name,
                         'lib_page': self.zip.open(path).readlines()
                     })
+                    source, created = Source.objects.get_or_create(
+                        name=name,
+                        version=self.r_version.version,
+                        category=5,
+                    )
+                    self.library = source
+                    self.library.depends.add(self.r_version)
+                    self.library.save()
         elif _category is 5:
             self.lib_url = config.get("url")
             req = urllib.request.Request(self.lib_url)
@@ -366,6 +375,10 @@ class RExtract():
                 'name': name,
                 'lib_page': res.readlines()
             })
+
+            self.library = robot_version
+
+
 
     def _lib_parser(self, lib):
         """ Parses a Robot library from a json formated string
@@ -380,7 +393,7 @@ class RExtract():
                 libdoc = True
                 line = re.sub(r'\\x3c', '<', line)
                 line = re.sub(r';', '', line)
-                print(line.split('=', 1)[1])
+                #print(line.split('=', 1)[1])
                 lib_dict = json.loads(line.split('=', 1)[1])
                 for keyword in lib_dict['keywords']:
                     try:
@@ -388,7 +401,7 @@ class RExtract():
                             name=keyword['name'],
                             description=keyword['shortdoc']
                         )
-                        rbt_keyw.source.add(self.r_version)
+                        rbt_keyw.source.add(self.library)
                         rbt_keyw.save()
                     except Exception as error:
                         print(error)

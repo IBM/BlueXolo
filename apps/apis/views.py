@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.Products.models import Command, Source, Argument
-from apps.Servers.models import TemplateServer, ServerProfile
+from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
 from apps.Testings.models import Keyword, Collection
@@ -17,9 +17,9 @@ from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer
 from .api_pagination import CommandsPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -66,6 +66,10 @@ class ServerTemplateApiView(LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+    # def perform_create(self, serializer):
+    #     messages.success(self.request, "{0} Created".format(serializer.data['name']))
+    #     serializer.save()
 
 
 class ServerTemplateDetailApiView(LoginRequiredMixin,
@@ -336,6 +340,22 @@ class ArgumentsApiView(LoginRequiredMixin,
     queryset = Argument.objects.all()
     serializer_class = ArgumentsSerializer
     filter_class = ArgumentFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class ParametersApiView(LoginRequiredMixin,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin,
+                        generics.GenericAPIView
+                        ):
+    queryset = Parameters.objects.all()
+    serializer_class = ParametersSerializer
+    filter_class = ParametersFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
