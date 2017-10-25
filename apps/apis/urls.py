@@ -1,16 +1,16 @@
 from django.conf.urls import url
 
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
-from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson, \
-    JenkinsServerProfilesListJson
+from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson
 from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
-    TasksApiView, ArgumentsApiView
+    TasksApiView, ArgumentsApiView, ParametersApiView
 
 urlpatterns = [
     url(r'^arguments/$', ArgumentsApiView.as_view(), name="api-arguments"),
+    url(r'^parameters/$', ParametersApiView.as_view(), name="api-parameters"),
     url(r'^commands/$', CommandsApiView.as_view(), name="api-commands"),
     url(r'^commands/(?P<pk>[0-9]+)/$', CommandsDetailApiView.as_view(), name="api-commands"),
     url(r'^templates/$', ServerTemplateApiView.as_view(), name="api-templates"),
@@ -27,7 +27,6 @@ urlpatterns = [
     url(r'^commands/os/$', OSCommandsListJson.as_view(), name="api-os-commands"),
     url(r'^servers/templates/$', ServerTemplatesListJson.as_view(), name='api-servers-templates'),
     url(r'^servers/profiles/$', ServerProfilesListJson.as_view(), name='api-servers-profiles'),
-    url(r'^servers/jenkins-servers/$', JenkinsServerProfilesListJson.as_view(), name="api-jenkins-servers"),
     url(r'^keywords/list/$', KeywordsListJson.as_view(), name="api-keywords-list"),
     url(r'^collections/$', CollectionsListJson.as_view(), name="api-collections"),
     url(r'^sources/list/$', SourcesListJson.as_view(), name="api-sources-list"),
