@@ -67,8 +67,9 @@ class ServerTemplateApiView(LoginRequiredMixin,
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-    def perform_create(self, serializer):
-        messages.success(self.request, "{0} Created".format(serializer.data['name']))
+    # def perform_create(self, serializer):
+    #     messages.success(self.request, "{0} Created".format(serializer.data['name']))
+    #     serializer.save()
 
 
 class ServerTemplateDetailApiView(LoginRequiredMixin,
