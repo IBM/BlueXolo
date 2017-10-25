@@ -13,6 +13,6 @@ $.ajaxSetup({
 
 function drawMessage(msg, _class) {
     var _class_color = _class || '';
-    var _msg = $('<span class="' + _class_color + '">' + msg + '</span>');
-    Materialize.toast(_msg, 12000);
+    var _msg = $('<span>' + msg + '</span>');
+    Materialize.toast(_msg, 12000, _class_color);
 }

@@ -2,18 +2,17 @@
     {% for message in messages %}
         <script type="text/javascript">
             var _class = '';
-            if ("{{ message.tags }}" === "ERROR") {
-                _class = "red-text"
-            } else if ("{{ message.tags }}" === "WARNING") {
-                _class = "yellow-text"
+            if ("{{ message.tags }}" === "error") {
+                _class = "red"
+            } else if ("{{ message.tags }}" === "warning") {
+                _class = "yellow"
             } else if ("{{ message.tags }}" === "success") {
-                _class = "lime-text"
-            } else if ("{{ message.tags }}" === "INFO") {
-                _class = "blue-text"
+                _class = "green"
+            } else if ("{{ message.tags }}" === "info") {
+                _class = "blue"
             }
-            var $toastContent = $('<span' + _class + '>{{ message }}</span>');
-            Materialize.toast($toastContent, 10000);
-
+            var $toastContent = $('<span>{{ message }}</span>');
+            Materialize.toast($toastContent, 12000, _class);
         </script>
     {% endfor %}
 {% endif %}

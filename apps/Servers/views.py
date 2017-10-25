@@ -34,9 +34,16 @@ class NewServerTemplate(LoginRequiredMixin, CreateView):
         return context
 
 
-class EditServerTemplate(LoginRequiredMixin, DetailView):
+class EditServerTemplate(LoginRequiredMixin, UpdateView):
     model = TemplateServer
     template_name = "edit-server-template.html"
+    success_url = reverse_lazy('servers-templates')
+    form_class = ServerTemplateForm
+
+    def get_context_data(self, **kwargs):
+        context = super(EditServerTemplate, self).get_context_data(**kwargs)
+        context['ParametersForm'] = ParametersForm
+        return context
 
 
 class DeleteServerTemplate(LoginRequiredMixin, DeleteView):

@@ -11,6 +11,9 @@ class ServerTemplateForm(forms.ModelForm):
             'category',
             'description'
         ]
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea'})
+        }
 
 
 class ParametersForm(forms.ModelForm):

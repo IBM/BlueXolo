@@ -65,11 +65,8 @@ class ServerTemplateApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(self.request, "Template Created")
         return self.create(request, *args, **kwargs)
-
-    # def perform_create(self, serializer):
-    #     messages.success(self.request, "{0} Created".format(serializer.data['name']))
-    #     serializer.save()
 
 
 class ServerTemplateDetailApiView(LoginRequiredMixin,
@@ -291,7 +288,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
             try:
-                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, profile.name, params)
+                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path,
+                                               profile.name, params)
                 # task = Task.objects.create(
                 #     name="Run Keyword -  {0}".format(kwd.name),
                 #     task_id=result.task_id,

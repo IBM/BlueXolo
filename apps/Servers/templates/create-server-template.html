@@ -4,7 +4,7 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col s12">
+            <div class="col s12 ">
                 <form novalidate>
                     {% csrf_token %}
                     {% include "form-snippet-horizontal.html" %}
@@ -48,7 +48,9 @@
                 </div>
             </div>
             <div class="center section">
-                <button type="button" class="btn  waves-effect" onclick="createTemplate()">Create Template</button>
+                <button type="button" class="btn  waves-effect" onclick="createTemplate()" disabled id="btn_create">
+                    Create Template
+                </button>
             </div>
         </div>
     </div>
@@ -56,7 +58,7 @@
     <!-- Modal Structure -->
     <div id="modalParameter" class="modal modal-fixed-footer">
         <div class="modal-content">
-            <h4>Modal Header</h4>
+            <h4>New Parameter</h4>
             <form novalidate>
                 {% include "form-snippet.html" with form=ParametersForm %}
             </form>
@@ -89,6 +91,7 @@
         var _types = ['String', 'List'];
         var _table_containenr = document.getElementById('tableContainer');
         var _select_input = $('#parameter-search');
+        var _btn_create = document.getElementById('btn_create');
 
         _select_input.select2({
             ajax: {
@@ -121,7 +124,8 @@
         });
 
         _select_input.on("select2:select", function (e) {
-            populateObj(_select_input.select2('data')[0])
+            populateObj(_select_input.select2('data')[0]);
+            _btn_create.disabled = false;
         });
 
 
@@ -174,6 +178,10 @@
             global_params.splice(id, 1);
             _objCont--;
             _element.parentNode.removeChild(_element);
+            if (global_params.length < 1) {
+                _btn_create.disabled = true;
+                _table_containenr.classList.add("hide");
+            }
         }
 
         document.getElementById("id_category").onchange = cleanGlobalParams;
@@ -185,10 +193,10 @@
             while (table.firstChild) {
                 table.removeChild(table.firstChild);
             }
+            _table_containenr.classList.add("hide");
         }
 
         function createParameter() {
-            var _msg;
             $.ajax({
                 url: "{% url "api-parameters" %}",
                 type: "POST",
@@ -198,13 +206,17 @@
                     category: document.getElementById('category_group').value,
                     value_type: document.getElementById('id_value_type').value,
                 }, success: function (data) {
-                    drawMessage("Parameter '" + data.name + "' Created", 'lime-text');
+                    drawMessage("Parameter '" + data.name + "' Created", 'green');
                     $('#modalParameter').modal('close');
                 }, error: function (err) {
-                    drawMessage(err, 'red-text');
+                    if (err.responseJSON.name) {
+                        (err.responseJSON.name).forEach(function (v) {
+
+                            drawMessage("Name: " + v, 'red');
+                        })
+                    }
                 }
             });
-            $('#modalParameter').modal('close');
         }
 
         function createTemplate() {
@@ -221,12 +233,16 @@
                     "category": document.getElementById('id_category').value,
                     "params": JSON.stringify(_params)
                 }, success: function (data) {
-{#                    drawMessage("Template '" + data.name + "' Created", 'lime-text');#}
-                  
+                    if (data.id) {
                         window.location.href = '{% url "servers-templates" %}';
-
+                    }
                 }, error: function (err) {
-                    drawMessage(err, 'red-text');
+                    if (err.responseJSON.name) {
+                        (err.responseJSON.name).forEach(function (v) {
+
+                            drawMessage("Name: " + v, 'red');
+                        })
+                    }
                 }
             })
         }
