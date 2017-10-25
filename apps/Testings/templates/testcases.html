@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Keywords{% endblock %}{% block subtitle %}Keywords{% endblock %}
+{% block title %}Testcases{% endblock %}{% block subtitle %}Testcase{% endblock %}
 {% block content %}
     <div class="container">
         <table class="datatable">
@@ -13,9 +13,9 @@
             </thead>
         </table>
         <div class="fixed-action-btn">
-            <a href="{% url "new-keywords" %}"
+            <a href="{% url "new-testcase" %}"
                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-               data-tooltip="New Keyword"><i class="material-icons">add</i></a>
+               data-tooltip="New Testcases"><i class="material-icons">add</i></a>
         </div>
     </div>
 {% endblock %}
@@ -32,12 +32,12 @@
                 "targets": 3,
                 data: function (row) {
                     return "<div>" +
-                        "<a class='btn' href='/testings/keywords/edit/" + row[3] + "'><i class='material-icons'>edit</i></a>" +
-                        "<a class='btn red' href='/testings/keywords/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                        "<a class='btn' href='/testings/testcases/edit/" + row[3] + "'><i class='material-icons'>edit</i></a>" +
+                        "<a class='btn red' href='/testings/testcases/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
                         "</div>";
                 }
             }];
-            dtStart("{% url "api-keywords-list" %}", config)
+            dtStart("{% url "api-testcases-list" %}", config)
         });
     </script>
 {% endblock %}
