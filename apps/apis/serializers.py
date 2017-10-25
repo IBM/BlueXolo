@@ -46,6 +46,8 @@ class ParametersSerializer(serializers.ModelSerializer):
 
 
 class TemplateServerSerializer(serializers.ModelSerializer):
+    parameters = ParametersSerializer(many=True)
+
     class Meta:
         model = TemplateServer
         fields = '__all__'
