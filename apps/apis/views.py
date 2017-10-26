@@ -18,8 +18,9 @@ from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
     TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer
-from .api_pagination import CommandsPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter
+from .api_pagination import CommandsPagination, KeywordPagination
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
+    KeywordFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -28,6 +29,13 @@ class KeywordAPIView(LoginRequiredMixin,
                      generics.GenericAPIView):
     queryset = Keyword.objects.all()
     serializer_class = KeywordsSerializer
+    pagination_class = KeywordPagination
+
+    def filter_queryset(self, queryset):
+        name = self.request.query_params.get('name')
+        if name:
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

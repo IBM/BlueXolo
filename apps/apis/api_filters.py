@@ -2,7 +2,7 @@ import django_filters
 
 from apps.Products.models import Source, Argument
 from apps.Servers.models import Parameters
-from apps.Testings.models import Collection, TestCase
+from apps.Testings.models import Collection, TestCase, Keyword
 from apps.Users.models import Task
 
 
@@ -16,6 +16,12 @@ class CollectionFilter(django_filters.FilterSet):
     class Meta:
         model = Collection
         fields = ('name', 'id')
+
+
+class KeywordFilter(django_filters.FilterSet):
+    class Meta:
+        model = Keyword
+        fields = ('collection', 'id', 'name')
 
 
 class TaskFilter(django_filters.FilterSet):

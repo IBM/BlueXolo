@@ -523,7 +523,17 @@
                     </li>
                     <li>
                         <div class="collapsible-header">Custom Keyword</div>
-                        <div id="customKeywordCommandsPanel" class="collapsible-body"></div>
+                        <div id="customKeywordCommandsPanel" class="collapsible-body">
+                            <div class="row">
+                                <p class="blue-grey-text" >Keywords Search</p>
+                                <div class=" col s12">
+                                    <select id="keywrd-search"></select>
+                                    <div id="custom-keywords-area" class="section">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
                 {#                <button onclick="popUpPropertiesKeyword()">Save Keyword</button>#}
@@ -699,6 +709,57 @@
                 return selection.name;
             }
         });
+        $('#keywrd-search').select2({
+            ajax: {
+                url: "{% url "api-keywords" %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        collection: document.getElementById('keyword_collection').value,
+                        name: params.term, // search term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.results
+                    };
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }, // let our custom formatter work
+            minimumInputLength: 2,
+            templateResult: function (results) {
+                return results.name
+            },
+            templateSelection: function (selection) {
+                return selection.name;
+            }
+        });
+
+        $('#keywrd-search').on("select2:select", function (e) {
+            $.ajax({
+                url: '/apis/keywords/' + this.value + '/',
+                type: 'GET',
+                success: function (data) {
+                    console.log(data)
+
+                    var _section = document.getElementById('custom-keywords-area');
+                    _section.innerHTML = "";
+                    var _element = document.createElement('div');
+
+                    _element.className = "drag-drop-item";
+                    _element.id = data.id + "-drag-drop";
+                    _element.draggable = true;
+                    _element.setAttribute("ondragstart", "drag(event)");
+                    _element.innerHTML = data.name;
+                    _section.appendChild(_element);
+                }, error: function (err) {
+                    console.log('error' + err)
+                }
+            });
+        });
 
         $('#command-search').on("select2:select", function (e) {
             $.ajax({
@@ -714,7 +775,6 @@
         });
 
         function CommandPrint(element) {
-            console.log(element)
             var _accordions = ['controlFlowCommandsPanel', 'systemCommandsPanel', 'productCommandsPanel',
                 'robotCommandsPanel', 'librariesCommandsPanel', 'customKeywordCommandsPanel'];
             var _category = element.source[0].category;
@@ -788,7 +848,7 @@
                     success: function (data) {
                         $('#modalPreview').modal('close');
                         alert('Success');
-                        var win = window.open('/' + data.report +'',  '_blank');
+                        var win = window.open('/' + data.report + '', '_blank');
                         if (win) {
                             //Browser has allowed it to be opened
                             win.focus();
