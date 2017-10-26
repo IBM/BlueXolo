@@ -39,13 +39,14 @@ class Collection(models.Model):
     def __str__(self):
         return '{0}'.format(self.name)
 
+
 class TestCase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
-    script = models.TextField(_('script'))
+    script = models.TextField(_('script'), blank=True)
     user = models.ForeignKey(User)
-    collection = models.ManyToManyField(Collection, blank=True)
-    profile = models.ForeignKey(ServerProfile)
+    collection = models.ManyToManyField(Collection)
+    profile = models.ForeignKey(ServerProfile, blank=True, null=True)
     values = models.TextField(_('values'), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
