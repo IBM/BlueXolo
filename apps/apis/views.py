@@ -132,9 +132,14 @@ class CommandsApiView(mixins.ListModelMixin,
         id_command = self.request.query_params.get('id')
         category = self.request.query_params.get('category')
         source = self.request.query_params.get('source')
+        collection = self.request.query_params.get('collection')
         exact = self.request.query_params.get('exact')
         if category:
-            if category in ['2', '3', '4', '5'] and name:
+            if category == '6':
+                queryset = Keyword.objects.all()
+                if collection:
+                    queryset = queryset.filter(collection=collection)
+            elif category in ['2', '3', '4', '5'] and name:
                 # check the category and search by his name
                 queryset = queryset.filter(source__category=category)
                 if exact:
@@ -163,8 +168,11 @@ class CommandsApiView(mixins.ListModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
-            serializer = CommandsSerializer
+        if self.request.query_params.get('category') == '6':
+            serializer = KeywordsSerializer
+        else:
+            if self.request.query_params.get('extra') == '1':
+                serializer = CommandsSerializer
         return serializer
 
     def get(self, request, *args, **kwargs):
