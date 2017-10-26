@@ -6,7 +6,7 @@ from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJso
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
-    TasksApiView, ArgumentsApiView, ParametersApiView
+    TasksApiView, ArgumentsApiView, ParametersApiView, TestCaseApiView, TestCaseDetailApiView
 
 urlpatterns = [
     url(r'^arguments/$', ArgumentsApiView.as_view(), name="api-arguments"),
@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^profiles/(?P<pk>[0-9]+)/$', ServerProfileDetailApiView.as_view(), name="api-profiles"),
     url(r'^keywords/$', KeywordAPIView.as_view(), name="api-keywords"),
     url(r'^keywords/(?P<pk>[0-9]+)/$', KeywordDetailApiView.as_view(), name="api-keywords"),
+    url(r'^testcase/$', TestCaseApiView.as_view(), name="api-testcases"),
+    url(r'^testcase/(?P<pk>[0-9]+)/$', TestCaseDetailApiView.as_view(), name="api-testcases"),
     url(r'^source/$', SourceApiView.as_view(), name="api-source"),
     url(r'^collection/$', CollectionApiView.as_view(), name="api-collection"),
     url(r'^tasks/$', TasksApiView.as_view(), name="api-tasks"),
