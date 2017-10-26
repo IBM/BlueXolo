@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from apps.Products.models import Command, Argument, Source
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Testings.models import Keyword, Collection
+from apps.Testings.models import Keyword, Collection, TestCase
 from apps.Users.models import Task
 
 
@@ -103,4 +103,10 @@ class CollectionSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
+        fields = '__all__'
+
+
+class TestCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestCase
         fields = '__all__'

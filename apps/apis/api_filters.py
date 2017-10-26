@@ -2,7 +2,7 @@ import django_filters
 
 from apps.Products.models import Source, Argument
 from apps.Servers.models import Parameters
-from apps.Testings.models import Collection
+from apps.Testings.models import Collection, TestCase
 from apps.Users.models import Task
 
 
@@ -36,3 +36,9 @@ class ParametersFilter(django_filters.FilterSet):
     class Meta:
         model = Parameters
         fields = ('name', 'id', 'category')
+
+
+class TestCaseFilter(django_filters.FilterSet):
+    class Meta:
+        model = TestCase
+        fields = ('name', 'id', 'collection', 'profile')

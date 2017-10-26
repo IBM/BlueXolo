@@ -12,14 +12,14 @@ from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection
+from apps.Testings.models import Keyword, Collection, TestCase
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer, ParametersSerializer
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer
 from .api_pagination import CommandsPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -361,3 +361,37 @@ class ParametersApiView(LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class TestCaseApiView(LoginRequiredMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      generics.GenericAPIView
+                      ):
+    queryset = TestCase.objects.all()
+    serializer_class = TestCaseSerializer
+    filter_class = TestCaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class TestCaseDetailApiView(mixins.RetrieveModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.DestroyModelMixin,
+                            generics.GenericAPIView):
+    queryset = TestCase.objects.all()
+    serializer_class = TestCaseSerializer
+    filter_class = TestCaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
