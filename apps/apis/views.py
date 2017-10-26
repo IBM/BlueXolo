@@ -33,6 +33,9 @@ class KeywordAPIView(LoginRequiredMixin,
 
     def filter_queryset(self, queryset):
         name = self.request.query_params.get('name')
+        collection = self.request.query_params.get('collection')
+        if collection:
+            queryset = queryset.filter(collection=collection)
         if name:
             queryset = queryset.filter(name__istartswith=name)
         return queryset
