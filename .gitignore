@@ -88,3 +88,4 @@ secrets.json
 .directory
 
 nohup.out
+setup.sh
