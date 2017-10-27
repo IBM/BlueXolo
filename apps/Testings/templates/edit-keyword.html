@@ -61,7 +61,7 @@
                 "data": {"category": 5, "page_size": 5, "extra": 0},
                 "id_div_accordion": "librariesCommandsPanel"
             });
-
+            getKeywordToEdit();
         });
 
         {#        var test = function (event, ui) {#}
@@ -69,6 +69,16 @@
         {#            console.log(event.target);#}
         {#            console.log(ui.item[0]);#}
         {#        };#}
+
+        function getKeywordToEdit(){
+
+            var keywordData = "{{object.values}}";
+            console.log(keywordData);
+            
+            droppedElements = JSON.parse(keywordData.replace(/&quot;/g,'"'));
+            console.log(droppedElements);
+            drawElementsFromJSON();            
+        }
 
         function getFirstCommands(config) {
             $.ajax({
@@ -551,31 +561,6 @@
 
                                 </div>
                                 <div class="col s12 l4 z-depth-1">
-                                    {% if not object %}
-
-                                        <div class="propertiesPanelContainer">
-                                            {#                                            <button id="toggleProperties"#}
-                                            {#                                                    onclick="handleVisualization()"><#}
-                                            {#                                            </button>#}
-                                            <div id="propertiesPannel" class="card-content">
-                                                <p id="currentEditing">Editing ID</p>
-                                                <form action="">
-
-                                                    <div id="defaultEditing" class="input-field">
-                                                        <input type="text" name="value">
-                                                        <label for="value">Value</label>
-                                                    </div>
-                                                    <div class="center">
-                                                        <input type="submit" class="btn" value="Create"
-                                                               onclick="saveParametersFromInput();">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <h4 class="center grey-text"> No Actions Available</h4>
-                                        <p class="grey-text subheader center">First drop some command</p>
-                                    {% endif %}
                                 </div>
                             </div>
 
