@@ -30,6 +30,8 @@
         var movingElement = false;
         var new_keyword;
 
+        console.log();
+
         $(document).ready(function () {
             //populate selects
             var _config = {
@@ -61,7 +63,7 @@
                 "data": {"category": 5, "page_size": 5, "extra": 0},
                 "id_div_accordion": "librariesCommandsPanel"
             });
-
+            getKeywordToEdit(1);
         });
 
         {#        var test = function (event, ui) {#}
@@ -69,6 +71,34 @@
         {#            console.log(event.target);#}
         {#            console.log(ui.item[0]);#}
         {#        };#}
+
+        function getKeywordToEdit(commandID){
+            var keywordID = "{{object.id}}";
+            console.log(keywordID);
+
+            $.ajax({
+                url: "{% url 'api-keywords' %}",
+                type: 'GET',
+                data: {
+                    id: commandID,
+                    extra: 1 //0 retorna sin argumentos, 1 con argumentos
+                },
+                success: function (data) { 
+                    console.log(data);
+                    /*
+                    var commandName = data.results[0].name;
+                    var commandArguments = data.results[0].arguments;
+                    var commandCategory = data.results[0].source[0].category;
+                    */
+                    drawElementsFromJSON();
+                },
+                error: function (error) {
+                    console.log("Error retrieving the keyword to edit from DB");
+                    console.log(error);
+                    return false;
+                }
+            });
+        }
 
         function getFirstCommands(config) {
             $.ajax({
