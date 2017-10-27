@@ -63,7 +63,6 @@ function drawElementsFromJSON(){
     var keywordCategory = 6;
 
 	for(var i=0; i<droppedElements.length; i++){
-		console.log(droppedElements[i]);
 		var newID = getNewID(droppedElements[i].id);		
 		var newClass = "drop-"+droppedElements[i].indentation;
 
@@ -96,7 +95,7 @@ function drawElementsFromJSON(){
 			var rowNodeIndex = this.id;
 			addClickEvent(this.children[1].id, rowNodeIndex);
 		});
-		
+
 		function addClickEvent(htmlID, rowNodeIndex) {
 			var DOMnode = document.getElementById(htmlID);
 			if(DOMnode === null){

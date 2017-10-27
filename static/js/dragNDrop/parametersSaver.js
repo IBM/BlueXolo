@@ -176,14 +176,30 @@ function saveKeywordFromInput(droppedElementIndex, elementID){
         arguments = commands[i].arguments;
 		indexEnd = indexStart + arguments.length;
 		var values = getInputsInRange(droppedElementIndex, i, indexStart, indexEnd);
-		console.log(values);
+		saveValuesInKeywordJSON(droppedElementIndex, i, values)
+		//console.log(values);
 		indexStart = indexEnd;
     }
-    /*
-    var values = getInputs(droppedElementIndex);        
-	saveValuesInJSON(droppedElementIndex, values);
-	drawParameterList(droppedElementIndex, elementID);	
-	*/
+}
+function saveValuesInKeywordJSON(droppedElementIndex, commandIndexInJSON, values) {
+	var droppedElement = droppedElements[droppedElementIndex];
+    var commands = droppedElement.keywordJSON;
+    var arguments = commands[commandIndexInJSON].arguments;
+
+    for (var i = 0; i < arguments.length; i++) {
+
+        if (values[i].checked === undefined && (values[i].value === undefined || values[i].value === "")) {
+            continue;
+        }
+
+        if (values[i].checked) {
+            droppedElements[droppedElementIndex].keywordJSON[commandIndexInJSON].arguments[i].visible = true;
+        }
+
+        if (values[i].value !== undefined) {
+           droppedElements[droppedElementIndex].keywordJSON[commandIndexInJSON].arguments[i].value = values[i].value;
+        }
+    }
 }
 
 function saveValuesInJSON(droppedElementIndex, values) {

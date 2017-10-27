@@ -88,17 +88,17 @@
         }
 
         function addKeywordToJSON(indentation, keywordID) {
-
             $.ajax({
-                url: "{% url 'api-keywords' %}",
+                url: "/apis/keywords/" + keywordID + "/",
                 type: 'GET',
                 data: {
                     id: keywordID,
                 },
                 success: function (data) {
-                    var keywordName = data.results[0].name;
-                    var keywordArguments = data.results[0].arguments;                    
-                    var valuesAsString = data.results[0].values;
+                    console.log(data);
+                    var keywordName = data.name;
+                    var keywordArguments = data.arguments;                    
+                    var valuesAsString = data.values;
                     var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g,'"'));
                     var keywordCategory = 6;
 
@@ -108,6 +108,7 @@
                         category: keywordCategory,
                         position: droppedElements.length,
                         indentation: indentation,
+                        keywordJSON: keywordValues,
                         arguments: keywordArguments,
                         extraValue: undefined,
                     });
