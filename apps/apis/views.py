@@ -110,6 +110,7 @@ class ServerProfileApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(self.request, "Profile Created")
         return self.create(request, *args, **kwargs)
 
 
