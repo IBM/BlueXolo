@@ -13,4 +13,7 @@ echo "ok, the dirs have created."
 echo "Now need run Celery on background"
 ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
 nohup celery -A CTAFramework worker -l info &
-echo "Then run python, that's your Task my friend. See u :3"
+echo "Then run python"
+ps -ef | grep 'runserver 0.0.0.0:8000' | grep -v grep | awk '{print $2}' | xargs kill
+nohup ./manage.py runserver 0.0.0.0:8000 &
+echo "That's all"
