@@ -63,7 +63,8 @@ function drawElementsFromJSON(){
     var keywordCategory = 6;
 
 	for(var i=0; i<droppedElements.length; i++){
-		var newID = getNewID(droppedElements[i].id);
+		console.log(droppedElements[i]);
+		var newID = getNewID(droppedElements[i].id);		
 		var newClass = "drop-"+droppedElements[i].indentation;
 
 		var basicDnDNode = document.createElement("div");
@@ -95,7 +96,7 @@ function drawElementsFromJSON(){
 			var rowNodeIndex = this.id;
 			addClickEvent(this.children[1].id, rowNodeIndex);
 		});
-
+		
 		function addClickEvent(htmlID, rowNodeIndex) {
 			var DOMnode = document.getElementById(htmlID);
 			if(DOMnode === null){
@@ -115,7 +116,7 @@ function drawElementsFromJSON(){
 
 		dragNDrop.appendChild(td);
 
-		if(droppedElements[i].id === keywordCategory){
+		if(droppedElements[i].category === keywordCategory){
 		
 		}else{
 			drawParameterList(i, newID);

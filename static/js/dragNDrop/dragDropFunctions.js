@@ -202,8 +202,8 @@ function drop(ev){
 		var belongsToPanel = elementID.slice(elementID.length - keywordsPanel.length);
 		if (belongsToPanel === keywordsPanel){
 			//It belongs to the keyword panel!
-			if(targetRow !== ""){				
-				var keywordID = commandID;
+			var keywordID = commandID;
+			if(targetRow !== ""){								
 				var addElementInThisPosition = getLastIdentationChild(targetRow-1);
 				addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPosition);
 			}else{
@@ -237,7 +237,6 @@ function getNewID(elementID){
     	if(commandCounter.name === commandName){
     		commandCounter.counter++;
     		found = true;
-
 			newID = commandName + "-" + commandCounter.counter;		
     	}
 	});
