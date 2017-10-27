@@ -87,6 +87,40 @@
             });
         }
 
+        function addKeywordToJSON(indentation, keywordID) {
+
+            $.ajax({
+                url: "{% url 'api-keywords' %}",
+                type: 'GET',
+                data: {
+                    id: keywordID,
+                },
+                success: function (data) {
+                    var keywordName = data.results[0].name;
+                    var keywordArguments = data.results[0].arguments;                    
+                    var valuesAsString = data.results[0].values;
+                    var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g,'"'));
+                    var keywordCategory = 6;
+
+                    droppedElements.push({
+                        id: keywordID,
+                        name: keywordName,
+                        category: keywordCategory,
+                        position: droppedElements.length,
+                        indentation: indentation,
+                        arguments: keywordArguments,
+                        extraValue: undefined,
+                    });
+                    drawElementsFromJSON();
+                },
+                error: function (error) {
+                    console.log("Error while adding element to JSON after being dropped");
+                    console.log(error);
+                    return false;
+                }
+            });
+        }
+
         function addElementToJSON(indentation, commandID) {
 
             $.ajax({
@@ -110,6 +144,7 @@
                         arguments: commandArguments,
                         extraValue: undefined,
                     });
+                    console.log(droppedElements);
                     drawElementsFromJSON();
                 },
                 error: function (error) {
@@ -359,7 +394,7 @@
         function writeKeywordDatabase() {
             var keywordName = document.getElementById("keyword_name").value;
             var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = getAllValuesInTable();
+            var keywordValues = droppedElements;
             var keywordScript = document.getElementById("terminal").value;
 
             var newKeyword = {
@@ -681,7 +716,7 @@
                     _section.innerHTML = "";
                     var _element = document.createElement('div');
                     _element.className = "drag-drop-item";
-                    _element.id = data.id + "-drag-drop";
+                    _element.id = data.id + "-keyword-drag-drop";
                     _element.draggable = true;
                     _element.setAttribute("ondragstart", "drag(event)");
                     _element.innerHTML = data.name;

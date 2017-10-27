@@ -191,23 +191,41 @@ function drop(ev){
 	var commandID = elementID.split("-")[0];
 	var indentation = nodeCopy.className.split("-")[1];	
 
-	var targetRow = ev.target.parentNode.parentNode.id;
-
-	if(targetRow !== ""){
-		var addElementInThisPosition = getLastIdentationChild(targetRow-1);
-		addElementToJSONInIndex(indentation, commandID, addElementInThisPosition);
-	}else{
-		addElementToJSON(indentation, commandID);
-	}			
-
 	var belongsToPanel = elementID.slice(elementID.length-9);
 	var dragAndDropPanel = "drag-drop";
-	if(belongsToPanel !== dragAndDropPanel){
-		// Deletes the original node because it was moved (it is not a copy)
-		var originalNode = document.getElementById(elementID);
-		var rowNode = originalNode.parentNode;
-		rowNode.parentNode.removeChild(rowNode);
-	} 		
+	var keywordsPanel = "keyword-drag-drop";
+
+	var targetRow = ev.target.parentNode.parentNode.id;
+
+	if(elementID.length >= 19){
+		//It could belong to the keyword panel
+		var belongsToPanel = elementID.slice(elementID.length - keywordsPanel.length);
+		if (belongsToPanel === keywordsPanel){
+			//It belongs to the keyword panel!
+			if(targetRow !== ""){				
+				var keywordID = commandID;
+				var addElementInThisPosition = getLastIdentationChild(targetRow-1);
+				addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPosition);
+			}else{
+				addKeywordToJSON(indentation, keywordID);
+			}
+		}
+	}else{
+		if(targetRow !== ""){
+			var addElementInThisPosition = getLastIdentationChild(targetRow-1);
+			addElementToJSONInIndex(indentation, commandID, addElementInThisPosition);
+		}else{
+			addElementToJSON(indentation, commandID);
+		}
+
+		var belongsToPanel = elementID.slice(elementID.length - dragAndDropPanel.length);
+		if(belongsToPanel !== dragAndDropPanel){
+			// Deletes the original node because it was moved (it is not a copy)
+			var originalNode = document.getElementById(elementID);
+			var rowNode = originalNode.parentNode;
+			rowNode.parentNode.removeChild(rowNode);
+		}
+	}		
 }
 
 function getNewID(elementID){
