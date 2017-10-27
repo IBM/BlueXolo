@@ -90,6 +90,7 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
     ssh.run_file_named(filename, host, user, passwd, path, namefile)
     ssh.send_results_named(host, user, passwd, namefile, path)
 
+
 class SshConnect(LoginRequiredMixin):
     def send_file_user_pass(self, filename, host, user, passwd, path):
         name = filename.replace(" ", "")
