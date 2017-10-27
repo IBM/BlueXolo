@@ -62,10 +62,8 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
-    console.log("commands are "+commands);
     for(var j=0; j< commands.length; j++){
         arguments = commands[j].arguments;
-        console.log("arguments are "+arguments);
         if(arguments === null){
             continue;
         }
@@ -144,7 +142,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     });
 
     function addClickEvent() {
-        saveFromInput(droppedElementIndex, elementID);
+        saveKeywordFromInput(droppedElementIndex, elementID);
     }
 
     propPanel.appendChild(tempDiv);

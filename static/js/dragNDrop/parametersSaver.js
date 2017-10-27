@@ -25,6 +25,37 @@ function getInputs(droppedElementIndex) {
 	return inputValues;
 }
 
+function getInputsInRange(droppedElementIndex, commandIndexInJSON, indexStart, indexEnd) {
+    var droppedElement = droppedElements[droppedElementIndex];
+    var commands = droppedElement.keywordJSON;
+
+	var propertiesPannel = document.getElementById("propertiesPannel").getElementsByTagName("form");
+	var inputValues = [];
+
+	for(var i=indexStart; i<indexEnd; i++){
+		var parameterChecked = undefined;
+		var parameterValue = undefined;	
+
+		var formNode = propertiesPannel[i];
+		//There is a checkbox
+		var checkboxNode = formNode[0];
+		var parameterChecked = checkboxNode.checked;
+		
+		var currentArgument = commands[commandIndexInJSON].arguments[i-indexStart];
+
+		if(currentArgument.needs_value){
+			var parameterValue = formNode[1].value;
+		}
+
+	    var inputValue = {
+	        "checked": parameterChecked,
+	        "value": parameterValue,
+	    };
+	    inputValues.push(inputValue);
+	}
+	return inputValues;
+}
+
 function getInputsExtraInput(droppedElementIndex) {
     var droppedElement = droppedElements[droppedElementIndex];
 	var propertiesPannel = document.getElementById("propertiesPannel").getElementsByTagName("form");
@@ -128,6 +159,31 @@ function saveTagFromInput(droppedElementIndex, elementID){
 	var values = getTagInputs(droppedElementIndex);
 	saveValuesInJSON(droppedElementIndex, values);
 	drawParameterList(droppedElementIndex, elementID);	
+}
+
+function saveKeywordFromInput(droppedElementIndex, elementID){
+	if (elementID === undefined ){
+		alert("You need to select an item to edit first");
+		return;
+	}
+    var droppedElement = droppedElements[droppedElementIndex];
+    var commands = droppedElement.keywordJSON;
+
+    var indexStart = 0;
+    var indexEnd = 0;
+
+    for(var i=0; i<commands.length; i++){
+        arguments = commands[i].arguments;
+		indexEnd = indexStart + arguments.length;
+		var values = getInputsInRange(droppedElementIndex, i, indexStart, indexEnd);
+		console.log(values);
+		indexStart = indexEnd;
+    }
+    /*
+    var values = getInputs(droppedElementIndex);        
+	saveValuesInJSON(droppedElementIndex, values);
+	drawParameterList(droppedElementIndex, elementID);	
+	*/
 }
 
 function saveValuesInJSON(droppedElementIndex, values) {
