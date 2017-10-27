@@ -1,5 +1,4 @@
 import json
-import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,8 +7,6 @@ from django.db.models import Q, Count
 from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from string import digits, ascii_lowercase
-from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
@@ -303,22 +300,18 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
             try:
-                random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
-                today = time.strftime("%y_%m_%d")
-                name = kwd.name.replace(" ","")
-                name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
+                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path,
                                                profile.name, params)
-                task = Task.objects.create(
-                    name="Run Keyword -  {0}".format(kwd.name),
-                    task_id= filename.task_id,
-                    state= "run"
-                )
-                request.user.tasks.add(task)
-                request.user.save()
-
+                # task = Task.objects.create(
+                #     name="Run Keyword -  {0}".format(kwd.name),
+                #     task_id=result.task_id,
+                #     state=result.state
+                # )
+                # request.user.tasks.add(task)
+                # request.user.save()
+                # run_key(host, user, passwd, filename, script, values):
                 _data = {
-                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, filename)
                 }
             except Exception as errorConnection:
                 _status = 500

@@ -1,5 +1,6 @@
 import paramiko
 import pexpect
+import time
 
 from django.conf import settings
 from django.contrib import messages
@@ -8,8 +9,9 @@ from django.db.migrations import serializer
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from pexpect import pxssh
+from random import choice
 from scp import SCPClient
-
+from string import digits, ascii_lowercase
 
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
 from .models import TemplateServer, ServerProfile
@@ -81,14 +83,15 @@ class DeleteServerProfile(LoginRequiredMixin, DeleteView):
 
 
 @shared_task
-def run_keyword(host, user, passwd, filename, script, values, path, namefile, profilename, variables):
+def run_keyword(host, user, passwd, filename, script, values, path, profilename, variables):
     ssh = SshConnect()
     ssh.create_robot_file(filename, script)
     ssh.create_testcase_robotFile(filename, values)
     ssh.create_profile_file(profilename, variables)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
-    ssh.run_file_named(filename, host, user, passwd, path, namefile)
-    ssh.send_results_named(host, user, passwd, namefile, path)
+    result, result_filename = ssh.run_file_named(filename, host, user, passwd, path)
+    ssh.send_results_named(host, user, passwd, result_filename, path)
+    return result, result_filename
 
 
 class SshConnect(LoginRequiredMixin):
@@ -117,21 +120,26 @@ class SshConnect(LoginRequiredMixin):
         system.sendline(passwd)
         system.expect('100%', timeout=600)
 
-    def run_file_named(self, filename, host, user, passwd, path, namefile):
+    def run_file_named(self, filename, host, user, passwd, path):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
         ssh.login(host, user, passwd)
+        random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
         run_path = 'cd {0}'.format(path)
+        today = time.strftime("%y_%m_%d")
         try:
-            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html {1}_testcase.robot'.format(
-                namefile,
-                name
+            run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {0}_testcase.robot'.format(
+                name,
+                random_string,
+                today
             )
             print(run_keyword)
             ssh.sendline(run_path)
             ssh.sendline(run_keyword)
             ssh.prompt()
+            ssh_result = ssh.before
             ssh.logout()
+            return ssh_result, "{0}_{1}_{2}".format(name, random_string, today)
         except Exception as error:
             return error
 
