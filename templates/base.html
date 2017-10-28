@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Styles-->
     <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
-    <link rel="stylesheet" href="{% static "css/toastr.min.css" %}">
     <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
     <link rel="stylesheet" href="{% static "css/main.css" %}">
     {% block extraStyles %}{% endblock extraStyles %}
@@ -15,7 +14,6 @@
     <!-- Scripts -->
     <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
     <script src="{% static "js/materialize.min.js" %}"></script>
-    <script src="{% static "js/toastr.min.js" %}"></script>
     <script src="{% static "js/main.js" %}"></script>
 </head>
 <body>
@@ -24,7 +22,7 @@
 <a data-activates="slide-out"
    class="btn-floating btn-large waves-effect waves-light blue-grey button-collapse  btn-main-menu"><i
         class="material-icons">menu</i></a>
-<a class="title blue-grey-text app-title" href="{% url "home" %}">Common Test Automation </a>
+<a class="title blue-grey-text app-title" href="{% url "home" %}">Blue Xolo Framework </a>
 <span class="app-subtitle blue-grey-text"> {% block subtitle %}{% endblock subtitle %} </span>
 <div class="right user-topbar">
     <a class='dropdown-button btn-flat blue-text' href='#' data-activates='dropdownUser'>

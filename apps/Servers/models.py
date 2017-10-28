@@ -1,11 +1,41 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+VARIABLES = 1
+LOCAL = 2
+JENKINS = 3
+CATEGORY_CHOICES = (
+    (VARIABLES, 'Global Variables'),
+    (LOCAL, 'Local Network Connection'),
+    (JENKINS, 'Jenkins Connection'),
+)
+
+
+class Parameters(models.Model):
+    VALUES_TYPES_CHOICES = (
+        (1, 'String'),
+        (2, 'List'),
+    )
+    name = models.CharField(_('name'), max_length=100, unique=True)
+    help_text = models.CharField(_('help text'), max_length=255, blank=True)
+    category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
+    value_type = models.IntegerField(_('value type'), choices=VALUES_TYPES_CHOICES, default=1)
+
+    class Meta:
+        db_table = 'parameters'
+        verbose_name = _('parameter')
+        verbose_name_plural = _('parameters')
+        ordering = ['name']
+
+    def __str__(self):
+        return '{0}'.format(self.name)
+
 
 class TemplateServer(models.Model):
     name = models.CharField(_('name'), max_length=30)
     description = models.TextField(_('description'), blank=True)
-    parameters = models.TextField(_('parameters'))
+    category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
+    parameters = models.ManyToManyField(Parameters, blank=True)
 
     class Meta:
         db_table = 'servers_templates'
@@ -21,6 +51,7 @@ class ServerProfile(models.Model):
     description = models.TextField(_('description'), blank=True)
     template = models.ForeignKey(TemplateServer)
     config = models.TextField(blank=True)
+    category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
 
     class Meta:
         db_table = 'servers_profiles'
@@ -29,17 +60,3 @@ class ServerProfile(models.Model):
 
     def __str__(self):
         return '{0}'.format(self.name)
-
-
-class JenkinsServerProfile(models.Model):
-    name = models.CharField(_('name'), unique=True, max_length=30)
-    ip = models.CharField(_('ip'), unique=True, max_length=15)
-    port = models.CharField(_('port'), max_length=5)
-
-    class Meta:
-        db_table = 'jenkins_servers_profiles'
-        verbose_name = _('jenkins_server_profile')
-        verbose_name_plural = _('jenkins_server_profiles')
-
-    def __str__(self):
-        return '{0}:{1}'.format(self.ip, self.ip)

@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView
+from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView
 
-from apps.Testings.models import Keyword, Collection
+from apps.Testings.models import Keyword, Collection, TestCase
 from apps.Testings.forms import CollectionForm
 
 
@@ -14,12 +14,29 @@ class KeyWordsView(LoginRequiredMixin, TemplateView):
 class NewKeywordView(LoginRequiredMixin, TemplateView):
     template_name = "create-keyword.html"
 
+class EditKeywordView(LoginRequiredMixin, DetailView):
+    model = Keyword
+    template_name = "edit-keyword.html"
 
 class DeleteKeywordView(LoginRequiredMixin, DeleteView):
     template_name = "delete-keyword.html"
     model = Keyword
     success_url = reverse_lazy('keywords')
 
+class TestcaseView(LoginRequiredMixin, TemplateView):
+    template_name = "testcases.html"
+
+class NewTestcaseView(LoginRequiredMixin, TemplateView):
+    template_name = "create-testcase.html"
+
+class EditTestcaseView(LoginRequiredMixin, DetailView):
+    model = TestCase
+    template_name = "edit-testcase.html"
+
+class DeleteTestcaseView(LoginRequiredMixin, DeleteView):
+    template_name = "delete-testcase.html"
+    model = TestCase
+    success_url = reverse_lazy('testcases')
 
 class CollectionsView(LoginRequiredMixin, TemplateView):
     template_name = "collections.html"

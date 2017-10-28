@@ -61,7 +61,7 @@
                 "data": {"category": 5, "page_size": 5, "extra": 0},
                 "id_div_accordion": "librariesCommandsPanel"
             });
-
+            getKeywordToEdit();
         });
 
         {#        var test = function (event, ui) {#}
@@ -69,6 +69,16 @@
         {#            console.log(event.target);#}
         {#            console.log(ui.item[0]);#}
         {#        };#}
+
+        function getKeywordToEdit(){
+
+            var keywordData = "{{object.values}}";
+            //console.log(keywordData);
+            
+            droppedElements = JSON.parse(keywordData.replace(/&quot;/g,'"'));
+            //console.log(droppedElements);
+            drawElementsFromJSON();            
+        }
 
         function getFirstCommands(config) {
             $.ajax({
@@ -87,7 +97,7 @@
             });
         }
 
-        function addElementToJSON(indentation, commandID) {
+        function addElementToJSON(indentation, commandID){
 
             $.ajax({
                 url: "{% url 'api-commands' %}",
@@ -101,14 +111,13 @@
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
 
-                    droppedElements.push({
-                        id: commandID,
-                        name: commandName,
+                    droppedElements.push({              
+                        id:     commandID,  
+                        name:   commandName,
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
-                        arguments: commandArguments,
-                        extraValue: undefined,
+                        arguments: commandArguments
                     });
                     drawElementsFromJSON();
                 },
@@ -120,7 +129,7 @@
             });
         }
 
-        function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition) {
+        function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition){
 
             $.ajax({
                 url: "{% url 'api-commands' %}",
@@ -134,9 +143,9 @@
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
 
-                    var droppedElement = {
-                        id: commandID,
-                        name: commandName,
+                    var droppedElement = {              
+                        id:     commandID,  
+                        name:   commandName,
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
@@ -270,86 +279,6 @@
             });
         }
 
-        /*
-                function translateToRobot(callBackFunction) {
-                    var dragNDrop = document.getElementById("dragDropSpace");
-                    var rowsInTable = dragNDrop.children;
-
-                    var terminal = document.getElementById("terminal");
-                    terminal.value = "";
-
-                    var translation = [];
-
-                    var inForLoop = false;
-                    var identationForLoop = 1;
-
-                    for (var i = 0; i < rowsInTable.length; i++) {
-
-                        (function (i) {
-
-                            var currentElement = rowsInTable[i].lastChild;
-                            // Avoid analyzing the button
-                            if (currentElement.type === 'submit') {
-                                return;
-                            }
-
-                            var elementType = currentElement.id.split("-")[0];
-                            var identationLevel = currentElement.className.split("-")[1];
-                            var parameters = getValuesByID(currentElement.id);
-
-                            $.ajax({
-                                url: "{% url 'api-commands' %}",
-                        type: 'GET',
-                        data: {
-                            id: elementType,
-                            extra: 1 //0 retorna sin argumentos, 1 con argumentos
-                        },
-                        success: function (data) {
-                            if (inForLoop && Number(identationLevel) <= identationForLoop) {
-                                inForLoop = false;
-                            }
-
-                            if (inForLoop) {
-                                var translatedRow = handleIdentation(identationForLoop - 1);
-                                translatedRow += "\\    ";
-                                translatedRow += handleIdentation(identationLevel);
-                            }
-                            else {
-                                var translatedRow = handleIdentation(identationLevel);
-                            }
-
-                            translatedRow += handleTranslationOf(data.results[0], parameters);
-                            translation.push(translatedRow);
-
-                            if ((i + 1) >= rowsInTable.length) {
-                                for (var j = 0; j < translation.length; j++) {
-                                    terminal.value += translation[j];
-                                }
-                                if (callBackFunction !== undefined) {
-                                    callBackFunction();
-                                }
-                                return true;
-                            }
-
-                            if (data.results[0].name === "for in" || data.results[0].name === "for in range") {
-                                inForLoop = true;
-                                identationForLoop = (Number(identationLevel));
-                            }
-
-                        },
-                        error: function (error) {
-                            console.log("Error while translating");
-                            terminal.value = "Error while translating";
-                            console.log(error);
-                            return false;
-                        }
-                    }); // Closes Ajax
-
-                })(i);  // Closes anonymus function
-
-            }// Closes for iterates over the rows in the drag and drop table        
-        }
-*/
         function translateToRobot(callBackFunction) {
             var dragNDrop = document.getElementById("dragDropSpace");
             var rowsInTable = dragNDrop.children;
@@ -426,16 +355,14 @@
         function writeKeywordDatabase() {
             var keywordName = document.getElementById("keyword_name").value;
             var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = droppedElements;
-            var keywordCollection = document.getElementById('keyword_collection').value;
+            var keywordValues = getAllValuesInTable();
             var keywordScript = document.getElementById("terminal").value;
 
             var newKeyword = {
                 "name": keywordName,
                 "description": keywordDescription,
                 "script": keywordScript,
-                "values": JSON.stringify(keywordValues),
-                "collection": keywordCollection
+                "values": JSON.stringify(keywordValues)
             };
             $.ajax({
                 url: "{% url "api-keywords" %}",
@@ -525,17 +452,7 @@
                     </li>
                     <li>
                         <div class="collapsible-header">Custom Keyword</div>
-                        <div id="customKeywordCommandsPanel" class="collapsible-body">
-                            <div class="row">
-                                <p class="blue-grey-text" >Keywords Search</p>
-                                <div class=" col s12">
-                                    <select id="keywrd-search"></select>
-                                    <div id="custom-keywords-area" class="section">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div id="customKeywordCommandsPanel" class="collapsible-body"></div>
                     </li>
                 </ul>
                 {#                <button onclick="popUpPropertiesKeyword()">Save Keyword</button>#}
@@ -561,39 +478,37 @@
                                             <td id="dragDropSpace"></td>
                                         </tr>
                                     </table>
-
                                 </div>
                                 <div class="col s12 l4 z-depth-1">
                                     {% if not object %}
-
-                                        <div class="propertiesPanelContainer">
-                                            {#                                            <button id="toggleProperties"#}
-                                            {#                                                    onclick="handleVisualization()"><#}
-                                            {#                                            </button>#}
-                                            <div id="propertiesPannel" class="card-content">
-                                                <p id="currentEditing">Editing ID</p>
-                                                <form action="">
-
-                                                    <div id="defaultEditing" class="input-field">
-                                                        <input type="text" name="value">
-                                                        <label for="value">Value</label>
-                                                    </div>
-                                                    <div class="center">
-                                                        <input type="submit" class="btn" value="Create"
-                                                               onclick="saveParametersFromInput();">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
+                                    <h4 class="center grey-text"> No Actions Available</h4>
+                                    <p class="grey-text subheader center">First drop some command</p>
                                     {% else %}
-                                        <h4 class="center grey-text"> No Actions Available</h4>
-                                        <p class="grey-text subheader center">First drop some command</p>
-                                    {% endif %}
-                                </div>
-                            </div>
+                                    <div class="propertiesPanelContainer">
+                                        {#                                            <button id="toggleProperties"#}
+                                        {#                                                    onclick="handleVisualization()"><#}
+                                    {#                                            </button>#}
+                                    <div id="propertiesPannel" class="card-content">
+                                        <p id="currentEditing">Editing ID</p>
+                                        <form action="">
 
+                                            <div id="defaultEditing" class="input-field">
+                                                <input type="text" name="value">
+                                                <label for="value">Value</label>
+                                            </div>
+                                            <div class="center">
+                                                <input type="submit" class="btn" value="Create"
+                                                onclick="saveParametersFromInput();">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
+
                     </div>
+                </div>
                 </div>
                 <div id="tab2" class="col s12">
                     <div class="card">
@@ -711,57 +626,6 @@
                 return selection.name;
             }
         });
-        $('#keywrd-search').select2({
-            ajax: {
-                url: "{% url "api-keywords" %}",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        collection: document.getElementById('keyword_collection').value,
-                        name: params.term, // search term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data.results
-                    };
-                }
-            },
-            escapeMarkup: function (markup) {
-                return markup;
-            }, // let our custom formatter work
-            minimumInputLength: 2,
-            templateResult: function (results) {
-                return results.name
-            },
-            templateSelection: function (selection) {
-                return selection.name;
-            }
-        });
-
-        $('#keywrd-search').on("select2:select", function (e) {
-            $.ajax({
-                url: '/apis/keywords/' + this.value + '/',
-                type: 'GET',
-                success: function (data) {
-                    console.log(data)
-
-                    var _section = document.getElementById('custom-keywords-area');
-                    _section.innerHTML = "";
-                    var _element = document.createElement('div');
-
-                    _element.className = "drag-drop-item";
-                    _element.id = data.id + "-drag-drop";
-                    _element.draggable = true;
-                    _element.setAttribute("ondragstart", "drag(event)");
-                    _element.innerHTML = data.name;
-                    _section.appendChild(_element);
-                }, error: function (err) {
-                    console.log('error' + err)
-                }
-            });
-        });
 
         $('#command-search').on("select2:select", function (e) {
             $.ajax({
@@ -777,6 +641,7 @@
         });
 
         function CommandPrint(element) {
+            console.log(element)
             var _accordions = ['controlFlowCommandsPanel', 'systemCommandsPanel', 'productCommandsPanel',
                 'robotCommandsPanel', 'librariesCommandsPanel', 'customKeywordCommandsPanel'];
             var _category = element.source[0].category;
@@ -849,19 +714,10 @@
                     },
                     success: function (data) {
                         $('#modalPreview').modal('close');
-                        alert('Success');
-                        var win = window.open('/' + data.report + '', '_blank');
-                        if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
-                        {#                        $('#black_terminal').empty();#}
-                        {##}
-                        {#                        $('#black_terminal').append('<iframe src="' + data.report + '" style="widht:100%"></iframe>\n');#}
-                        {#                        $('#modal-run').modal('open');#}
+                        $('#black_terminal').empty();
+
+                        $('#black_terminal').append('<iframe src="' + data.report + '"></iframe>\n');
+                        $('#modal-run').modal('open');
 
                     }, error: function (err) {
                         console.log('error on run script: ' + err)
