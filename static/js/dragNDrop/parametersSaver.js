@@ -181,6 +181,7 @@ function saveKeywordFromInput(droppedElementIndex, elementID){
 		indexStart = indexEnd;
     }
 }
+
 function saveValuesInKeywordJSON(droppedElementIndex, commandIndexInJSON, values) {
 	var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
