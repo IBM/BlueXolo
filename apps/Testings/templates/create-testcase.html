@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Keywords{% endblock %}
-{% block subtitle %}Keywords{% endblock %}
+{% block title %}Testcases{% endblock %}
+{% block subtitle %}Testcases{% endblock %}
 
 {% block content %}
 
@@ -87,6 +87,41 @@
             });
         }
 
+        function addKeywordToJSON(indentation, keywordID) {
+            $.ajax({
+                url: "/apis/keywords/" + keywordID + "/",
+                type: 'GET',
+                data: {
+                    id: keywordID,
+                },
+                success: function (data) {
+                    console.log(data);
+                    var keywordName = data.name;
+                    var keywordArguments = data.arguments;                    
+                    var valuesAsString = data.values;
+                    var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g,'"'));
+                    var keywordCategory = 6;
+
+                    droppedElements.push({
+                        id: keywordID,
+                        name: keywordName,
+                        category: keywordCategory,
+                        position: droppedElements.length,
+                        indentation: indentation,
+                        keywordJSON: keywordValues,
+                        arguments: keywordArguments,
+                        extraValue: undefined,
+                    });
+                    drawElementsFromJSON();
+                },
+                error: function (error) {
+                    console.log("Error while adding element to JSON after being dropped");
+                    console.log(error);
+                    return false;
+                }
+            });
+        }
+
         function addElementToJSON(indentation, commandID) {
 
             $.ajax({
@@ -110,6 +145,7 @@
                         arguments: commandArguments,
                         extraValue: undefined,
                     });
+                    console.log(droppedElements);
                     drawElementsFromJSON();
                 },
                 error: function (error) {
@@ -228,6 +264,19 @@
             });
         }
 
+        function populateKeywordsPanel(commands, id_div_accordion) {
+            commands.forEach(function (commandJSON) {
+                var draggableNode = document.createElement("div");
+                draggableNode.className = "drag-drop-item";
+                draggableNode.id = commandJSON.id + "-keyword";
+                draggableNode.draggable = true;
+                draggableNode.setAttribute("ondragstart", "drag(event)");
+                draggableNode.innerHTML = commandJSON.name;
+                var commandsPanelControlFlow = document.getElementById(id_div_accordion);
+                commandsPanelControlFlow.appendChild(draggableNode);
+            });
+        }
+
         function populateCommandsAfterSearch(commands) {
             commands.forEach(function (commandJSON) {
                 var draggableNode = document.createElement("div");
@@ -270,86 +319,6 @@
             });
         }
 
-        /*
-                function translateToRobot(callBackFunction) {
-                    var dragNDrop = document.getElementById("dragDropSpace");
-                    var rowsInTable = dragNDrop.children;
-
-                    var terminal = document.getElementById("terminal");
-                    terminal.value = "";
-
-                    var translation = [];
-
-                    var inForLoop = false;
-                    var identationForLoop = 1;
-
-                    for (var i = 0; i < rowsInTable.length; i++) {
-
-                        (function (i) {
-
-                            var currentElement = rowsInTable[i].lastChild;
-                            // Avoid analyzing the button
-                            if (currentElement.type === 'submit') {
-                                return;
-                            }
-
-                            var elementType = currentElement.id.split("-")[0];
-                            var identationLevel = currentElement.className.split("-")[1];
-                            var parameters = getValuesByID(currentElement.id);
-
-                            $.ajax({
-                                url: "{% url 'api-commands' %}",
-                        type: 'GET',
-                        data: {
-                            id: elementType,
-                            extra: 1 //0 retorna sin argumentos, 1 con argumentos
-                        },
-                        success: function (data) {
-                            if (inForLoop && Number(identationLevel) <= identationForLoop) {
-                                inForLoop = false;
-                            }
-
-                            if (inForLoop) {
-                                var translatedRow = handleIdentation(identationForLoop - 1);
-                                translatedRow += "\\    ";
-                                translatedRow += handleIdentation(identationLevel);
-                            }
-                            else {
-                                var translatedRow = handleIdentation(identationLevel);
-                            }
-
-                            translatedRow += handleTranslationOf(data.results[0], parameters);
-                            translation.push(translatedRow);
-
-                            if ((i + 1) >= rowsInTable.length) {
-                                for (var j = 0; j < translation.length; j++) {
-                                    terminal.value += translation[j];
-                                }
-                                if (callBackFunction !== undefined) {
-                                    callBackFunction();
-                                }
-                                return true;
-                            }
-
-                            if (data.results[0].name === "for in" || data.results[0].name === "for in range") {
-                                inForLoop = true;
-                                identationForLoop = (Number(identationLevel));
-                            }
-
-                        },
-                        error: function (error) {
-                            console.log("Error while translating");
-                            terminal.value = "Error while translating";
-                            console.log(error);
-                            return false;
-                        }
-                    }); // Closes Ajax
-
-                })(i);  // Closes anonymus function
-
-            }// Closes for iterates over the rows in the drag and drop table        
-        }
-*/
         function translateToRobot(callBackFunction) {
             var dragNDrop = document.getElementById("dragDropSpace");
             var rowsInTable = dragNDrop.children;
@@ -427,15 +396,13 @@
             var keywordName = document.getElementById("keyword_name").value;
             var keywordDescription = document.getElementById("keyword_description").value;
             var keywordValues = droppedElements;
-            var keywordCollection = document.getElementById('keyword_collection').value;
             var keywordScript = document.getElementById("terminal").value;
 
             var newKeyword = {
                 "name": keywordName,
                 "description": keywordDescription,
                 "script": keywordScript,
-                "values": JSON.stringify(keywordValues),
-                "collection": keywordCollection
+                "values": JSON.stringify(keywordValues)
             };
             $.ajax({
                 url: "{% url "api-keywords" %}",
@@ -711,6 +678,7 @@
                 return selection.name;
             }
         });
+
         $('#keywrd-search').select2({
             ajax: {
                 url: "{% url "api-keywords" %}",
@@ -739,20 +707,17 @@
                 return selection.name;
             }
         });
-
         $('#keywrd-search').on("select2:select", function (e) {
             $.ajax({
                 url: '/apis/keywords/' + this.value + '/',
                 type: 'GET',
                 success: function (data) {
                     console.log(data)
-
                     var _section = document.getElementById('custom-keywords-area');
                     _section.innerHTML = "";
                     var _element = document.createElement('div');
-
                     _element.className = "drag-drop-item";
-                    _element.id = data.id + "-drag-drop";
+                    _element.id = data.id + "-keyword-drag-drop";
                     _element.draggable = true;
                     _element.setAttribute("ondragstart", "drag(event)");
                     _element.innerHTML = data.name;
@@ -761,7 +726,7 @@
                     console.log('error' + err)
                 }
             });
-        });
+        });        
 
         $('#command-search').on("select2:select", function (e) {
             $.ajax({
@@ -777,6 +742,7 @@
         });
 
         function CommandPrint(element) {
+            console.log(element)
             var _accordions = ['controlFlowCommandsPanel', 'systemCommandsPanel', 'productCommandsPanel',
                 'robotCommandsPanel', 'librariesCommandsPanel', 'customKeywordCommandsPanel'];
             var _category = element.source[0].category;
@@ -850,7 +816,7 @@
                     success: function (data) {
                         $('#modalPreview').modal('close');
                         alert('Success');
-                        var win = window.open('/' + data.report + '', '_blank');
+                        var win = window.open('/' + data.report +'',  '_blank');
                         if (win) {
                             //Browser has allowed it to be opened
                             win.focus();

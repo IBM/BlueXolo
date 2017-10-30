@@ -1,18 +1,17 @@
 import paramiko
 import pexpect
-import time
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.migrations import serializer
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from pexpect import pxssh
-from random import choice
 from scp import SCPClient
-from string import digits, ascii_lowercase
 
-from .forms import ServerProfileForm, NewJenkinsServerprofileForm
+
+from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
 from .models import TemplateServer, ServerProfile
 
 from celery import shared_task
@@ -22,13 +21,28 @@ class ServerTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "servers-templates.html"
 
 
-class NewServerTemplate(LoginRequiredMixin, TemplateView):
+class NewServerTemplate(LoginRequiredMixin, CreateView):
     template_name = "create-server-template.html"
+    model = TemplateServer
+    success_url = reverse_lazy('servers-templates')
+    form_class = ServerTemplateForm
+
+    def get_context_data(self, **kwargs):
+        context = super(NewServerTemplate, self).get_context_data(**kwargs)
+        context['ParametersForm'] = ParametersForm
+        return context
 
 
-class EditServerTemplate(LoginRequiredMixin, DetailView):
+class EditServerTemplate(LoginRequiredMixin, UpdateView):
     model = TemplateServer
     template_name = "edit-server-template.html"
+    success_url = reverse_lazy('servers-templates')
+    form_class = ServerTemplateForm
+
+    def get_context_data(self, **kwargs):
+        context = super(EditServerTemplate, self).get_context_data(**kwargs)
+        context['ParametersForm'] = ParametersForm
+        return context
 
 
 class DeleteServerTemplate(LoginRequiredMixin, DeleteView):
@@ -66,30 +80,15 @@ class DeleteServerProfile(LoginRequiredMixin, DeleteView):
         return reverse_lazy('servers-profiles')
 
 
-class JenkinsServerProfileView(LoginRequiredMixin, TemplateView):
-    template_name = "jenkins-server-profiles.html"
-
-
-class NewJenkinsServerProfileView(LoginRequiredMixin, CreateView):
-    template_name = "create-edit-jenkins-server-profile.html"
-    form_class = NewJenkinsServerprofileForm
-    success_url = reverse_lazy('jenkins-servers-profiles')
-
-    def get_context_data(self, **kwargs):
-        context = super(NewJenkinsServerProfileView, self).get_context_data(**kwargs)
-        context['title'] = 'New Jenkins Profile'
-        return context
-
-
 @shared_task
-def run_keyword(host, user, passwd, filename, script, values, path):
+def run_keyword(host, user, passwd, filename, script, values, path, namefile, profilename, variables):
     ssh = SshConnect()
     ssh.create_robot_file(filename, script)
     ssh.create_testcase_robotFile(filename, values)
+    ssh.create_profile_file(profilename, variables)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
-    result, result_filename = ssh.run_file_named(filename, host, user, passwd, path)
-    ssh.send_results_named(host, user, passwd, result_filename, path)
-    return result, result_filename
+    ssh.run_file_named(filename, host, user, passwd, path, namefile)
+    ssh.send_results_named(host, user, passwd, namefile, path)
 
 
 class SshConnect(LoginRequiredMixin):
@@ -118,26 +117,21 @@ class SshConnect(LoginRequiredMixin):
         system.sendline(passwd)
         system.expect('100%', timeout=600)
 
-    def run_file_named(self, filename, host, user, passwd, path):
+    def run_file_named(self, filename, host, user, passwd, path, namefile):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
         ssh.login(host, user, passwd)
-        random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
         run_path = 'cd {0}'.format(path)
-        today = time.strftime("%y_%m_%d")
         try:
-            run_keyword = 'pybot -o {0}_{1}_{2}_output.xml -l {0}_{1}_{2}_log.html -r {0}_{1}_{2}_report.html {0}_testcase.robot'.format(
-                name,
-                random_string,
-                today
+            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html {1}_testcase.robot'.format(
+                namefile,
+                name
             )
             print(run_keyword)
             ssh.sendline(run_path)
             ssh.sendline(run_keyword)
             ssh.prompt()
-            ssh_result = ssh.before
             ssh.logout()
-            return ssh_result, "{0}_{1}_{2}".format(name, random_string, today)
         except Exception as error:
             return error
 
@@ -180,4 +174,12 @@ class SshConnect(LoginRequiredMixin):
         for i in range(0, len(values)):
             f = '{}\t'.format(values[i])
             a.write(f)
+        a.close()
+
+    def create_profile_file(self, profilename, variables):
+        name = profilename.replace(" ", "")
+        a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
+        a.write("#      {0}      #\n".format(name))
+        for p in variables:
+            a.write('{0} = "{1}"\n'.format(p.get("parameter"), p.get("value")))
         a.close()

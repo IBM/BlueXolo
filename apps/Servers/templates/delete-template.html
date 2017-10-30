@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Delete Template {{ object.name }}{% endblock %}
-{% block subtitle %}Delete Template {{ object.name }}{% endblock %}
+{% block title %}Delete Template {% endblock %}
+{% block subtitle %}Delete Template {% endblock %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -11,7 +11,19 @@
                         <p class="card-title">Are you sure you want to delete the follow Template?</p>
                         <ul>
                             <li><b>Name:</b> {{ object.name }}</li>
-                            <li><b>Description:</b> {{ object.description }}</li>
+                            {% if object.description %}
+                                <li><b>Description:</b> {{ object.description }}</li>
+                            {% endif %}
+                            {% if object.parameters.exists %}
+                                <li><b>Parameters:</b>
+                                    <ul>
+                                        {% for param in object.parameters.all %}
+                                            <li>{{ param.name }}</li>
+                                        {% endfor %}
+
+                                    </ul>
+                                </li>
+                            {% endif %}
                         </ul>
                         <div class="center">
                             <a href="{% url "servers-templates" %}" class="btn blue-grey">Back</a>
