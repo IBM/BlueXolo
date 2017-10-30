@@ -7,7 +7,7 @@ import time
 import urllib.request
 import zipfile
 from pexpect import pxssh
-#import distro
+import distro
 
 from celery import shared_task
 
@@ -256,14 +256,14 @@ class MExtract:
     def _getSource(self, category):
 
         if category is 2:
-            # if self.api_config.get('host'):
-            #     name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
-            #     version = self.api_config.get('host')
-            # else:
-            #     name = distro.linux_distribution()[0]
-            #     version = distro.linux_distribution()[1]
-            name = "dummy"
-            version = "dummy"
+            if self.api_config.get('host'):
+                name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
+                version = self.api_config.get('host')
+            else:
+                name = distro.linux_distribution()[0]
+                version = distro.linux_distribution()[1]
+            # name = "dummy"
+            # version = "dummy"
             try:
                 source, created = Source.objects.get_or_create(
                     name=name,
