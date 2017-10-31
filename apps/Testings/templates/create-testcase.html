@@ -371,7 +371,7 @@
             }// Closes for iterates over the rows in the drag and drop table        
         }
 
-        function popUpPropertiesKeyword() {
+        function popUpPropertiesTestcase() {
             var floatingDiv = document.getElementById("floatingDiv"),
                 lightsOff = document.createElement("div");
 
@@ -392,24 +392,27 @@
             floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
         }
 
-        function writeKeywordDatabase() {
-            var keywordName = document.getElementById("keyword_name").value;
-            var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = droppedElements;
-            var keywordScript = document.getElementById("terminal").value;
+        function writeTestcaseDatabase() {
+            var testcaseName = document.getElementById("testcase_name").value;
+            var testcaseDescription = document.getElementById("testcase_description").value;
+            var testcaseCollection = document.getElementById("keyword_collection").value;
+            var testcaseValues = droppedElements;
+            var testcaseScript = document.getElementById("terminal").value;
 
-            var newKeyword = {
-                "name": keywordName,
-                "description": keywordDescription,
-                "script": keywordScript,
-                "values": JSON.stringify(keywordValues)
+            var newTestcase = {
+                "name": testcaseName,
+                "description": testcaseValues,
+                "collection": testcaseCollection,
+                "script": testcaseScript,
+                "values": JSON.stringify(testcaseValues)
             };
             $.ajax({
-                url: "{% url "api-keywords" %}",
+                //url: "{% url "api-keywords" %}",
+                url: "{% url "api-testcases" %}",
                 type: 'POST',
-                data: newKeyword,
+                data: newTestcase,
                 success: function (data) {
-                    alert("Keyword have been successfully saved");
+                    alert("Testcase have been successfully saved");
                     {#                    $('#modalPreview').modal('close');#}
                     new_keyword = data;
                 },
@@ -418,14 +421,16 @@
                 }
             });
 
-            hidePropertiesKeyword();
+            hidePropertiesTestcase();
         }
 
-        function saveKeyword() {
-            translateToRobot(writeKeywordDatabase);
+        function saveTestcase() {
+            var functionToExecuteAfter = writeTestcaseDatabase;
+            translateToRobot(functionToExecuteAfter);
+            //translateToRobot(writeTestcaseDatabase);
         }
 
-        function hidePropertiesKeyword() {
+        function hidePropertiesTestcase() {
             {#            var floatingDiv = document.getElementById("floatingDiv"),#}
             {#                lightsOff = document.getElementById("lightsOff");#}
             {##}
@@ -442,12 +447,12 @@
                 <label for="keyword_collection">Keyword Collection</label>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_name">Keyword Name</label>
-                <input type="text" id="keyword_name" onblur="hasValues()">
+                <label for="testcase_name">Testcase Name</label>
+                <input type="text" id="testcase_name" onblur="hasValues()">
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_description">Keyword Description</label>
-                <input type="text" id="keyword_description">
+                <label for="testcase_description">Testcase Description</label>
+                <input type="text" id="testcase_description">
             </div>
         </div>
     </div>
@@ -505,7 +510,7 @@
                         </div>
                     </li>
                 </ul>
-                {#                <button onclick="popUpPropertiesKeyword()">Save Keyword</button>#}
+                {#                <button onclick="popUpPropertiesTestcase()">Save Testcase</button>#}
             </div>
 
             <div class="col l9 s12">
@@ -580,7 +585,7 @@
             <div class="modal-content">
                 <div class="card">
                     <div class="card-content">
-                        <h4 class="app-title">Keyword Properties</h4>
+                        <h4 class="app-title">Testcase Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
                                 <select name="severs" id="selectProfiles"
@@ -591,7 +596,7 @@
                         </div>
                     </div>
                 </div>
-                <h4 class="app-title">Keyword Preview</h4>
+                <h4 class="app-title">Testcase Preview</h4>
                 <textarea id="codeFinal" class=" terminal blue-grey-text" disabled></textarea>
             </div>
             <div class="modal-footer">
@@ -599,8 +604,8 @@
                 <button type="button" id="runScript" class="waves-effect waves-green btn" onclick="runScript()"
                         disabled="true">Run script
                 </button>
-                <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveKeyword()">Save
-                    Keyword
+                <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveTestcase()">Save
+                    Testcase
                 </button>
             </div>
         </div>
@@ -617,7 +622,7 @@
         </div>
         {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
         <div id="floatingDiv">
-            <p>Keyword Properties</p>
+            <p>Testcase Properties</p>
             <div class="input-field">
                 <input id="inputKeywordName" type="text" name="value">
                 <label for="value">Name</label>
@@ -627,7 +632,7 @@
                 <label for="value">Description</label>
             </div>
             <div class="center">
-                <input type="submit" class="btn" value="Create" onclick="saveKeyword()">
+                <input type="submit" class="btn" value="Create" onclick="saveTestcase()">
             </div>
         </div>
 
@@ -797,14 +802,14 @@
         }
 
         function hasValues() {
-            var _keyName = document.getElementById('keyword_name');
+            var _keyName = document.getElementById('testcase_name');
             var _keyCollection = document.getElementById('keyword_collection');
             var _btn_save = document.getElementById('btn_play');
             _btn_save.disabled = !(_keyCollection.value && _keyName.value);
         }
 
         function runScript() {
-            saveKeyword();
+            saveTestcase();
             setTimeout(function () {
                 $.ajax({
                     url: "{% url "run-on-server" %}",
