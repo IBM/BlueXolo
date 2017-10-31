@@ -22,8 +22,7 @@ from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
     TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer
 from .api_pagination import CommandsPagination, KeywordPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    KeywordFilter
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -152,7 +151,13 @@ class CommandsApiView(mixins.ListModelMixin,
         if category:
             if category in ['2', '3', '4', '5'] and name:
                 # check the category and search by his name
-                queryset = queryset.filter(source__category=category)
+                if category == '4':
+                    queryset = queryset.filter(
+                        Q(source__category=5) |
+                        Q(source__depends__category=4)
+                    )
+                else:
+                    queryset = queryset.filter(source__category=category)
                 if exact:
                     queryset = queryset.filter(
                         Q(source__name=name) |
