@@ -1,5 +1,6 @@
 {% extends "registration/base_registration.html" %}
 {% load staticfiles %}
+
 {% block content %}
     <div class="container">
         <div class="section">
@@ -35,6 +36,9 @@
         </div>
         <div class="center">
             <a href="{% url "request-access" %}" class="blue-grey-text">Request Access</a>
+        </div>
+        <div class="center">
+            <a href="{% url "reset-password" %}" class="blue-grey-text">I forgot my password</a>
         </div>
     </div>
 {% endblock %}
