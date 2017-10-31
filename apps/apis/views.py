@@ -308,6 +308,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
+                name_file = "{0}_{1}_{2}".format(name, random_string, today)
                 filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
                                              profile.name, params)
                 task = Task.objects.create(

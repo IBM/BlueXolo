@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, FormView, DeleteView
 
 from CTAFramework import settings
-from .forms import UserForm, EditUserForm, RequestAccessForm
+from .forms import UserForm, EditUserForm, RequestAccessForm, ForgetPasswordForm
 from .models import User
 from .ibmauth import LDAPBackend
 
@@ -166,3 +166,4 @@ class RequestAccessView(FormView):
             messages.error(self.request, "Failed on request access. Error {}".format(error))
             return HttpResponseRedirect(reverse_lazy('request-access'))
         return HttpResponseRedirect(self.get_success_url())
+
