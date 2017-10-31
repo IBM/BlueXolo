@@ -10,13 +10,12 @@ class ArgumentForm(forms.ModelForm):
 
 
 class SourceProductForm(forms.ModelForm):
-    path = forms.CharField(widget=forms.TextInput())
+    path = forms.CharField(widget=forms.TextInput(), required=False)
     regex = forms.CharField(widget=forms.Textarea(attrs={'rows': 6, 'class': 'materialize-textarea'}), required=False)
-    host = forms.CharField()
-    port = forms.IntegerField()
-    username = forms.CharField()
-
-    password = forms.CharField(widget=forms.PasswordInput())
+    host = forms.CharField(required=False)
+    port = forms.IntegerField(required=False)
+    username = forms.CharField(required=False)
+    password = forms.CharField(widget=forms.PasswordInput(), required=False)
 
     class Meta:
         model = Source

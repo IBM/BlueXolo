@@ -118,18 +118,26 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
         _config = {}
         if name == 'products':
             form.instance.category = 3
+            if Source.objects.filter(name=form.data.get('name'), version=form.data.get('version')):
+                messages.warning(self.request, 'Already exist a Product with this name and version')
+                return self.render_to_response(self.get_context_data(form=form))
             source = form.save()
-            _config = {
-                'category': 3,
-                'source': source.pk,
-                'regex': form.data.get('regex'),
-                'path': form.data.get('path'),
-                'host': form.data.get('host'),
-                'port': form.data.get('port'),
-                'username': form.data.get('username'),
-                'password': form.data.get('password')
-            }
-            messages.success(self.request, 'Product {0} created and running the extract'.format(source.name))
+            messages.success(self.request, 'Product {0} created'.format(source.name))
+            host = form.data.get('host')
+            if not host:
+                return HttpResponseRedirect(self.get_success_url())
+            if host:
+                _config = {
+                    'category': 3,
+                    'source': source.pk,
+                    'regex': form.data.get('regex'),
+                    'path': form.data.get('path'),
+                    'host': host,
+                    'port': form.data.get('port'),
+                    'username': form.data.get('username'),
+                    'password': form.data.get('password')
+                }
+            messages.info(self.request, 'Running {0} Extract on background'.format(source.name))
         if name == 'robot':
             form.instance.name = 'Robot Framework'
             form.instance.category = 4
@@ -239,7 +247,7 @@ class DeleteSourceView(LoginRequiredMixin, DeleteView):
         commands = Command.objects.filter(source=object.pk)
         for command in commands:
             arguments = command.arguments.all()
-            
+
             if command.source.count() <= 1:
                 command.delete()
         object.delete()
