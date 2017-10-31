@@ -39,7 +39,12 @@ function addExtraTextInput(propPanelNode, droppedElementIndex){
     return propPanelNode;
 }
 
-function handlePropertiesPanelCleaning(){
+function cleanPropertiesPanel(){
+    var propPanel = document.getElementById("propertiesPannel");
+    while (propPanel.hasChildNodes()) {
+        propPanel.removeChild(propPanel.childNodes[0]);
+    }
+
     var propPanelContainer = document.getElementById("propertiesPanelContainer");
 
     var indexOfButton = 3;
@@ -59,14 +64,9 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         return;
     }
 
-    // Clean previous properties panel
+    cleanPropertiesPanel();
+
     var propPanel = document.getElementById("propertiesPannel");
-    while (propPanel.hasChildNodes()) {
-        propPanel.removeChild(propPanel.childNodes[0]);
-    }
-
-
-    handlePropertiesPanelCleaning()
 
     // Adds the basic data through arguments
     var titleNode = document.createElement("p");
