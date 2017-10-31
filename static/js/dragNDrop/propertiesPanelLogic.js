@@ -175,11 +175,9 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
         return;
     }
 
-    // Clean previous properties panel
+    cleanPropertiesPanel();
+
     var propPanel = document.getElementById("propertiesPannel");
-    while (propPanel.hasChildNodes()) {
-        propPanel.removeChild(propPanel.childNodes[0]);
-    }
 
     // Adds the basic data through arguments
     var titleNode = document.createElement("p");
@@ -268,8 +266,9 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
         saveFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
