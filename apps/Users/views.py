@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, FormView, DeleteView
 
 from CTAFramework import settings
-from .forms import UserForm, EditUserForm, RequestAccessForm, ForgetPasswordForm
+from .forms import UserForm, EditUserForm, RequestAccessForm
 from .models import User
 from .ibmauth import LDAPBackend
 
