@@ -113,6 +113,7 @@ class ServerProfileApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(self.request, "Profile Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -128,6 +129,7 @@ class ServerProfileDetailApiView(LoginRequiredMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(self.request, "Profile Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -305,14 +307,13 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             try:
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
-                name = kwd.name.replace(" ","")
-                name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,profile.name, params)
-                #r         run_keyword.delay(host, user, passwd, filename, script, values, path, namefile, profilename, variables):
+                name = kwd.name.replace(" ", "")
+                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
+                                             profile.name, params)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
-                    task_id= filename.task_id,
-                    state= "run"
+                    task_id=filename.task_id,
+                    state="run"
                 )
                 request.user.tasks.add(task)
                 request.user.save()

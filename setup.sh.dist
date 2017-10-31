@@ -5,7 +5,7 @@ echo 'Welcome back Mr. Anderson'
 echo "Let's create some dirs First"
 mkdir -p media/test_keywords
 echo " . "
-mkdir -p media/zips
+mkdir -p media/zip
 echo " . . "
 mkdir -p media/test_result
 echo " . . . "

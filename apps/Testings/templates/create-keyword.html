@@ -426,14 +426,16 @@
         function writeKeywordDatabase() {
             var keywordName = document.getElementById("keyword_name").value;
             var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = getAllValuesInTable();
+            var keywordValues = droppedElements;
+            var keywordCollection = document.getElementById('keyword_collection').value;
             var keywordScript = document.getElementById("terminal").value;
 
             var newKeyword = {
                 "name": keywordName,
                 "description": keywordDescription,
                 "script": keywordScript,
-                "values": JSON.stringify(keywordValues)
+                "values": JSON.stringify(keywordValues),
+                "collection": keywordCollection
             };
             $.ajax({
                 url: "{% url "api-keywords" %}",

@@ -61,7 +61,7 @@
                 "data": {"category": 5, "page_size": 5, "extra": 0},
                 "id_div_accordion": "librariesCommandsPanel"
             });
-
+            getKeywordToEdit();
         });
 
         {#        var test = function (event, ui) {#}
@@ -69,6 +69,16 @@
         {#            console.log(event.target);#}
         {#            console.log(ui.item[0]);#}
         {#        };#}
+
+        function getKeywordToEdit(){
+
+            var keywordData = "{{object.values}}";
+            //console.log(keywordData);
+            
+            droppedElements = JSON.parse(keywordData.replace(/&quot;/g,'"'));
+            //console.log(droppedElements);
+            drawElementsFromJSON();            
+        }
 
         function getFirstCommands(config) {
             $.ajax({
@@ -269,86 +279,6 @@
             });
         }
 
-/*
-        function translateToRobot(callBackFunction) {
-            var dragNDrop = document.getElementById("dragDropSpace");
-            var rowsInTable = dragNDrop.children;
-
-            var terminal = document.getElementById("terminal");
-            terminal.value = "";
-
-            var translation = [];
-
-            var inForLoop = false;
-            var identationForLoop = 1;
-
-            for (var i = 0; i < rowsInTable.length; i++) {
-
-                (function (i) {
-
-                    var currentElement = rowsInTable[i].lastChild;
-                    // Avoid analyzing the button
-                    if (currentElement.type === 'submit') {
-                        return;
-                    }
-
-                    var elementType = currentElement.id.split("-")[0];
-                    var identationLevel = currentElement.className.split("-")[1];
-                    var parameters = getValuesByID(currentElement.id);
-
-                    $.ajax({
-                        url: "{% url 'api-commands' %}",
-                        type: 'GET',
-                        data: {
-                            id: elementType,
-                            extra: 1 //0 retorna sin argumentos, 1 con argumentos
-                        },
-                        success: function (data) {
-                            if (inForLoop && Number(identationLevel) <= identationForLoop) {
-                                inForLoop = false;
-                            }
-
-                            if (inForLoop) {
-                                var translatedRow = handleIdentation(identationForLoop - 1);
-                                translatedRow += "\\    ";
-                                translatedRow += handleIdentation(identationLevel);
-                            }
-                            else {
-                                var translatedRow = handleIdentation(identationLevel);
-                            }
-
-                            translatedRow += handleTranslationOf(data.results[0], parameters);
-                            translation.push(translatedRow);
-
-                            if ((i + 1) >= rowsInTable.length) {
-                                for (var j = 0; j < translation.length; j++) {
-                                    terminal.value += translation[j];
-                                }
-                                if (callBackFunction !== undefined) {
-                                    callBackFunction();
-                                }
-                                return true;
-                            }
-
-                            if (data.results[0].name === "for in" || data.results[0].name === "for in range") {
-                                inForLoop = true;
-                                identationForLoop = (Number(identationLevel));
-                            }
-
-                        },
-                        error: function (error) {
-                            console.log("Error while translating");
-                            terminal.value = "Error while translating";
-                            console.log(error);
-                            return false;
-                        }
-                    }); // Closes Ajax
-
-                })(i);  // Closes anonymus function
-
-            }// Closes for iterates over the rows in the drag and drop table        
-        }
-*/
         function translateToRobot(callBackFunction) {
             var dragNDrop = document.getElementById("dragDropSpace");
             var rowsInTable = dragNDrop.children;
@@ -548,39 +478,37 @@
                                             <td id="dragDropSpace"></td>
                                         </tr>
                                     </table>
-
                                 </div>
                                 <div class="col s12 l4 z-depth-1">
                                     {% if not object %}
-
-                                        <div class="propertiesPanelContainer">
-                                            {#                                            <button id="toggleProperties"#}
-                                            {#                                                    onclick="handleVisualization()"><#}
-                                            {#                                            </button>#}
-                                            <div id="propertiesPannel" class="card-content">
-                                                <p id="currentEditing">Editing ID</p>
-                                                <form action="">
-
-                                                    <div id="defaultEditing" class="input-field">
-                                                        <input type="text" name="value">
-                                                        <label for="value">Value</label>
-                                                    </div>
-                                                    <div class="center">
-                                                        <input type="submit" class="btn" value="Create"
-                                                               onclick="saveParametersFromInput();">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
+                                    <h4 class="center grey-text"> No Actions Available</h4>
+                                    <p class="grey-text subheader center">First drop some command</p>
                                     {% else %}
-                                        <h4 class="center grey-text"> No Actions Available</h4>
-                                        <p class="grey-text subheader center">First drop some command</p>
-                                    {% endif %}
-                                </div>
-                            </div>
+                                    <div class="propertiesPanelContainer">
+                                        {#                                            <button id="toggleProperties"#}
+                                        {#                                                    onclick="handleVisualization()"><#}
+                                    {#                                            </button>#}
+                                    <div id="propertiesPannel" class="card-content">
+                                        <p id="currentEditing">Editing ID</p>
+                                        <form action="">
 
+                                            <div id="defaultEditing" class="input-field">
+                                                <input type="text" name="value">
+                                                <label for="value">Value</label>
+                                            </div>
+                                            <div class="center">
+                                                <input type="submit" class="btn" value="Create"
+                                                onclick="saveParametersFromInput();">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
+
                     </div>
+                </div>
                 </div>
                 <div id="tab2" class="col s12">
                     <div class="card">
