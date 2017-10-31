@@ -145,8 +145,10 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         saveKeywordFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
