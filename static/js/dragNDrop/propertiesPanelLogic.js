@@ -55,6 +55,14 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         propPanel.removeChild(propPanel.childNodes[0]);
     }
 
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+
+    var indexOfButton = 3;
+    var previousButtonNode = propPanelContainer.childNodes[indexOfButton];
+    if(previousButtonNode !== undefined){
+        propPanelContainer.removeChild(previousButtonNode);
+    }    
+
     // Adds the basic data through arguments
     var titleNode = document.createElement("p");
     var keywordName = droppedElement.name;
@@ -144,8 +152,6 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     function addClickEvent() {
         saveKeywordFromInput(droppedElementIndex, elementID);
     }
-
-    var propPanelContainer = document.getElementById("propertiesPanelContainer");
 
     tempDiv.appendChild(buttonNode);
     propPanelContainer.appendChild(tempDiv);
