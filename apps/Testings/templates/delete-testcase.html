@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Delete Source{% endblock %}{% block subtitle %}Delete Source{% endblock %}
+{% block title %}Delete  {{ object.name }}{% endblock %}
+{% block subtitle %}Delete  {{ object.name }}{% endblock %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -7,13 +8,13 @@
                 <div class="card-content">
                     <form action="" method="POST">
                         {% csrf_token %}
-                        <p class="card-title">Are you sure you want to delete the follow source?</p>
+                        <p class="card-title">Are you sure you want to delete the follow Testcase?</p>
                         <ul>
                             <li><b>Name:</b> {{ object.name }}</li>
-                            <li><b>Version:</b> {{ object.version }}</li>
+                            <li><b>Description:</b> {{ object.description }}</li>
                         </ul>
                         <div class="center">
-                            <a href="/sources/{{ slug }}" class="btn blue-grey">Back</a>
+                            <a href="{% url "testcases" %}" class="btn blue-grey">Back</a>
                             <input type="submit" value="Confirm" class="btn red"/>
                         </div>
                     </form>

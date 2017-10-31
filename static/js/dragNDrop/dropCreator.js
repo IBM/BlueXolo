@@ -60,9 +60,10 @@ function drawElementsFromJSON(){
     resetDropCounters();
     var dragNDrop = document.getElementById("dragDropSpace");
     dragNDrop.innerHTML = "";
+    var keywordCategory = 6;
 
 	for(var i=0; i<droppedElements.length; i++){
-		var newID = getNewID(droppedElements[i].id);
+		var newID = getNewID(droppedElements[i].id);		
 		var newClass = "drop-"+droppedElements[i].indentation;
 
 		var basicDnDNode = document.createElement("div");
@@ -80,7 +81,7 @@ function drawElementsFromJSON(){
 
 		//Appends an empty parameter list in order to populate it after
 		basicDnDNode = createEmptyParameterList(basicDnDNode);
-		
+
 		basicDnDNode.setAttribute('ondragstart', 'startDragDroppedElement(event)');
 		basicDnDNode.setAttribute('ondrop', 'moveDroppedElement(event)');
 		basicDnDNode.setAttribute('draggable', true);
@@ -113,11 +114,30 @@ function drawElementsFromJSON(){
 		td.appendChild(basicDnDNode);		
 
 		dragNDrop.appendChild(td);
-		drawParameterList(i, newID);
+
+		if(droppedElements[i].category === keywordCategory){
+		
+		}else{
+			drawParameterList(i, newID);
+		}		
 	}
 }
 
 function createEmptyParameterList(node){
+	var attributeList = document.createElement("ul");
+	attributeList.id = node.id + "-" + "parameters";
+
+	attributeList.className = "parameter";
+	attributeList.style.fontWeight = "normal";
+
+    var li = document.createElement('li');
+    attributeList.appendChild(li);
+
+	node.appendChild(attributeList);
+	return node;
+}
+
+function createEmptyParameterListForKeywords(node){
 	var attributeList = document.createElement("ul");
 	attributeList.id = node.id + "-" + "parameters";
 

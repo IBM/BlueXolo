@@ -10,6 +10,7 @@
                     <form method="POST">
                         {% include "form-snippet.html" %}
                     </form>
+                    <h4 class="card-title" id="category_template"></h4>
                 </div>
             </div>
             <div class="col s12 l1">
@@ -49,7 +50,7 @@
         var _select = document.getElementById('id_template');
         var _name = document.getElementById('id_name');
         var _desc = document.getElementById('id_description');
-        var _categories = ['Global Variable', 'Node Launcher'];
+        var _categories = ['Global Variables', 'Local Network Connection', 'Jenkins Connection'];
 
         _select.onchange = getParams;
 
@@ -59,7 +60,10 @@
                     url: "/apis/templates/" + _select.value,
                     type: "GET",
                     success: function (data) {
-                        showParams(JSON.parse(data.parameters))
+                        var _category_type = document.getElementById('category_template');
+                        _category_type.innerHTML = "Category: " + _categories[data.category - 1];
+                        showParams(data.parameters)
+
                     }, error: function (err) {
                         console.log(err)
                     }
@@ -74,7 +78,7 @@
             params.forEach(function (v, k) {
                 var _listElement = document.createElement('li');
                 var _txtParam = document.createElement('span');
-                _txtParam.innerHTML = v.parameter;
+                _txtParam.innerHTML = v.name.toUpperCase();
                 _listElement.appendChild(_txtParam);
                 if (v.help_text) {
                     var _help_icon = document.createElement('i');
@@ -82,25 +86,23 @@
                     _txtParam.setAttribute('data-tooltip', v.help_text);
                     _txtParam.setAttribute('class', 'tooltipped');
                     _help_icon.innerHTML = 'help';
+                    _txtParam.appendChild (document.createTextNode (" "));
                     _txtParam.appendChild(_help_icon);
                 }
-                var _categoryTxt = document.createElement('span');
-                _categoryTxt.setAttribute('class', 'blue-grey-text');
-                _categoryTxt.innerHTML = _categories[v.category - 1];
-                _txtParam.appendChild(_categoryTxt);
-                if (v.value_type === '2') {
-                    var _chip = createChips(v);
-                    _listElement.appendChild(_chip);
+                if (v.value_type === 2) {
+                    var _chipContainer = document.createElement('div');
+                    _chipContainer.setAttribute('id', v.id);
+                    _chipContainer.setAttribute('class', 'chips param_val');
+                    var _chipText = document.createTextNode('Put a value and press ENTER');
+                    {#                    _chipText.setAttribute('class', 'blue-grey-text');#}
+                    _listElement.appendChild(_chipText);
+                    _listElement.appendChild(_chipContainer);
                 } else {
                     var _input_value = document.createElement('input');
                     _input_value.setAttribute('type', 'Text');
-                    if (v.category === '1') {
-                        _input_value.setAttribute('class', 'category1 param_val');
-                    } else {
-                        _input_value.setAttribute('class', 'category2 param_val');
-                    }
-                    _input_value.setAttribute('placeholder', 'put a ' + v.parameter + ' value');
-                    _input_value.setAttribute('id', v.parameter);
+                    _input_value.setAttribute('class', 'param_val');
+                    _input_value.setAttribute('placeholder', 'put a ' + v.name + ' value');
+                    _input_value.setAttribute('id', v.id);
                     _listElement.appendChild(_input_value);
                 }
 
@@ -108,20 +110,7 @@
             });
             document.getElementById('btn_create').disabled = false;
             $('.tooltipped').tooltip({delay: 20});
-
             $('.chips').material_chip();
-        }
-
-        function createChips(data) {
-            var _chipContainer = document.createElement('div');
-            _chipContainer.setAttribute('id', data.parameter);
-            if (data.category === '1') {
-                _chipContainer.setAttribute('class', 'category1 chips param_val');
-            } else {
-                _chipContainer.setAttribute('class', 'category2 chips param_val');
-            }
-            _chipContainer.setAttribute('placeholder', 'Press Enter after write a value');
-            return _chipContainer;
         }
 
         function saveProfile() {
@@ -131,34 +120,21 @@
             var _cont;
             var _inputs = document.getElementsByClassName('param_val');
 
-
             for (_cont = 0; _cont < _inputs.length; _cont++) {
-                var _category = 2;
-                if (_inputs[_cont].classList.contains('category1')) {
-                    _category = 1;
-                }
-                if (_inputs[_cont].classList.contains('chips')) {
-                    var _chips_values = [];
-                    var _chipId = _inputs[_cont].getAttribute('id');
-                    var _chipData = $('#' + _chipId + '').material_chip('data');
-                    _chipData.forEach(function (v, k) {
-                        _chips_values.push(v);
-                    });
-                    if (_chips_values.length) {
-                        _params.push({
-                            parameter: _chipId,
-                            category: _category,
-                            value: _chips_values
-                        });
-                    }
-                }
-                if (_inputs[_cont].value) {
-                    /*Save only if user write a value on parameter*/
+                var _current = _inputs[_cont];
+                if (_current.classList.contains('chips')) {
+                    var _chipData = $('#' + _current.id + '').material_chip('data');
                     _params.push({
-                        parameter: _inputs[_cont].id,
-                        category: _category,
-                        value: _inputs[_cont].value
+                        'id': _current.id,
+                        'value': _chipData
                     })
+                } else {
+                    if (_current.value) {
+                        _params.push({
+                            'id': _current.id,
+                            'value': _current.value
+                        })
+                    }
                 }
             }
             _values = {
@@ -175,6 +151,11 @@
                     window.location.replace("{% url "servers-profiles" %}");
                 }, error: function (err) {
                     console.log(err)
+                    if (err.responseJSON.name) {
+                        (err.responseJSON.name).forEach(function (v) {
+                            drawMessage("Name: " + v, 'red');
+                        })
+                    }
                 }
             });
         }

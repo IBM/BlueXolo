@@ -118,18 +118,25 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
         _config = {}
         if name == 'products':
             form.instance.category = 3
+            if Source.objects.filter(name=form.data.get('name'), version=form.data.get('version')):
+                messages.warning(self.request, 'Already exist a Product with this name and version')
+                return self.render_to_response(self.get_context_data(form=form))
             source = form.save()
-            _config = {
-                'category': 3,
-                'source': source.pk,
-                'regex': form.data.get('regex'),
-                'path': form.data.get('path'),
-                'host': form.data.get('host'),
-                'port': form.data.get('port'),
-                'username': form.data.get('username'),
-                'password': form.data.get('password')
-            }
-            messages.success(self.request, 'Product {0} created and running the extract'.format(source.name))
+            messages.success(self.request, 'Product {0} created'.format(source.name))
+            host = form.data.get('host')
+            if not host:
+                return HttpResponseRedirect(self.get_success_url())
+            if host:
+                _config = {
+                    'category': 3,
+                    'source': source.pk,
+                    'regex': form.data.get('regex'),
+                    'path': form.data.get('path'),
+                    'host': host,
+                    'port': form.data.get('port'),
+                    'username': form.data.get('username'),
+                    'password': form.data.get('password')
+                }
         if name == 'robot':
             form.instance.name = 'Robot Framework'
             form.instance.category = 4
@@ -144,10 +151,11 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
                     'source': source.pk,
                     "zip": uploaded_file_url
                 }
-                messages.success(self.request, 'Robot Framework Source created and running the extract')
+                messages.success(self.request, 'Robot Framework Source created')
         if name == 'libraries':
             form.instance.category = 5
             source = form.save()
+            messages.success(self.request, 'Library Source created')
             _config = {
                 'category': 5,
                 'source': source.pk,
@@ -160,6 +168,7 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
                 task_id=extract.task_id,
                 state=extract.state
             )
+            messages.info(self.request, 'Running extract in background')
             self.request.user.tasks.add(task)
             self.request.user.save()
             return HttpResponseRedirect(self.get_success_url())
@@ -230,20 +239,27 @@ class DeleteSourceView(LoginRequiredMixin, DeleteView):
     model = Source
     template_name = "delete-source.html"
 
-    def get_success_url(self):
+    def get_success_url(self, slug):
         messages.success(self.request, 'Robot Framework Source and his commands deleted')
-        return reverse_lazy('commands')
+        return reverse_lazy('source-list', kwargs={'slug': slug})
 
     def delete(self, request, *args, **kwargs):
-        object = self.get_object()
-        commands = Command.objects.filter(source=object.pk)
+        source = self.get_object()
+        slug = ''
+        if source.category == 3:
+            slug = 'products'
+        if source.category == 4:
+            slug = 'robot'
+        if source.category == 5:
+            slug = 'libraries'
+        commands = Command.objects.filter(source=source.pk)
         for command in commands:
             arguments = command.arguments.all()
-            
+
             if command.source.count() <= 1:
                 command.delete()
-        object.delete()
-        return HttpResponseRedirect(self.get_success_url())
+        source.delete()
+        return HttpResponseRedirect(self.get_success_url(slug))
 
     def get_context_data(self, **kwargs):
         context = super(DeleteSourceView, self).get_context_data()

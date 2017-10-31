@@ -1,4 +1,5 @@
 import json
+import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,19 +8,21 @@ from django.db.models import Q, Count
 from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from string import digits, ascii_lowercase
+from random import choice
 
 from apps.Products.models import Command, Source, Argument
-from apps.Servers.models import TemplateServer, ServerProfile
+from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection
+from apps.Testings.models import Keyword, Collection, TestCase
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer
-from .api_pagination import CommandsPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer
+from .api_pagination import CommandsPagination, KeywordPagination
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -28,6 +31,16 @@ class KeywordAPIView(LoginRequiredMixin,
                      generics.GenericAPIView):
     queryset = Keyword.objects.all()
     serializer_class = KeywordsSerializer
+    pagination_class = KeywordPagination
+
+    def filter_queryset(self, queryset):
+        name = self.request.query_params.get('name')
+        collection = self.request.query_params.get('collection')
+        if collection:
+            queryset = queryset.filter(collection=collection)
+        if name:
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -65,6 +78,7 @@ class ServerTemplateApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(self.request, "Template Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -80,6 +94,7 @@ class ServerTemplateDetailApiView(LoginRequiredMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(self.request, "Template Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -97,6 +112,7 @@ class ServerProfileApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(self.request, "Profile Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -112,6 +128,7 @@ class ServerProfileDetailApiView(LoginRequiredMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(self.request, "Profile Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -134,7 +151,13 @@ class CommandsApiView(mixins.ListModelMixin,
         if category:
             if category in ['2', '3', '4', '5'] and name:
                 # check the category and search by his name
-                queryset = queryset.filter(source__category=category)
+                if category == '4':
+                    queryset = queryset.filter(
+                        Q(source__category=5) |
+                        Q(source__depends__category=4)
+                    )
+                else:
+                    queryset = queryset.filter(source__category=category)
                 if exact:
                     queryset = queryset.filter(
                         Q(source__name=name) |
@@ -287,17 +310,22 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
             try:
-                result, filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path)
-                # task = Task.objects.create(
-                #     name="Run Keyword -  {0}".format(kwd.name),
-                #     task_id=result.task_id,
-                #     state=result.state
-                # )
-                # request.user.tasks.add(task)
-                # request.user.save()
-                # run_key(host, user, passwd, filename, script, values):
+                random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
+                today = time.strftime("%y_%m_%d")
+                name = kwd.name.replace(" ", "")
+                name_file = "{0}_{1}_{2}".format(name, random_string, today)
+                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
+                                             profile.name, params)
+                task = Task.objects.create(
+                    name="Run Keyword -  {0}".format(kwd.name),
+                    task_id=filename.task_id,
+                    state="run"
+                )
+                request.user.tasks.add(task)
+                request.user.save()
+
                 _data = {
-                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, filename)
+                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                 }
             except Exception as errorConnection:
                 _status = 500
@@ -342,3 +370,53 @@ class ArgumentsApiView(LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class ParametersApiView(LoginRequiredMixin,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin,
+                        generics.GenericAPIView
+                        ):
+    queryset = Parameters.objects.all()
+    serializer_class = ParametersSerializer
+    filter_class = ParametersFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class TestCaseApiView(LoginRequiredMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      generics.GenericAPIView
+                      ):
+    queryset = TestCase.objects.all()
+    serializer_class = TestCaseSerializer
+    filter_class = TestCaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class TestCaseDetailApiView(mixins.RetrieveModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.DestroyModelMixin,
+                            generics.GenericAPIView):
+    queryset = TestCase.objects.all()
+    serializer_class = TestCaseSerializer
+    filter_class = TestCaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

@@ -344,9 +344,11 @@ class RExtract():
         """ R-Extract initialization
             Opens zip file and get libs names and inner paths for later parsing
         """
-        self.r_version = Source.objects.get(id=config.get("source"))
+        robot_version = Source.objects.get(id=config.get("source"))
+        self.r_version = robot_version
         self.libraries = list()
         self.extra_libraries = list()
+        self.source_dict = dict()
         _category = int(config.get('category'))
         if _category is 4:
             self.zip = zipfile.ZipFile(config.get("zip"))
@@ -357,6 +359,15 @@ class RExtract():
                         'name': name,
                         'lib_page': self.zip.open(path).readlines()
                     })
+                    source, created = Source.objects.get_or_create(
+                        name=name,
+                        version=self.r_version.version,
+                        category=5,
+                    )
+                    instance = source
+                    instance.depends.add(self.r_version)
+                    instance.save()
+                    self.source_dict[name] = instance
         elif _category is 5:
             self.lib_url = config.get("url")
             req = urllib.request.Request(self.lib_url)
@@ -366,11 +377,15 @@ class RExtract():
                 'name': name,
                 'lib_page': res.readlines()
             })
+            self.source_dict[name] = robot_version
+
+
 
     def _lib_parser(self, lib):
         """ Parses a Robot library from a json formated string
             format is expected to be like the Robot Framework 3.0 page
         """
+        lib_name = lib['name']
         libdoc = False
         for x in lib['lib_page']:
             # libdoc is the JS variable where the docs are stored.
@@ -380,7 +395,7 @@ class RExtract():
                 libdoc = True
                 line = re.sub(r'\\x3c', '<', line)
                 line = re.sub(r';', '', line)
-                print(line.split('=', 1)[1])
+                #print(line.split('=', 1)[1])
                 lib_dict = json.loads(line.split('=', 1)[1])
                 for keyword in lib_dict['keywords']:
                     try:
@@ -388,7 +403,7 @@ class RExtract():
                             name=keyword['name'],
                             description=keyword['shortdoc']
                         )
-                        rbt_keyw.source.add(self.r_version)
+                        rbt_keyw.source.add(self.source_dict[lib_name])
                         rbt_keyw.save()
                     except Exception as error:
                         print(error)

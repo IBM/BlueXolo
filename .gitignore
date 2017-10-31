@@ -86,3 +86,6 @@ staticfiles/
 secrets.json
 # KDE
 .directory
+
+nohup.out
+setup.sh

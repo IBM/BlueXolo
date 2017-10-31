@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^request-access/', RequestAccessView.as_view(), name='request-access'),
     url(r'^login/$', login, name='login'),
     url(r'^logout/$', logout, name='logout'),
-    url(r'^password_reset/$', PasswordResetView.as_view()),
+    url(r'^password_reset/$', PasswordResetView.as_view(), name="reset-password"),
     url(r'^password_reset/done/$',
         PasswordResetDoneView.as_view(), name='password_reset_done'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
