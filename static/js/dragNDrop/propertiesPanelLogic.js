@@ -39,6 +39,21 @@ function addExtraTextInput(propPanelNode, droppedElementIndex){
     return propPanelNode;
 }
 
+function cleanPropertiesPanel(){
+    var propPanel = document.getElementById("propertiesPannel");
+    while (propPanel.hasChildNodes()) {
+        propPanel.removeChild(propPanel.childNodes[0]);
+    }
+
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+
+    var indexOfButton = 3;
+    var previousButtonNode = propPanelContainer.childNodes[indexOfButton];
+    if(previousButtonNode !== undefined){
+        propPanelContainer.removeChild(previousButtonNode);
+    }
+}
+
 function drawPropertiesForKeywords(droppedElementIndex, elementID) {    
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
@@ -49,11 +64,9 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         return;
     }
 
-    // Clean previous properties panel
+    cleanPropertiesPanel();
+
     var propPanel = document.getElementById("propertiesPannel");
-    while (propPanel.hasChildNodes()) {
-        propPanel.removeChild(propPanel.childNodes[0]);
-    }
 
     // Adds the basic data through arguments
     var titleNode = document.createElement("p");
@@ -145,8 +158,9 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         saveKeywordFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
