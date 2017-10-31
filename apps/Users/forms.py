@@ -68,13 +68,3 @@ class RequestAccessForm(forms.ModelForm):
         """This filter only for sources in the category 3(Products)"""
         super(RequestAccessForm, self).__init__(*args, **kwargs)
         self.fields['products'].queryset = Source.objects.filter(category=3)
-
-class ForgetPasswordForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = [
-            'email'
-        ]
-        widgets = {
-            "email": forms.EmailInput()
-        }
