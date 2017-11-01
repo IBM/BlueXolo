@@ -142,7 +142,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -250,7 +250,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -372,7 +372,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
