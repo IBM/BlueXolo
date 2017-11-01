@@ -372,6 +372,24 @@ class ArgumentsApiView(LoginRequiredMixin,
         return self.create(request, *args, **kwargs)
 
 
+class ArgumentsDetailApiView(mixins.RetrieveModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             generics.GenericAPIView):
+    queryset = Argument.objects.all()
+    serializer_class = ArgumentsSerializer
+    filter_class = ArgumentFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
 class ParametersApiView(LoginRequiredMixin,
                         mixins.ListModelMixin,
                         mixins.CreateModelMixin,
@@ -386,6 +404,24 @@ class ParametersApiView(LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class ParametersDetailApiView(mixins.RetrieveModelMixin,
+                              mixins.UpdateModelMixin,
+                              mixins.DestroyModelMixin,
+                              generics.GenericAPIView):
+    queryset = Parameters.objects.all()
+    serializer_class = ParametersSerializer
+    filter_class = ParametersFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class TestCaseApiView(LoginRequiredMixin,
