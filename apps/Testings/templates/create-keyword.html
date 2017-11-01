@@ -100,7 +100,7 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
-                    var commandSource = data.results[0].source[0];                
+                    var commandSource = data.results[0].source[0];
 
                     droppedElements.push({
                         id: commandID,
@@ -367,8 +367,8 @@
                 type: 'POST',
                 data: newKeyword,
                 success: function (data) {
-                    alert("Keyword have been successfully saved");
-                    {#                    $('#modalPreview').modal('close');#}
+                    drawMessage("Keyword Saved", 'green');
+                    $('#modalPreview').modal('close');
                     new_keyword = data;
                 },
                 error: function (error) {
@@ -453,7 +453,7 @@
                         <div class="collapsible-header">Custom Keyword</div>
                         <div id="customKeywordCommandsPanel" class="collapsible-body">
                             <div class="row">
-                                <p class="blue-grey-text" >Keywords Search</p>
+                                <p class="blue-grey-text">Keywords Search</p>
                                 <div class=" col s12">
                                     <select id="keywrd-search"></select>
                                     <div id="custom-keywords-area" class="section">
@@ -532,7 +532,6 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Trigger -->
 
         <!-- Modal Structure -->
         <div id="modalPreview" class="modal modal-fixed-footer">
@@ -542,8 +541,7 @@
                         <h4 class="app-title">Keyword Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
-                                <select name="severs" id="selectProfiles"
-                                        onchange="document.getElementById('runScript').disabled = false;">
+                                <select name="severs" id="selectProfiles" multiple>
                                 </select>
                                 <label for="severs">Server Profile</label>
                             </div>
@@ -556,7 +554,7 @@
             <div class="modal-footer">
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
                 <button type="button" id="runScript" class="waves-effect waves-green btn" onclick="runScript()"
-                        disabled="true">Run script
+                        disabled>Run script
                 </button>
                 <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveKeyword()">Save
                     Keyword
@@ -564,17 +562,6 @@
             </div>
         </div>
 
-        {#  - - - -  - - - MODAL RUNNING - - - - - - - - - - -#}
-        <div id="modal-run" class="modal">
-            <div class="modal-content">
-                <h4>Run Output</h4>
-                <div id="black_terminal" style="width: 100%"></div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-            </div>
-        </div>
-        {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
     <div class="fixed-action-btn">
@@ -742,6 +729,12 @@
             $('#modalPreview').modal('open');
         }
 
+        document.getElementById('selectProfiles').onchange = function () {
+            if ($('#selectProfiles').val()) {
+                document.getElementById('runScript').disabled = false;
+            }
+        };
+
         function hasValues() {
             var _keyName = document.getElementById('keyword_name');
             var _keyCollection = document.getElementById('keyword_collection');
@@ -751,17 +744,18 @@
 
         function runScript() {
             saveKeyword();
+            var _profiles = JSON.stringify($('#selectProfiles').val());
             setTimeout(function () {
                 $.ajax({
                     url: "{% url "run-on-server" %}",
                     type: "post",
                     data: {
                         keyword: new_keyword.id,
-                        profile: document.getElementById('selectProfiles').value
+                        profile: _profiles
                     },
                     success: function (data) {
+                        drawMessage("Keyword has sent to scheduler", 'blue');
                         $('#modalPreview').modal('close');
-                        alert('Success');
                         var win = window.open('/' + data.report + '', '_blank');
                         if (win) {
                             //Browser has allowed it to be opened
@@ -770,13 +764,9 @@
                             //Browser has blocked it
                             alert('Please allow popups for this website');
                         }
-                        {#                        $('#black_terminal').empty();#}
-                        {##}
-                        {#                        $('#black_terminal').append('<iframe src="' + data.report + '" style="widht:100%"></iframe>\n');#}
-                        {#                        $('#modal-run').modal('open');#}
-
+       
                     }, error: function (err) {
-                        console.log('error on run script: ' + err)
+                        drawMessage(err.responseJSON.text, 'red');
                     }
                 });
             }, 3000);
