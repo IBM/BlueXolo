@@ -1,4 +1,3 @@
-from celery.result import AsyncResult
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,11 +6,12 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
 
+from apps.Testings.models import Phase
 from apps.Users.models import Task
 from extracts import run_extract
 from .models import Argument, Source, Command
 from .forms import ArgumentForm, SourceProductForm, SourceRobotForm, SourceLibraryForm, SourceEditProductForm, \
-    CommandForm, SourceEditLibraryForm
+    CommandForm, SourceEditLibraryForm, PhaseForm
 
 
 class IndexView(TemplateView):
@@ -307,3 +307,36 @@ class DeleteCommandView(LoginRequiredMixin, DeleteView):
     template_name = "delete-command.html"
     model = Command
     success_url = reverse_lazy("commands")
+
+
+class PhasesView(LoginRequiredMixin, TemplateView):
+    template_name = "phases.html"
+
+
+class NewPhaseView(LoginRequiredMixin, CreateView):
+    model = Phase
+    form_class = PhaseForm
+    template_name = 'create-edit-phase.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "Phase Created")
+        return reverse_lazy('phases')
+
+
+class EditPhaseView(LoginRequiredMixin, UpdateView):
+    model = Phase
+    form_class = PhaseForm
+    template_name = 'create-edit-phase.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "Phase Edited")
+        return reverse_lazy('phases')
+
+
+class DeletePhaseView(LoginRequiredMixin, DeleteView):
+    model = Phase
+    template_name = "delete-phase.html"
+
+    def get_success_url(self):
+        messages.success(self.request, "Phase deleted")
+        return reverse_lazy('phases')

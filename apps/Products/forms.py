@@ -1,5 +1,6 @@
 from django import forms
 
+from apps.Testings.models import Phase
 from .models import Argument, Source, Command
 
 
@@ -7,6 +8,17 @@ class ArgumentForm(forms.ModelForm):
     class Meta:
         model = Argument
         fields = '__all__'
+
+
+class PhaseForm(forms.ModelForm):
+    class Meta:
+        model = Phase
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        """This filter only for sources in the category 4(Robot)"""
+        super(PhaseForm, self).__init__(*args, **kwargs)
+        self.fields['product'].queryset = Source.objects.filter(category=3)
 
 
 class SourceProductForm(forms.ModelForm):

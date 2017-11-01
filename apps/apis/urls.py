@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson
-from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson
+from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
@@ -22,8 +22,8 @@ urlpatterns = [
     url(r'^profiles/(?P<pk>[0-9]+)/$', ServerProfileDetailApiView.as_view(), name="api-profiles"),
     url(r'^keywords/$', KeywordAPIView.as_view(), name="api-keywords"),
     url(r'^keywords/(?P<pk>[0-9]+)/$', KeywordDetailApiView.as_view(), name="api-keywords"),
-    url(r'^testcase/$', TestCaseApiView.as_view(), name="api-testcases"),
-    url(r'^testcase/(?P<pk>[0-9]+)/$', TestCaseDetailApiView.as_view(), name="api-testcases"),
+    url(r'^testcases/$', TestCaseApiView.as_view(), name="api-testcases"),
+    url(r'^testcases/(?P<pk>[0-9]+)/$', TestCaseDetailApiView.as_view(), name="api-testcases"),
     url(r'^source/$', SourceApiView.as_view(), name="api-source"),
     url(r'^collection/$', CollectionApiView.as_view(), name="api-collection"),
     url(r'^tasks/$', TasksApiView.as_view(), name="api-tasks"),
@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^testcases/list/$', TestcasesListJson.as_view(), name="api-testcases-list"),
     url(r'^collections/$', CollectionsListJson.as_view(), name="api-collections"),
     url(r'^sources/list/$', SourcesListJson.as_view(), name="api-sources-list"),
+    url(r'^phases/list/$', PhasesListJson.as_view(), name="api-phases-list"),
     # Extract
     url(r'^run_extract/$', RunExtract.as_view(), name="run_extract"),
     # Run On server
