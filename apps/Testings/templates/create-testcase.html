@@ -135,6 +135,7 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
+                    var commandSource = data.results[0].source[0];                
 
                     droppedElements.push({
                         id: commandID,
@@ -143,9 +144,9 @@
                         position: droppedElements.length,
                         indentation: indentation,
                         arguments: commandArguments,
+                        source: commandSource,
                         extraValue: undefined,
                     });
-                    console.log(droppedElements);
                     drawElementsFromJSON();
                 },
                 error: function (error) {
@@ -169,6 +170,7 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
+                    var commandSource = data.results[0].source[0];
 
                     var droppedElement = {
                         id: commandID,
@@ -176,7 +178,9 @@
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
-                        arguments: commandArguments
+                        arguments: commandArguments,
+                        source: commandSource,
+                        extraValue: undefined,
                     };
                     droppedElements.splice(addElementInThisPosition, 0, droppedElement);
                     drawElementsFromJSON();

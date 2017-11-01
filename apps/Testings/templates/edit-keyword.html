@@ -110,14 +110,17 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
+                    var commandSource = data.results[0].source[0];                
 
-                    droppedElements.push({              
-                        id:     commandID,  
-                        name:   commandName,
+                    droppedElements.push({
+                        id: commandID,
+                        name: commandName,
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
-                        arguments: commandArguments
+                        arguments: commandArguments,
+                        source: commandSource,
+                        extraValue: undefined,
                     });
                     drawElementsFromJSON();
                 },
@@ -142,14 +145,17 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
+                    var commandSource = data.results[0].source[0];
 
-                    var droppedElement = {              
-                        id:     commandID,  
-                        name:   commandName,
+                    var droppedElement = {
+                        id: commandID,
+                        name: commandName,
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
-                        arguments: commandArguments
+                        arguments: commandArguments,
+                        source: commandSource,
+                        extraValue: undefined,
                     };
                     droppedElements.splice(addElementInThisPosition, 0, droppedElement);
                     drawElementsFromJSON();
