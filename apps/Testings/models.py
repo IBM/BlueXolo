@@ -61,7 +61,6 @@ class TestCase(models.Model):
     collection = models.ManyToManyField(Collection)
     functions = models.CharField(_('functions'), blank=True, max_length=100)
     phase = models.ForeignKey(Phase)
-    profile = models.ForeignKey(ServerProfile, blank=True, null=True)
     values = models.TextField(_('values'), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
