@@ -45,7 +45,7 @@ class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
         if column == 'created_at':
             return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
         else:
-            return super(KeywordsListJson, self).render_column(row, column)
+            return super(TestcasesListJson, self).render_column(row, column)
 
 class CollectionsListJson(LoginRequiredMixin, BaseDatatableView):
     model = Collection

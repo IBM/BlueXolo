@@ -294,13 +294,14 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _passwd = ""
             _path = ""
             for p in params:
-                if p.get('parameter') == 'host':
+                _parameter = Parameters.objects.get(pk=p.get('id'))
+                if _parameter == 'host':
                     _host = p.get('value')
-                if p.get('parameter') == 'user':
+                if _parameter == 'user':
                     _username = p.get('value')
-                if p.get('parameter') == 'passwd':
+                if _parameter == 'passwd':
                     _passwd = p.get('value')
-                if p.get('parameter') == 'path':
+                if _parameter == 'path':
                     _path = p.get('value')
                 if p.get('category') == 2:
                     _values.append(p.get('value'))
