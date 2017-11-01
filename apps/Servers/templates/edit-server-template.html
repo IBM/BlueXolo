@@ -59,7 +59,7 @@
     <div id="modalParameter" class="modal modal-fixed-footer">
         <div class="modal-content">
             <h4>New Parameter</h4>
-            <form novalidate>
+            <form novalidate id="form_parameter">
                 {% include "form-snippet.html" with form=ParametersForm %}
             </form>
         </div>
@@ -200,6 +200,7 @@
                 _btn_create.disabled = true;
                 _table_containenr.classList.add("hide");
             }
+            _select_input.val(null).trigger("change");
         }
 
         document.getElementById("id_category").onchange = cleanGlobalParams;
@@ -226,6 +227,7 @@
                     value_type: document.getElementById('id_value_type').value,
                 }, success: function (data) {
                     drawMessage("Parameter '" + data.name + "' Created", 'green');
+                    document.getElementById('form_parameter').reset();
                     $('#modalParameter').modal('close');
                 }, error: function (err) {
                     if (err.responseJSON.name) {
