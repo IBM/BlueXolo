@@ -40,12 +40,27 @@ class Keyword(models.Model):
         return '{0}'.format(self.name)
 
 
+class Phase(models.Model):
+    name = models.CharField(_('name'), max_length=100, unique=True)
+    product = models.ForeignKey(Source)
+
+    class Meta:
+        db_table = "phases"
+        verbose_name = _('phase')
+        verbose_name_plural = _('phases')
+
+    def __str__(self):
+        return '{0}'.format(self.name)
+
+
 class TestCase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     script = models.TextField(_('script'), blank=True)
     user = models.ForeignKey(User)
     collection = models.ManyToManyField(Collection)
+    functions = models.CharField(_('functions'), blank=True, max_length=100)
+    phase = models.ForeignKey(Phase)
     profile = models.ForeignKey(ServerProfile, blank=True, null=True)
     values = models.TextField(_('values'), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
