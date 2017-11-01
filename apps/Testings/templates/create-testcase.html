@@ -95,7 +95,6 @@
                     id: keywordID,
                 },
                 success: function (data) {
-                    console.log(data);
                     var keywordName = data.name;
                     var keywordArguments = data.arguments;                    
                     var valuesAsString = data.values;
@@ -135,6 +134,7 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
+                    var commandSource = data.results[0].source[0];                
 
                     droppedElements.push({
                         id: commandID,
@@ -143,9 +143,9 @@
                         position: droppedElements.length,
                         indentation: indentation,
                         arguments: commandArguments,
+                        source: commandSource,
                         extraValue: undefined,
                     });
-                    console.log(droppedElements);
                     drawElementsFromJSON();
                 },
                 error: function (error) {
@@ -169,6 +169,7 @@
                     var commandName = data.results[0].name;
                     var commandArguments = data.results[0].arguments;
                     var commandCategory = data.results[0].source[0].category;
+                    var commandSource = data.results[0].source[0];
 
                     var droppedElement = {
                         id: commandID,
@@ -176,7 +177,9 @@
                         category: commandCategory,
                         position: droppedElements.length,
                         indentation: indentation,
-                        arguments: commandArguments
+                        arguments: commandArguments,
+                        source: commandSource,
+                        extraValue: undefined,
                     };
                     droppedElements.splice(addElementInThisPosition, 0, droppedElement);
                     drawElementsFromJSON();
@@ -331,7 +334,14 @@
             var inForLoop = false;
             var identationForLoop = 1;
 
+            var keywordDroppedCategory = 6;
+
             for (var i = 0; i < droppedElements.length; i++) {
+
+                if(droppedElements[i].category === keywordDroppedCategory){
+                    translateDroppedKeyword(droppedElements[i].keywordJSON);
+                    continue;
+                }
 
                 var elementType = droppedElements[i].id;
                 var identationLevel = droppedElements[i].indentation;
@@ -368,7 +378,53 @@
                     identationForLoop = (Number(identationLevel));
                 }
 
-            }// Closes for iterates over the rows in the drag and drop table        
+            }
+        }
+
+        function translateDroppedKeyword(keyword) {
+            var dragNDrop = document.getElementById("dragDropSpace");
+            var rowsInTable = dragNDrop.children;
+
+            var terminal = document.getElementById("terminal");
+            var translation = [];
+
+            var inForLoop = false;
+            var identationForLoop = 1;        
+
+            for (var i = 0; i < keyword.length; i++) {
+                var elementType = keyword[i].id;
+                var identationLevel = keyword[i].indentation;
+                var parameters = keyword[i].arguments;
+
+                if (inForLoop && Number(identationLevel) <= identationForLoop) {
+                    inForLoop = false;
+                }
+
+                if (inForLoop) {
+                    var translatedRow = handleIdentation(identationForLoop - 1);
+                    translatedRow += "\\    ";
+                    translatedRow += handleIdentation(identationLevel);
+                }
+                else {
+                    var translatedRow = handleIdentation(identationLevel);
+                }
+
+                translatedRow += handleTranslationOf(keyword[i], parameters);
+                translation.push(translatedRow);
+
+                if ((i + 1) >= rowsInTable.length) {
+                    for (var j = 0; j < translation.length; j++) {
+                        terminal.value += translation[j];
+                    }
+                    return true;
+                }
+
+                if (keyword[i].name === "for in" || keyword[i].name === "for in range") {
+                    inForLoop = true;
+                    identationForLoop = (Number(identationLevel));
+                }
+
+            }
         }
 
         function popUpPropertiesTestcase() {
@@ -703,7 +759,7 @@
                 url: '/apis/keywords/' + this.value + '/',
                 type: 'GET',
                 success: function (data) {
-                    console.log(data)
+                    //console.log(data)
                     var _section = document.getElementById('custom-keywords-area');
                     _section.innerHTML = "";
                     var _element = document.createElement('div');
