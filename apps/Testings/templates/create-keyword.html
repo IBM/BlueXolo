@@ -380,7 +380,8 @@
         }
 
         function saveKeyword() {
-            translateToRobot(writeKeywordDatabase);
+            var functionToExecuteAfter = writeKeywordDatabase;
+            translateToRobot(functionToExecuteAfter);
         }
 
         function hidePropertiesKeyword() {
