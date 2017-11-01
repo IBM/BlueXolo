@@ -15,14 +15,15 @@ from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection, TestCase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer
 from .api_pagination import CommandsPagination, KeywordPagination
-from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter
+from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
+    PhaseFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -447,6 +448,40 @@ class TestCaseDetailApiView(mixins.RetrieveModelMixin,
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
     filter_class = TestCaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class PhaseApiView(LoginRequiredMixin,
+                   mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   generics.GenericAPIView
+                   ):
+    queryset = Phase.objects.all()
+    serializer_class = PhaseSerializer
+    filter_class = PhaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class PhaseDetailApiView(mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.DestroyModelMixin,
+                         generics.GenericAPIView):
+    queryset = Phase.objects.all()
+    serializer_class = PhaseSerializer
+    filter_class = PhaseFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
