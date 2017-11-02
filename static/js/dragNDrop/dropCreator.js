@@ -207,6 +207,7 @@ function createButtonToDeleteRow(rowID){
 	var buttonNode =  document.createElement("input");
     buttonNode.setAttribute("type", "submit");
     buttonNode.setAttribute("value", "X");
+    buttonNode.setAttribute("class", "btn-flat red-text");
 
 	buttonNode.addEventListener("click", function(){	
 		deleteAllChildren(rowID);

@@ -142,7 +142,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -188,7 +188,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
     if(droppedElement.category !== 1){
         propPanel = addExtraTextInput(propPanel, droppedElementIndex);
-    }    
+    }
 
     // Add arguments in the properties panel
     for (var i = 0; i < arguments.length; i++) {
@@ -201,7 +201,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
             checkbox.id = checkboxCounter;
-            
+
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
 
@@ -221,7 +221,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
             if(arguments[i].visible !== undefined){
                 checkbox.setAttribute("checked", arguments[i].visible);
-            }                            
+            }
 
             // Create a label with the argument name
             var labelNode = document.createElement('label');
@@ -236,10 +236,10 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
         if (arguments[i].needs_value) {
             var inputNode = document.createElement("input");
             inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
-            
+
             if(arguments[i].value!== undefined){
                 inputNode.setAttribute('value', arguments[i].value);
-            }            
+            }
 
             // Now it doesn't refresh the website if you press enter while typing on the form
             inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
@@ -250,7 +250,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -283,6 +283,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         return;
     }
 
+    cleanPropertiesPanel();
+
     // Clean previous properties panel
     var propPanel = document.getElementById("propertiesPannel");
     while (propPanel.hasChildNodes()) {
@@ -307,7 +309,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
             checkbox.id = checkboxCounter;
-            
+
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
 
@@ -327,7 +329,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
             if(arguments[i].visible !== undefined){
                 checkbox.setAttribute("checked", arguments[i].visible);
-            }                            
+            }
 
             // Create a label with the argument name
             var labelNode = document.createElement('label');
@@ -352,27 +354,27 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
                         placeholder: 'Add Tags',
                         secondaryPlaceholder: '+Tag',
                     });
-                });                 
+                });
             }
             else{
                 var inputNode = document.createElement("input");
                 inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
-                
+
                 if(arguments[i].value!== undefined){
                     inputNode.setAttribute('value', arguments[i].value);
-                }       
+                }
 
                 // Now it doesn't refresh the website if you press enter while typing on the form
                 inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
-                tempForm.appendChild(inputNode);                
-            }         
+                tempForm.appendChild(inputNode);
+            }
         }
 
         propPanel.appendChild(tempForm);
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -388,8 +390,9 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         saveTagFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }

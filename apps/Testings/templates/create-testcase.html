@@ -356,11 +356,8 @@
             for (var i = 0; i < droppedElements.length; i++) {
 
                 if (droppedElements[i].category === keywordDroppedCategory) {
-                    translateDroppedKeyword(droppedElements[i].keywordJSON);                    
+                    translateDroppedKeyword(droppedElements[i].keywordJSON);
                     if ((i + 1) >= rowsInTable.length) {
-                        for (var j = 0; j < translation.length; j++) {
-                            terminal.value += translation[j];
-                        }
                         if (callBackFunction !== undefined) {
                             callBackFunction();
                         }
@@ -368,7 +365,6 @@
                     }else{
                         continue;
                     }
-
                 }
 
                 var elementType = droppedElements[i].id;
@@ -389,12 +385,9 @@
                 }
 
                 translatedRow += handleTranslationOf(droppedElements[i], parameters);
-                translation.push(translatedRow);
+                terminal.value += translatedRow;
 
                 if ((i + 1) >= rowsInTable.length) {
-                    for (var j = 0; j < translation.length; j++) {
-                        terminal.value += translation[j];
-                    }
                     if (callBackFunction !== undefined) {
                         callBackFunction();
                     }
@@ -438,14 +431,7 @@
                 }
 
                 translatedRow += handleTranslationOf(keyword[i], parameters);
-                translation.push(translatedRow);
-
-                if ((i + 1) >= rowsInTable.length) {
-                    for (var j = 0; j < translation.length; j++) {
-                        terminal.value += translation[j];
-                    }
-                    return true;
-                }
+                terminal.value += translatedRow;
 
                 if (keyword[i].name === "for in" || keyword[i].name === "for in range") {
                     inForLoop = true;
