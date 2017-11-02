@@ -181,5 +181,5 @@ class SshConnect(LoginRequiredMixin):
         a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
         a.write("#      {0}      #\n".format(name))
         for p in variables:
-            a.write('{0} = "{1}"\n'.format(p.get("parameter"), p.get("value")))
+            a.write('{0} = "{1}"\n'.format(p[0],p[1]))
         a.close()

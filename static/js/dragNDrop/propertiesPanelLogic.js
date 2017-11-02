@@ -142,7 +142,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center section";
+    tempDiv.className = "center";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -250,7 +250,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center section";
+    tempDiv.className = "center";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -282,8 +282,6 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         hidePropertiesPanel();
         return;
     }
-
-    cleanPropertiesPanel();
 
     // Clean previous properties panel
     var propPanel = document.getElementById("propertiesPannel");
@@ -374,7 +372,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center section";
+    tempDiv.className = "center";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -390,9 +388,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         saveTagFromInput(droppedElementIndex, elementID);
     }
 
-    var propPanelContainer = document.getElementById("propertiesPanelContainer");
-    tempDiv.appendChild(buttonNode);
-    propPanelContainer.appendChild(tempDiv);
+    propPanel.appendChild(tempDiv);
+    propPanel.appendChild(buttonNode);
 
     showPropertiesPanel();
 }
