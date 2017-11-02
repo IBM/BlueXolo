@@ -420,7 +420,6 @@ class RExtract():
                             keyw_opt, created = Argument.objects.get_or_create(
                                 name=arg_name,
                                 description=rbt_keyw,
-                                requirement=isRequired,
                                 needs_value=True
                             )
                             rbt_keyw.arguments.add(keyw_opt)
