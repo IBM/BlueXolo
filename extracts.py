@@ -7,7 +7,7 @@ import time
 import urllib.request
 import zipfile
 from pexpect import pxssh
-#import distro
+import distro
 
 from celery import shared_task
 
@@ -256,14 +256,14 @@ class MExtract:
     def _getSource(self, category):
 
         if category is 2:
-            # if self.api_config.get('host'):
-            #     name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
-            #     version = self.api_config.get('host')
-            # else:
-            #     name = distro.linux_distribution()[0]
-            #     version = distro.linux_distribution()[1]
-            name = "dummy"
-            version = "dummy"
+            if self.api_config.get('host'):
+                name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
+                version = self.api_config.get('host')
+            else:
+                name = distro.linux_distribution()[0]
+                version = distro.linux_distribution()[1]
+            # name = "dummy"
+            # version = "dummy"
             try:
                 source, created = Source.objects.get_or_create(
                     name=name,
@@ -348,6 +348,7 @@ class RExtract():
         self.r_version = robot_version
         self.libraries = list()
         self.extra_libraries = list()
+        self.source_dict = dict()
         _category = int(config.get('category'))
         if _category is 4:
             self.zip = zipfile.ZipFile(config.get("zip"))
@@ -363,9 +364,10 @@ class RExtract():
                         version=self.r_version.version,
                         category=5,
                     )
-                    self.library = source
-                    self.library.depends.add(self.r_version)
-                    self.library.save()
+                    instance = source
+                    instance.depends.add(self.r_version)
+                    instance.save()
+                    self.source_dict[name] = instance
         elif _category is 5:
             self.lib_url = config.get("url")
             req = urllib.request.Request(self.lib_url)
@@ -375,8 +377,7 @@ class RExtract():
                 'name': name,
                 'lib_page': res.readlines()
             })
-
-            self.library = robot_version
+            self.source_dict[name] = robot_version
 
 
 
@@ -384,6 +385,7 @@ class RExtract():
         """ Parses a Robot library from a json formated string
             format is expected to be like the Robot Framework 3.0 page
         """
+        lib_name = lib['name']
         libdoc = False
         for x in lib['lib_page']:
             # libdoc is the JS variable where the docs are stored.
@@ -401,7 +403,7 @@ class RExtract():
                             name=keyword['name'],
                             description=keyword['shortdoc']
                         )
-                        rbt_keyw.source.add(self.library)
+                        rbt_keyw.source.add(self.source_dict[lib_name])
                         rbt_keyw.save()
                     except Exception as error:
                         print(error)
@@ -418,7 +420,6 @@ class RExtract():
                             keyw_opt, created = Argument.objects.get_or_create(
                                 name=arg_name,
                                 description=rbt_keyw,
-                                requirement=isRequired,
                                 needs_value=True
                             )
                             rbt_keyw.arguments.add(keyw_opt)

@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from apps.Products.models import Command, Argument, Source
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Testings.models import Keyword, Collection, TestCase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase
 from apps.Users.models import Task
 
 
@@ -107,6 +107,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TestCaseSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = TestCase
+        fields = '__all__'
+
+
+class PhaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Phase
         fields = '__all__'
