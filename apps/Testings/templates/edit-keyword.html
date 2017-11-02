@@ -73,11 +73,10 @@
         {#        };#}
 
         function getKeywordToEdit() {
-
-            var keywordData = "{{object.values}}";
+            var keywordData = document.getElementById('kwd_values').value;
+{#            var keywordData = "{{object.values}}";#}
             //console.log(keywordData.replace(/&quot;/g,'"'));
-
-            droppedElements = JSON.parse(keywordData.replace(/&quot;/g, '"'));
+            droppedElements = JSON.parse(keywordData);
             //console.log(droppedElements);
             drawElementsFromJSON();
         }
@@ -408,6 +407,7 @@
 
 
     <div class="row">
+        <input type="hidden" value="{{ object.values }}" id="kwd_values">
         <div class="col s12">
             <div class="input-field col s6 l4">
                 <select id="keyword_collection"></select>
