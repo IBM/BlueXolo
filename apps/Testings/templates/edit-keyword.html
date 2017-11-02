@@ -31,16 +31,16 @@
         var new_keyword;
 
         $(document).ready(function () {
+        var _colleciontSelect = document.getElementById('keyword_collection');
             //populate selects
             var _config = {
                 "url": "{% url "api-collection" %}",
-                "data": {
-                    id: {{ object.pk }}
-                },
+                "data": {},
                 "container": "keyword_collection"
             };
             selectServerSide(_config);
 
+            _colleciontSelect.value = document.getElementById('kwd_collection').value;
 
             getFirstCommands({
                 "data": {"category": 1, "page_size": 10, "extra": 0},
@@ -408,7 +408,9 @@
 
     <div class="row">
         <input type="hidden" value="{{ object.values }}" id="kwd_values">
+        <input type="hidden" value="{{ object.collection.last.pk }}" id="kwd_collection">
         <div class="col s12">
+
             <div class="input-field col s6 l4">
                 <select id="keyword_collection"></select>
                 <label for="keyword_collection">Keyword Collection</label>
