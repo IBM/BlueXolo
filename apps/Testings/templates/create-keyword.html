@@ -87,6 +87,40 @@
             });
         }
 
+        function addKeywordToJSON(indentation, keywordID) {
+            $.ajax({
+                url: "/apis/keywords/" + keywordID + "/",
+                type: 'GET',
+                data: {
+                    id: keywordID,
+                },
+                success: function (data) {
+                    var keywordName = data.name;
+                    var keywordArguments = data.arguments;
+                    var valuesAsString = data.values;
+                    var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
+                    var keywordCategory = 6;
+
+                    droppedElements.push({
+                        id: keywordID,
+                        name: keywordName,
+                        category: keywordCategory,
+                        position: droppedElements.length,
+                        indentation: indentation,
+                        keywordJSON: keywordValues,
+                        arguments: keywordArguments,
+                        extraValue: undefined,
+                    });
+                    drawElementsFromJSON();
+                },
+                error: function (error) {
+                    console.log("Error while adding element to JSON after being dropped");
+                    console.log(error);
+                    return false;
+                }
+            });
+        } 
+
         function addElementToJSON(indentation, commandID) {
 
             $.ajax({
@@ -644,14 +678,11 @@
                 url: '/apis/keywords/' + this.value + '/',
                 type: 'GET',
                 success: function (data) {
-                    console.log(data)
-
                     var _section = document.getElementById('custom-keywords-area');
                     _section.innerHTML = "";
                     var _element = document.createElement('div');
-
                     _element.className = "drag-drop-item";
-                    _element.id = data.id + "-drag-drop";
+                    _element.id = data.id + "-keyword-drag-drop";
                     _element.draggable = true;
                     _element.setAttribute("ondragstart", "drag(event)");
                     _element.innerHTML = data.name;
