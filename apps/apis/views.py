@@ -330,7 +330,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
                 name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,_profile_name, _values_name)
+                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,_profile_name, _values_name)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
