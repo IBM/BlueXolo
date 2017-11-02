@@ -283,6 +283,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         return;
     }
 
+    cleanPropertiesPanel();
+
     // Clean previous properties panel
     var propPanel = document.getElementById("propertiesPannel");
     while (propPanel.hasChildNodes()) {
@@ -388,8 +390,9 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         saveTagFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
