@@ -292,31 +292,45 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
         _data = {}
         try:
             kwd = Keyword.objects.get(pk=_config.get('keyword'))
-            profile = ServerProfile.objects.get(pk=_config.get('profile'))
-            params = json.loads(profile.config)
-            _values = []
             _host = ""
             _username = ""
             _passwd = ""
             _path = ""
-            for p in params:
-                if p.get('parameter') == 'host':
-                    _host = p.get('value')
-                if p.get('parameter') == 'user':
-                    _username = p.get('value')
-                if p.get('parameter') == 'passwd':
-                    _passwd = p.get('value')
-                if p.get('parameter') == 'path':
-                    _path = p.get('value')
-                if p.get('category') == 2:
-                    _values.append(p.get('value'))
+            _profile_name = ""
+            _values = []
+            _values_name = []
+            _perfiles = json.loads(_config.get('profile'))
+            for perfil in _perfiles:
+                _server_profile = ServerProfile.objects.get(pk=perfil)
+                if _server_profile.category == 2:
+                    _parametros = json.loads(_server_profile.config)
+                    for p in _parametros:
+                        _parametro = Parameters.objects.get(pk=p.get('id'))
+                        if _parametro.name == 'host':
+                            _host = p.get('value')
+                        if _parametro.name == 'user':
+                            _username = p.get('value')
+                        if _parametro.name == 'passwd':
+                            _passwd = p.get('value')
+                        if _parametro.name == 'path':
+                            _path = p.get('value')
+                elif _server_profile.category == 1:
+                    _global_variables =json.loads(_server_profile.config)
+                    _profile_name = _server_profile.name
+                    for variable in _global_variables:
+                        _values.append(variable.get('value'))
+                        _param_name = Parameters.objects.get(pk=variable.get('id'))
+                        _arreglo = []
+                        _arreglo.append(_param_name.name)
+                        _arreglo.append(variable.get('value'))
+                        _values_name.append(_arreglo)
+
             try:
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
                 name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
-                                             profile.name, params)
+                filename = run_keyword(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,_profile_name, _values_name)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
@@ -324,7 +338,6 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 )
                 request.user.tasks.add(task)
                 request.user.save()
-
                 _data = {
                     'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                 }
