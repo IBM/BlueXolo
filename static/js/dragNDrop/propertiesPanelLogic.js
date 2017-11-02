@@ -54,6 +54,28 @@ function cleanPropertiesPanel(){
     }
 }
 
+function getIfArgumentIsEmpty(argument){
+    var hasValue = false;
+    var isChecked = undefined;
+    
+    if(argument.value !== undefined || argument.value !== ""){
+        hasValue = true;
+    }
+    if(argument.needs_value && argument.visible !== undefined){
+        isChecked = argument.visible;
+    }
+
+    if(argument.needs_value && !hasValue){
+        return false;
+    }
+    else if(argument.requirement || isChecked !== undefined){
+        return false;
+    }    
+    else{
+        return true;
+    }
+}
+
 function drawPropertiesForKeywords(droppedElementIndex, elementID) {    
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
@@ -83,6 +105,11 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
+
+            if(getIfArgumentIsEmpty(arguments[i])){
+                continue;
+            }
+
             var tempForm = document.createElement("form");
 
             // If the command need the argument in order to work
