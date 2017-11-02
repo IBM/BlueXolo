@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
-from .models import Keyword, Collection, TestCase
+from .models import Keyword, Collection, TestCase, Phase
 
 
 class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
@@ -26,6 +26,7 @@ class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
         else:
             return super(KeywordsListJson, self).render_column(row, column)
 
+
 class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
     model = TestCase
     columns = ['name', 'description', 'created_at', 'pk']
@@ -45,7 +46,8 @@ class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
         if column == 'created_at':
             return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
         else:
-            return super(KeywordsListJson, self).render_column(row, column)
+            return super(TestcasesListJson, self).render_column(row, column)
+
 
 class CollectionsListJson(LoginRequiredMixin, BaseDatatableView):
     model = Collection
@@ -62,3 +64,15 @@ class CollectionsListJson(LoginRequiredMixin, BaseDatatableView):
             )
         return qs
 
+
+class PhasesListJson(LoginRequiredMixin, BaseDatatableView):
+    model = Phase
+    columns = ['name', 'pk']
+    order_columns = ['name', 'pk']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(name__icontains=search)
+        return qs

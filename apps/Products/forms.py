@@ -1,5 +1,6 @@
 from django import forms
 
+from apps.Testings.models import Phase
 from .models import Argument, Source, Command
 
 
@@ -9,14 +10,24 @@ class ArgumentForm(forms.ModelForm):
         fields = '__all__'
 
 
-class SourceProductForm(forms.ModelForm):
-    path = forms.CharField(widget=forms.TextInput())
-    regex = forms.CharField(widget=forms.Textarea(attrs={'rows': 6, 'class': 'materialize-textarea'}), required=False)
-    host = forms.CharField()
-    port = forms.IntegerField()
-    username = forms.CharField()
+class PhaseForm(forms.ModelForm):
+    class Meta:
+        model = Phase
+        fields = '__all__'
 
-    password = forms.CharField(widget=forms.PasswordInput())
+    def __init__(self, *args, **kwargs):
+        """This filter only for sources in the category 4(Robot)"""
+        super(PhaseForm, self).__init__(*args, **kwargs)
+        self.fields['product'].queryset = Source.objects.filter(category=3)
+
+
+class SourceProductForm(forms.ModelForm):
+    path = forms.CharField(widget=forms.TextInput(), required=False)
+    regex = forms.CharField(widget=forms.Textarea(attrs={'rows': 6, 'class': 'materialize-textarea'}), required=False)
+    host = forms.CharField(required=False)
+    port = forms.IntegerField(required=False)
+    username = forms.CharField(required=False)
+    password = forms.CharField(widget=forms.PasswordInput(), required=False)
 
     class Meta:
         model = Source

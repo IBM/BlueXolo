@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Delete Source{% endblock %}{% block subtitle %}Delete Source{% endblock %}
+{% block title %}Delete Phase {% endblock %}
+{% block subtitle %}Delete Phase {% endblock %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -7,18 +8,22 @@
                 <div class="card-content">
                     <form action="" method="POST">
                         {% csrf_token %}
-                        <p class="card-title">Are you sure you want to delete the follow source?</p>
+                        <p class="card-title">Are you sure you want to delete the follow Phase?</p>
                         <ul>
                             <li><b>Name:</b> {{ object.name }}</li>
-                            <li><b>Version:</b> {{ object.version }}</li>
+                            <li><b>Product:</b> {{ object.product}}</li>
                         </ul>
                         <div class="center">
-                            <a href="/sources/{{ slug }}" class="btn blue-grey">Back</a>
                             <input type="submit" value="Confirm" class="btn red"/>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+     <div class="fixed-action-btn left-button ">
+        <a href="{% url "phases"  %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
     </div>
 {% endblock %}

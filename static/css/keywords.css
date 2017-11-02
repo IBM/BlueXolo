@@ -74,6 +74,19 @@ table {
     border: 1px dotted #60666a;
 }
 
+#tab1{ 
+    direction: rtl;
+    margin-left:auto;
+    margin-right: auto;
+    overflow: auto; 
+    height: 42em;
+}
+
+.card-content{
+    height: fill;
+    direction: ltr;
+}
+
 #propertiesPannel {
     display: none;
     max-height: 80vh;
@@ -90,6 +103,8 @@ table {
     display: flex;
     -webkit-justify-content: end;
     justify-content: end;
+    -webkit-flex-direction: column;
+    flex-direction: column;    
     width: 100%;
     height: 100%;
     background-color: white;

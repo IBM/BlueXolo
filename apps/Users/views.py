@@ -166,3 +166,4 @@ class RequestAccessView(FormView):
             messages.error(self.request, "Failed on request access. Error {}".format(error))
             return HttpResponseRedirect(reverse_lazy('request-access'))
         return HttpResponseRedirect(self.get_success_url())
+

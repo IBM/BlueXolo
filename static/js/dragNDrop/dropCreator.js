@@ -72,10 +72,22 @@ function drawElementsFromJSON(){
 		//Gives style to the button and makes the dropped element clickable
 		basicDnDNode.id = newID;
 		basicDnDNode.className = newClass;
+				
+		var commandProductCategory = 3;
+		var commandRobotCategory = 4;
+		var commandLibrariesCategory = 5;
+		if(droppedElements[i].category === commandProductCategory ||
+			droppedElements[i].category === commandRobotCategory ||
+			droppedElements[i].category === commandLibrariesCategory){
+			
+			var libraryName = droppedElements[i].source.name;
+			textNode.innerText += libraryName + "."+droppedElements[i].name;
+		}
+		else{
+			textNode.innerText += droppedElements[i].name;
+		}		
 		
 		//Gives style to the button
-		textNode.innerText = droppedElements[i].name;
-		
 		textNode.className = newClass;
 		basicDnDNode.appendChild(textNode);
 
@@ -195,6 +207,7 @@ function createButtonToDeleteRow(rowID){
 	var buttonNode =  document.createElement("input");
     buttonNode.setAttribute("type", "submit");
     buttonNode.setAttribute("value", "X");
+    buttonNode.setAttribute("class", "btn-flat red-text");
 
 	buttonNode.addEventListener("click", function(){	
 		deleteAllChildren(rowID);
