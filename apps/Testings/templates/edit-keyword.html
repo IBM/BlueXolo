@@ -74,7 +74,7 @@
 
         function getKeywordToEdit() {
             var keywordData = document.getElementById('kwd_values').value;
-{#            var keywordData = "{{object.values}}";#}
+            {#            var keywordData = "{{object.values}}";#}
             //console.log(keywordData.replace(/&quot;/g,'"'));
             droppedElements = JSON.parse(keywordData);
             //console.log(droppedElements);
@@ -543,8 +543,7 @@
                         <h4 class="app-title">Keyword Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
-                                <select name="severs" id="selectProfiles"
-                                        onchange="document.getElementById('runScript').disabled = false;">
+                                <select name="severs" id="selectProfiles" multiple>
                                 </select>
                                 <label for="severs">Server Profile</label>
                             </div>
@@ -700,23 +699,34 @@
             _btn_save.disabled = !(_keyCollection.value && _keyName.value);
         }
 
+        document.getElementById('selectProfiles').onchange = function () {
+            if ($('#selectProfiles').val()) {
+                document.getElementById('runScript').disabled = false;
+            }
+        };
+
         function runScript() {
             saveKeyword();
+            var _profiles = JSON.stringify($('#selectProfiles').val());
             setTimeout(function () {
                 $.ajax({
                     url: "{% url "run-on-server" %}",
                     type: "post",
                     data: {
                         keyword: new_keyword.id,
-                        profile: document.getElementById('selectProfiles').value
+                        profile: _profiles
                     },
                     success: function (data) {
+                        drawMessage("Keyword has sent to scheduler", 'blue');
                         $('#modalPreview').modal('close');
-                        $('#black_terminal').empty();
-
-                        $('#black_terminal').append('<iframe src="' + data.report + '"></iframe>\n');
-                        $('#modal-run').modal('open');
-
+                        var win = window.open('/' + data.report + '', '_blank');
+                        if (win) {
+                            //Browser has allowed it to be opened
+                            win.focus();
+                        } else {
+                            //Browser has blocked it
+                            alert('Please allow popups for this website');
+                        }
                     }, error: function (err) {
                         console.log('error on run script: ' + err)
                     }
