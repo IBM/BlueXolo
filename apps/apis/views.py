@@ -149,6 +149,15 @@ class CommandsApiView(mixins.ListModelMixin,
         category = self.request.query_params.get('category')
         source = self.request.query_params.get('source')
         exact = self.request.query_params.get('exact')
+        full_search = self.request.query_params.get('full_search')
+        if full_search == '1':
+            queryset = queryset.filter(
+                Q(source__name__icontains=name) |
+                Q(name__icontains=name)
+            )
+            if category:
+                queryset = queryset.filter(source__category=category)
+            return queryset.annotate(Count('id'))
         if category:
             if category in ['2', '3', '4', '5'] and name:
                 # check the category and search by his name
@@ -315,7 +324,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         if _parametro.name == 'path':
                             _path = p.get('value')
                 elif _server_profile.category == 1:
-                    _global_variables =json.loads(_server_profile.config)
+                    _global_variables = json.loads(_server_profile.config)
                     _profile_name = _server_profile.name
                     for variable in _global_variables:
                         _values.append(variable.get('value'))
@@ -330,7 +339,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
                 name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,_profile_name, _values_name)
+                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
+                                             _profile_name, _values_name)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
