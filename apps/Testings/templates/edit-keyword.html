@@ -31,8 +31,9 @@
         var new_keyword;
 
         $(document).ready(function () {
-        var _colleciontSelect = document.getElementById('keyword_collection');
-            //populate selects
+
+            var _colleciontSelect = document.getElementById('keyword_collection');
+
             var _config = {
                 "url": "{% url "api-collection" %}",
                 "data": {},
@@ -41,36 +42,8 @@
             selectServerSide(_config);
 
             _colleciontSelect.value = document.getElementById('kwd_collection').value;
-
-            getFirstCommands({
-                "data": {"category": 1, "page_size": 10, "extra": 0},
-                "id_div_accordion": "controlFlowCommandsPanel"
-            });
-            $('.collapsible').collapsible('open', 0);
-            getFirstCommands({
-                "data": {"category": 2, "page_size": 5, "extra": 0},
-                "id_div_accordion": "systemCommandsPanel"
-            });
-            getFirstCommands({
-                "data": {"category": 3, "page_size": 5, "extra": 0},
-                "id_div_accordion": "productCommandsPanel"
-            });
-            getFirstCommands({
-                "data": {"category": 4, "page_size": 5, "extra": 0},
-                "id_div_accordion": "robotCommandsPanel"
-            });
-            getFirstCommands({
-                "data": {"category": 5, "page_size": 5, "extra": 0},
-                "id_div_accordion": "librariesCommandsPanel"
-            });
-            getKeywordToEdit();
         });
 
-        {#        var test = function (event, ui) {#}
-        {#            console.log(event);#}
-        {#            console.log(event.target);#}
-        {#            console.log(ui.item[0]);#}
-        {#        };#}
 
         function getKeywordToEdit() {
             var keywordData = document.getElementById('kwd_values').value;
@@ -81,22 +54,6 @@
             drawElementsFromJSON();
         }
 
-        function getFirstCommands(config) {
-            $.ajax({
-                url: "{% url 'api-commands' %}",
-                type: 'GET',
-                data: config.data,
-                success: function (data) {
-                    if (data.results) {
-                        populateCommandsPanel(data.results, config.id_div_accordion);
-                    }
-                },
-                error: function (error) {
-                    console.log("Error retrieving commands when website is loaded " + error);
-                    return false;
-                }
-            });
-        }
 
         function addKeywordToJSON(indentation, keywordID) {
             $.ajax({
@@ -130,7 +87,7 @@
                     return false;
                 }
             });
-        }        
+        }
 
         function addElementToJSON(indentation, commandID) {
 
@@ -356,7 +313,7 @@
                             callBackFunction();
                         }
                         return true;
-                    }else{
+                    } else {
                         continue;
                     }
                 }
@@ -435,27 +392,6 @@
             }
         }
 
-        function popUpPropertiesKeyword() {
-            var floatingDiv = document.getElementById("floatingDiv"),
-                lightsOff = document.createElement("div");
-
-            lightsOff.style.width = window.innerWidth + "px";
-            lightsOff.style.height = window.innerHeight + "px";
-            lightsOff.className = "lightsOff";
-            lightsOff.id = "lightsOff";
-
-            lightsOff.onclick = function () {
-                document.body.removeChild(this);
-                floatingDiv.style.visibility = 'hidden';
-            };
-
-            document.body.appendChild(lightsOff);
-
-            floatingDiv.style.visibility = 'visible';
-            floatingDiv.style.top = window.innerHeight / 2 - 50 + 'px';
-            floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
-        }
-
         function writeKeywordDatabase() {
             var keywordName = document.getElementById("keyword_name").value;
             var keywordDescription = document.getElementById("keyword_description").value;
@@ -485,7 +421,6 @@
                 }
             });
 
-            hidePropertiesKeyword();
         }
 
         function saveKeyword() {
@@ -493,13 +428,7 @@
             translateToRobot(functionToExecuteAfter);
         }
 
-        function hidePropertiesKeyword() {
-            {#            var floatingDiv = document.getElementById("floatingDiv"),#}
-            {#                lightsOff = document.getElementById("lightsOff");#}
-            {##}
-            {#            document.body.removeChild(lightsOff);#}
-            {#            floatingDiv.style.visibility = 'hidden';#}
-        }
+
     </script>
 
 
@@ -527,58 +456,7 @@
     <div class="section">
         {% csrf_token %}
         <div class="row">
-            <div class="col s12 l3">
-                <div class="section ">
-                    <div class="col s12">
-                        <div class="row">
-                            <label for="command-search">Command Search</label>
-                            <div class="input-field col s12">
-                                <select id="command-search" class="autocomplete"></select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <p class=" center-align blue-grey-text">Select command to drag</p>
-                <ul class="collapsible" data-collapsible="accordion">
-                    <li>
-                        <div class="collapsible-header">Control Flow Sentences</div>
-                        <div id="controlFlowCommandsPanel" class="collapsible-body"></div>
-                    </li>
-                    <li>
-                        <div class="collapsible-header">OS Commands</div>
-                        <div id="systemCommandsPanel" class="collapsible-body"></div>
-                    </li>
-                    <li>
-                        <div class="collapsible-header">Product Commands</div>
-                        <div id="productCommandsPanel" class="collapsible-body"></div>
-                    </li>
-                    <li>
-                        <div class="collapsible-header">Robot Commands</div>
-                        <div id="robotCommandsPanel" class="collapsible-body"></div>
-                    </li>
-                    <li>
-                        <div class="collapsible-header">External Libraries Commands</div>
-                        <div id="librariesCommandsPanel" class="collapsible-body"></div>
-                    </li>
-                    <li>
-                        <div class="collapsible-header">Custom Keyword</div>
-                        <div id="customKeywordCommandsPanel" class="collapsible-body">
-                            <div class="row">
-                                <p class="blue-grey-text">Keywords Search</p>
-                                <div class=" col s12">
-                                    <select id="keywrd-search"></select>
-                                    <div id="custom-keywords-area" class="section">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                {#                <button onclick="popUpPropertiesKeyword()">Save Keyword</button>#}
-            </div>
-
+            {% include "search-block.html" %}
             <div class="col l9 s12">
                 <ul class="tabs">
                     <!--
@@ -705,120 +583,6 @@
 {% block extraScripts %}
     <script type="text/javascript">
         $('.modal').modal();
-        $('#command-search').select2({
-            ajax: {
-                url: "{% url "api-commands" %}",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        name: params.term, // search term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data.results
-                    };
-                }
-            },
-            escapeMarkup: function (markup) {
-                return markup;
-            }, // let our custom formatter work
-            minimumInputLength: 2,
-            templateResult: function (results) {
-                return results.name
-            },
-            templateSelection: function (selection) {
-                return selection.name;
-            }
-        });
-
-        $('#keywrd-search').select2({
-            ajax: {
-                url: "{% url "api-keywords" %}",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        collection: document.getElementById('keyword_collection').value,
-                        name: params.term, // search term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data.results
-                    };
-                }
-            },
-            escapeMarkup: function (markup) {
-                return markup;
-            }, // let our custom formatter work
-            minimumInputLength: 2,
-            templateResult: function (results) {
-                return results.name
-            },
-            templateSelection: function (selection) {
-                return selection.name;
-            }
-        });
-
-        $('#keywrd-search').on("select2:select", function (e) {
-            $.ajax({
-                url: '/apis/keywords/' + this.value + '/',
-                type: 'GET',
-                success: function (data) {
-                    var _section = document.getElementById('custom-keywords-area');
-                    _section.innerHTML = "";
-                    var _element = document.createElement('div');
-                    _element.className = "drag-drop-item";
-                    _element.id = data.id + "-keyword-drag-drop";
-                    _element.draggable = true;
-                    _element.setAttribute("ondragstart", "drag(event)");
-                    _element.innerHTML = data.name;
-                    _section.appendChild(_element);
-                }, error: function (err) {
-                    console.log('error' + err)
-                }
-            });
-        });
-
-        $('#command-search').on("select2:select", function (e) {
-            $.ajax({
-                url: '/apis/commands/' + this.value + '/',
-                type: 'GET',
-                data: {extra: 1},
-                success: function (data) {
-                    CommandPrint(data)
-                }, error: function (err) {
-                    console.log('error' + err)
-                }
-            });
-        });
-
-        function CommandPrint(element) {
-            console.log(element)
-            var _accordions = ['controlFlowCommandsPanel', 'systemCommandsPanel', 'productCommandsPanel',
-                'robotCommandsPanel', 'librariesCommandsPanel', 'customKeywordCommandsPanel'];
-            var _category = element.source[0].category;
-            $('.collapsible').collapsible('close', (_category - 1));
-            var _section = document.getElementById(_accordions[_category - 1]);
-            _section.innerHTML = "";
-            var _element = document.createElement('div');
-
-            _element.className = "drag-drop-item";
-            _element.id = element.id + "-drag-drop";
-            _element.draggable = true;
-            _element.setAttribute("ondragstart", "drag(event)");
-            if (_category === 3) {
-                _element.innerHTML = element.source[0].name + ' - ' + element.name;
-            } else {
-                _element.innerHTML = element.name;
-            }
-
-            _section.appendChild(_element);
-            $('.collapsible').collapsible('open', (_category - 1));
-
-        }
 
         function populateSelect() {
             var _select = document.getElementById('selectProfiles');
@@ -890,7 +654,6 @@
                     }
                 });
             }, 3000);
-
         }
     </script>
 {% endblock %}
