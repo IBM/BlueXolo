@@ -457,55 +457,23 @@
         {% csrf_token %}
         <div class="row">
             {% include "search-block.html" %}
-            <div class="col l9 s12">
+            <div class="col l6 s12">
                 <ul class="tabs">
-                    <!--
-                        <li class="tab col s3"><a href="#tab1" onclick="interpreterInstance.translate()">Drag and Drop</a></li>
-                    -->
                     <li class="tab col s3"><a href="#tab1">Drag and Drop</a></li>
                     <li class="tab col s3"><a href="#tab2" onclick="translateToRobot()">Text</a></li>
                 </ul>
                 <div id="tab1" class="col s12">
                     <div class="card">
                         <div class="card-content" style="min-height: 30em">
-
                             <div class="row">
-                                <div class="col s12 l8">
-
+                                <div class="col s12">
                                     <table id="dragDropTable" style="width:100%">
                                         <tr id="tableFormat" ondrop="drop(event)" ondragover="allowDrop(event)">
                                             <td id="dragDropSpace"></td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="col s12 l4 z-depth-1">
-                                    {% if not object %}
-                                        <h4 class="center grey-text"> No Actions Available</h4>
-                                        <p class="grey-text subheader center">First drop some command</p>
-                                    {% else %}
-                                        <div id="propertiesPanelContainer" class="propertiesPanelContainer">
-                                            {#                                            <button id="toggleProperties"#}
-                                            {#                                                    onclick="handleVisualization()"><#}
-                                            {#                                            </button>#}
-                                            <div id="propertiesPannel" class="card-content">
-                                                <p id="currentEditing">Editing ID</p>
-                                                <form action="">
-
-                                                    <div id="defaultEditing" class="input-field">
-                                                        <input type="text" name="value">
-                                                        <label for="value">Value</label>
-                                                    </div>
-                                                    <div class="center">
-                                                        <input type="submit" class="btn" value="Create"
-                                                               onclick="saveParametersFromInput();">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -519,9 +487,10 @@
                     </div>
                 </div>
             </div>
+            <div class="col l3 s12">
+                {% include "properties-block.html" %}
+            </div>
         </div>
-        <!-- Modal Trigger -->
-
         <!-- Modal Structure -->
         <div id="modalPreview" class="modal modal-fixed-footer">
             <div class="modal-content">

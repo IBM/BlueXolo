@@ -89,9 +89,9 @@ table {
     direction: ltr;
 }
 
-#propertiesPannel {
+.propertiesPannel {
     display: none;
-    max-height: 40vh;
+    max-height: 52vh;
     overflow: auto;
 }
 
@@ -100,16 +100,15 @@ table {
     z-index: 2;
 }
 
-.propertiesPanelContainer {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-justify-content: end;
-    justify-content: end;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    background-color: white;
+.propertiesContainer {
+    /*display: -webkit-flex;*/
+    /*display: flex;*/
+    /*-webkit-justify-content: end;*/
+    /*justify-content: end;*/
+    /*-webkit-flex-direction: column;*/
+    /*flex-direction: column;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 
 .temporaryRow {
