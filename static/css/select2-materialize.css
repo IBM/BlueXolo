@@ -6,8 +6,8 @@
     vertical-align: middle
 }
 .select2 {
-    width: calc(100% - 45px) !important;
-    margin-left: 45px;
+    width: calc(100% - 20px) !important;
+    margin-left: 10px;
 }
 
 .select2-container .select2-selection--single {
