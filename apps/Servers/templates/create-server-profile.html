@@ -51,6 +51,7 @@
         var _name = document.getElementById('id_name');
         var _desc = document.getElementById('id_description');
         var _categories = ['Global Variables', 'Local Network Connection', 'Jenkins Connection'];
+        var _globalTemplate;
 
         _select.onchange = getParams;
 
@@ -60,6 +61,7 @@
                     url: "/apis/templates/" + _select.value,
                     type: "GET",
                     success: function (data) {
+                        _globalTemplate = data;
                         var _category_type = document.getElementById('category_template');
                         _category_type.innerHTML = "Category: " + _categories[data.category - 1];
                         showParams(data.parameters)
@@ -86,6 +88,7 @@
                     _txtParam.setAttribute('data-tooltip', v.help_text);
                     _txtParam.setAttribute('class', 'tooltipped');
                     _help_icon.innerHTML = 'help';
+                    _txtParam.appendChild(document.createTextNode(" "));
                     _txtParam.appendChild(_help_icon);
                 }
                 if (v.value_type === 2) {
@@ -140,6 +143,7 @@
                 "name": _name.value,
                 "description": _desc.value,
                 "template": _select.value,
+                "category": _globalTemplate.category,
                 "config": JSON.stringify(_params)
             };
             $.ajax({
