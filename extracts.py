@@ -408,14 +408,8 @@ class RExtract():
                     except Exception as error:
                         print(error)
                     for arg in keyword['args']:
-                        # needsValue = True
-                        isRequired = True
-                        # if '=' in arg:
-                        #     needsValue = True
                         arg_split = arg.split('=')
                         arg_name = arg_split[0]
-                        if len(arg_split) > 1:
-                            isRequired = False
                         try:
                             keyw_opt, created = Argument.objects.get_or_create(
                                 name=arg_name,
