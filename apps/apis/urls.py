@@ -3,6 +3,7 @@ from django.conf.urls import url
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson
 from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson
+from apps.Users.data_tables_views import TasksListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
@@ -39,6 +40,7 @@ urlpatterns = [
     url(r'^collections/$', CollectionsListJson.as_view(), name="api-collections"),
     url(r'^sources/list/$', SourcesListJson.as_view(), name="api-sources-list"),
     url(r'^phases/list/$', PhasesListJson.as_view(), name="api-phases-list"),
+    url(r'^tasks/list/$', TasksListJson.as_view(), name="api-tasks-list"),
     # Extract
     url(r'^run_extract/$', RunExtract.as_view(), name="run_extract"),
     # Run On server

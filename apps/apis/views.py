@@ -247,6 +247,8 @@ class RunExtract(LoginRequiredMixin, APIView):
             extract = run_extract.delay(_config)
             task = Task.objects.create(
                 name="Extract commands from {0}".format(origin),
+                category=1,
+                task_info="Started",
                 task_id=extract.task_id,
                 state=extract.state
             )
