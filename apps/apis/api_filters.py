@@ -2,7 +2,7 @@ import django_filters
 
 from apps.Products.models import Source, Argument
 from apps.Servers.models import Parameters
-from apps.Testings.models import Collection, TestCase, Keyword
+from apps.Testings.models import Collection, TestCase, Keyword, Phase
 from apps.Users.models import Task
 
 
@@ -47,4 +47,10 @@ class ParametersFilter(django_filters.FilterSet):
 class TestCaseFilter(django_filters.FilterSet):
     class Meta:
         model = TestCase
-        fields = ('name', 'id', 'collection', 'profile')
+        fields = ('name', 'id', 'collection')
+
+
+class PhaseFilter(django_filters.FilterSet):
+    class Meta:
+        model = Phase
+        fields = ('name', 'id')

@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from .views import HomeView, IndexView, ArgumentsView, NewArgumentView, EditArgumentView, DeleteArgumentView, \
     SourceList, CreateSourceView, DeleteSourceView, EditSourceView, CommandsView, EditCommandView, NewCommandView, \
-    DeleteCommandView
+    DeleteCommandView, PhasesView, NewPhaseView, EditPhaseView, DeletePhaseView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name="index"),
@@ -22,4 +22,9 @@ urlpatterns = [
     url(r'^commands/new/$', NewCommandView.as_view(), name='new-command'),
     url(r'^commands/(?P<pk>\d+)/edit/$', EditCommandView.as_view(), name='edit-command'),
     url(r'^commands/(?P<pk>\d+)/delete/$', DeleteCommandView.as_view(), name='delete-command'),
+    # phases
+    url(r'^phases/$', PhasesView.as_view(), name='phases'),
+    url(r'^phases/new/$', NewPhaseView.as_view(), name='new-phase'),
+    url(r'^phases/(?P<pk>\d+)/edit/$', EditPhaseView.as_view(), name='edit-phase'),
+    url(r'^phases/(?P<pk>\d+)/delete/$', DeletePhaseView.as_view(), name='delete-phase'),
 ]

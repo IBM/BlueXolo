@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_all_tasks(self):
         """Return last 6 tasks fo this user"""
         user_tasks = []
-        for task in self.tasks.all().order_by('-created_at')[:7]:
+        for task in self.tasks.all().order_by('-created_at')[:5]:
             res = AsyncResult(task.task_id)
             if res.ready() and res.state != task.state:
                 task.state = res.state

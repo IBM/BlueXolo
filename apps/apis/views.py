@@ -15,15 +15,15 @@ from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection, TestCase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer
 from .api_pagination import CommandsPagination, KeywordPagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    KeywordFilter
+    PhaseFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -149,10 +149,25 @@ class CommandsApiView(mixins.ListModelMixin,
         category = self.request.query_params.get('category')
         source = self.request.query_params.get('source')
         exact = self.request.query_params.get('exact')
+        full_search = self.request.query_params.get('full_search')
+        if full_search == '1':
+            queryset = queryset.filter(
+                Q(source__name__icontains=name) |
+                Q(name__icontains=name)
+            )
+            if category:
+                queryset = queryset.filter(source__category=category)
+            return queryset.annotate(Count('id'))
         if category:
             if category in ['2', '3', '4', '5'] and name:
                 # check the category and search by his name
-                queryset = queryset.filter(source__category=category)
+                if category == '4':
+                    queryset = queryset.filter(
+                        Q(source__category=5) |
+                        Q(source__depends__category=4)
+                    )
+                else:
+                    queryset = queryset.filter(source__category=category)
                 if exact:
                     queryset = queryset.filter(
                         Q(source__name=name) |
@@ -286,32 +301,45 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
         _data = {}
         try:
             kwd = Keyword.objects.get(pk=_config.get('keyword'))
-            profile = ServerProfile.objects.get(pk=_config.get('profile'))
-            params = json.loads(profile.config)
-            _values = []
             _host = ""
             _username = ""
             _passwd = ""
             _path = ""
-            for p in params:
-                _parameter = Parameters.objects.get(pk=p.get('id'))
-                if _parameter == 'host':
-                    _host = p.get('value')
-                if _parameter == 'user':
-                    _username = p.get('value')
-                if _parameter == 'passwd':
-                    _passwd = p.get('value')
-                if _parameter == 'path':
-                    _path = p.get('value')
-                if p.get('category') == 2:
-                    _values.append(p.get('value'))
+            _profile_name = ""
+            _values = []
+            _values_name = []
+            _perfiles = json.loads(_config.get('profile'))
+            for perfil in _perfiles:
+                _server_profile = ServerProfile.objects.get(pk=perfil)
+                if _server_profile.category == 2:
+                    _parametros = json.loads(_server_profile.config)
+                    for p in _parametros:
+                        _parametro = Parameters.objects.get(pk=p.get('id'))
+                        if _parametro.name == 'host':
+                            _host = p.get('value')
+                        if _parametro.name == 'user':
+                            _username = p.get('value')
+                        if _parametro.name == 'passwd':
+                            _passwd = p.get('value')
+                        if _parametro.name == 'path':
+                            _path = p.get('value')
+                elif _server_profile.category == 1:
+                    _global_variables = json.loads(_server_profile.config)
+                    _profile_name = _server_profile.name
+                    for variable in _global_variables:
+                        _values.append(variable.get('value'))
+                        _param_name = Parameters.objects.get(pk=variable.get('id'))
+                        _arreglo = []
+                        _arreglo.append(_param_name.name)
+                        _arreglo.append(variable.get('value'))
+                        _values_name.append(_arreglo)
             try:
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
                 name_file = "{0}_{1}_{2}".format(name, random_string, today)
                 filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
-                                             profile.name, params)
+                                             _profile_name, _values_name)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
@@ -319,9 +347,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 )
                 request.user.tasks.add(task)
                 request.user.save()
-
                 _data = {
-                    'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                    'report': "{0}test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                 }
             except Exception as errorConnection:
                 _status = 500
@@ -368,6 +395,24 @@ class ArgumentsApiView(LoginRequiredMixin,
         return self.create(request, *args, **kwargs)
 
 
+class ArgumentsDetailApiView(mixins.RetrieveModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             generics.GenericAPIView):
+    queryset = Argument.objects.all()
+    serializer_class = ArgumentsSerializer
+    filter_class = ArgumentFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
 class ParametersApiView(LoginRequiredMixin,
                         mixins.ListModelMixin,
                         mixins.CreateModelMixin,
@@ -382,6 +427,24 @@ class ParametersApiView(LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class ParametersDetailApiView(mixins.RetrieveModelMixin,
+                              mixins.UpdateModelMixin,
+                              mixins.DestroyModelMixin,
+                              generics.GenericAPIView):
+    queryset = Parameters.objects.all()
+    serializer_class = ParametersSerializer
+    filter_class = ParametersFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class TestCaseApiView(LoginRequiredMixin,
@@ -407,6 +470,40 @@ class TestCaseDetailApiView(mixins.RetrieveModelMixin,
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
     filter_class = TestCaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class PhaseApiView(LoginRequiredMixin,
+                   mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   generics.GenericAPIView
+                   ):
+    queryset = Phase.objects.all()
+    serializer_class = PhaseSerializer
+    filter_class = PhaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class PhaseDetailApiView(mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.DestroyModelMixin,
+                         generics.GenericAPIView):
+    queryset = Phase.objects.all()
+    serializer_class = PhaseSerializer
+    filter_class = PhaseFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

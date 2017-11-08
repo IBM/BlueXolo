@@ -1,0 +1,204 @@
+<div class="col s12 l3">
+    <div class="center pink-text"><b>Select Elements to Drag</b></div>
+    <div class="card">
+        <div class="card-content">
+            <label for="cfs">
+                Control Flow Sentences
+            </label>
+            <div id="flowSentenceContainer"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-content">
+            <div class="row">
+                <label for="id_label_single">
+                    Command Search
+                    <select id="command-search"></select>
+                </label>
+            </div>
+            <div id="commandsContainer"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-content">
+            <div class="row">
+                <label for="id_label_single">
+                    Keyword Search
+                    <select id="keyword-search"></select>
+                </label>
+            </div>
+            <div id="keywordsContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* Search for Control Flow Sentences Commands */
+    getFlowSentenceCommands({
+        "data": {"category": 1, "page_size": 10, "extra": 0},
+        "id_div_accordion": "controlFlowCommandsPanel"
+    });
+
+    function parseReults(results) {
+        var _print = "Getting info . . .";
+        if (results.source) {
+            if (results.source[0].category == 2) {
+                _print = results.name
+            } else {
+                if (results.source.length > 1) {
+                    _print = 'Multiples Sources - ' + results.name
+                } else {
+                    _print = results.source[0].name + ' - ' + results.name
+                }
+            }
+        }
+        return _print
+    }
+
+    $('#command-search').select2({
+        ajax: {
+            url: "{% url "api-commands" %}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    name: params.term, // search term
+                    full_search: 1,
+                    extra: 1
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            }
+        },
+        escapeMarkup: function (markup) {
+            return markup;
+        }, // let our custom formatter work
+        minimumInputLength: 2,
+        templateResult: parseReults,
+        templateSelection: parseReults
+    });
+
+
+    $('#command-search').on("select2:select", function (e) {
+        $.ajax({
+            url: '/apis/commands/' + this.value + '/',
+            type: 'GET',
+            data: {extra: 1},
+            success: function (data) {
+                drawResult(data)
+            }, error: function (err) {
+                drawMessage(error.responseJSON.text, 'red');
+                console.log('error' + err)
+            }
+        });
+    });
+
+    function drawResult(data) {
+        var _container = document.getElementById('commandsContainer');
+        _container.innerHTML = "";
+        var _resultElement = document.createElement('div');
+        _resultElement.className = 'drag-drop-item center';
+        _resultElement.id = data.id + "-drag-drop";
+        _resultElement.draggable = true;
+        if (data.source.length > 1) {
+            _resultElement.innerHTML = "Multiple Sources - " + data.name;
+        } else {
+            if (data.source[0].category == 2) {
+                _resultElement.innerHTML = data.name;
+            } else {
+                _resultElement.innerHTML = data.source[0].name + ' - ' + data.name;
+            }
+        }
+        _resultElement.setAttribute("ondragstart", "drag(event)");
+        _container.appendChild(_resultElement);
+    }
+
+
+    function getFlowSentenceCommands(config) {
+        $.ajax({
+            url: "{% url 'api-commands' %}",
+            type: 'GET',
+            data: config.data,
+            success: function (data) {
+                if (data.results) {
+                    populateCommandsPanel(data.results);
+                }
+            },
+            error: function (error) {
+                drawMessage(error.responseJSON.text, 'red');
+                console.log("Error retrieving commands when website is loaded " + error);
+                return false;
+            }
+        });
+    }
+
+
+    function populateCommandsPanel(commands) {
+        commands.forEach(function (commandJSON) {
+            var draggableNode = document.createElement("div");
+
+            draggableNode.className = "drag-drop-item center";
+            draggableNode.id = commandJSON.id + "-drag-drop";
+            draggableNode.draggable = true;
+            draggableNode.setAttribute("ondragstart", "drag(event)");
+            draggableNode.innerHTML = commandJSON.name;
+            var commandsPanelControlFlow = document.getElementById('flowSentenceContainer');
+            commandsPanelControlFlow.appendChild(draggableNode);
+        });
+    }
+
+    $('#keyword-search').select2({
+        ajax: {
+            url: "{% url "api-keywords" %}",
+            dataType: 'json',
+            delay: 350,
+            data: function (params) {
+                return {
+                    collection: document.getElementById('keyword_collection').value,
+                    name: params.term, // search term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            }
+        },
+        escapeMarkup: function (markup) {
+            return markup;
+        }, // let our custom formatter work
+        minimumInputLength: 2,
+        templateResult: function (results) {
+            return results.name
+        },
+        templateSelection: function (selection) {
+            return selection.name;
+        }
+    });
+
+    $('#keyword-search').on("select2:select", function (e) {
+        $.ajax({
+            url: '/apis/keywords/' + this.value + '/',
+            type: 'GET',
+            success: function (data) {
+                var _container = document.getElementById('keywordsContainer');
+                _container.innerHTML = "";
+                var _resultElement = document.createElement('div');
+                _resultElement.className = 'drag-drop-item center';
+                _resultElement.id = data.id + "-keyword-drag-drop";
+                _resultElement.draggable = true;
+                _resultElement.setAttribute("ondragstart", "drag(event)");
+                _resultElement.innerHTML = data.name;
+                _container.appendChild(_resultElement);
+            }, error: function (err) {
+                drawMessage(err.responseJSON.text, 'red');
+            }
+        });
+    });
+
+</script>

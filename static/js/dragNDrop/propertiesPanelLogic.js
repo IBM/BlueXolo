@@ -39,6 +39,43 @@ function addExtraTextInput(propPanelNode, droppedElementIndex){
     return propPanelNode;
 }
 
+function cleanPropertiesPanel(){
+    var propPanel = document.getElementById("propertiesPannel");
+    while (propPanel.hasChildNodes()) {
+        propPanel.removeChild(propPanel.childNodes[0]);
+    }
+
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+
+    var indexOfButton = 3;
+    var previousButtonNode = propPanelContainer.childNodes[indexOfButton];
+    if(previousButtonNode !== undefined){
+        propPanelContainer.removeChild(previousButtonNode);
+    }
+}
+
+function getIfArgumentIsEmpty(argument){
+    var hasValue = false;
+    var isChecked = undefined;
+    
+    if(argument.value !== undefined || argument.value !== ""){
+        hasValue = true;
+    }
+    if(argument.needs_value && argument.visible !== undefined){
+        isChecked = argument.visible;
+    }
+
+    if(argument.needs_value && !hasValue){
+        return false;
+    }
+    else if(argument.requirement || isChecked !== undefined){
+        return false;
+    }    
+    else{
+        return true;
+    }
+}
+
 function drawPropertiesForKeywords(droppedElementIndex, elementID) {    
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
@@ -49,11 +86,9 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         return;
     }
 
-    // Clean previous properties panel
+    cleanPropertiesPanel();
+
     var propPanel = document.getElementById("propertiesPannel");
-    while (propPanel.hasChildNodes()) {
-        propPanel.removeChild(propPanel.childNodes[0]);
-    }
 
     // Adds the basic data through arguments
     var titleNode = document.createElement("p");
@@ -70,6 +105,11 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
+
+            if(getIfArgumentIsEmpty(arguments[i])){
+                continue;
+            }
+
             var tempForm = document.createElement("form");
 
             // If the command need the argument in order to work
@@ -129,7 +169,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -145,8 +185,9 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         saveKeywordFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
@@ -161,11 +202,9 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
         return;
     }
 
-    // Clean previous properties panel
+    cleanPropertiesPanel();
+
     var propPanel = document.getElementById("propertiesPannel");
-    while (propPanel.hasChildNodes()) {
-        propPanel.removeChild(propPanel.childNodes[0]);
-    }
 
     // Adds the basic data through arguments
     var titleNode = document.createElement("p");
@@ -176,7 +215,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
     if(droppedElement.category !== 1){
         propPanel = addExtraTextInput(propPanel, droppedElementIndex);
-    }    
+    }
 
     // Add arguments in the properties panel
     for (var i = 0; i < arguments.length; i++) {
@@ -189,7 +228,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
             checkbox.id = checkboxCounter;
-            
+
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
 
@@ -209,7 +248,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
             if(arguments[i].visible !== undefined){
                 checkbox.setAttribute("checked", arguments[i].visible);
-            }                            
+            }
 
             // Create a label with the argument name
             var labelNode = document.createElement('label');
@@ -224,10 +263,10 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
         if (arguments[i].needs_value) {
             var inputNode = document.createElement("input");
             inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
-            
+
             if(arguments[i].value!== undefined){
                 inputNode.setAttribute('value', arguments[i].value);
-            }            
+            }
 
             // Now it doesn't refresh the website if you press enter while typing on the form
             inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
@@ -238,7 +277,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -254,8 +293,9 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
         saveFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
@@ -269,6 +309,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         hidePropertiesPanel();
         return;
     }
+
+    cleanPropertiesPanel();
 
     // Clean previous properties panel
     var propPanel = document.getElementById("propertiesPannel");
@@ -294,7 +336,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
             checkbox.id = checkboxCounter;
-            
+
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
 
@@ -314,7 +356,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
             if(arguments[i].visible !== undefined){
                 checkbox.setAttribute("checked", arguments[i].visible);
-            }                            
+            }
 
             // Create a label with the argument name
             var labelNode = document.createElement('label');
@@ -339,27 +381,27 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
                         placeholder: 'Add Tags',
                         secondaryPlaceholder: '+Tag',
                     });
-                });                 
+                });
             }
             else{
                 var inputNode = document.createElement("input");
                 inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
-                
+
                 if(arguments[i].value!== undefined){
                     inputNode.setAttribute('value', arguments[i].value);
-                }       
+                }
 
                 // Now it doesn't refresh the website if you press enter while typing on the form
                 inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
-                tempForm.appendChild(inputNode);                
-            }         
+                tempForm.appendChild(inputNode);
+            }
         }
 
         propPanel.appendChild(tempForm);
     }
 
     var tempDiv = document.createElement("div");
-    tempDiv.className = "center";
+    tempDiv.className = "center section";
 
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -375,8 +417,9 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
         saveTagFromInput(droppedElementIndex, elementID);
     }
 
-    propPanel.appendChild(tempDiv);
-    propPanel.appendChild(buttonNode);
+    var propPanelContainer = document.getElementById("propertiesPanelContainer");
+    tempDiv.appendChild(buttonNode);
+    propPanelContainer.appendChild(tempDiv);
 
     showPropertiesPanel();
 }
