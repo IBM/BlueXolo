@@ -4,52 +4,121 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col s12 l6">
-                <form>
-                    {% csrf_token %}
-                    <div class="input-field">
-                        <i class="material-icons prefix">search</i>
-                        <input type="text" name="product_search" placeholder="S/N, Name, Category">
-                        <label for="product_search">Product Search</label>
-                    </div>
-                </form>
+            <div class="center">
+                <h4 class="blue-grey-text">Last Tasks</h4>
             </div>
-            <div class="col s12 l6">
-                <div class="card">
-                    <div class="card-content">
-                        <span class="card-title">Tasks</span>
-                        <ul>
-                            {% for script in user_tasks %}
-                                <li><span>{{ script.name }}
-                                    <p class="blue-grey-text">{{ script.state }}{% if script.task_info %}
-                                        : {{ script.task_info }}
-                                    {% endif %}
-                                </p>
-                                    <p class="blue-grey-text"> Start at: {{ script.created_at }}
-                                        {% if script.state == "SUCCESS" or script.state == "FAILURE" %}
-                                            Completed at:
-                                            {{ script.updated_at }} {% endif %}
-                                </p>
-                                </span>
+            {% if user_tasks %}
+                <div class="col s12 l6">
+                    {% for task in user_tasks %}
+                        <div class="card">
+                            <div class="card-content">
+                                {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
+                                {% if task.state == "PENDING" %}
+                                    <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
+                                        Running {{ task.name }} </h5>
                                     <div class="progress">
-                                        {% if script.state == "SUCCESS" %}
-                                            <div class="determinate green"
-                                                 style="width: 100%"></div>
-                                            <p></p>
-                                        {% elif script.state == "PENDING" or script.state == "STARTED" %}
-                                            <div class="indeterminate blue"
-                                                 style="width: 100%"></div>
-                                        {% elif script.state == "FAILURE" %}
-                                            <div class="determinate red"
-                                                 style="width: 100%"></div>
-                                        {% endif %}
+                                        <div class="indeterminate blue"></div>
                                     </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="grey-text">Started: {{ task.created_at }}</p>
+
+                                    {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
+                                {% elif task.state == "SUCCESS" %}
+                                    <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                        {{ task.name }} Completed</h5>
+                                    <div class="progress">
+                                        <div class="determinate green" style="width: 100%"></div>
+                                    </div>
+                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="grey-text">Started: {{ task.created_at }}</p>
+                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    {% if task.category == 2 %}
+                                        <div class="center ">
+                                            <button class="btn-flat green-text waves-effect">View Result</button>
+                                        </div>
+                                    {% endif %}
+
+
+                                    {#  - - - - - - - - - - FAILED - - - - - - - - - - #}
+                                {% elif task.state == "FAILURE" %}
+                                    <h5 class="app-title red-text"><i class="material-icons">error</i>
+                                        {{ task.name }} Completed</h5>
+                                    <div class="progress">
+                                        <div class="determinate red" style="width: 100%"></div>
+                                    </div>
+                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="grey-text">Started: {{ task.created_at }}</p>
+                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    {% if task.category == 2 %}
+                                        <div class="center ">
+                                            <button class="btn-flat red-text waves-effect">View Result</button>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-            </div>
-        </div>
+
+                <div class="col s12 l6">
+                    {% for task in user_tasks2 %}
+                        <div class="card">
+                            <div class="card-content">
+                                {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
+                                {% if task.state == "PENDING" %}
+                                    <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
+                                        Running {{ task.name }} </h5>
+                                    <div class="progress">
+                                        <div class="indeterminate blue"></div>
+                                    </div>
+                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="grey-text">Started: {{ task.created_at }}</p>
+
+                                    {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
+                                {% elif task.state == "SUCCESS" %}
+                                    <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                        {{ task.name }} Completed</h5>
+                                    <div class="progress">
+                                        <div class="determinate green" style="width: 100%"></div>
+                                    </div>
+                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="grey-text">Started: {{ task.created_at }}</p>
+                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    {% if task.category == 2 %}
+                                        <div class="center ">
+                                            <button class="btn-flat green-text waves-effect">View Result</button>
+                                        </div>
+                                    {% endif %}
+
+
+                                    {#  - - - - - - - - - - FAILED - - - - - - - - - - #}
+                                {% elif task.state == "FAILURE" %}
+                                    <h5 class="app-title red-text"><i class="material-icons">error</i>
+                                        {{ task.name }} Completed</h5>
+                                    <div class="progress">
+                                        <div class="determinate red" style="width: 100%"></div>
+                                    </div>
+                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="grey-text">Started: {{ task.created_at }}</p>
+                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    {% if  task.category == 2 %}
+                                        <div class="center ">
+                                            <button class="btn-flat red-text waves-effect">View Result</button>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="center panel-footer">
+                    <a class="btn-flat teal-text waves-effect">View all Tasks</a>
+                </div>
+                </div>
+            {% else %}
+                <div class="center section">
+                    <h5 class="blue-grey-text">Don't have task yet</h5>
+                </div>
+            {% endif %}
     </div>
 {% endblock %}

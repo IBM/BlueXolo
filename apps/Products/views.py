@@ -28,7 +28,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['user_tasks'] = self.request.user.get_all_tasks()
+        context['user_tasks'] = self.request.user.get_all_tasks()[:3]
+        context['user_tasks2'] = self.request.user.get_all_tasks()[3:]
         return context
 
 
@@ -165,6 +166,8 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
             extract = run_extract.delay(_config)
             task = Task.objects.create(
                 name="Extract commands from {0}".format(name),
+                category=1,
+                task_info="Started",
                 task_id=extract.task_id,
                 state=extract.state
             )
