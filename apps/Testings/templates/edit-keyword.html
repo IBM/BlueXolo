@@ -42,8 +42,8 @@
             selectServerSide(_config);
 
             _colleciontSelect.value = document.getElementById('kwd_collection').value;
+            getKeywordToEdit();
         });
-
 
         function getKeywordToEdit() {
             var keywordData = document.getElementById('kwd_values').value;
@@ -53,7 +53,6 @@
             //console.log(droppedElements);
             drawElementsFromJSON();
         }
-
 
         function addKeywordToJSON(indentation, keywordID) {
             $.ajax({
