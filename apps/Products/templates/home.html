@@ -13,7 +13,7 @@
                         <div class="card">
                             <div class="card-content">
                                 {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
-                                {% if task.state == "PENDING" %}
+                                {% if task.state == "PENDING" or task.state == "run" %}
                                     <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
                                         Running {{ task.name }} </h5>
                                     <div class="progress">
@@ -34,7 +34,8 @@
                                     <p class="grey-text">Completed: {{ task.updated_at }}</p>
                                     {% if task.category == 2 %}
                                         <div class="center ">
-                                            <button class="btn-flat green-text waves-effect">View Result</button>
+                                            <a target="_blank" href="{{ task.task_result }}"
+                                               class="btn-flat green-text waves-effect">View Result</a>
                                         </div>
                                     {% endif %}
 
@@ -49,10 +50,21 @@
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
                                     <p class="grey-text">Completed: {{ task.updated_at }}</p>
-                                    {% if task.category == 2 %}
+                                    {% if task.category == 2 and task.result %}
                                         <div class="center ">
-                                            <button class="btn-flat red-text waves-effect">View Result</button>
+                                            <a target="_blank" href="{{ task.task_result }}"
+                                               class="btn-flat red-text waves-effect">View Result</a>
                                         </div>
+                                    {% else %}
+                                        <ul class="collapsible" data-collapsible="accordion">
+                                            <li>
+                                                <div class="collapsible-header"><i
+                                                        class="material-icons">details</i>Error Detail
+                                                </div>
+                                                <div class="collapsible-body"><span>{{ task.task_info }}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -65,7 +77,7 @@
                         <div class="card">
                             <div class="card-content">
                                 {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
-                                {% if task.state == "PENDING" %}
+                                {% if task.state == "PENDING" or task.state == "run" %}
                                     <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
                                         Running {{ task.name }} </h5>
                                     <div class="progress">
@@ -86,7 +98,8 @@
                                     <p class="grey-text">Completed: {{ task.updated_at }}</p>
                                     {% if task.category == 2 %}
                                         <div class="center ">
-                                            <button class="btn-flat green-text waves-effect">View Result</button>
+                                            <a target="_blank" href="{{ task.task_result }}"
+                                               class="btn-flat green-text waves-effect">View Result</a>
                                         </div>
                                     {% endif %}
 
@@ -101,10 +114,21 @@
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
                                     <p class="grey-text">Completed: {{ task.updated_at }}</p>
-                                    {% if  task.category == 2 %}
+                                    {% if task.category == 2 and task.result %}
                                         <div class="center ">
-                                            <button class="btn-flat red-text waves-effect">View Result</button>
+                                            <a target="_blank" href="{{ task.task_result }}"
+                                               class="btn-flat red-text waves-effect">View Result</a>
                                         </div>
+                                    {% else %}
+                                        <ul class="collapsible" data-collapsible="accordion">
+                                            <li>
+                                                <div class="collapsible-header"><i
+                                                        class="material-icons">details</i>Error Detail
+                                                </div>
+                                                <div class="collapsible-body"><span>{{ task.task_info }}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
                                     {% endif %}
                                 {% endif %}
                             </div>
