@@ -12,7 +12,7 @@ from scp import SCPClient
 
 
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
-from .models import TemplateServer, ServerProfile
+from .models import TemplateServer, ServerProfile, Parameters
 
 from celery import shared_task
 
@@ -183,3 +183,25 @@ class SshConnect(LoginRequiredMixin):
         for p in variables:
             a.write('{0} = "{1}"\n'.format(p[0],p[1]))
         a.close()
+
+class ParametersView(LoginRequiredMixin, TemplateView):
+    template_name = "parameters.html"
+
+class NewParametersView(LoginRequiredMixin, CreateView):
+    template_name = 'create-edit-parameter.html'
+    success_url = reverse_lazy('parameters')
+    form_class = ParametersForm
+
+class EditParametersView(LoginRequiredMixin, UpdateView):
+    template_name = "create-edit-parameter.html"
+    success_url = reverse_lazy("parameters")
+    form_class = ParametersForm
+    model = Parameters
+
+class DeleteParametersView(LoginRequiredMixin, DeleteView):
+    model = Parameters
+    template_name = "delete-parameters.html"
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Deleted")
+        return reverse_lazy('parameters')

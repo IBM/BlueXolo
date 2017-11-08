@@ -38,6 +38,12 @@ class DeleteTestcaseView(LoginRequiredMixin, DeleteView):
     model = TestCase
     success_url = reverse_lazy('testcases')
 
+class TestsuiteView(LoginRequiredMixin, TemplateView):
+    template_name = "testsuites.html"
+
+class NewTestsuiteView(LoginRequiredMixin, TemplateView):
+    template_name = "create-testsuites.html"
+
 class CollectionsView(LoginRequiredMixin, TemplateView):
     template_name = "collections.html"
 

@@ -76,4 +76,4 @@ class PhasesListJson(LoginRequiredMixin, BaseDatatableView):
         search = self.request.GET.get(u'search[value]', None)
         if search:
             qs = qs.filter(name__icontains=search)
-        return qs
+        return qspg
