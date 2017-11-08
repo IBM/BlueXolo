@@ -12,7 +12,7 @@ class UsersListJson(LoginRequiredMixin, BaseDatatableView):
     model = User
     columns = ['first_name', 'last_name', 'email', 'last_login', 'pk']
     order_columns = ['first_name', 'last_name', 'email', 'last_login', 'pk']
-    max_display_length = 200
+    max_display_length = 100
 
     def get_initial_queryset(self):
         """Excluding the admins users"""
@@ -40,24 +40,31 @@ class TasksListJson(LoginRequiredMixin, BaseDatatableView):
     https://bitbucket.org/pigletto/django-datatables-view
     """
     model = Task
-    columns = ['name', 'created_at', 'updated_at', 'id']
-    order_columns = ['name', 'created_at', 'updated_at', 'id']
-    max_display_length = 200
+    columns = ['name', 'state', 'created_at', 'updated_at', 'id']
+    order_columns = ['name', 'state', 'created_at', 'updated_at', 'id']
+    max_display_length = 100
 
     def get_initial_queryset(self):
-        """Excluding the admins users"""
-        return User.objects.exclude(is_superuser=True)
+        """get only user tasks"""
+        user_tasks = self.request.user.get_all_tasks()
+        tasks_ids = []
+        for t in user_tasks:
+            tasks_ids.append(t.id)
+        return Task.objects.filter(pk__in=tasks_ids)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
-            qs = qs.filter(name__icontains=search)
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(state__icontains=search)
+            )
         return qs
 
     def render_column(self, row, column):
         if column == 'created_at':
-            return '{}'.format(row.last_login.strftime("%d/%b/%Y - %H:%M"))
+            return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
         if column == 'updated_at':
-            return '{}'.format(row.last_login.strftime("%d/%b/%Y - %H:%M"))
+            return '{}'.format(row.updated_at.strftime("%d/%b/%Y - %H:%M"))
         else:
             return super(TasksListJson, self).render_column(row, column)
