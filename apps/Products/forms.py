@@ -128,3 +128,4 @@ class CommandForm(forms.ModelForm):
         """This filter only for sources in the category 4(Robot)"""
         super(CommandForm, self).__init__(*args, **kwargs)
         self.fields['source'].queryset = Source.objects.exclude(category=1)
+        self.fields['source'].required = True
