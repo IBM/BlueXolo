@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Task Detail{% endblock %}
+{% block subtitle %}Task Detail{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12 offset-l3 l6 card">
+                <div class="card-content">
+                    <p class="card-title">Task Detail</p>
+                    <ul>
+                        <li><b>Name:</b> {{ object.name }}</li>
+                        <li><b>State:</b> {{ object.state }}</li>
+                        <li><b>Create:</b> {{ object.created_at }}</li>
+                        <li><b>Last update:</b> {{ object.updated_at}}</li>
+                        {% if object.task_info %}
+                            <li><b>Information:</b> {{ object.task_info }}</li>
+                        {% endif %}
+                    </ul>
+                    <div class="center">
+                        {% if object.task_result %}
+                            <a href="{{ object.task_result }}" class="btn-flat teal-text waves-effect">Open Result</a>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "tasks"%}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

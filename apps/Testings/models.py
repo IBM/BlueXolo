@@ -66,9 +66,28 @@ class TestCase(models.Model):
     modified = models.DateTimeField(_('modified'), auto_now=True)
 
     class Meta:
-        verbose_name = _('testcase')
-        verbose_name_plural = _('testcases')
+        verbose_name = _('test case')
+        verbose_name_plural = _('test cases')
         db_table = 'testcases'
+
+    def __str__(self):
+        return '{0}'.format(self.name)
+
+
+class TestSuite(models.Model):
+    name = models.CharField(_('name'), max_length=100, unique=True)
+    description = models.TextField(_('description'), blank=True, null=True)
+    script = models.TextField(_('script'), blank=True)
+    user = models.ForeignKey(User)
+    collection = models.ManyToManyField(Collection)
+    values = models.TextField(_('values'), blank=True)
+    created_at = models.DateTimeField(_('created_at'), auto_now_add=True, editable=False)
+    modified = models.DateTimeField(_('modified'), auto_now=True)
+
+    class Meta:
+        verbose_name = _('test suite')
+        verbose_name_plural = _('test suites')
+        db_table = 'testsuites'
 
     def __str__(self):
         return '{0}'.format(self.name)

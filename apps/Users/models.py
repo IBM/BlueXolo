@@ -11,12 +11,18 @@ from .managers import UserManager
 
 
 class Task(models.Model):
+    CATEGORIES = (
+        (1, "Extract"),
+        (2, "Run Script"),
+    )
     name = models.CharField(_('name'), max_length=200)
     task_id = models.CharField(_('task id'), max_length=100)
     state = models.CharField(_('state'), max_length=100)
+    category = models.IntegerField(choices=CATEGORIES, default=2)
+    task_info = models.TextField(blank=True)
+    task_result = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
-    task_info = models.TextField(blank=True)
 
     class Meta:
         db_table = 'tasks'
@@ -73,7 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_all_tasks(self):
         """Return last 6 tasks fo this user"""
         user_tasks = []
-        for task in self.tasks.all().order_by('-created_at')[:5]:
+        for task in self.tasks.all().order_by('-created_at')[:6]:
             res = AsyncResult(task.task_id)
             if res.ready() and res.state != task.state:
                 task.state = res.state

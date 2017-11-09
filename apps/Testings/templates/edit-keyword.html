@@ -42,8 +42,8 @@
             selectServerSide(_config);
 
             _colleciontSelect.value = document.getElementById('kwd_collection').value;
+            getKeywordToEdit();
         });
-
 
         function getKeywordToEdit() {
             var keywordData = document.getElementById('kwd_values').value;
@@ -53,7 +53,6 @@
             //console.log(droppedElements);
             drawElementsFromJSON();
         }
-
 
         function addKeywordToJSON(indentation, keywordID) {
             $.ajax({
@@ -610,14 +609,6 @@
                     success: function (data) {
                         drawMessage("Keyword has sent to scheduler", 'blue');
                         $('#modalPreview').modal('close');
-                        var win = window.open('/' + data.report + '', '_blank');
-                        if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
                     }, error: function (err) {
                         console.log('error on run script: ' + err)
                     }

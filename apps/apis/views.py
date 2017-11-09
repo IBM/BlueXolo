@@ -15,15 +15,15 @@ from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection, TestCase, Phase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
 from .api_pagination import CommandsPagination, KeywordPagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    PhaseFilter
+    PhaseFilter, TestSuiteFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -247,6 +247,8 @@ class RunExtract(LoginRequiredMixin, APIView):
             extract = run_extract.delay(_config)
             task = Task.objects.create(
                 name="Extract commands from {0}".format(origin),
+                category=1,
+                task_info="Started",
                 task_id=extract.task_id,
                 state=extract.state
             )
@@ -504,6 +506,40 @@ class PhaseDetailApiView(mixins.RetrieveModelMixin,
     queryset = Phase.objects.all()
     serializer_class = PhaseSerializer
     filter_class = PhaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class TestSuiteApiView(LoginRequiredMixin,
+                       mixins.ListModelMixin,
+                       mixins.CreateModelMixin,
+                       generics.GenericAPIView
+                       ):
+    queryset = TestSuite.objects.all()
+    serializer_class = TestSuiteSerializer
+    filter_class = TestSuiteFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             generics.GenericAPIView):
+    queryset = TestSuite.objects.all()
+    serializer_class = TestSuiteSerializer
+    filter_class = TestSuiteFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
