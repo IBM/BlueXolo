@@ -335,7 +335,6 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         _arreglo.append(_param_name.name)
                         _arreglo.append(variable.get('value'))
                         _values_name.append(_arreglo)
-
             try:
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
