@@ -8,7 +8,7 @@ from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
     TasksApiView, ArgumentsApiView, ParametersApiView, TestCaseApiView, TestCaseDetailApiView, ParametersDetailApiView, \
-    ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView
+    ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView, TestSuiteApiView, TestSuiteDetailApiView
 
 urlpatterns = [
     url(r'^arguments/$', ArgumentsApiView.as_view(), name="api-arguments"),
@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^testcases/(?P<pk>[0-9]+)/$', TestCaseDetailApiView.as_view(), name="api-testcases"),
     url(r'^phases/$', PhaseApiView.as_view(), name="api-phases"),
     url(r'^phases/(?P<pk>[0-9]+)/$', PhaseDetailApiView.as_view(), name="api-phases"),
+    url(r'^testsuite/$', TestSuiteApiView.as_view(), name="api-testsuite"),
+    url(r'^testsuite/(?P<pk>[0-9]+)/$', TestSuiteDetailApiView.as_view(), name="api-testsuite"),
     url(r'^source/$', SourceApiView.as_view(), name="api-source"),
     url(r'^collection/$', CollectionApiView.as_view(), name="api-collection"),
     url(r'^tasks/$', TasksApiView.as_view(), name="api-tasks"),
