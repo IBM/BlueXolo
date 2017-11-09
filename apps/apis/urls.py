@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson, ParametersListJson
-from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson
+from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson, TestsuitesListJson
 from apps.Users.data_tables_views import TasksListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^servers/profiles/$', ServerProfilesListJson.as_view(), name='api-servers-profiles'),
     url(r'^keywords/list/$', KeywordsListJson.as_view(), name="api-keywords-list"),
     url(r'^testcases/list/$', TestcasesListJson.as_view(), name="api-testcases-list"),
+    url(r'^testsuites/list/$', TestsuitesListJson.as_view(), name="api-testsuites-list"),
     url(r'^collections/$', CollectionsListJson.as_view(), name="api-collections"),
     url(r'^sources/list/$', SourcesListJson.as_view(), name="api-sources-list"),
     url(r'^phases/list/$', PhasesListJson.as_view(), name="api-phases-list"),

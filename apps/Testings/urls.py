@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from .views import KeyWordsView, NewKeywordView, DeleteKeywordView, CollectionsView, NewCollectionsView, EditCollectionsView, \
     DeleteCollectionsView, EditKeywordView, TestcaseView, NewTestcaseView, EditTestcaseView, DeleteTestcaseView, TestsuiteView, \
-    NewTestsuiteView
+    NewTestsuiteView, EditTestsuiteView, DeleteTestsuiteView
 
 urlpatterns = [
     url(r'^keywords/$', KeyWordsView.as_view(), name="keywords"),
@@ -17,6 +17,8 @@ urlpatterns = [
     #TestSuites
     url(r'^testsuites/$', TestsuiteView.as_view(), name="testsuites"),
     url(r'^testsuites/new/$', NewTestsuiteView.as_view(), name="new-testsuites"),
+    url(r'^testsuites/edit/(?P<pk>\d+)$', EditTestsuiteView.as_view(), name="edit-testsuites"),
+    url(r'^testsuites/(?P<pk>\d+)/delete/$', DeleteTestsuiteView.as_view(), name="delete-testsuite"),
     #Collections
     url(r'^collections/$', CollectionsView.as_view(), name="collections"),
     url(r'^collections/new/$', NewCollectionsView.as_view(), name="new-collections"),
