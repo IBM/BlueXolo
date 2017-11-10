@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Create Test Suites{% endblock %}
-{% block subtitle %}Create Test Suites{% endblock %}
+{% block title %}Create Test Suite{% endblock %}
+{% block subtitle %}Create Test Suite{% endblock %}
 
 {% block content %}
 
@@ -31,30 +31,13 @@
         var new_keyword;
 
         $(document).ready(function () {
-            $('.chips').material_chip();
             //populate selects
-            var _configCollections = {
+            var _config = {
                 "url": "{% url "api-collection" %}",
                 "data": {},
                 "container": "keyword_collection"
             };
-            selectServerSide(_configCollections);
-
-            setTimeout(function () {
-                getPhases();
-            }, 1000);
-
-            function getPhases() {
-                var _configPhases = {
-                    "url": "{% url "api-phases" %}",
-                    "data": {
-                        "collection": document.getElementById("keyword_collection").value
-                    },
-                    "container": "phases_list"
-                };
-
-                selectServerSide(_configPhases);
-            }
+            selectServerSide(_config);
 
         });
 
@@ -224,6 +207,48 @@
             }
         }
 
+        function populateCommandsAfterSearch(commands) {
+            commands.forEach(function (commandJSON) {
+                var draggableNode = document.createElement("div");
+
+                draggableNode.className = "drag-drop-item";
+                draggableNode.id = commandJSON.id + "-drag-drop";
+                draggableNode.draggable = true;
+                draggableNode.setAttribute("ondragstart", "drag(event)");
+                draggableNode.innerHTML = commandJSON.name;
+
+                if (commandJSON.category === 1) {
+                    var panelToPopulate = document.getElementById("controlFlowCommandsPanel");
+                    $('.collapsible').collapsible('open', 0);
+                }
+                else if (commandJSON.category === 2) {
+                    var panelToPopulate = document.getElementById("systemCommandsPanel");
+                    $('.collapsible').collapsible('open', 1);
+                }
+                else if (commandJSON.category === 3) {
+                    var panelToPopulate = document.getElementById("productCommandsPanel");
+                    $('.collapsible').collapsible('open', 2);
+                }
+                else if (commandJSON.category === 4) {
+                    var panelToPopulate = document.getElementById("robotCommandsPanel");
+                    $('.collapsible').collapsible('open', 3);
+                }
+                else if (commandJSON.category === 5) {
+                    var panelToPopulate = document.getElementById("librariesCommandsPanel");
+                    $('.collapsible').collapsible('open', 4);
+                }
+                else if (commandJSON.category === 6) {
+                    var panelToPopulate = document.getElementById("customKeywordCommandsPanel");
+                    $('.collapsible').collapsible('open', 5);
+                }
+
+                if (panelToPopulate !== undefined) {
+                    panelToPopulate.appendChild(draggableNode);
+                }
+
+            });
+        }
+
         function translateToRobot(callBackFunction) {
             var dragNDrop = document.getElementById("dragDropSpace");
             var rowsInTable = dragNDrop.children;
@@ -247,7 +272,7 @@
                             callBackFunction();
                         }
                         return true;
-                    }else{
+                    } else {
                         continue;
                     }
                 }
@@ -326,7 +351,7 @@
             }
         }
 
-        function popUpPropertiesTestcase() {
+        function popUpPropertiesKeyword() {
             var floatingDiv = document.getElementById("floatingDiv"),
                 lightsOff = document.createElement("div");
 
@@ -347,48 +372,43 @@
             floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
         }
 
-        function writeTestcaseDatabase() {
-            var testcaseName = document.getElementById("testcase_name").value;
-            var testcaseDescription = document.getElementById("testcase_description").value;
-            var testcaseCollection = document.getElementById("keyword_collection").value;
-            var testcaseValues = droppedElements;
-            var testcaseScript = document.getElementById("terminal").value;
-            var testcaseFunctions = $('#testecase_functions').material_chip('data');
-            var testcasePhase = document.getElementById("phases_list").value;
+        function writeKeywordDatabase() {
+            var keywordName = document.getElementById("keyword_name").value;
+            var keywordDescription = document.getElementById("keyword_description").value;
+            var keywordValues = droppedElements;
+            var keywordCollection = document.getElementById('keyword_collection').value;
+            var keywordScript = document.getElementById("terminal").value;
 
-            var newTestcase = {
-                "name": testcaseName,
-                "description": testcaseDescription,
-                "collection": testcaseCollection,
-                "script": testcaseScript,
-                "functions": JSON.stringify(testcaseFunctions),
-                "phase": testcasePhase,
-                "values": JSON.stringify(testcaseValues)
+            var newKeyword = {
+                "name": keywordName,
+                "description": keywordDescription,
+                "script": keywordScript,
+                "values": JSON.stringify(keywordValues),
+                "collection": keywordCollection
             };
             $.ajax({
-                url: "{% url "api-testcases" %}",
+                url: "{% url "api-keywords" %}",
                 type: 'POST',
-                data: newTestcase,
+                data: newKeyword,
                 success: function (data) {
-                    drawMessage("TestCase Saved", "green");
+                    drawMessage("Keyword Saved", 'green');
                     $('#modalPreview').modal('close');
                     new_keyword = data;
                 },
-                error: function (err) {
-                    console.log(err);
-                    drawMessage(err.responseText, 'red');
+                error: function (error) {
+                    console.log(error)
                 }
             });
 
-            hidePropertiesTestcase();
+            hidePropertiesKeyword();
         }
 
-        function saveTestcase() {
-            var functionToExecuteAfter = writeTestcaseDatabase;
+        function saveKeyword() {
+            var functionToExecuteAfter = writeKeywordDatabase;
             translateToRobot(functionToExecuteAfter);
-{#            translateToRobot(writeTestcaseDatabase);#}
         }
-        function hidePropertiesTestcase() {
+
+        function hidePropertiesKeyword() {
             {#            var floatingDiv = document.getElementById("floatingDiv"),#}
             {#                lightsOff = document.getElementById("lightsOff");#}
             {##}
@@ -400,27 +420,17 @@
 
     <div class="row">
         <div class="col s12">
-            <div class="input-field col s6 m4 l2">
+            <div class="input-field col s6 l4">
                 <select id="keyword_collection"></select>
                 <label for="keyword_collection">Collection</label>
             </div>
-            <div class="input-field col s6 m4 l2">
-                <select id="phases_list">
-                    <option value="" selected>- - - - -</option>
-                </select>
-                <label for="phases_list">Phase</label>
+            <div class="input-field col s6 l4">
+                <label for="keyword_name">Test Suite Name</label>
+                <input type="text" id="keyword_name" onblur="hasValues()">
             </div>
-            <div class="input-field col s6 m4 l3 ">
-                Functions
-                <div class="chips" id="testecase_functions"></div>
-            </div>
-            <div class="input-field col s6 m4 l2">
-                <label for="testcase_name">Name</label>
-                <input type="text" id="testcase_name" onblur="hasValues()">
-            </div>
-            <div class="input-field col s6 m4 l3">
-                <label for="testcase_description">Description</label>
-                <input type="text" id="testcase_description">
+            <div class="input-field col s6 l4">
+                <label for="keyword_description">Test Suite Description</label>
+                <input type="text" id="keyword_description">
             </div>
         </div>
     </div>
@@ -429,55 +439,28 @@
     <div class="section">
         {% csrf_token %}
         <div class="row">
-              {% include "search-block.html" %}
-            <div class="col l9 s12">
+            <div class="col s12 l3">
+                {% include "search-block.html" %}
+                {% include "search-testcase-block.html" %}
+            </div>
+            <div class="col l6 s12">
                 <ul class="tabs">
-                    <!--
-                        <li class="tab col s3"><a href="#tab1" onclick="interpreterInstance.translate()">Drag and Drop</a></li>
-                    -->
                     <li class="tab col s3"><a href="#tab1">Drag and Drop</a></li>
                     <li class="tab col s3"><a href="#tab2" onclick="translateToRobot()">Text</a></li>
                 </ul>
                 <div id="tab1" class="col s12">
                     <div class="card">
                         <div class="card-content" style="min-height: 30em">
-
                             <div class="row">
-                                <div class="col s12 l8">
-
+                                <div class="col s12 ">
                                     <table id="dragDropTable" style="width:100%">
                                         <tr id="tableFormat" ondrop="drop(event)" ondragover="allowDrop(event)">
                                             <td id="dragDropSpace"></td>
                                         </tr>
                                     </table>
-
                                 </div>
-                                <div class="col s12 l4 z-depth-1">
-                                    {% if not object %}
 
-                                        <div id="propertiesPanelContainer" class="propertiesPanelContainer">
-                                            <div id="propertiesPannel" class="card-content">
-                                                <p id="currentEditing">Editing ID</p>
-                                                <form action="">
-
-                                                    <div id="defaultEditing" class="input-field">
-                                                        <input type="text" name="value">
-                                                        <label for="value">Value</label>
-                                                    </div>
-                                                    <div class="center">
-                                                        <input type="submit" class="btn" value="Create"
-                                                               onclick="saveParametersFromInput();">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <h4 class="center grey-text"> No Actions Available</h4>
-                                        <p class="grey-text subheader center">First drop some command</p>
-                                    {% endif %}
-                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -491,50 +474,40 @@
                     </div>
                 </div>
             </div>
+            <div class="col l3 s12">
+                {% include "properties-block.html" %}
+            </div>
         </div>
-        <!-- Modal Trigger -->
 
         <!-- Modal Structure -->
         <div id="modalPreview" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <div class="card">
                     <div class="card-content">
-                        <h4 class="app-title">Testcase Properties</h4>
+                        <h4 class="app-title">Test Suite Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
-                                <select name="severs" id="selectProfiles"
-                                        onchange="document.getElementById('runScript').disabled = false;">
+                                <select name="severs" id="selectProfiles" multiple>
                                 </select>
                                 <label for="severs">Server Profile</label>
                             </div>
                         </div>
                     </div>
                 </div>
-                <h4 class="app-title">Testcase Preview</h4>
+                <h4 class="app-title">Test Suite Preview</h4>
                 <textarea id="codeFinal" class=" terminal blue-grey-text" disabled></textarea>
             </div>
             <div class="modal-footer">
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
                 <button type="button" id="runScript" class="waves-effect waves-green btn" onclick="runScript()"
-                        disabled="true">Run script
+                        disabled>Run script
                 </button>
-                <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveTestcase()">Save
-                    Testcase
+                <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveKeyword()">Save
+                    Keyword
                 </button>
             </div>
         </div>
 
-        {#  - - - -  - - - MODAL RUNNING - - - - - - - - - - -#}
-        <div id="modal-run" class="modal">
-            <div class="modal-content">
-                <h4>Run Output</h4>
-                <div id="black_terminal" style="width: 100%"></div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-            </div>
-        </div>
-        {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
     <div class="fixed-action-btn">
@@ -546,7 +519,7 @@
 
 
     <div class="fixed-action-btn left-button ">
-        <a href="{% url "testcases" %}" id="btn_back"
+        <a href="{% url "keywords" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Keyword List">
             <i class="material-icons">arrow_back</i></a>
@@ -556,6 +529,8 @@
 {% block extraScripts %}
     <script type="text/javascript">
         $('.modal').modal();
+
+
         function populateSelect() {
             var _select = document.getElementById('selectProfiles');
             $.ajax({
@@ -586,36 +561,35 @@
             $('#modalPreview').modal('open');
         }
 
+        document.getElementById('selectProfiles').onchange = function () {
+            if ($('#selectProfiles').val()) {
+                document.getElementById('runScript').disabled = false;
+            }
+        };
+
         function hasValues() {
-            var _keyName = document.getElementById('testcase_name');
+            var _keyName = document.getElementById('keyword_name');
             var _keyCollection = document.getElementById('keyword_collection');
             var _btn_save = document.getElementById('btn_play');
             _btn_save.disabled = !(_keyCollection.value && _keyName.value);
         }
 
         function runScript() {
-            saveTestcase();
+            saveKeyword();
+            var _profiles = JSON.stringify($('#selectProfiles').val());
             setTimeout(function () {
                 $.ajax({
                     url: "{% url "run-on-server" %}",
                     type: "post",
                     data: {
                         keyword: new_keyword.id,
-                        profile: document.getElementById('selectProfiles').value
+                        profile: _profiles
                     },
                     success: function (data) {
+                        drawMessage("Keyword has sent to scheduler", 'blue');
                         $('#modalPreview').modal('close');
-                        alert('Success');
-                        var win = window.open('/' + data.report + '', '_blank');
-                        if (win) {
-                            //Browser has allowed it to be opened
-                            win.focus();
-                        } else {
-                            //Browser has blocked it
-                            alert('Please allow popups for this website');
-                        }
                     }, error: function (err) {
-                        console.log('error on run script: ' + err)
+                        drawMessage(err.responseJSON.text, 'red');
                     }
                 });
             }, 3000);
