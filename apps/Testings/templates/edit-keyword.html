@@ -455,7 +455,9 @@
     <div class="section">
         {% csrf_token %}
         <div class="row">
-            {% include "search-block.html" %}
+            <div class="col s12 l3">
+                {% include "search-block.html" %}
+            </div>
             <div class="col l6 s12">
                 <ul class="tabs">
                     <li class="tab col s3"><a href="#tab1">Drag and Drop</a></li>

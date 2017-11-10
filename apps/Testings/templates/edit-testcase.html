@@ -436,7 +436,7 @@
             </div>
             <div class="input-field col s6 m4 l3">
                 <label for="testcase_description">Description</label>
-                <input type="text" id="testcase_description"  value="{{ object.description }}">
+                <input type="text" id="testcase_description" value="{{ object.description }}">
             </div>
         </div>
     </div>
@@ -445,7 +445,9 @@
     <div class="section">
         {% csrf_token %}
         <div class="row">
-            {% include "search-block.html" %}
+            <div class="col s12 l3">
+                {% include "search-block.html" %}
+            </div>
             <div class="col l9 s12">
                 <ul class="tabs">
                     <!--

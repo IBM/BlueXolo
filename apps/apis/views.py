@@ -21,7 +21,7 @@ from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
     TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
-from .api_pagination import CommandsPagination, KeywordPagination
+from .api_pagination import CommandsPagination, KeywordPagination, TestCasePagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
     PhaseFilter, TestSuiteFilter
 
@@ -456,7 +456,16 @@ class TestCaseApiView(LoginRequiredMixin,
                       ):
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
-    filter_class = TestCaseFilter
+    pagination_class = TestCasePagination
+
+    def filter_queryset(self, queryset):
+        name = self.request.query_params.get('name')
+        collection = self.request.query_params.get('collection')
+        if collection:
+            queryset = queryset.filter(collection=collection)
+        if name:
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

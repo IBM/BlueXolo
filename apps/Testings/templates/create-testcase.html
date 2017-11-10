@@ -247,7 +247,7 @@
                             callBackFunction();
                         }
                         return true;
-                    }else{
+                    } else {
                         continue;
                     }
                 }
@@ -386,8 +386,9 @@
         function saveTestcase() {
             var functionToExecuteAfter = writeTestcaseDatabase;
             translateToRobot(functionToExecuteAfter);
-{#            translateToRobot(writeTestcaseDatabase);#}
+            {#            translateToRobot(writeTestcaseDatabase);#}
         }
+
         function hidePropertiesTestcase() {
             {#            var floatingDiv = document.getElementById("floatingDiv"),#}
             {#                lightsOff = document.getElementById("lightsOff");#}
@@ -429,7 +430,9 @@
     <div class="section">
         {% csrf_token %}
         <div class="row">
-              {% include "search-block.html" %}
+            <div class="col s12 l3">
+                {% include "search-block.html" %}
+            </div>
             <div class="col l9 s12">
                 <ul class="tabs">
                     <!--
@@ -556,6 +559,7 @@
 {% block extraScripts %}
     <script type="text/javascript">
         $('.modal').modal();
+
         function populateSelect() {
             var _select = document.getElementById('selectProfiles');
             $.ajax({
