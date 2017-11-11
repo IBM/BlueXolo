@@ -60,7 +60,12 @@ function drawElementsFromJSON() {
     resetDropCounters();
     var dragNDrop = document.getElementById("dragDropSpace");
     dragNDrop.innerHTML = "";
+
+    var commandProductCategory = 3;
+    var commandRobotCategory = 4;
+    var commandLibrariesCategory = 5;
     var keywordCategory = 6;
+    var testcaseCategory = 7;
 
     for (var i = 0; i < droppedElements.length; i++) {
         var newID = getNewID(droppedElements[i].id);
@@ -73,9 +78,6 @@ function drawElementsFromJSON() {
         basicDnDNode.id = newID;
         basicDnDNode.className = newClass;
 
-        var commandProductCategory = 3;
-        var commandRobotCategory = 4;
-        var commandLibrariesCategory = 5;
         if (droppedElements[i].category === commandProductCategory ||
             droppedElements[i].category === commandRobotCategory ||
             droppedElements[i].category === commandLibrariesCategory) {
@@ -127,7 +129,8 @@ function drawElementsFromJSON() {
 
         dragNDrop.appendChild(td);
 
-        if (droppedElements[i].category === keywordCategory) {
+        if (droppedElements[i].category === keywordCategory ||
+            droppedElements[i].category === testcaseCategory) {
 
         } else {
             drawParameterList(i, newID);

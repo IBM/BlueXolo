@@ -41,6 +41,41 @@
 
         });
 
+        function addTestcaseToJSON(indentation, testcaseID) {
+            $.ajax({
+                url: "/apis/testcases/" + testcaseID + "/",
+                type: 'GET',
+                data: {
+                    id: testcaseID,
+                },
+                success: function (data) {
+                    var testcaseName = data.name;
+                    var testcaseArguments = data.arguments;
+                    var valuesAsString = data.values;
+                    var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
+                    var testcaseCategory = 7;
+
+                    droppedElements.push({
+                        id: testcaseID,
+                        name: testcaseName,
+                        category: testcaseCategory,
+                        position: droppedElements.length,
+                        indentation: indentation,
+                        keywordJSON: testcaseValues,
+                        arguments: testcaseArguments,
+                        extraValue: undefined,
+                    });
+                    drawElementsFromJSON();
+                    console.log(droppedElements);
+                },
+                error: function (error) {
+                    console.log("Error while adding testcase to JSON after being dropped");
+                    console.log(error);
+                    return false;
+                }
+            });
+        }
+
         function addKeywordToJSON(indentation, keywordID) {
             $.ajax({
                 url: "/apis/keywords/" + keywordID + "/",
@@ -372,28 +407,28 @@
             floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
         }
 
-        function writeKeywordDatabase() {
-            var keywordName = document.getElementById("keyword_name").value;
-            var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = droppedElements;
-            var keywordCollection = document.getElementById('keyword_collection').value;
-            var keywordScript = document.getElementById("terminal").value;
+        function writeTestSuiteDatabase() {
+            var testSuiteName = document.getElementById("keyword_name").value;
+            var testSuiteDescription = document.getElementById("keyword_description").value;
+            var testSuiteValues = droppedElements;
+            var testSuiteCollection = document.getElementById('keyword_collection').value;
+            var testSuiteScript = document.getElementById("terminal").value;
 
-            var newKeyword = {
-                "name": keywordName,
-                "description": keywordDescription,
-                "script": keywordScript,
-                "values": JSON.stringify(keywordValues),
-                "collection": keywordCollection
+            var newTestSuite = {
+                "name": testSuiteName,
+                "description": testSuiteDescription,
+                "script": testSuiteScript,
+                "values": JSON.stringify(testSuiteValues),
+                "collection": testSuiteCollection
             };
             $.ajax({
-                url: "{% url "api-keywords" %}",
+                url: "{% url "api-testsuite" %}",
                 type: 'POST',
-                data: newKeyword,
+                data: newTestSuite,
                 success: function (data) {
-                    drawMessage("Keyword Saved", 'green');
+                    drawMessage("Test suite Saved", 'green');
                     $('#modalPreview').modal('close');
-                    new_keyword = data;
+                    new_testSuite = data;
                 },
                 error: function (error) {
                     console.log(error)
@@ -404,7 +439,7 @@
         }
 
         function saveKeyword() {
-            var functionToExecuteAfter = writeKeywordDatabase;
+            var functionToExecuteAfter = writeTestSuiteDatabase;
             translateToRobot(functionToExecuteAfter);
         }
 
