@@ -11,6 +11,11 @@
                         <p class="card-title">Are you sure you want to delete the follow Parameter?</p>
                         <ul>
                             <li><b>Name:</b> {{ object.name }}</li>
+                            <li><b>Category:</b> {{ object.get_category_display }}</li>
+                            <li><b>Value Type:</b> {{ object.get_value_type_display }}</li>
+                            {% if object.help_text %}
+                                <li><b>Help Text:</b> {{ object.help_text }}</li>
+                            {% endif %}
 
                         </ul>
                         <div class="center">
