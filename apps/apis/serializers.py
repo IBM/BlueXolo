@@ -121,6 +121,7 @@ class PhaseSerializer(serializers.ModelSerializer):
 
 
 class TestSuiteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     class Meta:
         model = TestSuite
         fields = '__all__'
