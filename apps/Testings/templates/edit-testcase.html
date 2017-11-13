@@ -143,7 +143,7 @@
             };
             $.ajax({
                 url: "{% url "api-testcases" %}",
-                type: 'POST',
+                type: 'PUT',
                 data: newTestcase,
                 success: function (data) {
                     drawMessage("TestCase Saved", "green");

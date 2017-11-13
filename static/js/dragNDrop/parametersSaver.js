@@ -174,31 +174,49 @@ function saveKeywordFromInput(droppedElementIndex, elementID){
 
     for(var i=0; i<commands.length; i++){
         arguments = commands[i].arguments;
-		indexEnd = indexStart + arguments.length;
+		argumentsDisplayed = getIndexesOfArgumentsDisplayed(arguments);
+		indexEnd = indexStart + argumentsDisplayed.length;
+
 		var values = getInputsInRange(droppedElementIndex, i, indexStart, indexEnd);
-		saveValuesInKeywordJSON(droppedElementIndex, i, values)
-		//console.log(values);
+		saveValuesInKeywordJSON(droppedElementIndex, i, values, argumentsDisplayed);
+
 		indexStart = indexEnd;
     }
 }
 
-function saveValuesInKeywordJSON(droppedElementIndex, commandIndexInJSON, values) {
+function getIndexesOfArgumentsDisplayed(arguments){
+	// Receives an array of arguments and then checks which were modified
+	var indexesArgumentsDisplayed = [];
+	for(var i=0; i<arguments.length; i++){
+		if(!getIfArgumentIsEmpty(arguments[i])){
+			indexesArgumentsDisplayed.push(i);
+		}
+	}
+	return indexesArgumentsDisplayed;
+}
+
+function saveValuesInKeywordJSON(droppedElementIndex, commandIndexInJSON, values, argumentsDisplayed) {
 	var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
     var arguments = commands[commandIndexInJSON].arguments;
 
-    for (var i = 0; i < arguments.length; i++) {
+	//console.log(values);
+	//console.log(argumentsDisplayed);
+
+    for (var i = 0; i < argumentsDisplayed.length; i++) {
+    	var argumentToEdit = argumentsDisplayed[i];
+    	//console.log("Argument to edit "+argumentToEdit);
 
         if (values[i].checked === undefined && (values[i].value === undefined || values[i].value === "")) {
             continue;
         }
 
-        if (values[i].checked) {
-            droppedElements[droppedElementIndex].keywordJSON[commandIndexInJSON].arguments[i].visible = true;
+        if (values[i].checked !== undefined) {
+            droppedElements[droppedElementIndex].keywordJSON[commandIndexInJSON].arguments[argumentToEdit].visible = values[i].checked;
         }
 
         if (values[i].value !== undefined) {
-           droppedElements[droppedElementIndex].keywordJSON[commandIndexInJSON].arguments[i].value = values[i].value;
+           droppedElements[droppedElementIndex].keywordJSON[commandIndexInJSON].arguments[argumentToEdit].value = values[i].value;
         }
     }
 }

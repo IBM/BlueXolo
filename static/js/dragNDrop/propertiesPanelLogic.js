@@ -68,7 +68,7 @@ function getIfArgumentIsEmpty(argument){
     if(argument.needs_value && !hasValue){
         return false;
     }
-    else if(argument.requirement || isChecked !== undefined){
+    else if(argument.requirement || isChecked !== undefined || argument.visible){
         return false;
     }    
     else{
@@ -76,7 +76,7 @@ function getIfArgumentIsEmpty(argument){
     }
 }
 
-function drawPropertiesForTestcases(droppedElementIndex, elementID) {    
+function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
     var checkboxCounter = 2;
@@ -192,7 +192,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     showPropertiesPanel();
 }
 
-function drawPropertiesForKeywords(droppedElementIndex, elementID) {    
+function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
     var checkboxCounter = 2;
@@ -215,6 +215,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
     for(var j=0; j< commands.length; j++){
         arguments = commands[j].arguments;
+
         if(arguments === null){
             continue;
         }
