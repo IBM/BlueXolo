@@ -1,3 +1,105 @@
+function translateToRobot(callBackFunction) {
+    var dragNDrop = document.getElementById("dragDropSpace");
+    var rowsInTable = dragNDrop.children;
+
+    var terminal = document.getElementById("terminal");
+    terminal.value = "";
+
+    var translation = [];
+
+    var inForLoop = false;
+    var identationForLoop = 1;
+
+    var keywordDroppedCategory = 6;
+
+    for (var i = 0; i < droppedElements.length; i++) {
+
+        if (droppedElements[i].category === keywordDroppedCategory) {
+            translateDroppedKeyword(droppedElements[i].keywordJSON);
+            if ((i + 1) >= rowsInTable.length) {
+                if (callBackFunction !== undefined) {
+                    callBackFunction();
+                }
+                return true;
+            } else {
+                continue;
+            }
+        }
+
+        var elementType = droppedElements[i].id;
+        var identationLevel = droppedElements[i].indentation;
+        var parameters = droppedElements[i].arguments;
+
+        if (inForLoop && Number(identationLevel) <= identationForLoop) {
+            inForLoop = false;
+        }
+
+        if (inForLoop) {
+            var translatedRow = handleIdentation(identationForLoop - 1);
+            translatedRow += "\\    ";
+            translatedRow += handleIdentation(identationLevel);
+        }
+        else {
+            var translatedRow = handleIdentation(identationLevel);
+        }
+
+        translatedRow += handleTranslationOf(droppedElements[i], parameters);
+        terminal.value += translatedRow;
+
+        if ((i + 1) >= rowsInTable.length) {
+            if (callBackFunction !== undefined) {
+                callBackFunction();
+            }
+            return true;
+        }
+
+        if (droppedElements[i].name === "for in" || droppedElements[i].name === "for in range") {
+            inForLoop = true;
+            identationForLoop = (Number(identationLevel));
+        }
+
+    }
+}
+
+function translateDroppedKeyword(keyword) {
+    var dragNDrop = document.getElementById("dragDropSpace");
+    var rowsInTable = dragNDrop.children;
+
+    var terminal = document.getElementById("terminal");
+    var translation = [];
+
+    var inForLoop = false;
+    var identationForLoop = 1;
+
+    for (var i = 0; i < keyword.length; i++) {
+        var elementType = keyword[i].id;
+        var identationLevel = keyword[i].indentation;
+        var parameters = keyword[i].arguments;
+
+        if (inForLoop && Number(identationLevel) <= identationForLoop) {
+            inForLoop = false;
+        }
+
+        if (inForLoop) {
+            var translatedRow = handleIdentation(identationForLoop - 1);
+            translatedRow += "\\    ";
+            translatedRow += handleIdentation(identationLevel);
+        }
+        else {
+            var translatedRow = handleIdentation(identationLevel);
+        }
+
+        translatedRow += handleTranslationOf(keyword[i], parameters);
+        terminal.value += translatedRow;
+
+        if (keyword[i].name === "for in" || keyword[i].name === "for in range") {
+            inForLoop = true;
+            identationForLoop = (Number(identationLevel));
+        }
+
+    }
+}
+
 function handleIdentation(identationLevel){
 	var identation = '';
 	for(var i=0; i<identationLevel-1; i++){
@@ -35,19 +137,18 @@ function handleTranslationOf(data, parameters){
 
     translatedRow += "\n";
     return translatedRow;
-
 }
 
 function translateExternCommand(commandData){
 	var scriptLine = commandData.name;
 	var arguments = commandData.arguments;
 
-/*	Elements are not translated like this
-	if(commandData.extraValue !== undefined){
-		scriptLine += "\n...    " + commandData.extraValue;
-		scriptLine += "\n";
-	}
-*/	
+	/*	Elements are not longer translated like this
+		if(commandData.extraValue !== undefined){
+			scriptLine += "\n...    " + commandData.extraValue;
+			scriptLine += "\n";
+		}
+	*/	
 
 	for(var i=0; i<arguments.length; i++){
 		if(arguments[i].visible === true){
