@@ -126,6 +126,10 @@ class MExtract:
 
     def _run_with_default(self):
         self._split_list_of_commands()
+
+        if not self.list_of_commands:
+            raise Exception("There where no commands for extraction")
+
         for command in self.list_of_commands:
             manpage = self._get_manpage(command)
             if manpage is None:
@@ -136,7 +140,10 @@ class MExtract:
             self._save_into_db()
 
     def _run_with_ssh(self):
-        self._sshConnect()
+        self._ssh_connect()
+        if not self.ssh_commands_man:
+            raise Exception("There where no commands for extraction")
+
         for (command, manpage) in self.ssh_commands_man.items():
             if manpage is None:
                 continue
@@ -145,7 +152,7 @@ class MExtract:
                 self._parse_arguments(section)  # TODO. Needs to change for modularity
             self._save_into_db()
 
-    def _sshConnect(self):
+    def _ssh_connect(self):
         """
         Establish connection with remote server running a bash shell
         :return:
@@ -179,7 +186,6 @@ class MExtract:
                 else:
                     manpage = re.split(self.sections_re, man)
                 self.ssh_commands_man[command] = manpage
-
 
         except pxssh.ExceptionPxssh as e:
             connection = False
@@ -408,14 +414,8 @@ class RExtract():
                     except Exception as error:
                         print(error)
                     for arg in keyword['args']:
-                        # needsValue = True
-                        isRequired = True
-                        # if '=' in arg:
-                        #     needsValue = True
                         arg_split = arg.split('=')
                         arg_name = arg_split[0]
-                        if len(arg_split) > 1:
-                            isRequired = False
                         try:
                             keyw_opt, created = Argument.objects.get_or_create(
                                 name=arg_name,

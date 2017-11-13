@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Keywords{% endblock %}
-{% block subtitle %}Keywords{% endblock %}
+{% block title %}Create Test Suite{% endblock %}
+{% block subtitle %}Create Test Suite{% endblock %}
 
 {% block content %}
 
@@ -21,7 +21,7 @@
         <script type="text/javascript" src="{% static '/js/dragNDrop/translatorToRobot.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dragDropFunctions.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dropCreator.js' %}"></script>
-        <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>        
+        <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>
     {% endblock %}
 
     <script type="text/javascript">
@@ -32,28 +32,14 @@
         var new_keyword;
 
         $(document).ready(function () {
-
-            var _colleciontSelect = document.getElementById('keyword_collection');
-
+            //populate selects
             var _config = {
                 "url": "{% url "api-collection" %}",
                 "data": {},
                 "container": "keyword_collection"
             };
             selectServerSide(_config);
-
-            _colleciontSelect.value = document.getElementById('kwd_collection').value;
-            getKeywordToEdit();
         });
-
-        function getKeywordToEdit() {
-            var keywordData = document.getElementById('kwd_values').value;
-            {#            var keywordData = "{{object.values}}";#}
-            //console.log(keywordData.replace(/&quot;/g,'"'));
-            droppedElements = JSON.parse(keywordData);
-            //console.log(droppedElements);
-            drawElementsFromJSON();
-        }
 
         function createParametersList(node, iDTarget) {
             var attributeList = document.createElement("ul");
@@ -85,33 +71,6 @@
                     console.log("Error loading arguments of " + elementType + "while drawing list on drop");
                     return false;
                 }
-            });
-        }
-
-        function populateCommandsPanel(commands, id_div_accordion) {
-            commands.forEach(function (commandJSON) {
-                var draggableNode = document.createElement("div");
-
-                draggableNode.className = "drag-drop-item";
-                draggableNode.id = commandJSON.id + "-drag-drop";
-                draggableNode.draggable = true;
-                draggableNode.setAttribute("ondragstart", "drag(event)");
-                draggableNode.innerHTML = commandJSON.name;
-                var commandsPanelControlFlow = document.getElementById(id_div_accordion);
-                commandsPanelControlFlow.appendChild(draggableNode);
-            });
-        }
-
-        function populateKeywordsPanel(commands, id_div_accordion) {
-            commands.forEach(function (commandJSON) {
-                var draggableNode = document.createElement("div");
-                draggableNode.className = "drag-drop-item";
-                draggableNode.id = commandJSON.id + "-keyword";
-                draggableNode.draggable = true;
-                draggableNode.setAttribute("ondragstart", "drag(event)");
-                draggableNode.innerHTML = commandJSON.name;
-                var commandsPanelControlFlow = document.getElementById(id_div_accordion);
-                commandsPanelControlFlow.appendChild(draggableNode);
             });
         }
 
@@ -157,61 +116,86 @@
             });
         }
 
-        function writeKeywordDatabase() {
-            var keywordName = document.getElementById("keyword_name").value;
-            var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = droppedElements;
-            var keywordCollection = document.getElementById('keyword_collection').value;
-            var keywordScript = document.getElementById("terminal").value;
+        function popUpPropertiesKeyword() {
+            var floatingDiv = document.getElementById("floatingDiv"),
+                lightsOff = document.createElement("div");
 
-            var newKeyword = {
-                "name": keywordName,
-                "description": keywordDescription,
-                "script": keywordScript,
-                "values": JSON.stringify(keywordValues),
-                "collection": keywordCollection
+            lightsOff.style.width = window.innerWidth + "px";
+            lightsOff.style.height = window.innerHeight + "px";
+            lightsOff.className = "lightsOff";
+            lightsOff.id = "lightsOff";
+
+            lightsOff.onclick = function () {
+                document.body.removeChild(this);
+                floatingDiv.style.visibility = 'hidden';
+            };
+
+            document.body.appendChild(lightsOff);
+
+            floatingDiv.style.visibility = 'visible';
+            floatingDiv.style.top = window.innerHeight / 2 - 50 + 'px';
+            floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
+        }
+
+        function writeTestSuiteDatabase() {
+            var testSuiteName = document.getElementById("keyword_name").value;
+            var testSuiteDescription = document.getElementById("keyword_description").value;
+            var testSuiteValues = droppedElements;
+            var testSuiteCollection = document.getElementById('keyword_collection').value;
+            var testSuiteScript = document.getElementById("terminal").value;
+
+            var newTestSuite = {
+                "name": testSuiteName,
+                "description": testSuiteDescription,
+                "script": testSuiteScript,
+                "values": JSON.stringify(testSuiteValues),
+                "collection": testSuiteCollection
             };
             $.ajax({
-                url: "{% url "api-keywords" object.pk %}",
-                type: 'PUT',
-                data: newKeyword,
+                url: "{% url "api-testsuite" %}",
+                type: 'POST',
+                data: newTestSuite,
                 success: function (data) {
-
-                    drawMessage("Keyword Updated", 'green');
+                    drawMessage("Test suite Saved", 'green');
                     $('#modalPreview').modal('close');
-                    new_keyword = data;
+                    new_testSuite = data;
                 },
                 error: function (error) {
                     console.log(error)
                 }
             });
+
+            hidePropertiesKeyword();
         }
 
-        function saveKeyword() {
-            var functionToExecuteAfter = writeKeywordDatabase;
+        function saveTestsuite() {
+            var functionToExecuteAfter = writeTestSuiteDatabase;
             translateToRobot(functionToExecuteAfter);
         }
 
-
+        function hidePropertiesKeyword() {
+            {#            var floatingDiv = document.getElementById("floatingDiv"),#}
+            {#                lightsOff = document.getElementById("lightsOff");#}
+            {##}
+            {#            document.body.removeChild(lightsOff);#}
+            {#            floatingDiv.style.visibility = 'hidden';#}
+        }
     </script>
 
 
     <div class="row">
-        <input type="hidden" value="{{ object.values }}" id="kwd_values">
-        <input type="hidden" value="{{ object.collection.last.pk }}" id="kwd_collection">
         <div class="col s12">
-
             <div class="input-field col s6 l4">
                 <select id="keyword_collection"></select>
-                <label for="keyword_collection">Keyword Collection</label>
+                <label for="keyword_collection">Collection</label>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_name">Keyword Name</label>
-                <input type="text" id="keyword_name" onblur="hasValues()" value="{{ object.name }}">
+                <label for="keyword_name">Test Suite Name</label>
+                <input type="text" id="keyword_name" onblur="hasValues()">
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_description">Keyword Description</label>
-                <input type="text" id="keyword_description" value="{{ object.description }}">
+                <label for="keyword_description">Test Suite Description</label>
+                <input type="text" id="keyword_description">
             </div>
         </div>
     </div>
@@ -222,6 +206,7 @@
         <div class="row">
             <div class="col s12 l3">
                 {% include "search-block.html" %}
+                {% include "search-testcase-block.html" %}
             </div>
             <div class="col l6 s12">
                 <ul class="tabs">
@@ -232,13 +217,14 @@
                     <div class="card">
                         <div class="card-content" style="min-height: 30em">
                             <div class="row">
-                                <div class="col s12">
+                                <div class="col s12 ">
                                     <table id="dragDropTable" style="width:100%">
                                         <tr id="tableFormat" ondrop="drop(event)" ondragover="allowDrop(event)">
                                             <td id="dragDropSpace"></td>
                                         </tr>
                                     </table>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -257,12 +243,13 @@
                 {% include "properties-block.html" %}
             </div>
         </div>
+
         <!-- Modal Structure -->
         <div id="modalPreview" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <div class="card">
                     <div class="card-content">
-                        <h4 class="app-title">Keyword Properties</h4>
+                        <h4 class="app-title">Test Suite Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
                                 <select name="severs" id="selectProfiles" multiple>
@@ -272,43 +259,32 @@
                         </div>
                     </div>
                 </div>
-                <h4 class="app-title">Keyword Preview</h4>
+                <h4 class="app-title">Test Suite Preview</h4>
                 <textarea id="codeFinal" class=" terminal blue-grey-text" disabled></textarea>
             </div>
             <div class="modal-footer">
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
                 <button type="button" id="runScript" class="waves-effect waves-green btn" onclick="runScript()"
-                        disabled="true">Run script
+                        disabled>Run script
                 </button>
-                <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveKeyword()">Save
-                    Keyword
+                <button type="button" id="btnSave" class="waves-effect waves-green btn" onclick="saveTestsuite()">Save
+                    Test suite
                 </button>
             </div>
         </div>
 
-        {#  - - - -  - - - MODAL RUNNING - - - - - - - - - - -#}
-        <div id="modal-run" class="modal">
-            <div class="modal-content">
-                <h4>Run Output</h4>
-                <div id="black_terminal" style="width: 100%"></div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-            </div>
-        </div>
-        {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
     <div class="fixed-action-btn">
         <button onclick="translateToRobot(populatePreview)" id="btn_play"
                 class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-                data-tooltip="Preview Script">
+                data-tooltip="Preview Script" disabled="true">
             <i class="material-icons">play_arrow</i></button>
     </div>
 
 
     <div class="fixed-action-btn left-button ">
-        <a href="{% url "keywords" %}" id="btn_play"
+        <a href="{% url "testsuites" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Keyword List">
             <i class="material-icons">arrow_back</i></a>
@@ -318,6 +294,7 @@
 {% block extraScripts %}
     <script type="text/javascript">
         $('.modal').modal();
+
 
         function populateSelect() {
             var _select = document.getElementById('selectProfiles');
@@ -349,6 +326,12 @@
             $('#modalPreview').modal('open');
         }
 
+        document.getElementById('selectProfiles').onchange = function () {
+            if ($('#selectProfiles').val()) {
+                document.getElementById('runScript').disabled = false;
+            }
+        };
+
         function hasValues() {
             var _keyName = document.getElementById('keyword_name');
             var _keyCollection = document.getElementById('keyword_collection');
@@ -356,14 +339,8 @@
             _btn_save.disabled = !(_keyCollection.value && _keyName.value);
         }
 
-        document.getElementById('selectProfiles').onchange = function () {
-            if ($('#selectProfiles').val()) {
-                document.getElementById('runScript').disabled = false;
-            }
-        };
-
         function runScript() {
-            saveKeyword();
+            saveTestsuite();
             var _profiles = JSON.stringify($('#selectProfiles').val());
             setTimeout(function () {
                 $.ajax({
@@ -377,10 +354,11 @@
                         drawMessage("Keyword has sent to scheduler", 'blue');
                         $('#modalPreview').modal('close');
                     }, error: function (err) {
-                        console.log('error on run script: ' + err)
+                        drawMessage(err.responseJSON.text, 'red');
                     }
                 });
             }, 3000);
+
         }
     </script>
 {% endblock %}

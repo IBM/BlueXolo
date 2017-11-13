@@ -15,15 +15,15 @@ from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection, TestCase, Phase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer
-from .api_pagination import CommandsPagination, KeywordPagination
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
+from .api_pagination import CommandsPagination, KeywordPagination, TestCasePagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    PhaseFilter
+    PhaseFilter, TestSuiteFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -149,6 +149,15 @@ class CommandsApiView(mixins.ListModelMixin,
         category = self.request.query_params.get('category')
         source = self.request.query_params.get('source')
         exact = self.request.query_params.get('exact')
+        full_search = self.request.query_params.get('full_search')
+        if full_search == '1':
+            queryset = queryset.filter(
+                Q(source__name__icontains=name) |
+                Q(name__icontains=name)
+            )
+            if category:
+                queryset = queryset.filter(source__category=category)
+            return queryset.annotate(Count('id'))
         if category:
             if category in ['2', '3', '4', '5'] and name:
                 # check the category and search by his name
@@ -238,6 +247,8 @@ class RunExtract(LoginRequiredMixin, APIView):
             extract = run_extract.delay(_config)
             task = Task.objects.create(
                 name="Extract commands from {0}".format(origin),
+                category=1,
+                task_info="Started",
                 task_id=extract.task_id,
                 state=extract.state
             )
@@ -315,7 +326,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         if _parametro.name == 'path':
                             _path = p.get('value')
                 elif _server_profile.category == 1:
-                    _global_variables =json.loads(_server_profile.config)
+                    _global_variables = json.loads(_server_profile.config)
                     _profile_name = _server_profile.name
                     for variable in _global_variables:
                         _values.append(variable.get('value'))
@@ -324,13 +335,13 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         _arreglo.append(_param_name.name)
                         _arreglo.append(variable.get('value'))
                         _values_name.append(_arreglo)
-
             try:
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
                 name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,_profile_name, _values_name)
+                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
+                                             _profile_name, _values_name)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
@@ -445,7 +456,16 @@ class TestCaseApiView(LoginRequiredMixin,
                       ):
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
-    filter_class = TestCaseFilter
+    pagination_class = TestCasePagination
+
+    def filter_queryset(self, queryset):
+        name = self.request.query_params.get('name')
+        collection = self.request.query_params.get('collection')
+        if collection:
+            queryset = queryset.filter(collection=collection)
+        if name:
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -495,6 +515,40 @@ class PhaseDetailApiView(mixins.RetrieveModelMixin,
     queryset = Phase.objects.all()
     serializer_class = PhaseSerializer
     filter_class = PhaseFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class TestSuiteApiView(LoginRequiredMixin,
+                       mixins.ListModelMixin,
+                       mixins.CreateModelMixin,
+                       generics.GenericAPIView
+                       ):
+    queryset = TestSuite.objects.all()
+    serializer_class = TestSuiteSerializer
+    filter_class = TestSuiteFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             generics.GenericAPIView):
+    queryset = TestSuite.objects.all()
+    serializer_class = TestSuiteSerializer
+    filter_class = TestSuiteFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

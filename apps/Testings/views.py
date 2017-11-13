@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView
 
-from apps.Testings.models import Keyword, Collection, TestCase
+from apps.Testings.models import Keyword, Collection, TestCase, TestSuite
 from apps.Testings.forms import CollectionForm
 
 
@@ -37,6 +37,20 @@ class DeleteTestcaseView(LoginRequiredMixin, DeleteView):
     template_name = "delete-testcase.html"
     model = TestCase
     success_url = reverse_lazy('testcases')
+
+class TestsuiteView(LoginRequiredMixin, TemplateView):
+    template_name = "testsuites.html"
+
+class NewTestsuiteView(LoginRequiredMixin, TemplateView):
+    template_name = "create-testsuites.html"
+
+class EditTestsuiteView(LoginRequiredMixin,DetailView):
+    model = TestSuite
+    template_name = "edit-testsuites.html"
+
+class DeleteTestsuiteView(LoginRequiredMixin, DetailView):
+    template_name = "delete-testsuite.html"
+    model = TestSuite
 
 class CollectionsView(LoginRequiredMixin, TemplateView):
     template_name = "collections.html"

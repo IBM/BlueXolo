@@ -1,7 +1,7 @@
 .drag-drop-item {
     font-weight: bold;
-    margin-left: 0em;
     cursor: pointer;
+    margin: 0.2rem;
 }
 
 .drop-area {
@@ -71,25 +71,27 @@
 }
 
 table {
-    border: 1px dotted #60666a;
+    /*border: 1px dotted #60666a;*/
+    background-color: #f1f1f1;
+    border-radius: 0.5rem;
 }
 
-#tab1{ 
+#tab1 {
     direction: rtl;
-    margin-left:auto;
+    margin-left: auto;
     margin-right: auto;
-    overflow: auto; 
+    overflow: auto;
     height: 42em;
 }
 
-.card-content{
-    height: fill;
+.card-content {
+    /*height: fill;*/
     direction: ltr;
 }
 
-#propertiesPannel {
+.propertiesPannel {
     display: none;
-    max-height: 80vh;
+    max-height: 52vh;
     overflow: auto;
 }
 
@@ -98,40 +100,22 @@ table {
     z-index: 2;
 }
 
-.propertiesPanelContainer {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-justify-content: end;
-    justify-content: end;
-    -webkit-flex-direction: column;
-    flex-direction: column;    
-    width: 100%;
-    height: 100%;
-    background-color: white;
+.propertiesContainer {
+    /*display: -webkit-flex;*/
+    /*display: flex;*/
+    /*-webkit-justify-content: end;*/
+    /*justify-content: end;*/
+    /*-webkit-flex-direction: column;*/
+    /*flex-direction: column;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 
 .temporaryRow {
     height: 1.5em;
     width: 100%;
-    border: 2px solid gray;
-    border-style: dotted;
-}
-
-#floatingDiv {
-    visibility: hidden;
-    position: absolute;
-    background: white;
-    border: 2px solid #3c3c3c;
-    z-index: 100;
-    padding: 20px;
-}
-
-.lightsOff {
-    background: #000;
-    position: absolute;
-    opacity: .5;
-    top: 0;
-    z-index: 99;
+    border: 2px dotted gray;
+    /*border-style: ;*/
 }
 
 #terminal, .terminal {

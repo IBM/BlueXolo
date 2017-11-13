@@ -10,9 +10,8 @@ from django.views.generic import TemplateView, CreateView, UpdateView, DeleteVie
 from pexpect import pxssh
 from scp import SCPClient
 
-
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
-from .models import TemplateServer, ServerProfile
+from .models import TemplateServer, ServerProfile, Parameters
 
 from celery import shared_task
 
@@ -181,5 +180,49 @@ class SshConnect(LoginRequiredMixin):
         a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
         a.write("#      {0}      #\n".format(name))
         for p in variables:
-            a.write('{0} = "{1}"\n'.format(p[0],p[1]))
+            a.write('{0} = "{1}"\n'.format(p[0], p[1]))
         a.close()
+
+
+class ParametersView(LoginRequiredMixin, TemplateView):
+    template_name = "parameters.html"
+
+
+class NewParametersView(LoginRequiredMixin, CreateView):
+    template_name = 'create-edit-parameter.html'
+    success_url = reverse_lazy('parameters')
+    form_class = ParametersForm
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Created")
+        return reverse_lazy('parameters')
+
+    def get_context_data(self, **kwargs):
+        context = super(NewParametersView, self).get_context_data(**kwargs)
+        context['title'] = 'Create Parameter'
+        return context
+
+
+class EditParametersView(LoginRequiredMixin, UpdateView):
+    template_name = "create-edit-parameter.html"
+    success_url = reverse_lazy("parameters")
+    form_class = ParametersForm
+    model = Parameters
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Edited")
+        return reverse_lazy('parameters')
+
+    def get_context_data(self, **kwargs):
+        context = super(EditParametersView, self).get_context_data(**kwargs)
+        context['title'] = 'Edit Parameter'
+        return context
+
+
+class DeleteParametersView(LoginRequiredMixin, DeleteView):
+    model = Parameters
+    template_name = "delete-parameters.html"
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Deleted")
+        return reverse_lazy('parameters')
