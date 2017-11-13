@@ -35,7 +35,7 @@ function addKeywordToJSON(indentation, keywordID) {
 function addElementToJSON(indentation, commandID) {
 
     $.ajax({
-        url: "{% url 'api-commands' %}",
+        url: "/apis/commands/",
         type: 'GET',
         data: {
             id: commandID,
@@ -70,7 +70,7 @@ function addElementToJSON(indentation, commandID) {
 function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition) {
 
     $.ajax({
-        url: "{% url 'api-commands' %}",
+        url: "/apis/commands/",
         type: 'GET',
         data: {
             id: commandID,
