@@ -168,7 +168,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
 function addElementToJSON(indentation, commandID) {
 
     $.ajax({
-        url: jsonAPIURL.commands,
+        url: "/apis/commands/",
         type: 'GET',
         data: {
             id: commandID,
@@ -203,7 +203,7 @@ function addElementToJSON(indentation, commandID) {
 function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition) {
 
     $.ajax({
-        url: jsonAPIURL.commands,
+        url: "/apis/commands/",
         type: 'GET',
         data: {
             id: commandID,
