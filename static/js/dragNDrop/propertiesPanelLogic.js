@@ -68,7 +68,7 @@ function getIfArgumentIsEmpty(argument){
     if(argument.needs_value && !hasValue){
         return false;
     }
-    else if(argument.requirement || isChecked !== undefined){
+    else if(argument.requirement || isChecked !== undefined || argument.visible){
         return false;
     }    
     else{
@@ -213,8 +213,13 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
+    console.log(commands.length);
+
     for(var j=0; j< commands.length; j++){
         arguments = commands[j].arguments;
+
+        console.log(arguments);
+
         if(arguments === null){
             continue;
         }
