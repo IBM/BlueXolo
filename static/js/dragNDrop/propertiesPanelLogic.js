@@ -76,7 +76,7 @@ function getIfArgumentIsEmpty(argument){
     }
 }
 
-function drawPropertiesForTestcases(droppedElementIndex, elementID) {    
+function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
     var checkboxCounter = 2;
@@ -192,7 +192,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     showPropertiesPanel();
 }
 
-function drawPropertiesForKeywords(droppedElementIndex, elementID) {    
+function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
     var checkboxCounter = 2;
@@ -213,12 +213,8 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
-    console.log(commands.length);
-
     for(var j=0; j< commands.length; j++){
         arguments = commands[j].arguments;
-
-        console.log(arguments);
 
         if(arguments === null){
             continue;
