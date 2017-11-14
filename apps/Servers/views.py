@@ -85,7 +85,7 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
     ssh.create_robot_file(filename, script)
     ssh.create_testcase_robotFile(filename, values)
     ssh.create_profile_file(profilename, variables)
-    if ssh.check_dirs(host, user, passwd, path) == False:
+    if not ssh.check_dirs(host, user, passwd, path):
         ssh.create_structure(host, user, passwd, path)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
     ssh.run_file_named(filename, host, user, passwd, path, namefile)
@@ -93,19 +93,19 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
 
 
 class SshConnect(LoginRequiredMixin):
-
     def check_dirs(self, host, user, passwd, path):
+        """Check if dirs schema exist"""
+        result = False
         client = paramiko.SSHClient()
         client.load_system_host_keys()
         client.connect(host, username=user, password=passwd)
         _, stdout, _ = client.exec_command(
-            "if test -d '{0}'; then echo 'yes'; else  echo 'no'; fi".format(path))
-        resultado = stdout.read()
-        res = resultado.decode('ascii').replace("\n", "")
-        if res == "yes":
-            return True
-        else:
-            return False
+            "if test -d '{0}/Keywords'; then echo '1'; else  echo '0'; fi".format(path))
+        pre_res = stdout.read()
+        res = pre_res.decode('ascii').replace("\n", "")
+        if int(res):
+            result = True
+        return result
 
     def create_structure(self, host, user, passwd, path):
         ssh = pxssh.pxssh(timeout=50)
