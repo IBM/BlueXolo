@@ -85,22 +85,53 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
     ssh.create_robot_file(filename, script)
     ssh.create_testcase_robotFile(filename, values)
     ssh.create_profile_file(profilename, variables)
+    if ssh.check_dirs(host, user, passwd, path) == False:
+        ssh.create_structure(host, user, passwd, path)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
     ssh.run_file_named(filename, host, user, passwd, path, namefile)
     ssh.send_results_named(host, user, passwd, namefile, path)
 
 
 class SshConnect(LoginRequiredMixin):
+
+    def check_dirs(self, host, user, passwd, path):
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.connect(host, username=user, password=passwd)
+        _, stdout, _ = client.exec_command(
+            "if test -d '{0}'; then echo 'yes'; else  echo 'no'; fi".format(path))
+        resultado = stdout.read()
+        res = resultado.decode('ascii').replace("\n", "")
+        if res == "yes":
+            return True
+        else:
+            return False
+
+    def create_structure(self, host, user, passwd, path):
+        ssh = pxssh.pxssh(timeout=50)
+        ssh.login(host, user, passwd)
+        run_create_path = 'mkdir {0}'.format(path)
+        run_path = 'cd {0}'.format(path)
+        run_create_structure = 'mkdir Keywords Libraries Profiles Resources Templates TestScripts Tools TestSuites'
+        try:
+            ssh.sendline(run_create_path)
+            ssh.sendline(run_path)
+            ssh.sendline(run_create_structure)
+            ssh.prompt()
+            ssh.logout()
+        except Exception as error:
+            return error
+
     def send_file_user_pass(self, filename, host, user, passwd, path):
         name = filename.replace(" ", "")
-        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:{4}'.format(
+        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
             settings.MEDIA_ROOT,
             name,
             user,
             host,
             path
         )
-        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}'.format(
+        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}/Keywords'.format(
             settings.MEDIA_ROOT,
             name,
             user,
@@ -120,7 +151,7 @@ class SshConnect(LoginRequiredMixin):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
         ssh.login(host, user, passwd)
-        run_path = 'cd {0}'.format(path)
+        run_path = 'cd {0}/Keywords'.format(path)
         try:
             run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html {1}_testcase.robot'.format(
                 namefile,
@@ -138,11 +169,11 @@ class SshConnect(LoginRequiredMixin):
         t = paramiko.Transport((host, 22))
         t.connect(username=user, password=passwd)
         scp = SCPClient(t)
-        scp.get('{0}/{1}_log.html'.format(path, filename),
+        scp.get('{0}/Keywords/{1}_log.html'.format(path, filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('{0}/{1}_report.html'.format(path, filename),
+        scp.get('{0}/Keywords/{1}_report.html'.format(path, filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('{0}/{1}_output.xml'.format(path, filename),
+        scp.get('{0}/Keywords/{1}_output.xml'.format(path, filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
         scp.close()
         t.close()
