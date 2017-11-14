@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Create Test Case{% endblock %}
-{% block subtitle %}Create Test Case{% endblock %}
+{% block title %}Edit Test Case{% endblock %}
+{% block subtitle %}EditTest Case{% endblock %}
 
 {% block content %}
 
@@ -183,22 +183,24 @@
 
         <div class="col s12">
             <div class="input-field col s6 m4 l2">
-                <select id="keyword_collection" onchange="hasValues()"></select>
+                <select id="keyword_collection" onchange="hasValues()" value="{{ object.collection }}"></select>
                 <label for="keyword_collection">Collection</label>
             </div>
             <div class="input-field col s6 m4 l2">
-                <select id="phases_list" onchange="hasValues()">
+                <select id="phases_list" onchange="hasValues()" value="{{ object.phase }}">
                     <option value="" selected>- - - - -</option>
                 </select>
                 <label for="phases_list">Phase</label>
             </div>
             <div class="input-field col s6 m4 l2">
                 <label for="testcase_name">Name</label>
-                <input type="text" id="testcase_name" onblur="hasValues()" placeholder="Required">
+                <input type="text" id="testcase_name" onblur="hasValues()" placeholder="Required"
+                       value="{{ object.name }}">
             </div>
             <div class="input-field col s6 m4 l3">
                 <label for="testcase_description">Description</label>
-                <input type="text" id="testcase_description" onblur="hasValues()" placeholder="Optional">
+                <input type="text" id="testcase_description" onblur="hasValues()" placeholder="Optional"
+                       value="{{ object.description | escape }}">
             </div>
             <div class="input-field col s6 m4 l3 ">
                 Functions
