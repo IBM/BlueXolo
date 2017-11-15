@@ -142,7 +142,7 @@
                 "values": JSON.stringify(testcaseValues)
             };
             $.ajax({
-                url: "{% url "api-testcases" %}",
+                url: "{% url "api-testcases" testcase.pk %}",
                 type: 'PUT',
                 data: newTestcase,
                 success: function (data) {
@@ -260,7 +260,7 @@
                         <h4 class="app-title">Testcase Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
-                                <select name="severs" id="selectProfiles"
+                                <select name="severs" id="selectProfiles"  multiple
                                         onchange="document.getElementById('runScript').disabled = false;">
                                 </select>
                                 <label for="severs">Server Profile</label>
@@ -281,18 +281,6 @@
                 </button>
             </div>
         </div>
-
-        {#  - - - -  - - - MODAL RUNNING - - - - - - - - - - -#}
-        <div id="modal-run" class="modal">
-            <div class="modal-content">
-                <h4>Run Output</h4>
-                <div id="black_terminal" style="width: 100%"></div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-            </div>
-        </div>
-        {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
     <div class="fixed-action-btn">
