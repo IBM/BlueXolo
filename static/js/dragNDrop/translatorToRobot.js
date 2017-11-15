@@ -156,7 +156,7 @@ function translateExternCommand(commandData){
 		}
 		
 		if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
-			scriptLine += "" + arguments[i].value + " ";
+			scriptLine += " " + arguments[i].value + " ";
 		}
 	
 	}
@@ -207,7 +207,7 @@ function translateVariable(parameters){
 	variableName = removeAllSpacesBeforeValue(variableName);
 	variableValue = removeAllSpacesBeforeValue(variableValue);
 
-	var scriptLine = '${'+variableName+'}= ' + variableValue;
+	var scriptLine =  "    " + '${'+variableName+'}= ' + variableValue;
 	return scriptLine;
 }
 
