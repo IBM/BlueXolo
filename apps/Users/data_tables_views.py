@@ -46,6 +46,8 @@ class TasksListJson(LoginRequiredMixin, BaseDatatableView):
 
     def get_initial_queryset(self):
         """get only user tasks"""
+        if self.request.user.is_superuser:
+            return Task.objects.all()
         user_tasks = self.request.user.get_all_tasks()
         tasks_ids = []
         for t in user_tasks:
