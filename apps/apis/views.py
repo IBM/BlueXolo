@@ -194,7 +194,7 @@ class CommandsApiView(mixins.ListModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
+        if self.request.query_params.get('extra') == '1' or self.request.data.get('extra') == '1':
             serializer = CommandsSerializer
         return serializer
 
@@ -202,6 +202,7 @@ class CommandsApiView(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(request, "Command Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -213,7 +214,7 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
+        if self.request.query_params.get('extra') == '1' or self.request.data.get('extra') == '1':
             serializer = CommandsSerializer
         return serializer
 
@@ -221,6 +222,7 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(request, "Command Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
