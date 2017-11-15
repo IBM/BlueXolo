@@ -386,9 +386,12 @@ class ArgumentsApiView(LoginRequiredMixin,
                        mixins.CreateModelMixin,
                        generics.GenericAPIView
                        ):
-    queryset = Argument.objects.all()
     serializer_class = ArgumentsSerializer
     filter_class = ArgumentFilter
+
+    def get_queryset(self):
+        qs = Argument.objects.exclude(id__in=[1, 2, 3, 4, 5, 6])
+        return qs.annotate(Count('id'))
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

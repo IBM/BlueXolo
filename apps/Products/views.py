@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, FormView
 
 from apps.Testings.models import Phase
 from apps.Users.models import Task
@@ -281,15 +281,18 @@ class CommandsView(LoginRequiredMixin, TemplateView):
     template_name = "commands.html"
 
 
-class NewCommandView(LoginRequiredMixin, CreateView):
+class NewCommandView(LoginRequiredMixin, FormView):
     model = Command
-    form_class = CommandForm
     template_name = 'create-edit-command.html'
-    success_url = reverse_lazy('commands')
+    form_class = CommandForm
+
+    def get_success_url(self):
+        return reverse_lazy('commands')
 
     def get_context_data(self, **kwargs):
         context = super(NewCommandView, self).get_context_data(**kwargs)
         context['title'] = 'Create Command'
+        context['ArgumentForm'] = ArgumentForm
         return context
 
 
