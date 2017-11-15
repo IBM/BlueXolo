@@ -347,7 +347,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
-                    state="run"
+                    state="run",
+                    task_result="{0}test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                 )
                 request.user.tasks.add(task)
                 request.user.save()
