@@ -106,13 +106,12 @@
             {% for arg in command.arguments.all %}
                 _startArgs.push({
                     "id": {{ arg.id }},
-                    "name": "{{ arg.name }}",
-                    "description": "{{ arg.description }}",
+                    "name": "{{ arg.name | escapejs }}",
+                    "description": "{{ arg.description | escapejs }}",
                     "needs_value": "{{ arg.needs_value }}",
                     "requirement": "{{ arg.requirement }}"
                 });
             {% endfor %}
-            console.log(_startArgs)
             _startArgs.forEach(function (v) {
                 populateObj(v);
             });
