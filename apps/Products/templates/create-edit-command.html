@@ -49,9 +49,15 @@
                 </div>
             </div>
             <div class="center section">
-                <button type="button" class="btn  waves-effect" onclick="createCommand()" disabled id="btn_create">
-                    Create Command
-                </button>
+                {% if object %}
+                    <button type="button" class="btn  waves-effect" onclick="updateCommand()"   id="btn_update">
+                        Update Command
+                    </button>
+                {% else %}
+                    <button type="button" class="btn  waves-effect" onclick="createCommand()" disabled id="btn_create">
+                        Create Command
+                    </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -93,8 +99,29 @@
 {% block extraScripts %}
     <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
     <script type="text/javascript">
-        $('.modal').modal();
         var _arguments = [];
+        {#  - - - - -- - -  Only for edit instance - - - - - - - - #}
+        {% if  command %}
+            var _startArgs = [];
+            {% for arg in command.arguments.all %}
+                _startArgs.push({
+                    "id": {{ arg.id }},
+                    "name": "{{ arg.name }}",
+                    "description": "{{ arg.description }}",
+                    "needs_value": "{{ arg.needs_value }}",
+                    "requirement": "{{ arg.requirement }}"
+                });
+            {% endfor %}
+            console.log(_startArgs)
+            _startArgs.forEach(function (v) {
+                populateObj(v);
+            });
+            var _btn_update = document.getElementById('btn_update');
+        {% endif %}
+        {#  - - - - -- - -  END edit instance - - - - - - - - #}
+
+        $('.modal').modal();
+
         var _objCont;
         var _table_container = document.getElementById('tableContainer');
         var _select_input = $('#argument-search');
@@ -134,7 +161,11 @@
 
         _select_input.on("select2:select", function (e) {
             populateObj(_select_input.select2('data')[0]);
-            _btn_create.disabled = false;
+            {% if object.pk %}
+                _btn_update.disabled = false;
+            {% else %}
+                _btn_create.disabled = false;
+            {% endif %}
         });
 
 
@@ -142,13 +173,15 @@
             _arguments.push({
                 "id": data.id,
                 "name": data.name,
-                "help_text": data.help_text,
-                "category": data.category,
-                "value_type": data.value_type
+                "description": data.description,
+                "needs_value": data.needs_value,
+                "requirement": data.requirement
             });
+
             if (!_objCont) {
                 _objCont = 0;
             }
+            _table_container = document.getElementById('tableContainer');
             _table_container.classList.remove("hide");
             drawArguments(data);
         }
@@ -181,6 +214,7 @@
             _tr_params.appendChild(_td_option);
 
             document.getElementById('params_table').appendChild(_tr_params);
+
             _objCont++;
         }
 
@@ -191,9 +225,18 @@
             _objCont--;
             _element.parentNode.removeChild(_element);
             if (_arguments.length < 1) {
+                {% if command %}
+                _btn_update.disabled = true;
+                    {% else %}
                 _btn_create.disabled = true;
+                {% endif %}
                 _table_container.classList.add("hide");
             }
+            {% if command %}
+                _btn_update.disabled = false;
+                    {% else %}
+                _btn_create.disabled = false;
+                {% endif %}
             _select_input.val(null).trigger("change");
         }
 
@@ -221,38 +264,86 @@
             });
         }
 
+        function checkFieldsRequirements() {
+            if (document.getElementById('id_name').value &&
+                ($('#id_source').val()).length &&
+                _arguments.length
+            ) {
+                return true;
+            } else {
+                drawMessage("Name, Source and Arguments are required", "yellow black-text");
+                return false;
+            }
+        }
+
         function createCommand() {
-            var _args = [];
-            _arguments.forEach(function (v) {
-                _args.push(parseInt(v.id));
-            });
+            if (checkFieldsRequirements()) {
+                var _args = [];
+                _arguments.forEach(function (v) {
+                    _args.push(parseInt(v.id));
+                });
 
-            var _data = {
-                "name": document.getElementById('id_name').value,
-                "description": document.getElementById('id_description').value,
-                "source": JSON.stringify($('#id_source').val()),
-                "arguments": JSON.stringify(_args),
-                "extra": 1
-            };
-            console.log(_data);
-            $.ajax({
-                url: "{% url "api-commands" %}",
-                type: 'POST',
-                data: _data,
-                success: function (data) {
-                    if (data.id) {
-                        console.log(data)
-                        window.location.href = '{% url "servers-templates" %}';
-                    }
-                }, error: function (err) {
-                    if (err.responseJSON.name) {
-                        (err.responseJSON.name).forEach(function (v) {
+                var _data = {
+                    "name": document.getElementById('id_name').value,
+                    "description": document.getElementById('id_description').value,
+                    "source": JSON.stringify($('#id_source').val()),
+                    "arguments": JSON.stringify(_args),
+                    "extra": 1
+                };
+                $.ajax({
+                    url: "{% url "api-commands" %}",
+                    type: 'POST',
+                    data: _data,
+                    success: function (data) {
+                        if (data.id) {
+                            window.location.href = '{% url "commands" %}';
+                        }
+                    }, error: function (err) {
+                        if (err.responseJSON.name) {
+                            (err.responseJSON.name).forEach(function (v) {
 
-                            drawMessage("Name: " + v, 'red');
-                        })
+                                drawMessage("Name: " + v, 'red');
+                            })
+                        }
                     }
-                }
-            })
+                })
+            }
+
+        }
+
+        function updateCommand() {
+            if (checkFieldsRequirements()) {
+                var _args = [];
+                _arguments.forEach(function (v) {
+                    _args.push(parseInt(v.id));
+                });
+
+                var _data = {
+                    "name": document.getElementById('id_name').value,
+                    "description": document.getElementById('id_description').value,
+                    "source": JSON.stringify($('#id_source').val()),
+                    "arguments": JSON.stringify(_args),
+                    "extra": 1
+                };
+                $.ajax({
+                    url: "/apis/commands/{{ command.pk }}/",
+                    type: 'PUT',
+                    data: _data,
+                    success: function (data) {
+                        if (data.id) {
+                            window.location.href = '{% url "commands" %}';
+                        }
+                    }, error: function (err) {
+                        if (err.responseJSON.name) {
+                            (err.responseJSON.name).forEach(function (v) {
+
+                                drawMessage("Name: " + v, 'red');
+                            })
+                        }
+                    }
+                })
+            }
+
         }
     </script>
 {% endblock %}

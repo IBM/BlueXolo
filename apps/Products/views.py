@@ -305,7 +305,7 @@ class EditCommandView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(EditCommandView, self).get_context_data(**kwargs)
         context['title'] = 'Edit Command'
-        context['delete'] = True
+        context['ArgumentForm'] = ArgumentForm
         return context
 
 
