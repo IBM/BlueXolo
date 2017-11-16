@@ -14,43 +14,58 @@ class KeyWordsView(LoginRequiredMixin, TemplateView):
 class NewKeywordView(LoginRequiredMixin, TemplateView):
     template_name = "create-keyword.html"
 
+
 class EditKeywordView(LoginRequiredMixin, DetailView):
     model = Keyword
     template_name = "edit-keyword.html"
+
 
 class DeleteKeywordView(LoginRequiredMixin, DeleteView):
     template_name = "delete-keyword.html"
     model = Keyword
     success_url = reverse_lazy('keywords')
 
+
 class TestcaseView(LoginRequiredMixin, TemplateView):
     template_name = "testcases.html"
+
 
 class NewTestcaseView(LoginRequiredMixin, TemplateView):
     template_name = "create-testcase.html"
 
+
 class EditTestcaseView(LoginRequiredMixin, DetailView):
     model = TestCase
     template_name = "edit-testcase.html"
+
 
 class DeleteTestcaseView(LoginRequiredMixin, DeleteView):
     template_name = "delete-testcase.html"
     model = TestCase
     success_url = reverse_lazy('testcases')
 
+
 class TestsuiteView(LoginRequiredMixin, TemplateView):
     template_name = "testsuites.html"
+
 
 class NewTestsuiteView(LoginRequiredMixin, TemplateView):
     template_name = "create-testsuites.html"
 
-class EditTestsuiteView(LoginRequiredMixin,DetailView):
+
+class EditTestsuiteView(LoginRequiredMixin, DetailView):
     model = TestSuite
     template_name = "edit-testsuites.html"
 
-class DeleteTestsuiteView(LoginRequiredMixin, DetailView):
+
+class DeleteTestsuiteView(LoginRequiredMixin, DeleteView):
     template_name = "delete-testsuite.html"
     model = TestSuite
+
+    def get_success_url(self):
+        messages.success(self.request, "Test Suite Deleted")
+        return reverse_lazy("testsuites")
+
 
 class CollectionsView(LoginRequiredMixin, TemplateView):
     template_name = "collections.html"

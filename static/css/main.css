@@ -37,3 +37,7 @@
     left: 23px;
     right: auto;
 }
+
+.manita {
+    cursor: pointer;
+}

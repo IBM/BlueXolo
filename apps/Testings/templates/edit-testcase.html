@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Create Test Case{% endblock %}
-{% block subtitle %}Create Test Case{% endblock %}
+{% block title %}Edit Test Case{% endblock %}
+{% block subtitle %}EditTest Case{% endblock %}
 
 {% block content %}
 
@@ -21,7 +21,7 @@
         <script type="text/javascript" src="{% static '/js/dragNDrop/translatorToRobot.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dragDropFunctions.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dropCreator.js' %}"></script>
-        <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>        
+        <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>
     {% endblock %}
 
     <script type="text/javascript">
@@ -142,7 +142,7 @@
                 "values": JSON.stringify(testcaseValues)
             };
             $.ajax({
-                url: "{% url "api-testcases" %}",
+                url: "{% url "api-testcases" testcase.pk %}",
                 type: 'PUT',
                 data: newTestcase,
                 success: function (data) {
@@ -183,26 +183,28 @@
 
         <div class="col s12">
             <div class="input-field col s6 m4 l2">
-                <select id="keyword_collection"></select>
+                <select id="keyword_collection" onchange="hasValues()" value="{{ object.collection }}"></select>
                 <label for="keyword_collection">Collection</label>
             </div>
             <div class="input-field col s6 m4 l2">
-                <select id="phases_list">
+                <select id="phases_list" onchange="hasValues()" value="{{ object.phase }}">
                     <option value="" selected>- - - - -</option>
                 </select>
                 <label for="phases_list">Phase</label>
             </div>
-            <div class="input-field col s6 m4 l3 ">
-                Functions
-                <div class="chips" id="testecase_functions"></div>
-            </div>
             <div class="input-field col s6 m4 l2">
                 <label for="testcase_name">Name</label>
-                <input type="text" id="testcase_name" onblur="hasValues()" value="{{ object.name }}">
+                <input type="text" id="testcase_name" onblur="hasValues()" placeholder="Required"
+                       value="{{ object.name }}">
             </div>
             <div class="input-field col s6 m4 l3">
                 <label for="testcase_description">Description</label>
-                <input type="text" id="testcase_description" value="{{ object.description }}">
+                <input type="text" id="testcase_description" onblur="hasValues()" placeholder="Optional"
+                       value="{{ object.description | escape }}">
+            </div>
+            <div class="input-field col s6 m4 l3 ">
+                Functions
+                <div class="chips" id="testecase_functions"></div>
             </div>
         </div>
     </div>
@@ -258,7 +260,7 @@
                         <h4 class="app-title">Testcase Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
-                                <select name="severs" id="selectProfiles"
+                                <select name="severs" id="selectProfiles"  multiple
                                         onchange="document.getElementById('runScript').disabled = false;">
                                 </select>
                                 <label for="severs">Server Profile</label>
@@ -279,18 +281,6 @@
                 </button>
             </div>
         </div>
-
-        {#  - - - -  - - - MODAL RUNNING - - - - - - - - - - -#}
-        <div id="modal-run" class="modal">
-            <div class="modal-content">
-                <h4>Run Output</h4>
-                <div id="black_terminal" style="width: 100%"></div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-            </div>
-        </div>
-        {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
     <div class="fixed-action-btn">
@@ -346,8 +336,14 @@
         function hasValues() {
             var _keyName = document.getElementById('testcase_name');
             var _keyCollection = document.getElementById('keyword_collection');
+            var _phase = document.getElementById('phases_list');
             var _btn_save = document.getElementById('btn_play');
-            _btn_save.disabled = !(_keyCollection.value && _keyName.value);
+            if (!(_keyCollection.value && _keyName.value && _phase.value)) {
+                _btn_save.disabled = true;
+                drawMessage("Collection, Phase and  name are necessary", "yellow black-text");
+            } else {
+                _btn_save.disabled = false;
+            }
         }
 
         function runScript() {
