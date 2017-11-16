@@ -178,7 +178,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode); 
  
-    var keywordsCategory = 6; 
+    var keywordsCategory = 6;
     var testcaseCategory = 7; 
  
     for(var j=0; j< commands.length; j++){ 
@@ -271,7 +271,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     });
 
     function addClickEvent() {
-        saveKeywordFromInput(droppedElementIndex, elementID);
+        saveTestcaseFromInput(droppedElementIndex, elementID);
     }
 
     var propPanelContainer = document.getElementById("propertiesPanelContainer");
