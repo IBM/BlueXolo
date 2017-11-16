@@ -76,6 +76,87 @@ function getIfArgumentIsEmpty(argument){
     }
 }
 
+function drawKeywordsProperties(keywordJSON) { 
+    var checkboxCounter = 2; 
+ 
+    var propPanel = document.getElementById("propertiesPannel"); 
+    commands = keywordJSON; 
+ 
+    for(var j=0; j< commands.length; j++){ 
+        arguments = commands[j].arguments; 
+ 
+        if(arguments === null){ 
+            continue; 
+        } 
+ 
+        // Add arguments in the properties panel 
+        for (var i = 0; i < arguments.length; i++) { 
+ 
+            if(getIfArgumentIsEmpty(arguments[i])){ 
+                continue; 
+            } 
+ 
+            var tempForm = document.createElement("form"); 
+ 
+            // If the command need the argument in order to work 
+            if (arguments[i].requirement) { 
+                checkboxCounter++; 
+ 
+                var checkbox = document.createElement('input'); 
+                checkbox.type = "checkbox"; 
+                checkbox.id = checkboxCounter; 
+                 
+                checkbox.setAttribute("checked", true); 
+                checkbox.setAttribute("disabled", true); 
+ 
+                // Create a label with the argument name 
+                var labelNode = document.createElement('label'); 
+                labelNode.innerText = arguments[i].name; 
+                labelNode.htmlFor = checkboxCounter; 
+ 
+                tempForm.appendChild(checkbox); 
+                tempForm.appendChild(labelNode); 
+            } else { 
+                checkboxCounter++; 
+ 
+                var checkbox = document.createElement('input'); 
+                checkbox.type = "checkbox"; 
+                checkbox.id = checkboxCounter; 
+ 
+                if(arguments[i].visible !== undefined){ 
+                    checkbox.setAttribute("checked", arguments[i].visible); 
+                }                             
+ 
+                // Create a label with the argument name 
+                var labelNode = document.createElement('label'); 
+                labelNode.innerText = arguments[i].name; 
+                labelNode.htmlFor = checkboxCounter; 
+ 
+                tempForm.appendChild(checkbox); 
+                tempForm.appendChild(labelNode); 
+            } 
+ 
+            // If the argument needs a value then add an input form 
+            if (arguments[i].needs_value) { 
+                var inputNode = document.createElement("input"); 
+                inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name); 
+                 
+                if(arguments[i].value!== undefined){ 
+                    inputNode.setAttribute('value', arguments[i].value); 
+                }             
+ 
+                // Now it doesn't refresh the website if you press enter while typing on the form 
+                inputNode.setAttribute('onkeypress', 'return event.keyCode != 13'); 
+                tempForm.appendChild(inputNode); 
+            } 
+ 
+            propPanel.appendChild(tempForm); 
+        }         
+    } 
+ 
+    return checkboxCounter; 
+} 
+
 function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
@@ -95,15 +176,23 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     var keywordName = droppedElement.name;
     titleNode.innerText = "Currently editing: " + keywordName;
     titleNode.id = "currentEditing";
-    propPanel.appendChild(titleNode);
-
-    for(var j=0; j< commands.length; j++){
-        arguments = commands[j].arguments;
-        if(arguments === null){
-            continue;
-        }
-
-        // Add arguments in the properties panel
+    propPanel.appendChild(titleNode); 
+ 
+    var keywordsCategory = 6;
+    var testcaseCategory = 7; 
+ 
+    for(var j=0; j< commands.length; j++){ 
+        arguments = commands[j].arguments; 
+        if(arguments === null){ 
+            continue; 
+        } 
+ 
+        if(commands[j].category === keywordsCategory){ 
+            checkboxCounter = drawKeywordsProperties(commands[j].keywordJSON); 
+            continue; 
+        } 
+ 
+        // Add arguments in the properties panel 
         for (var i = 0; i < arguments.length; i++) {
 
             if(getIfArgumentIsEmpty(arguments[i])){
@@ -182,7 +271,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     });
 
     function addClickEvent() {
-        saveKeywordFromInput(droppedElementIndex, elementID);
+        saveTestcaseFromInput(droppedElementIndex, elementID);
     }
 
     var propPanelContainer = document.getElementById("propertiesPanelContainer");

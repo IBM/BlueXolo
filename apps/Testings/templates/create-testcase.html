@@ -21,7 +21,7 @@
         <script type="text/javascript" src="{% static '/js/dragNDrop/translatorToRobot.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dragDropFunctions.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dropCreator.js' %}"></script>
-        <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>        
+        <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>
     {% endblock %}
 
     <script type="text/javascript">
@@ -167,26 +167,26 @@
     <div class="row">
         <div class="col s12">
             <div class="input-field col s6 m4 l2">
-                <select id="keyword_collection"></select>
+                <select id="keyword_collection" onchange="hasValues()"></select>
                 <label for="keyword_collection">Collection</label>
             </div>
             <div class="input-field col s6 m4 l2">
-                <select id="phases_list">
+                <select id="phases_list" onchange="hasValues()">
                     <option value="" selected>- - - - -</option>
                 </select>
                 <label for="phases_list">Phase</label>
             </div>
-            <div class="input-field col s6 m4 l3 ">
-                Functions
-                <div class="chips" id="testecase_functions"></div>
-            </div>
             <div class="input-field col s6 m4 l2">
                 <label for="testcase_name">Name</label>
-                <input type="text" id="testcase_name" onblur="hasValues()">
+                <input type="text" id="testcase_name" onblur="hasValues()" placeholder="Required">
             </div>
             <div class="input-field col s6 m4 l3">
                 <label for="testcase_description">Description</label>
-                <input type="text" id="testcase_description">
+                <input type="text" id="testcase_description" onblur="hasValues()" placeholder="Optional">
+            </div>
+            <div class="input-field col s6 m4 l3 ">
+                Functions
+                <div class="chips" id="testecase_functions"></div>
             </div>
         </div>
     </div>
@@ -330,8 +330,14 @@
         function hasValues() {
             var _keyName = document.getElementById('testcase_name');
             var _keyCollection = document.getElementById('keyword_collection');
+            var _phase = document.getElementById('phases_list');
             var _btn_save = document.getElementById('btn_play');
-            _btn_save.disabled = !(_keyCollection.value && _keyName.value);
+            if (!(_keyCollection.value && _keyName.value && _phase.value)) {
+                _btn_save.disabled = true;
+                drawMessage("Collection, Phase and  name are necessary", "yellow black-text");
+            } else {
+                _btn_save.disabled = false;
+            }
         }
 
         function runScript() {

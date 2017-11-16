@@ -9,6 +9,12 @@ class ArgumentForm(forms.ModelForm):
         model = Argument
         fields = '__all__'
 
+        widgets = {
+            'name': forms.TextInput(attrs={'data-length': 30, 'id': 'args_name'}),
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea',
+                                                 'data-length': 70, 'id': 'args_description'})
+        }
+
 
 class PhaseForm(forms.ModelForm):
     class Meta:
@@ -120,9 +126,14 @@ class CommandForm(forms.ModelForm):
         model = Command
         fields = [
             'name',
+            'source',
             'description',
-            'source'
         ]
+
+        widgets = {
+            'name': forms.TextInput(attrs={'data-length': 30}),
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea', 'data-length': 70})
+        }
 
     def __init__(self, *args, **kwargs):
         """ This filter exclude the control flow sentences """

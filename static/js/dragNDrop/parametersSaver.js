@@ -25,6 +25,37 @@ function getInputs(droppedElementIndex) {
 	return inputValues;
 }
 
+function getInputsKeywordInTestcaseInRange(droppedElementIndex, keywordIndexInTestcase, commandIndexInJSON, indexStart, indexEnd) {
+    var droppedTestcase = droppedElements[droppedElementIndex];
+    var commands = droppedTestcase.keywordJSON[keywordIndexInTestcase].keywordJSON;
+
+	var propertiesPannel = document.getElementById("propertiesPannel").getElementsByTagName("form");
+	var inputValues = [];
+
+	for(var i=indexStart; i<indexEnd; i++){
+		var parameterChecked = undefined;
+		var parameterValue = undefined;	
+
+		var formNode = propertiesPannel[i];
+		//There is a checkbox
+		var checkboxNode = formNode[0];
+		var parameterChecked = checkboxNode.checked;
+			
+		var currentArgument = commands[commandIndexInJSON].arguments[i-indexStart];
+
+		if(currentArgument.needs_value){
+			var parameterValue = formNode[1].value;
+		}
+
+	    var inputValue = {
+	        "checked": parameterChecked,
+	        "value": parameterValue,
+	    };
+	    inputValues.push(inputValue);
+	}
+	return inputValues;
+}
+
 function getInputsInRange(droppedElementIndex, commandIndexInJSON, indexStart, indexEnd) {
     var droppedElement = droppedElements[droppedElementIndex];
     var commands = droppedElement.keywordJSON;
@@ -131,7 +162,7 @@ function getTagInputs(droppedElementIndex) {
 	    inputValues.push(inputValue);
 
 	}
-	console.log(inputValues);
+	//console.log(inputValues);
 	return inputValues;
 }
 
@@ -159,6 +190,64 @@ function saveTagFromInput(droppedElementIndex, elementID){
 	var values = getTagInputs(droppedElementIndex);
 	saveValuesInJSON(droppedElementIndex, values);
 	drawParameterList(droppedElementIndex, elementID);	
+}
+
+function saveTestcaseFromInput(droppedElementIndex, elementID){
+	if (elementID === undefined ){
+		alert("You need to select an item to edit first");
+		return;
+	}
+    var droppedTestcase = droppedElements[droppedElementIndex];
+    var commands = droppedTestcase.keywordJSON;
+
+    var indexStart = 0;
+    var indexEnd = 0;
+
+    var keywordsCategory = 6;
+
+    for(var i=0; i<commands.length; i++){
+    	if(commands[i].category === keywordsCategory){
+    		var keywordIndexInTestcase = i;
+    		var metaData = saveValuesKeywordInTestcase(droppedElementIndex, keywordIndexInTestcase, indexStart, indexEnd);
+
+    		indexStart = metaData.indexStart;
+    		indexEnd = metaData.metaData;
+    	}else{
+	        arguments = commands[i].arguments;
+			argumentsDisplayed = getIndexesOfArgumentsDisplayed(arguments);
+			indexEnd = indexStart + argumentsDisplayed.length;
+
+			var values = getInputsInRange(droppedElementIndex, i, indexStart, indexEnd);
+			saveValuesInKeywordJSON(droppedElementIndex, i, values, argumentsDisplayed);
+
+			indexStart = indexEnd;
+    	}
+    }
+}
+
+function saveValuesKeywordInTestcase(droppedElementIndex, keywordIndexInTestcase, indexStart, indexEnd){
+    var droppedTestcase = droppedElements[droppedElementIndex];
+    var commands = droppedTestcase.keywordJSON[keywordIndexInTestcase].keywordJSON;
+
+
+    for(var i=0; i<commands.length; i++){
+        arguments = commands[i].arguments;
+		argumentsDisplayed = getIndexesOfArgumentsDisplayed(arguments);
+		indexEnd = indexStart + argumentsDisplayed.length;
+
+		var values = getInputsKeywordInTestcaseInRange(droppedElementIndex, keywordIndexInTestcase, i, indexStart, indexEnd);
+		//console.log(values);
+		saveValuesKeywordInTestcaseJSON(droppedElementIndex, keywordIndexInTestcase, i, values, argumentsDisplayed);
+
+		indexStart = indexEnd;
+    }
+
+    var metaData = {
+        "start": indexStart,
+        "end": indexEnd,
+    };
+
+    return metaData;
 }
 
 function saveKeywordFromInput(droppedElementIndex, elementID){
@@ -193,6 +282,37 @@ function getIndexesOfArgumentsDisplayed(arguments){
 		}
 	}
 	return indexesArgumentsDisplayed;
+}
+
+function saveValuesKeywordInTestcaseJSON(droppedElementIndex, keywordIndexInTestcase, commandIndexInJSON, values, argumentsDisplayed) {
+    var droppedTestcase = droppedElements[droppedElementIndex];
+    var commands = droppedTestcase.keywordJSON[keywordIndexInTestcase].keywordJSON;
+
+    var arguments = commands[commandIndexInJSON].arguments;
+
+	//console.log(values);
+	//console.log(argumentsDisplayed);
+
+    for (var i = 0; i < argumentsDisplayed.length; i++) {
+    	var argumentToEdit = argumentsDisplayed[i];
+    	//console.log("Argument to edit "+argumentToEdit);
+
+        if (values[i].checked === undefined && (values[i].value === undefined || values[i].value === "")) {
+            continue;
+        }
+
+        if (values[i].checked !== undefined) {    	
+        	droppedTestcase = droppedElements[droppedElementIndex];
+        	keywordInsideTestcase = droppedTestcase.keywordJSON[keywordIndexInTestcase].keywordJSON;
+        	keywordInsideTestcase[commandIndexInJSON].arguments[argumentToEdit].visible = values[i].checked;
+        }
+
+        if (values[i].value !== undefined) {
+        	droppedTestcase = droppedElements[droppedElementIndex];
+        	keywordInsideTestcase = droppedTestcase.keywordJSON[keywordIndexInTestcase].keywordJSON;
+        	keywordInsideTestcase[commandIndexInJSON].arguments[argumentToEdit].value = values[i].value;
+        }
+    }
 }
 
 function saveValuesInKeywordJSON(droppedElementIndex, commandIndexInJSON, values, argumentsDisplayed) {

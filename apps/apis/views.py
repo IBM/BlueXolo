@@ -194,7 +194,7 @@ class CommandsApiView(mixins.ListModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
+        if self.request.query_params.get('extra') == '1' or self.request.data.get('extra') == '1':
             serializer = CommandsSerializer
         return serializer
 
@@ -202,6 +202,7 @@ class CommandsApiView(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(request, "Command Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -213,7 +214,7 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
+        if self.request.query_params.get('extra') == '1' or self.request.data.get('extra') == '1':
             serializer = CommandsSerializer
         return serializer
 
@@ -221,6 +222,7 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(request, "Command Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -345,7 +347,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
-                    state="run"
+                    state="run",
+                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL, name_file)
                 )
                 request.user.tasks.add(task)
                 request.user.save()
@@ -386,9 +389,12 @@ class ArgumentsApiView(LoginRequiredMixin,
                        mixins.CreateModelMixin,
                        generics.GenericAPIView
                        ):
-    queryset = Argument.objects.all()
     serializer_class = ArgumentsSerializer
     filter_class = ArgumentFilter
+
+    def get_queryset(self):
+        qs = Argument.objects.exclude(id__in=[1, 2, 3, 4, 5, 6])
+        return qs.annotate(Count('id'))
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

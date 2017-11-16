@@ -97,8 +97,8 @@
         {% for param in object.parameters.all %}
             global_params.push({
                 "id": "{{ param.id }}",
-                "name": "{{ param.name}}",
-                "help_text": "{{ param.help_text }}",
+                "name": "{{ param.name | escapejs}}",
+                "help_text": "{{ param.help_text | escapejs }}",
                 "category": "{{ param.category }}",
                 "value_type": "{{ param.value_type}}"
             });

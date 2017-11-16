@@ -31,6 +31,8 @@ class TaskFilter(django_filters.FilterSet):
 
 
 class ArgumentFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='istartswith')
+
     class Meta:
         model = Argument
         fields = ('name', 'id')
