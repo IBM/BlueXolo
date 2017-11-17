@@ -18,25 +18,31 @@
         </div>
     </div>
 {% endblock %}
+
 {% load staticfiles %}
-{% block extraStyles %}
+{% load compress %}
+
+{% compress css %}
     <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
-{% endblock %}
+{% endcompress %}
+
 {% block extraScripts %}
-    <script src="{% static "js/datatables.min.js" %}"></script>
-    <script src="{% static "js/DTBoilerPlate.js" %}"></script>
-    <script>
-        $(document).ready(function () {
-            var config = [{
-                "targets": 2,
-                data: function (row) {
-                    return "<div>" +
-                        "<a class='btn' href='/servers/parameters/" + row[2] + "'><i class='material-icons'>edit</i></a>" +
-                        "<a class='btn red' href='/servers/parameters/" + row[2] + "/delete/'><i class='material-icons'>delete</i></a>" +
-                        "</div>";
-                }
-            }];
-            dtStart("{% url "api-parameters-list" %}", config)
-        });
-    </script>
+    {% compress js %}
+        <script src="{% static "js/datatables.min.js" %}"></script>
+        <script src="{% static "js/DTBoilerPlate.js" %}"></script>
+        <script>
+            $(document).ready(function () {
+                var config = [{
+                    "targets": 2,
+                    data: function (row) {
+                        return "<div>" +
+                            "<a class='btn' href='/servers/parameters/" + row[2] + "'><i class='material-icons'>edit</i></a>" +
+                            "<a class='btn red' href='/servers/parameters/" + row[2] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            "</div>";
+                    }
+                }];
+                dtStart("{% url "api-parameters-list" %}", config)
+            });
+        </script>
+    {% endcompress %}
 {% endblock %}

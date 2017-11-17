@@ -50,7 +50,7 @@
             </div>
             <div class="center section">
                 {% if object %}
-                    <button type="button" class="btn  waves-effect" onclick="updateCommand()"   id="btn_update">
+                    <button type="button" class="btn  waves-effect" onclick="updateCommand()" id="btn_update">
                         Update Command
                     </button>
                 {% else %}
@@ -91,258 +91,265 @@
     </div>
 {% endblock %}
 
+
 {% load staticfiles %}
+{% load compress %}
+
 {% block extraStyles %}
-    <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
 {% endblock %}
 
 {% block extraScripts %}
-    <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
-    <script type="text/javascript">
-        var _arguments = [];
-        {#  - - - - -- - -  Only for edit instance - - - - - - - - #}
-        {% if  command %}
-            var _startArgs = [];
-            {% for arg in command.arguments.all %}
-                _startArgs.push({
-                    "id": {{ arg.id }},
-                    "name": "{{ arg.name | escapejs }}",
-                    "description": "{{ arg.description | escapejs }}",
-                    "needs_value": "{{ arg.needs_value }}",
-                    "requirement": "{{ arg.requirement }}"
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript">
+            var _arguments = [];
+            {#  - - - - -- - -  Only for edit instance - - - - - - - - #}
+            {% if  command %}
+                var _startArgs = [];
+                {% for arg in command.arguments.all %}
+                    _startArgs.push({
+                        "id": {{ arg.id }},
+                        "name": "{{ arg.name | escapejs }}",
+                        "description": "{{ arg.description | escapejs }}",
+                        "needs_value": "{{ arg.needs_value }}",
+                        "requirement": "{{ arg.requirement }}"
+                    });
+                {% endfor %}
+                _startArgs.forEach(function (v) {
+                    populateObj(v);
                 });
-            {% endfor %}
-            _startArgs.forEach(function (v) {
-                populateObj(v);
-            });
-            var _btn_update = document.getElementById('btn_update');
-        {% endif %}
-        {#  - - - - -- - -  END edit instance - - - - - - - - #}
-
-        $('.modal').modal();
-
-        var _objCont;
-        var _table_container = document.getElementById('tableContainer');
-        var _select_input = $('#argument-search');
-        var _btn_create = document.getElementById('btn_create');
-
-        function parseReults(results) {
-            var _print = "Getting info . . .";
-            if (results.name) {
-                _print = results.name + ' - ' + results.description
-            }
-            return _print
-        }
-
-        _select_input.select2({
-            ajax: {
-                url: "{% url "api-arguments" %}",
-                dataType: 'json',
-                delay: 300,
-                data: function (params) {
-                    return {
-                        name: params.term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            },
-            escapeMarkup: function (markup) {
-                return markup;
-            },
-            minimumInputLength: 1,
-            templateResult: parseReults,
-            templateSelection: parseReults
-        });
-
-        _select_input.on("select2:select", function (e) {
-            populateObj(_select_input.select2('data')[0]);
-            {% if object.pk %}
-                _btn_update.disabled = false;
-            {% else %}
-                _btn_create.disabled = false;
+                var _btn_update = document.getElementById('btn_update');
             {% endif %}
-        });
+            {#  - - - - -- - -  END edit instance - - - - - - - - #}
 
+            $('.modal').modal();
 
-        function populateObj(data) {
-            _arguments.push({
-                "id": data.id,
-                "name": data.name,
-                "description": data.description,
-                "needs_value": data.needs_value,
-                "requirement": data.requirement
-            });
+            var _objCont;
+            var _table_container = document.getElementById('tableContainer');
+            var _select_input = $('#argument-search');
+            var _btn_create = document.getElementById('btn_create');
 
-            if (!_objCont) {
-                _objCont = 0;
-            }
-            _table_container = document.getElementById('tableContainer');
-            _table_container.classList.remove("hide");
-            drawArguments(data);
-        }
-
-        function drawArguments(data) {
-            var _tr_params = document.createElement('tr');
-            var _td_param = document.createElement('td');
-            var _td_help = document.createElement('td');
-            var _td_required = document.createElement('td');
-            var _td_needs = document.createElement('td');
-            var _td_option = document.createElement('td');
-            var _delete_icon = document.createElement('i');
-
-            _tr_params.setAttribute('id', _objCont);
-
-            _delete_icon.setAttribute('class', 'material-icons red-text manita');
-            _delete_icon.setAttribute('onClick', 'deleteArgument(' + _objCont + ')');
-            _delete_icon.appendChild(document.createTextNode('close'));
-
-            _td_param.appendChild(document.createTextNode(data.name));
-            _td_help.appendChild(document.createTextNode(data.description));
-            _td_required.appendChild(document.createTextNode(data.requirement));
-            _td_needs.appendChild(document.createTextNode(data.needs_value));
-            _td_option.appendChild(_delete_icon);
-
-            _tr_params.appendChild(_td_param);
-            _tr_params.appendChild(_td_help);
-            _tr_params.appendChild(_td_required);
-            _tr_params.appendChild(_td_needs);
-            _tr_params.appendChild(_td_option);
-
-            document.getElementById('params_table').appendChild(_tr_params);
-
-            _objCont++;
-        }
-
-        function deleteArgument(id) {
-            /* Delete the param row (tr)*/
-            var _element = document.getElementById(id);
-            _arguments.splice(id, 1);
-            _objCont--;
-            _element.parentNode.removeChild(_element);
-            if (_arguments.length < 1) {
-                {% if command %}
-                _btn_update.disabled = true;
-                    {% else %}
-                _btn_create.disabled = true;
-                {% endif %}
-                _table_container.classList.add("hide");
-            }
-            {% if command %}
-                _btn_update.disabled = false;
-                    {% else %}
-                _btn_create.disabled = false;
-                {% endif %}
-            _select_input.val(null).trigger("change");
-        }
-
-
-        function createArgument() {
-            $.ajax({
-                url: "{% url "api-arguments" %}",
-                type: "POST",
-                data: {
-                    name: document.getElementById('args_name').value,
-                    description: document.getElementById('args_description').value,
-                    needs_value: document.getElementById('id_needs_value').checked,
-                    requirement: document.getElementById('id_requirement').checked
-                }, success: function (data) {
-                    drawMessage("Argument '" + data.name + "' Created", 'green');
-                    document.getElementById('form_argument').reset();
-                    $('#modalArgument').modal('close');
-                }, error: function (err) {
-                    if (err.responseJSON.name) {
-                        (err.responseJSON.name).forEach(function (v) {
-                            drawMessage("Name: " + v, 'red');
-                        })
-                    }
+            function parseReults(results) {
+                var _print = "Getting info . . .";
+                if (results.name) {
+                    _print = results.name + ' - ' + results.description
                 }
+                return _print
+            }
+
+            _select_input.select2({
+                ajax: {
+                    url: "{% url "api-arguments" %}",
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) {
+                        return {
+                            name: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                },
+                escapeMarkup: function (markup) {
+                    return markup;
+                },
+                minimumInputLength: 1,
+                templateResult: parseReults,
+                templateSelection: parseReults
             });
-        }
 
-        function checkFieldsRequirements() {
-            if (document.getElementById('id_name').value &&
-                ($('#id_source').val()).length &&
-                _arguments.length
-            ) {
-                return true;
-            } else {
-                drawMessage("Name, Source and Arguments are required", "yellow black-text");
-                return false;
-            }
-        }
+            _select_input.on("select2:select", function (e) {
+                populateObj(_select_input.select2('data')[0]);
+                {% if object.pk %}
+                    _btn_update.disabled = false;
+                {% else %}
+                    _btn_create.disabled = false;
+                {% endif %}
+            });
 
-        function createCommand() {
-            if (checkFieldsRequirements()) {
-                var _args = [];
-                _arguments.forEach(function (v) {
-                    _args.push(parseInt(v.id));
+
+            function populateObj(data) {
+                _arguments.push({
+                    "id": data.id,
+                    "name": data.name,
+                    "description": data.description,
+                    "needs_value": data.needs_value,
+                    "requirement": data.requirement
                 });
 
-                var _data = {
-                    "name": document.getElementById('id_name').value,
-                    "description": document.getElementById('id_description').value,
-                    "source": JSON.stringify($('#id_source').val()),
-                    "arguments": JSON.stringify(_args),
-                    "extra": 1
-                };
+                if (!_objCont) {
+                    _objCont = 0;
+                }
+                _table_container = document.getElementById('tableContainer');
+                _table_container.classList.remove("hide");
+                drawArguments(data);
+            }
+
+            function drawArguments(data) {
+                var _tr_params = document.createElement('tr');
+                var _td_param = document.createElement('td');
+                var _td_help = document.createElement('td');
+                var _td_required = document.createElement('td');
+                var _td_needs = document.createElement('td');
+                var _td_option = document.createElement('td');
+                var _delete_icon = document.createElement('i');
+
+                _tr_params.setAttribute('id', _objCont);
+
+                _delete_icon.setAttribute('class', 'material-icons red-text manita');
+                _delete_icon.setAttribute('onClick', 'deleteArgument(' + _objCont + ')');
+                _delete_icon.appendChild(document.createTextNode('close'));
+
+                _td_param.appendChild(document.createTextNode(data.name));
+                _td_help.appendChild(document.createTextNode(data.description));
+                _td_required.appendChild(document.createTextNode(data.requirement));
+                _td_needs.appendChild(document.createTextNode(data.needs_value));
+                _td_option.appendChild(_delete_icon);
+
+                _tr_params.appendChild(_td_param);
+                _tr_params.appendChild(_td_help);
+                _tr_params.appendChild(_td_required);
+                _tr_params.appendChild(_td_needs);
+                _tr_params.appendChild(_td_option);
+
+                document.getElementById('params_table').appendChild(_tr_params);
+
+                _objCont++;
+            }
+
+            function deleteArgument(id) {
+                /* Delete the param row (tr)*/
+                var _element = document.getElementById(id);
+                _arguments.splice(id, 1);
+                _objCont--;
+                _element.parentNode.removeChild(_element);
+                if (_arguments.length < 1) {
+                    {% if command %}
+                        _btn_update.disabled = true;
+                    {% else %}
+                        _btn_create.disabled = true;
+                    {% endif %}
+                    _table_container.classList.add("hide");
+                }
+                {% if command %}
+                    _btn_update.disabled = false;
+                {% else %}
+                    _btn_create.disabled = false;
+                {% endif %}
+                _select_input.val(null).trigger("change");
+            }
+
+
+            function createArgument() {
                 $.ajax({
-                    url: "{% url "api-commands" %}",
-                    type: 'POST',
-                    data: _data,
-                    success: function (data) {
-                        if (data.id) {
-                            window.location.href = '{% url "commands" %}';
-                        }
+                    url: "{% url "api-arguments" %}",
+                    type: "POST",
+                    data: {
+                        name: document.getElementById('args_name').value,
+                        description: document.getElementById('args_description').value,
+                        needs_value: document.getElementById('id_needs_value').checked,
+                        requirement: document.getElementById('id_requirement').checked
+                    }, success: function (data) {
+                        drawMessage("Argument '" + data.name + "' Created", 'green');
+                        document.getElementById('form_argument').reset();
+                        $('#modalArgument').modal('close');
                     }, error: function (err) {
                         if (err.responseJSON.name) {
                             (err.responseJSON.name).forEach(function (v) {
-
                                 drawMessage("Name: " + v, 'red');
                             })
                         }
                     }
-                })
-            }
-
-        }
-
-        function updateCommand() {
-            if (checkFieldsRequirements()) {
-                var _args = [];
-                _arguments.forEach(function (v) {
-                    _args.push(parseInt(v.id));
                 });
-
-                var _data = {
-                    "name": document.getElementById('id_name').value,
-                    "description": document.getElementById('id_description').value,
-                    "source": JSON.stringify($('#id_source').val()),
-                    "arguments": JSON.stringify(_args),
-                    "extra": 1
-                };
-                $.ajax({
-                    url: "/apis/commands/{{ command.pk }}/",
-                    type: 'PUT',
-                    data: _data,
-                    success: function (data) {
-                        if (data.id) {
-                            window.location.href = '{% url "commands" %}';
-                        }
-                    }, error: function (err) {
-                        if (err.responseJSON.name) {
-                            (err.responseJSON.name).forEach(function (v) {
-
-                                drawMessage("Name: " + v, 'red');
-                            })
-                        }
-                    }
-                })
             }
 
-        }
-    </script>
+            function checkFieldsRequirements() {
+                if (document.getElementById('id_name').value &&
+                    ($('#id_source').val()).length &&
+                    _arguments.length
+                ) {
+                    return true;
+                } else {
+                    drawMessage("Name, Source and Arguments are required", "yellow black-text");
+                    return false;
+                }
+            }
+
+            function createCommand() {
+                if (checkFieldsRequirements()) {
+                    var _args = [];
+                    _arguments.forEach(function (v) {
+                        _args.push(parseInt(v.id));
+                    });
+
+                    var _data = {
+                        "name": document.getElementById('id_name').value,
+                        "description": document.getElementById('id_description').value,
+                        "source": JSON.stringify($('#id_source').val()),
+                        "arguments": JSON.stringify(_args),
+                        "extra": 1
+                    };
+                    $.ajax({
+                        url: "{% url "api-commands" %}",
+                        type: 'POST',
+                        data: _data,
+                        success: function (data) {
+                            if (data.id) {
+                                window.location.href = '{% url "commands" %}';
+                            }
+                        }, error: function (err) {
+                            if (err.responseJSON.name) {
+                                (err.responseJSON.name).forEach(function (v) {
+
+                                    drawMessage("Name: " + v, 'red');
+                                })
+                            }
+                        }
+                    })
+                }
+
+            }
+
+            function updateCommand() {
+                if (checkFieldsRequirements()) {
+                    var _args = [];
+                    _arguments.forEach(function (v) {
+                        _args.push(parseInt(v.id));
+                    });
+
+                    var _data = {
+                        "name": document.getElementById('id_name').value,
+                        "description": document.getElementById('id_description').value,
+                        "source": JSON.stringify($('#id_source').val()),
+                        "arguments": JSON.stringify(_args),
+                        "extra": 1
+                    };
+                    $.ajax({
+                        url: "/apis/commands/{{ command.pk }}/",
+                        type: 'PUT',
+                        data: _data,
+                        success: function (data) {
+                            if (data.id) {
+                                window.location.href = '{% url "commands" %}';
+                            }
+                        }, error: function (err) {
+                            if (err.responseJSON.name) {
+                                (err.responseJSON.name).forEach(function (v) {
+
+                                    drawMessage("Name: " + v, 'red');
+                                })
+                            }
+                        }
+                    })
+                }
+
+            }
+        </script>
+    {% endcompress %}
 {% endblock %}
