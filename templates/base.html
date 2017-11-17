@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load compress %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block  title %}Blue Xolo{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Styles-->
-    <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
-    <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
-    <link rel="stylesheet" href="{% static "css/main.css" %}">
-    {% block extraStyles %}{% endblock extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
+        <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
+        <link rel="stylesheet" href="{% static "css/main.css" %}">
+        {% block extraStyles %}{% endblock extraStyles %}
+    {% endcompress %}
     <!-- End Styles -->
     <!-- Scripts -->
-    <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
-    <script src="{% static "js/materialize.min.js" %}"></script>
-    <script src="{% static "js/main.js" %}"></script>
+    {% compress js %}
+        <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <script src="{% static "js/materialize.min.js" %}"></script>
+        <script src="{% static "js/main.js" %}"></script>
+    {% endcompress %}
+
 </head>
 <body>
 <!-- messages  -->

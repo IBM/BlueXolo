@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+#script
+echo 'Welcome back Mr. Anderson'
+echo "Ruuuun! :-D "
+ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
+nohup celery -A CTAFramework worker -l info &
+echo "Then run python"
+ps -ef | grep 'runserver 0.0.0.0:8000' | grep -v grep | awk '{print $2}' | xargs kill
+./manage.py compress &
+nohup ./manage.py runserver 0.0.0.0:8000 &
+echo "now the project is running "
