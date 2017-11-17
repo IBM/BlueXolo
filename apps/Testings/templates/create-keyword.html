@@ -1,17 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Keywords{% endblock %}
-{% block subtitle %}Keywords{% endblock %}
-
+{% block title %}Create Keyword{% endblock %}{% block subtitle %}Create Keyword{% endblock %}
+{% load staticfiles %}
+{% load compress %}
 {% block content %}
 
-    {% load staticfiles %}
-
-    {% block extraStyles %}
+    {% compress css %}
         <link rel="stylesheet" href="{% static 'css/keywords.css' %}">
         <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
-    {% endblock %}
+    {% endcompress %}
 
-    {% block extraScript %}
+    {% compress js %}
         <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/dragNDrop/getInitial.js" %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/interpreter.js' %}"></script>
@@ -22,168 +20,159 @@
         <script type="text/javascript" src="{% static '/js/dragNDrop/dragDropFunctions.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dropCreator.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>
-    {% endblock %}
 
-    <script type="text/javascript">
-        var counterJSON = [];
-        var droppedElements = [];
-        var elementsInTable = 0;
-        var movingElement = false;
-        var new_keyword;
 
-        $(document).ready(function () {
-            //populate selects
-            var _config = {
-                "url": "{% url "api-collection" %}",
-                "data": {},
-                "container": "keyword_collection"
-            };
-            selectServerSide(_config);
+        <script type="text/javascript">
+            var counterJSON = [];
+            var droppedElements = [];
+            var elementsInTable = 0;
+            var movingElement = false;
+            var new_keyword;
 
-        });
+            $(document).ready(function () {
+                //populate selects
+                var _config = {
+                    "url": "{% url "api-collection" %}",
+                    "data": {},
+                    "container": "keyword_collection"
+                };
+                selectServerSide(_config);
 
-        function createParametersList(node, iDTarget) {
-            var attributeList = document.createElement("ul");
-            attributeList.id = node.id + "-" + "parameters";
+            });
 
-            attributeList.className = "parameter";
-            attributeList.style.fontWeight = "normal";
+            function createParametersList(node, iDTarget) {
+                var attributeList = document.createElement("ul");
+                attributeList.id = node.id + "-" + "parameters";
 
-            var elementType = node.id.split("-")[0];
+                attributeList.className = "parameter";
+                attributeList.style.fontWeight = "normal";
 
-            $.ajax({
-                url: "{% url 'api-commands' %}",
-                type: 'GET',
-                data: {
-                    id: elementType,
-                    extra: 1//0 retorna sin argumentos, 1 con argumentos
-                },
-                success: function (data) {
-                    var arguments = data.results[0].arguments;
-                    for (var i = 0; i < arguments.length; i++) {
-                        var li = document.createElement('li');
-                        t = document.createTextNode(arguments[i].name);
-                        li.appendChild(t);
-                        attributeList.appendChild(li);
+                var elementType = node.id.split("-")[0];
+
+                $.ajax({
+                    url: "{% url 'api-commands' %}",
+                    type: 'GET',
+                    data: {
+                        id: elementType,
+                        extra: 1//0 retorna sin argumentos, 1 con argumentos
+                    },
+                    success: function (data) {
+                        var arguments = data.results[0].arguments;
+                        for (var i = 0; i < arguments.length; i++) {
+                            var li = document.createElement('li');
+                            t = document.createTextNode(arguments[i].name);
+                            li.appendChild(t);
+                            attributeList.appendChild(li);
+                        }
+                        appendListInTable(node, attributeList, iDTarget);
+                    },
+                    error: function (error) {
+                        console.log("Error loading arguments of " + elementType + "while drawing list on drop");
+                        return false;
                     }
-                    appendListInTable(node, attributeList, iDTarget);
-                },
-                error: function (error) {
-                    console.log("Error loading arguments of " + elementType + "while drawing list on drop");
-                    return false;
-                }
-            });
-        }
+                });
+            }
 
-        function populateCommandsAfterSearch(commands) {
-            commands.forEach(function (commandJSON) {
-                var draggableNode = document.createElement("div");
+            function populateCommandsAfterSearch(commands) {
+                commands.forEach(function (commandJSON) {
+                    var draggableNode = document.createElement("div");
 
-                draggableNode.className = "drag-drop-item";
-                draggableNode.id = commandJSON.id + "-drag-drop";
-                draggableNode.draggable = true;
-                draggableNode.setAttribute("ondragstart", "drag(event)");
-                draggableNode.innerHTML = commandJSON.name;
+                    draggableNode.className = "drag-drop-item";
+                    draggableNode.id = commandJSON.id + "-drag-drop";
+                    draggableNode.draggable = true;
+                    draggableNode.setAttribute("ondragstart", "drag(event)");
+                    draggableNode.innerHTML = commandJSON.name;
 
-                if (commandJSON.category === 1) {
-                    var panelToPopulate = document.getElementById("controlFlowCommandsPanel");
-                    $('.collapsible').collapsible('open', 0);
-                }
-                else if (commandJSON.category === 2) {
-                    var panelToPopulate = document.getElementById("systemCommandsPanel");
-                    $('.collapsible').collapsible('open', 1);
-                }
-                else if (commandJSON.category === 3) {
-                    var panelToPopulate = document.getElementById("productCommandsPanel");
-                    $('.collapsible').collapsible('open', 2);
-                }
-                else if (commandJSON.category === 4) {
-                    var panelToPopulate = document.getElementById("robotCommandsPanel");
-                    $('.collapsible').collapsible('open', 3);
-                }
-                else if (commandJSON.category === 5) {
-                    var panelToPopulate = document.getElementById("librariesCommandsPanel");
-                    $('.collapsible').collapsible('open', 4);
-                }
-                else if (commandJSON.category === 6) {
-                    var panelToPopulate = document.getElementById("customKeywordCommandsPanel");
-                    $('.collapsible').collapsible('open', 5);
-                }
+                    if (commandJSON.category === 1) {
+                        var panelToPopulate = document.getElementById("controlFlowCommandsPanel");
+                        $('.collapsible').collapsible('open', 0);
+                    }
+                    else if (commandJSON.category === 2) {
+                        var panelToPopulate = document.getElementById("systemCommandsPanel");
+                        $('.collapsible').collapsible('open', 1);
+                    }
+                    else if (commandJSON.category === 3) {
+                        var panelToPopulate = document.getElementById("productCommandsPanel");
+                        $('.collapsible').collapsible('open', 2);
+                    }
+                    else if (commandJSON.category === 4) {
+                        var panelToPopulate = document.getElementById("robotCommandsPanel");
+                        $('.collapsible').collapsible('open', 3);
+                    }
+                    else if (commandJSON.category === 5) {
+                        var panelToPopulate = document.getElementById("librariesCommandsPanel");
+                        $('.collapsible').collapsible('open', 4);
+                    }
+                    else if (commandJSON.category === 6) {
+                        var panelToPopulate = document.getElementById("customKeywordCommandsPanel");
+                        $('.collapsible').collapsible('open', 5);
+                    }
 
-                if (panelToPopulate !== undefined) {
-                    panelToPopulate.appendChild(draggableNode);
-                }
+                    if (panelToPopulate !== undefined) {
+                        panelToPopulate.appendChild(draggableNode);
+                    }
 
-            });
-        }
+                });
+            }
 
-        function popUpPropertiesKeyword() {
-            var floatingDiv = document.getElementById("floatingDiv"),
-                lightsOff = document.createElement("div");
+            function popUpPropertiesKeyword() {
+                var floatingDiv = document.getElementById("floatingDiv"),
+                    lightsOff = document.createElement("div");
 
-            lightsOff.style.width = window.innerWidth + "px";
-            lightsOff.style.height = window.innerHeight + "px";
-            lightsOff.className = "lightsOff";
-            lightsOff.id = "lightsOff";
+                lightsOff.style.width = window.innerWidth + "px";
+                lightsOff.style.height = window.innerHeight + "px";
+                lightsOff.className = "lightsOff";
+                lightsOff.id = "lightsOff";
 
-            lightsOff.onclick = function () {
-                document.body.removeChild(this);
-                floatingDiv.style.visibility = 'hidden';
-            };
+                lightsOff.onclick = function () {
+                    document.body.removeChild(this);
+                    floatingDiv.style.visibility = 'hidden';
+                };
 
-            document.body.appendChild(lightsOff);
+                document.body.appendChild(lightsOff);
 
-            floatingDiv.style.visibility = 'visible';
-            floatingDiv.style.top = window.innerHeight / 2 - 50 + 'px';
-            floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
-        }
+                floatingDiv.style.visibility = 'visible';
+                floatingDiv.style.top = window.innerHeight / 2 - 50 + 'px';
+                floatingDiv.style.left = window.innerWidth / 2 - 100 + 'px';
+            }
 
-        function writeKeywordDatabase() {
-            var keywordName = document.getElementById("keyword_name").value;
-            var keywordDescription = document.getElementById("keyword_description").value;
-            var keywordValues = droppedElements;
-            var keywordCollection = document.getElementById('keyword_collection').value;
-            var keywordScript = document.getElementById("terminal").value;
+            function writeKeywordDatabase() {
+                var keywordName = document.getElementById("keyword_name").value;
+                var keywordDescription = document.getElementById("keyword_description").value;
+                var keywordValues = droppedElements;
+                var keywordCollection = document.getElementById('keyword_collection').value;
+                var keywordScript = document.getElementById("terminal").value;
 
-            var newKeyword = {
-                "name": keywordName,
-                "description": keywordDescription,
-                "script": keywordScript,
-                "values": JSON.stringify(keywordValues),
-                "collection": keywordCollection
-            };
-            $.ajax({
-                url: "{% url "api-keywords" %}",
-                type: 'POST',
-                data: newKeyword,
-                success: function (data) {
-                    drawMessage("Keyword Saved", 'green');
-                    $('#modalPreview').modal('close');
-                    new_keyword = data;
-                },
-                error: function (error) {
-                    console.log(error)
-                }
-            });
+                var newKeyword = {
+                    "name": keywordName,
+                    "description": keywordDescription,
+                    "script": keywordScript,
+                    "values": JSON.stringify(keywordValues),
+                    "collection": keywordCollection
+                };
+                $.ajax({
+                    url: "{% url "api-keywords" %}",
+                    type: 'POST',
+                    data: newKeyword,
+                    success: function (data) {
+                        drawMessage("Keyword Saved", 'green');
+                        $('#modalPreview').modal('close');
+                        new_keyword = data;
+                    },
+                    error: function (error) {
+                        console.log(error)
+                    }
+                });
 
-            hidePropertiesKeyword();
-        }
+                hidePropertiesKeyword();
+            }
 
-        function saveKeyword() {
-            var functionToExecuteAfter = writeKeywordDatabase;
-            translateToRobot(functionToExecuteAfter);
-        }
-
-        function hidePropertiesKeyword() {
-            {#            var floatingDiv = document.getElementById("floatingDiv"),#}
-            {#                lightsOff = document.getElementById("lightsOff");#}
-            {##}
-            {#            document.body.removeChild(lightsOff);#}
-            {#            floatingDiv.style.visibility = 'hidden';#}
-        }
-    </script>
-
-
+            function saveKeyword() {
+                var functionToExecuteAfter = writeKeywordDatabase;
+                translateToRobot(functionToExecuteAfter);
+            }
+        </script>
+    {% endcompress %}
     <div class="row">
         <div class="col s12">
             <div class="input-field col s6 l4">
@@ -196,7 +185,7 @@
             </div>
             <div class="input-field col s6 l4">
                 <label for="keyword_description">Keyword Description</label>
-                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()" >
+                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()">
             </div>
         </div>
     </div>
@@ -292,79 +281,80 @@
 
 {% endblock %}
 {% block extraScripts %}
-    <script type="text/javascript">
-        $('.modal').modal();
+    {% compress js %}
+        <script type="text/javascript">
+            $('.modal').modal();
 
-
-        function populateSelect() {
-            var _select = document.getElementById('selectProfiles');
-            $.ajax({
-                url: "{% url "api-profiles" %}",
-                type: "GET",
-                success: function (data) {
-                    _select.innerHTML = "";
-                    data.forEach(function (v, k) {
-                        var _option = document.createElement("option");
-                        _option.text = v.name;
-                        _option.value = v.id;
-                        _select.appendChild(_option);
-                    });
-                    setTimeout(function () {
-                        $('select').material_select();
-                    }, 100)
-                }, error: function (err) {
-                    console.log(err)
-                }
-            })
-        }
-
-        function populatePreview() {
-            populateSelect();
-            var _script = document.getElementById('terminal').value;
-            var _scriptView = document.getElementById('codeFinal');
-            _scriptView.innerHTML = _script;
-            $('#modalPreview').modal('open');
-        }
-
-        document.getElementById('selectProfiles').onchange = function () {
-            if ($('#selectProfiles').val()) {
-                document.getElementById('runScript').disabled = false;
-            }
-        };
-
-
-        function hasValues() {
-            var _keyName = document.getElementById('keyword_name');
-            var _keyCollection = document.getElementById('keyword_collection');
-            var _btn_save = document.getElementById('btn_play');
-            if (!(_keyCollection.value && _keyName.value)) {
-                _btn_save.disabled = true;
-                drawMessage("Collection and Keyword name are necessary", "yellow black-text");
-            } else{
-                _btn_save.disabled = false;
-            }
-        }
-
-        function runScript() {
-            saveKeyword();
-            var _profiles = JSON.stringify($('#selectProfiles').val());
-            setTimeout(function () {
+            function populateSelect() {
+                var _select = document.getElementById('selectProfiles');
                 $.ajax({
-                    url: "{% url "run-on-server" %}",
-                    type: "post",
-                    data: {
-                        keyword: new_keyword.id,
-                        profile: _profiles
-                    },
+                    url: "{% url "api-profiles" %}",
+                    type: "GET",
                     success: function (data) {
-                        drawMessage("Keyword has sent to scheduler", 'blue');
-                        $('#modalPreview').modal('close');
+                        _select.innerHTML = "";
+                        data.forEach(function (v, k) {
+                            var _option = document.createElement("option");
+                            _option.text = v.name;
+                            _option.value = v.id;
+                            _select.appendChild(_option);
+                        });
+                        setTimeout(function () {
+                            $('select').material_select();
+                        }, 100)
                     }, error: function (err) {
-                        drawMessage(err.responseJSON.text, 'red');
+                        console.log(err)
                     }
-                });
-            }, 3000);
+                })
+            }
 
-        }
-    </script>
+            function populatePreview() {
+                populateSelect();
+                var _script = document.getElementById('terminal').value;
+                var _scriptView = document.getElementById('codeFinal');
+                _scriptView.innerHTML = _script;
+                $('#modalPreview').modal('open');
+            }
+
+            document.getElementById('selectProfiles').onchange = function () {
+                if ($('#selectProfiles').val()) {
+                    document.getElementById('runScript').disabled = false;
+                }
+            };
+
+
+            function hasValues() {
+                var _keyName = document.getElementById('keyword_name');
+                var _keyCollection = document.getElementById('keyword_collection');
+                var _btn_save = document.getElementById('btn_play');
+                if (!(_keyCollection.value && _keyName.value)) {
+                    _btn_save.disabled = true;
+                    drawMessage("Collection and Keyword name are necessary", "yellow black-text");
+                } else {
+                    _btn_save.disabled = false;
+                }
+            }
+
+            function runScript() {
+                saveKeyword();
+                var _profiles = JSON.stringify($('#selectProfiles').val());
+                setTimeout(function () {
+                    $.ajax({
+                        url: "{% url "run-on-server" %}",
+                        type: "post",
+                        data: {
+                            keyword: new_keyword.id,
+                            profile: _profiles
+                        },
+                        success: function (data) {
+                            drawMessage("Keyword has sent to scheduler", 'blue');
+                            $('#modalPreview').modal('close');
+                        }, error: function (err) {
+                            drawMessage(err.responseJSON.text, 'red');
+                        }
+                    });
+                }, 3000);
+
+            }
+        </script>
+    {% endcompress %}
 {% endblock %}

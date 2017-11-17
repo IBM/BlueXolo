@@ -1,6 +1,7 @@
 celery==4.1.0
 distro==1.0.4
 Django==1.11.4
+django-compressor==2.2
 django-datatables-view==1.14.0
 djangorestframework==3.6.4
 django-filter==1.0.4
