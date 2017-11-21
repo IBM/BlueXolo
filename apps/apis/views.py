@@ -34,6 +34,14 @@ class KeywordAPIView(LoginRequiredMixin,
     serializer_class = KeywordsSerializer
     pagination_class = KeywordPagination
 
+    def get_queryset(self):
+        script_type = self.request.query_params.get('script_type')
+        if script_type == 1:
+            qs = Keyword.objects.filter(script_type=2)
+        else:
+            qs = Keyword.objects.filter(script_type=1)
+        return qs
+
     def filter_queryset(self, queryset):
         name = self.request.query_params.get('name')
         collection = self.request.query_params.get('collection')
@@ -348,7 +356,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
                     state="run",
-                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL, name_file)
+                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                                                                            name_file)
                 )
                 request.user.tasks.add(task)
                 request.user.save()
