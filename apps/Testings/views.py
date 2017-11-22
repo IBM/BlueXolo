@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView
 
 from apps.Testings.models import Keyword, Collection, TestCase, TestSuite
-from apps.Testings.forms import CollectionForm
+from apps.Testings.forms import CollectionForm, ImportScriptForm, EditImportScriptForm
 
 
 class KeyWordsView(LoginRequiredMixin, TemplateView):
@@ -108,3 +108,31 @@ class DeleteCollectionsView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Colletions Deleted")
         return reverse_lazy('collections')
+
+
+class NewKeywordImportedView(LoginRequiredMixin, CreateView):
+    template_name = "import-script.html"
+    form_class = ImportScriptForm
+    model = Keyword
+
+    def form_valid(self, form):
+        file = form.files.get('file_script')
+        if file:
+            form.instance.script = file.read()
+            form.instance.user = self.request.user
+            form.instance.script_type = 2
+            form.save()
+        messages.success(self.request, "Script imported")
+        return super(NewKeywordImportedView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(NewKeywordImportedView, self).form_invalid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('keywords')
+
+
+class EditKeywordImportedView(LoginRequiredMixin, UpdateView):
+    form_class = EditImportScriptForm
+    template_name = "edit-import-script.html"
+    model = Keyword

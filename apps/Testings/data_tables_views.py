@@ -11,6 +11,9 @@ class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
     order_columns = ['name', 'description', 'created_at', 'pk']
     max_display_length = 100
 
+    def get_initial_queryset(self):
+        return Keyword.objects.filter(script_type=1)
+
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
