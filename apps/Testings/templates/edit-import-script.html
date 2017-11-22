@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Edit import Script{% endblock %}{% block subtitle %}Edit Import Script{% endblock %}
 {% block content %}
-    <div class="container">
+    <div class="">
         <div class="row">
-            <div class="col s12 offset-l3 l6 card">
-                <div class="card-content">
+            <div class="col s12 l5 card">
+                <div class="card-content" style="max-height: 85vh; overflow: scroll">
                     <form method="POST" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         {% include "form-snippet.html" %}
@@ -12,6 +12,13 @@
                             <input type="submit" value="Import" class="btn">
                         </div>
                     </form>
+                </div>
+            </div>
+            <div class="col l1 s12">
+            </div>
+            <div class="col s12 l5 card">
+                <div class="card-content" style="max-height: 85vh; overflow: scroll">
+                    {{ keyword.values | safe }}
                 </div>
             </div>
         </div>
@@ -24,3 +31,10 @@
     </div>
 {% endblock %}
 
+{% load staticfiles %}
+{% load compress %}
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/highlight.css" %}">
+    {% endcompress %}
+{% endblock %}
