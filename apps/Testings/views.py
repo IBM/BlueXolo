@@ -2,6 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView
+from pygments import highlight
+from pygments.formatters.html import HtmlFormatter
+from pygments.lexers import get_lexer_by_name
 
 from apps.Testings.models import Keyword, Collection, TestCase, TestSuite
 from apps.Testings.forms import CollectionForm, ImportScriptForm, EditImportScriptForm
@@ -118,10 +121,17 @@ class NewKeywordImportedView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         file = form.files.get('file_script')
         if file:
-            form.instance.script = file.read()
-            form.instance.user = self.request.user
-            form.instance.script_type = 2
-            form.save()
+            try:
+                file_content = file.read()
+                form.instance.script = file_content
+                form.instance.user = self.request.user
+                form.instance.script_type = 2
+                lexer = get_lexer_by_name("robotframework", stripall=True)
+                formatter = HtmlFormatter(linenos=True, cssclass="source")
+                form.instance.values = highlight(file_content, lexer, formatter)
+                form.save()
+            except Exception as error:
+                print(error)
         messages.success(self.request, "Script imported")
         return super(NewKeywordImportedView, self).form_valid(form)
 
@@ -129,7 +139,7 @@ class NewKeywordImportedView(LoginRequiredMixin, CreateView):
         return super(NewKeywordImportedView, self).form_invalid(form)
 
     def get_success_url(self):
-        return reverse_lazy('keywords')
+        return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
 
 
 class EditKeywordImportedView(LoginRequiredMixin, UpdateView):
