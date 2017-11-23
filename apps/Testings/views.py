@@ -113,6 +113,10 @@ class DeleteCollectionsView(LoginRequiredMixin, DeleteView):
         return reverse_lazy('collections')
 
 
+class KeywordsImportedView(LoginRequiredMixin, TemplateView):
+    template_name = "list-import-script.html"
+
+
 class NewKeywordImportedView(LoginRequiredMixin, CreateView):
     template_name = "import-script.html"
     form_class = ImportScriptForm

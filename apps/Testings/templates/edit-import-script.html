@@ -45,13 +45,11 @@
                         </form>
                     </div>
                 </div>
-
             </div>
-
         </div>
 
         <div class="fixed-action-btn left-button ">
-            <a href="{% url "keywords" %}" id="btn_play"
+            <a href="{% url "imported-scripts" %}" id="btn_play"
                class="btn-floating btn-large waves-effect waves-light grey ">
                 <i class="material-icons">arrow_back</i></a>
         </div>
@@ -61,10 +59,9 @@
             <button type="button" class="btn-floating btn-large waves-effect waves-light tooltipped"
                     onclick="getHighlight()" data-position="left"
                     data-tooltip="Preview Current Script">
-                <i class="material-icons">launch</i>
+                <i class="material-icons">remove_red_eye</i>
             </button>
         </div>
-
 
         <!-- Modal Preview -->
         <div id="viewModal" class="modal">
@@ -118,10 +115,6 @@
                         }
                     }
                 )
-            }
-
-            function updateScript() {
-                document.forms.import_script.submit();
             }
 
             $('#keyword-search').select2({
@@ -197,7 +190,7 @@
 
             function appendValues(obj) {
                 document.getElementById('id_script').value += '\n \n' + obj.script;
-                drawMessage(obj.name+ ' added to the bottom of script', 'blue');
+                drawMessage(obj.name + ' added to the bottom of script', 'blue');
             }
         </script>
     {% endcompress %}
