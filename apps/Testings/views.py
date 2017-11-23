@@ -126,9 +126,6 @@ class NewKeywordImportedView(LoginRequiredMixin, CreateView):
                 form.instance.script = file_content
                 form.instance.user = self.request.user
                 form.instance.script_type = 2
-                lexer = get_lexer_by_name("robotframework", stripall=True)
-                formatter = HtmlFormatter(linenos=True, cssclass="source")
-                form.instance.values = highlight(file_content, lexer, formatter)
                 form.save()
             except Exception as error:
                 print(error)
@@ -146,3 +143,25 @@ class EditKeywordImportedView(LoginRequiredMixin, UpdateView):
     form_class = EditImportScriptForm
     template_name = "edit-import-script.html"
     model = Keyword
+
+    def form_valid(self, form):
+        messages.success(self.request, "Script updated")
+        return super(EditKeywordImportedView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(EditKeywordImportedView, self).form_invalid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
+
+
+def apply_highlight(script):
+    """This function use a pygments library for make a html highlight element. """
+    if script:
+        try:
+            lexer = get_lexer_by_name("robotframework", stripall=True)
+            formatter = HtmlFormatter(linenos=False, cssclass="source")
+            with_highlight = highlight(script, lexer, formatter)
+            return with_highlight
+        except Exception as error:
+            print(error)

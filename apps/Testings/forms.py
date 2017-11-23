@@ -13,7 +13,8 @@ class CollectionForm(forms.ModelForm):
             'product',
         ]
         widgets = {
-            'product': forms.Select(attrs={'required': True})
+            'product': forms.Select(attrs={'required': True}),
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -44,8 +45,6 @@ class ImportScriptForm(forms.ModelForm):
 
 
 class EditImportScriptForm(forms.ModelForm):
-    search_keyword = forms.CharField(widget=forms.TextInput(), required=False)
-
     class Meta:
         model = Keyword
         fields = [
@@ -53,9 +52,17 @@ class EditImportScriptForm(forms.ModelForm):
             'description',
             'collection',
             'script',
-            'search_keyword'
         ]
         widgets = {
             'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),
-            'script': forms.Textarea(attrs={'class': 'materialize-textarea'})
+            'script': forms.Textarea(attrs={
+                'class': 'materialize-textarea',
+                'spellcheck': 'false',
+                'style': 'max-height: 25vh; overflow: scroll'
+            })
         }
+
+    def __init__(self, *args, **kwargs):
+        """This filter only for sources in the category 3(products)"""
+        super(EditImportScriptForm, self).__init__(*args, **kwargs)
+        self.fields['collection'].required = True
