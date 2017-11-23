@@ -5,7 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q, Count
+from django.http import JsonResponse
 from rest_framework import mixins, generics, status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from string import digits, ascii_lowercase
@@ -16,6 +18,7 @@ from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
+from apps.Testings.views import apply_highlight
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
@@ -33,6 +36,14 @@ class KeywordAPIView(LoginRequiredMixin,
     queryset = Keyword.objects.all()
     serializer_class = KeywordsSerializer
     pagination_class = KeywordPagination
+
+    def get_queryset(self):
+        script_type = int(self.request.query_params.get('script_type'))
+        if script_type == 2:
+            qs = Keyword.objects.filter(script_type=2)
+        else:
+            qs = Keyword.objects.filter(script_type=1)
+        return qs
 
     def filter_queryset(self, queryset):
         name = self.request.query_params.get('name')
@@ -348,7 +359,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
                     state="run",
-                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL, name_file)
+                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                                                                            name_file)
                 )
                 request.user.tasks.add(task)
                 request.user.save()
@@ -564,3 +576,16 @@ class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+@api_view(['GET'])
+def get_highlight_version(request):
+    if request.is_ajax:
+        script = request.query_params.get('script')
+        data = {}
+        if script:
+            try:
+                data = {"script_result": apply_highlight(script)}
+            except Exception as error:
+                data = {'text': '{0}'.format(error)}
+            return JsonResponse(data)

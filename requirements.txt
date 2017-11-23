@@ -11,5 +11,6 @@ paramiko==2.3.1
 psycopg2==2.7.3.1
 pexpect==4.2.1
 pyasn1==0.3.4
+Pygments==2.2.0
 pytz==2017.2
 scp==0.10.2

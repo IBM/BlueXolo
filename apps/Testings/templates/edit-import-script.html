@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Edit import Script{% endblock %}{% block subtitle %}Edit Import Script{% endblock %}
+{% block content %}
+    <div class="">
+    <div class="row">
+        <div class="col s12 l4">
+            <div class="center">
+                <button type="button" class="btn waves-effect" onclick="updateScript()">Update</button>
+                <button type="button" class="btn blue-grey waves-effect " onclick="getHighlight()">
+                    Preview
+                </button>
+            </div>
+        </div>
+        <div class="col s12 l1">
+        </div>
+        <div class="col s12 l6">
+            <div class="card">
+                <div class="card-content">
+                    <form method="POST" enctype="multipart/form-data" novalidate name="import_script">
+                        {% csrf_token %}
+                        {% include "form-snippet.html" %}
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "keywords" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+
+
+    <!-- Modal Preview -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <h4>{{ keyword.name }}</h4>
+            <div id="result">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% load staticfiles %}
+{% load compress %}
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/highlight.css" %}">
+    {% endcompress %}
+{% endblock %}
+{% block extraScripts %}
+    {% compress js %}
+        <script type="text/javascript">
+            $('.modal').modal();
+
+            function getHighlight() {
+                var _script_container = document.getElementById('result');
+                _script_container.innerHTML = '';
+                $.ajax({
+                        url: "{% url "get-highlight" %}",
+                        type: 'GET',
+                        data: {
+                            'script': document.getElementById('id_script').value
+                        }, success: function (data) {
+                            _script_container.innerHTML = data.script_result;
+                            $('#viewModal').modal('open');
+                        }, error: function (err) {
+                            drawMessage(err.text, 'red');
+                        }
+                    }
+                )
+            }
+
+            function updateScript() {
+                document.forms.import_script.submit();
+            }
+        </script>
+    {% endcompress %}
+{% endblock %}

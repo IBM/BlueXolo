@@ -2,13 +2,15 @@ from django.conf.urls import url
 
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson, ParametersListJson
-from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson, TestsuitesListJson
+from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson, \
+    TestsuitesListJson
 from apps.Users.data_tables_views import TasksListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
     TasksApiView, ArgumentsApiView, ParametersApiView, TestCaseApiView, TestCaseDetailApiView, ParametersDetailApiView, \
-    ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView, TestSuiteApiView, TestSuiteDetailApiView
+    ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView, TestSuiteApiView, TestSuiteDetailApiView, \
+    get_highlight_version
 
 urlpatterns = [
     url(r'^arguments/$', ArgumentsApiView.as_view(), name="api-arguments"),
@@ -47,6 +49,8 @@ urlpatterns = [
     url(r'^tasks/list/$', TasksListJson.as_view(), name="api-tasks-list"),
     # Extract
     url(r'^run_extract/$', RunExtract.as_view(), name="run_extract"),
+    # apply pygment
+    url(r'^get-highlight/$', get_highlight_version, name="get-highlight"),
     # Run On server
     url(r'^run_on_server/$', RunOnServerApiView.as_view(), name="run-on-server"),
 ]
