@@ -23,9 +23,12 @@
 {% load staticfiles %}
 {% load compress %}
 
-{% compress css %}
-    <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
-{% endcompress %}
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
+    {% endcompress %}
+{% endblock %}
+
 {% block extraScripts %}
     {% compress js %}
         <script src="{% static "js/datatables.min.js" %}"></script>
