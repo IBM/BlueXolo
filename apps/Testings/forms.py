@@ -31,17 +31,11 @@ class ImportScriptForm(forms.ModelForm):
         fields = [
             'name',
             'description',
-            'file_script',
-            'collection'
+            'file_script'
         ]
         widgets = {
-            'description': forms.Textarea(attrs={'class': 'materialize-textarea'})
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        """This filter only for sources in the category 3(products)"""
-        super(ImportScriptForm, self).__init__(*args, **kwargs)
-        self.fields['collection'].required = True
 
 
 class EditImportScriptForm(forms.ModelForm):
@@ -50,8 +44,8 @@ class EditImportScriptForm(forms.ModelForm):
         fields = [
             'name',
             'description',
-            'collection',
             'script',
+
         ]
         widgets = {
             'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),
@@ -61,8 +55,3 @@ class EditImportScriptForm(forms.ModelForm):
                 'style': 'max-height: 25vh; overflow: scroll'
             })
         }
-
-    def __init__(self, *args, **kwargs):
-        """This filter only for sources in the category 3(products)"""
-        super(EditImportScriptForm, self).__init__(*args, **kwargs)
-        self.fields['collection'].required = True
