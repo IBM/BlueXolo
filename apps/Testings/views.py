@@ -169,3 +169,12 @@ def apply_highlight(script):
             return with_highlight
         except Exception as error:
             print(error)
+
+
+class DeleteImportedScriptView(LoginRequiredMixin, DeleteView):
+    model = Keyword
+    template_name = 'delete-imported-script.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "Script deleted")
+        return reverse_lazy('imported-scripts')
