@@ -38,11 +38,11 @@ class KeywordAPIView(LoginRequiredMixin,
     pagination_class = KeywordPagination
 
     def get_queryset(self):
-        script_type = int(self.request.query_params.get('script_type'))
-        if script_type == 2:
-            qs = Keyword.objects.filter(script_type=2)
+        script_type = self.request.query_params.get('script_type')
+        if script_type:
+            qs = Keyword.objects.filter(script_type=int(script_type))
         else:
-            qs = Keyword.objects.filter(script_type=1)
+            qs = Keyword.objects.all()
         return qs
 
     def filter_queryset(self, queryset):
