@@ -5,7 +5,7 @@ from .views import KeyWordsView, NewKeywordView, DeleteKeywordView, CollectionsV
     DeleteCollectionsView, EditKeywordView, TestcaseView, NewTestcaseView, EditTestcaseView, DeleteTestcaseView, \
     TestsuiteView, \
     NewTestsuiteView, EditTestsuiteView, DeleteTestsuiteView, NewKeywordImportedView, EditKeywordImportedView, \
-    KeywordsImportedView, DeleteImportedScriptView
+    KeywordsImportedView, DeleteImportedScriptView, SearchRunScriptView
 
 urlpatterns = [
     url(r'^keywords/$', KeyWordsView.as_view(), name="keywords"),
@@ -32,4 +32,6 @@ urlpatterns = [
     url(r'^import/$', NewKeywordImportedView.as_view(), name="new-import-script"),
     url(r'^import/(?P<pk>\d+)/edit/$', EditKeywordImportedView.as_view(), name="edit-import-script"),
     url(r'^import/(?P<pk>\d+)/delete/$', DeleteImportedScriptView.as_view(), name="delete-import-script"),
+    # Run scripts
+    url(r'^run/$', SearchRunScriptView.as_view(), name="search-run-script"),
 ]
