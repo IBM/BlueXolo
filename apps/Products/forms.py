@@ -9,6 +9,12 @@ class ArgumentForm(forms.ModelForm):
         model = Argument
         fields = '__all__'
 
+        widgets = {
+            'name': forms.TextInput(attrs={'data-length': 30, 'id': 'args_name'}),
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea',
+                                                 'data-length': 70, 'id': 'args_description'})
+        }
+
 
 class PhaseForm(forms.ModelForm):
     class Meta:
@@ -120,11 +126,18 @@ class CommandForm(forms.ModelForm):
         model = Command
         fields = [
             'name',
+            'source',
             'description',
-            'source'
         ]
 
+        widgets = {
+            'name': forms.TextInput(attrs={'data-length': 30}),
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea', 'data-length': 70})
+        }
+
     def __init__(self, *args, **kwargs):
-        """This filter only for sources in the category 4(Robot)"""
+        """ This filter exclude the control flow sentences """
         super(CommandForm, self).__init__(*args, **kwargs)
         self.fields['source'].queryset = Source.objects.exclude(category=1)
+        """ This Make required the source field """
+        self.fields['source'].required = True

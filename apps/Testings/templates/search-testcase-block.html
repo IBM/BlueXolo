@@ -1,0 +1,64 @@
+<div class="card">
+    <div class="card-content">
+        <div class="row">
+            <label for="id_label_single">
+                Test Case Search
+                <select id="testcase-search"></select>
+            </label>
+        </div>
+        <div id="TestCaseContainer"></div>
+    </div>
+</div>
+
+<script>
+
+    $('#testcase-search').select2({
+        ajax: {
+            url: "{% url "api-testcases" %}",
+            dataType: 'json',
+            delay: 350,
+            data: function (params) {
+                return {
+                    collection: document.getElementById('keyword_collection').value,
+                    name: params.term, // search term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.results
+                };
+            }
+        },
+        escapeMarkup: function (markup) {
+            return markup;
+        }, // let our custom formatter work
+        minimumInputLength: 2,
+        templateResult: function (results) {
+            return results.name
+        },
+        templateSelection: function (selection) {
+            return selection.name;
+        }
+    });
+
+    $('#testcase-search').on("select2:select", function (e) {
+        $.ajax({
+            url: '/apis/testcases/' + this.value + '/',
+            type: 'GET',
+            success: function (data) {
+                var _container = document.getElementById('TestCaseContainer');
+                _container.innerHTML = "";
+                var _resultElement = document.createElement('div');
+                _resultElement.className = 'drag-drop-item center';
+                _resultElement.id = data.id + "-testcase-drag-drop";
+                _resultElement.draggable = true;
+                _resultElement.setAttribute("ondragstart", "drag(event)");
+                _resultElement.innerHTML = data.name;
+                _container.appendChild(_resultElement);
+            }, error: function (err) {
+                drawMessage(err.responseJSON.text, 'red');
+            }
+        });
+    });
+
+</script>

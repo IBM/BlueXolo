@@ -194,6 +194,7 @@ function drop(ev) {
     var belongsToPanel = elementID.slice(elementID.length - 9);
     var dragAndDropPanel = "drag-drop";
     var keywordsPanel = "keyword-drag-drop";
+    var testcasePanel = "testcase-drag-drop";    
 
     var targetRow = ev.target.parentNode.parentNode.id;
 
@@ -209,8 +210,22 @@ function drop(ev) {
             } else {
                 addKeywordToJSON(indentation, keywordID);
             }
+        }else{
+            //Then it could belong to the testcase panel
+            var belongsToPanel = elementID.slice(elementID.length - testcasePanel.length);
+            if (belongsToPanel === testcasePanel) {            
+                //It belongs to the testcase panel!
+                var testcaseID = commandID;
+                if (targetRow !== "") {
+                    var addElementInThisPosition = getLastIdentationChild(targetRow - 1);
+                    addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosition);
+                } else {
+                    addTestcaseToJSON(indentation, testcaseID);
+                }
+            }
         }
-    } else {
+    }
+    else {
         if (targetRow !== "") {
             var addElementInThisPosition = getLastIdentationChild(targetRow - 1);
             addElementToJSONInIndex(indentation, commandID, addElementInThisPosition);

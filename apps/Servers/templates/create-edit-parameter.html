@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block subtitle %}{{ title }}{% endblock %}
+{% block content %}
+    {% include "base-new-form.html" with url="/parameters/" %}
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "parameters" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

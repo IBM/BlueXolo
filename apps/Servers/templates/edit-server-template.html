@@ -77,11 +77,15 @@
             <i class="material-icons">arrow_back</i></a>
     </div>
 {% endblock %}
-{% load staticfiles %}
-{% block extraStyles %}
-    <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
-{% endblock %}
 
+{% load staticfiles %}
+{% load compress %}
+
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
+{% endblock %}
 {% block extraScripts %}
     <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
     <script type="text/javascript">
@@ -97,8 +101,8 @@
         {% for param in object.parameters.all %}
             global_params.push({
                 "id": "{{ param.id }}",
-                "name": "{{ param.name}}",
-                "help_text": "{{ param.help_text }}",
+                "name": "{{ param.name | escapejs}}",
+                "help_text": "{{ param.help_text | escapejs }}",
                 "category": "{{ param.category }}",
                 "value_type": "{{ param.value_type}}"
             });

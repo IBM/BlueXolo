@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import ServerTemplateView, NewServerTemplate, EditServerTemplate, DeleteServerTemplate, ServerProfileView, \
     NewServerProfileView, EditServerProfileView, \
-    DeleteServerProfile
+    DeleteServerProfile, ParametersView, NewParametersView, EditParametersView, DeleteParametersView
 
 urlpatterns = [
     # Templates CRUD
@@ -14,4 +14,9 @@ urlpatterns = [
     url(r'^profiles/new/$', NewServerProfileView.as_view(), name='new-server-profile'),
     url(r'^profiles/(?P<pk>\d+)/$', EditServerProfileView.as_view(), name='edit-server-profile'),
     url(r'^profiles/(?P<pk>\d+)/delete/$', DeleteServerProfile.as_view(), name='delete-server-profile'),
+    # Parameters CRUD
+    url(r'^parameters/$', ParametersView.as_view(), name='parameters'),
+    url(r'^parameters/new$', NewParametersView.as_view(), name='new-parameters'),
+    url(r'^parameters/(?P<pk>\d+)/$', EditParametersView.as_view(), name='edit-parameters'),
+    url(r'^parameters/(?P<pk>\d+)/delete/$', DeleteParametersView.as_view(), name='delete-parameters'),
 ]

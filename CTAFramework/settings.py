@@ -36,7 +36,15 @@ def get_secret(setting, secret=secrets):
 SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if get_secret("DEBUG") == 1:
+    DEBUG = True
+else:
+    DEBUG = False
+
+if get_secret("COMPRESS_ROOT") == 1:
+    COMPRESS_OFFLINE = True
+else:
+    COMPRESS_OFFLINE = False
 
 ALLOWED_HOSTS = get_secret("ALLOWED_HOSTS")
 # Application definition
@@ -51,7 +59,8 @@ CORE_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework_docs',
-    'django_filters'
+    'django_filters',
+    'compressor',
 ]
 
 PROJECT_APPS = [
@@ -145,12 +154,24 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static')
+# ]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+COMPRESS_ENABLED = DEBUG
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 

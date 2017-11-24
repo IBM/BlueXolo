@@ -14,5 +14,5 @@ $.ajaxSetup({
 function drawMessage(msg, _class) {
     var _class_color = _class || '';
     var _msg = $('<span>' + msg + '</span>');
-    Materialize.toast(_msg, 12000, _class_color);
+    Materialize.toast(_msg, 5000, _class_color);
 }

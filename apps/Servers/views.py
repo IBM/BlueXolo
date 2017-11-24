@@ -10,9 +10,8 @@ from django.views.generic import TemplateView, CreateView, UpdateView, DeleteVie
 from pexpect import pxssh
 from scp import SCPClient
 
-
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
-from .models import TemplateServer, ServerProfile
+from .models import TemplateServer, ServerProfile, Parameters
 
 from celery import shared_task
 
@@ -86,22 +85,53 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
     ssh.create_robot_file(filename, script)
     ssh.create_testcase_robotFile(filename, values)
     ssh.create_profile_file(profilename, variables)
+    if not ssh.check_dirs(host, user, passwd, path):
+        ssh.create_structure(host, user, passwd, path)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
     ssh.run_file_named(filename, host, user, passwd, path, namefile)
     ssh.send_results_named(host, user, passwd, namefile, path)
 
 
 class SshConnect(LoginRequiredMixin):
+    def check_dirs(self, host, user, passwd, path):
+        """Check if dirs schema exist"""
+        result = False
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.connect(host, username=user, password=passwd)
+        _, stdout, _ = client.exec_command(
+            "if test -d '{0}/Keywords'; then echo '1'; else  echo '0'; fi".format(path))
+        pre_res = stdout.read()
+        res = pre_res.decode('ascii').replace("\n", "")
+        if int(res):
+            result = True
+        return result
+
+    def create_structure(self, host, user, passwd, path):
+        ssh = pxssh.pxssh(timeout=50)
+        ssh.login(host, user, passwd)
+        run_create_path = 'mkdir {0}'.format(path)
+        run_path = 'cd {0}'.format(path)
+        run_create_structure = 'mkdir Keywords Libraries Profiles Resources Templates TestScripts Tools TestSuites'
+        try:
+            ssh.sendline(run_create_path)
+            ssh.sendline(run_path)
+            ssh.sendline(run_create_structure)
+            ssh.prompt()
+            ssh.logout()
+        except Exception as error:
+            return error
+
     def send_file_user_pass(self, filename, host, user, passwd, path):
         name = filename.replace(" ", "")
-        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:{4}'.format(
+        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
             settings.MEDIA_ROOT,
             name,
             user,
             host,
             path
         )
-        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}'.format(
+        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}/Keywords'.format(
             settings.MEDIA_ROOT,
             name,
             user,
@@ -121,7 +151,7 @@ class SshConnect(LoginRequiredMixin):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
         ssh.login(host, user, passwd)
-        run_path = 'cd {0}'.format(path)
+        run_path = 'cd {0}/Keywords'.format(path)
         try:
             run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html {1}_testcase.robot'.format(
                 namefile,
@@ -139,11 +169,11 @@ class SshConnect(LoginRequiredMixin):
         t = paramiko.Transport((host, 22))
         t.connect(username=user, password=passwd)
         scp = SCPClient(t)
-        scp.get('{0}/{1}_log.html'.format(path, filename),
+        scp.get('{0}/Keywords/{1}_log.html'.format(path, filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('{0}/{1}_report.html'.format(path, filename),
+        scp.get('{0}/Keywords/{1}_report.html'.format(path, filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
-        scp.get('{0}/{1}_output.xml'.format(path, filename),
+        scp.get('{0}/Keywords/{1}_output.xml'.format(path, filename),
                 '{0}/test_result/'.format(settings.MEDIA_ROOT))
         scp.close()
         t.close()
@@ -181,5 +211,49 @@ class SshConnect(LoginRequiredMixin):
         a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
         a.write("#      {0}      #\n".format(name))
         for p in variables:
-            a.write('{0} = "{1}"\n'.format(p[0],p[1]))
+            a.write('{0} = "{1}"\n'.format(p[0], p[1]))
         a.close()
+
+
+class ParametersView(LoginRequiredMixin, TemplateView):
+    template_name = "parameters.html"
+
+
+class NewParametersView(LoginRequiredMixin, CreateView):
+    template_name = 'create-edit-parameter.html'
+    success_url = reverse_lazy('parameters')
+    form_class = ParametersForm
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Created")
+        return reverse_lazy('parameters')
+
+    def get_context_data(self, **kwargs):
+        context = super(NewParametersView, self).get_context_data(**kwargs)
+        context['title'] = 'Create Parameter'
+        return context
+
+
+class EditParametersView(LoginRequiredMixin, UpdateView):
+    template_name = "create-edit-parameter.html"
+    success_url = reverse_lazy("parameters")
+    form_class = ParametersForm
+    model = Parameters
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Edited")
+        return reverse_lazy('parameters')
+
+    def get_context_data(self, **kwargs):
+        context = super(EditParametersView, self).get_context_data(**kwargs)
+        context['title'] = 'Edit Parameter'
+        return context
+
+
+class DeleteParametersView(LoginRequiredMixin, DeleteView):
+    model = Parameters
+    template_name = "delete-parameters.html"
+
+    def get_success_url(self):
+        messages.success(self.request, "Parameter Deleted")
+        return reverse_lazy('parameters')

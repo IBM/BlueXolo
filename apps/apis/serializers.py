@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from apps.Products.models import Command, Argument, Source
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Testings.models import Keyword, Collection, TestCase, Phase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Users.models import Task
 
 
@@ -27,6 +27,44 @@ class CommandsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Command
         fields = '__all__'
+
+    def create(self, validated_data):
+        args = json.loads(self.initial_data['arguments'])
+        sources = json.loads(self.initial_data['source'])
+        command = Command.objects.create(
+            name=validated_data['name'],
+            description=validated_data['description']
+        )
+        for s in sources:
+            command.source.add(s)
+            command.save()
+        for arg in args:
+            command.arguments.add(arg)
+            command.save()
+        return command
+
+    def update(self, instance, validated_data):
+        try:
+            args = json.loads(self.initial_data['arguments'])
+            srcs = json.loads(self.initial_data['source'])
+            instance.name = validated_data.get('name')
+            instance.description = validated_data.get('description')
+            instance.source = validated_data.get('source')
+
+            for s in instance.source.all():
+                instance.source.remove(s)
+            for source in srcs:
+                instance.source.add(source)
+                instance.save()
+
+            for arg in instance.arguments.all():
+                instance.arguments.remove(arg)
+            for a in args:
+                instance.arguments.add(a)
+                instance.save()
+            return instance
+        except Exception as error:
+            raise RuntimeError('`update()` have error {0}.'.format(error))
 
 
 class BasicCommandsSerializer(serializers.ModelSerializer):
@@ -117,4 +155,12 @@ class TestCaseSerializer(serializers.ModelSerializer):
 class PhaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Phase
+        fields = '__all__'
+
+
+class TestSuiteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = TestSuite
         fields = '__all__'

@@ -19,25 +19,33 @@
         </div>
     </div>
 {% endblock %}
+
 {% load staticfiles %}
+{% load compress %}
+
 {% block extraStyles %}
-    <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
+    {% endcompress %}
 {% endblock %}
+
 {% block extraScripts %}
-    <script src="{% static "js/datatables.min.js" %}"></script>
-    <script src="{% static "js/DTBoilerPlate.js" %}"></script>
-    <script>
-        $(document).ready(function () {
-            var config = [{
-                "targets": 3,
-                data: function (row) {
-                    return "<div>" +
-                        "<a class='btn' href='/testings/keywords/edit/" + row[3] + "'><i class='material-icons'>edit</i></a>" +
-                        "<a class='btn red' href='/testings/keywords/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
-                        "</div>";
-                }
-            }];
-            dtStart("{% url "api-keywords-list" %}", config)
-        });
-    </script>
+    {% compress js %}
+        <script src="{% static "js/datatables.min.js" %}"></script>
+        <script src="{% static "js/DTBoilerPlate.js" %}"></script>
+        <script>
+            $(document).ready(function () {
+                var config = [{
+                    "targets": 3,
+                    data: function (row) {
+                        return "<div>" +
+                            "<a class='btn' href='/testings/keywords/edit/" + row[3] + "'><i class='material-icons'>edit</i></a>" +
+                            "<a class='btn red' href='/testings/keywords/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            "</div>";
+                    }
+                }];
+                dtStart("{% url "api-keywords-list" %}", config)
+            });
+        </script>
+    {% endcompress %}
 {% endblock %}

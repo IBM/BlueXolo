@@ -77,176 +77,183 @@
             <i class="material-icons">arrow_back</i></a>
     </div>
 {% endblock %}
+
 {% load staticfiles %}
+{% load compress %}
+
 {% block extraStyles %}
-    <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
 {% endblock %}
 
 {% block extraScripts %}
-    <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
-    <script type="text/javascript">
-        $('.modal').modal();
-        var global_params = [];
-        var _objCont;
-        var _types = ['String', 'List'];
-        var _table_containenr = document.getElementById('tableContainer');
-        var _select_input = $('#parameter-search');
-        var _btn_create = document.getElementById('btn_create');
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript">
+            $('.modal').modal();
+            var global_params = [];
+            var _objCont;
+            var _types = ['String', 'List'];
+            var _table_containenr = document.getElementById('tableContainer');
+            var _select_input = $('#parameter-search');
+            var _btn_create = document.getElementById('btn_create');
 
-        _select_input.select2({
-            ajax: {
-                url: "{% url "api-parameters" %}",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        name: params.term,// search term
-                        category: document.getElementById('id_category').value
-                    };
+            _select_input.select2({
+                ajax: {
+                    url: "{% url "api-parameters" %}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            name: params.term,// search term
+                            category: document.getElementById('id_category').value
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
                 },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
+                placeholder: "Command Search",
+                escapeMarkup: function (markup) {
+                    return markup;
+                }, // let our custom formatter work
+                minimumInputLength: 2,
+                templateResult: function (data) {
+                    return data.name
+                },
+                templateSelection: function (data) {
+                    return data.name
                 }
-            },
-            placeholder: "Command Search",
-            escapeMarkup: function (markup) {
-                return markup;
-            }, // let our custom formatter work
-            minimumInputLength: 2,
-            templateResult: function (data) {
-                return data.name
-            },
-            templateSelection: function (data) {
-                return data.name
-            }
-        });
-
-        _select_input.on("select2:select", function (e) {
-            populateObj(_select_input.select2('data')[0]);
-            _btn_create.disabled = false;
-        });
-
-
-        function populateObj(data) {
-            global_params.push({
-                "id": data.id,
-                "name": data.name,
-                "help_text": data.help_text,
-                "category": data.category,
-                "value_type": data.value_type
             });
-            if (!_objCont) {
-                _objCont = 0;
+
+            _select_input.on("select2:select", function (e) {
+                populateObj(_select_input.select2('data')[0]);
+                _btn_create.disabled = false;
+            });
+
+
+            function populateObj(data) {
+                global_params.push({
+                    "id": data.id,
+                    "name": data.name,
+                    "help_text": data.help_text,
+                    "category": data.category,
+                    "value_type": data.value_type
+                });
+                if (!_objCont) {
+                    _objCont = 0;
+                }
+                _table_containenr.classList.remove("hide");
+                drawParamter(data);
             }
-            _table_containenr.classList.remove("hide");
-            drawParamter(data);
-        }
 
-        function drawParamter(data) {
-            var _tr_params = document.createElement('tr');
-            var _td_param = document.createElement('td');
-            var _td_help = document.createElement('td');
-            var _td_type = document.createElement('td');
-            var _td_option = document.createElement('td');
-            var _delete_icon = document.createElement('i');
+            function drawParamter(data) {
+                var _tr_params = document.createElement('tr');
+                var _td_param = document.createElement('td');
+                var _td_help = document.createElement('td');
+                var _td_type = document.createElement('td');
+                var _td_option = document.createElement('td');
+                var _delete_icon = document.createElement('i');
 
-            _tr_params.setAttribute('id', _objCont);
+                _tr_params.setAttribute('id', _objCont);
 
-            _delete_icon.setAttribute('class', 'material-icons red-text');
-            _delete_icon.setAttribute('onClick', 'deleteParam(' + _objCont + ')');
-            _delete_icon.appendChild(document.createTextNode('close'));
+                _delete_icon.setAttribute('class', 'material-icons red-text');
+                _delete_icon.setAttribute('onClick', 'deleteParam(' + _objCont + ')');
+                _delete_icon.appendChild(document.createTextNode('close'));
 
-            _td_param.appendChild(document.createTextNode(data.name));
-            _td_help.appendChild(document.createTextNode(data.help_text));
-            _td_type.appendChild(document.createTextNode(_types[data.value_type - 1]));
-            _td_option.appendChild(_delete_icon);
+                _td_param.appendChild(document.createTextNode(data.name));
+                _td_help.appendChild(document.createTextNode(data.help_text));
+                _td_type.appendChild(document.createTextNode(_types[data.value_type - 1]));
+                _td_option.appendChild(_delete_icon);
 
-            _tr_params.appendChild(_td_param);
-            _tr_params.appendChild(_td_help);
-            _tr_params.appendChild(_td_type);
-            _tr_params.appendChild(_td_option);
+                _tr_params.appendChild(_td_param);
+                _tr_params.appendChild(_td_help);
+                _tr_params.appendChild(_td_type);
+                _tr_params.appendChild(_td_option);
 
-            document.getElementById('params_table').appendChild(_tr_params);
-            _objCont++;
-        }
+                document.getElementById('params_table').appendChild(_tr_params);
+                _objCont++;
+            }
 
-        function deleteParam(id) {
-            /* Delete the param row (tr)*/
-            var _element = document.getElementById(id);
-            global_params.splice(id, 1);
-            _objCont--;
-            _element.parentNode.removeChild(_element);
-            if (global_params.length < 1) {
-                _btn_create.disabled = true;
+            function deleteParam(id) {
+                /* Delete the param row (tr)*/
+                var _element = document.getElementById(id);
+                global_params.splice(id, 1);
+                _objCont--;
+                _element.parentNode.removeChild(_element);
+                if (global_params.length < 1) {
+                    _btn_create.disabled = true;
+                    _table_containenr.classList.add("hide");
+                }
+                _select_input.val(null).trigger("change");
+            }
+
+            document.getElementById("id_category").onchange = cleanGlobalParams;
+
+
+            function cleanGlobalParams() {
+                global_params = [];
+                var table = document.getElementById('params_table');
+                while (table.firstChild) {
+                    table.removeChild(table.firstChild);
+                }
                 _table_containenr.classList.add("hide");
             }
-            _select_input.val(null).trigger("change");
-        }
 
-        document.getElementById("id_category").onchange = cleanGlobalParams;
+            function createParameter() {
+                $.ajax({
+                    url: "{% url "api-parameters" %}",
+                    type: "POST",
+                    data: {
+                        name: document.getElementById('param_name').value,
+                        help_text: document.getElementById('id_help_text').value,
+                        category: document.getElementById('category_group').value,
+                        value_type: document.getElementById('id_value_type').value,
+                    }, success: function (data) {
+                        drawMessage("Parameter '" + data.name + "' Created", 'green');
+                        document.getElementById('form_parameter').reset();
+                        $('#modalParameter').modal('close');
+                    }, error: function (err) {
+                        if (err.responseJSON.name) {
+                            (err.responseJSON.name).forEach(function (v) {
 
-
-        function cleanGlobalParams() {
-            global_params = [];
-            var table = document.getElementById('params_table');
-            while (table.firstChild) {
-                table.removeChild(table.firstChild);
+                                drawMessage("Name: " + v, 'red');
+                            })
+                        }
+                    }
+                });
             }
-            _table_containenr.classList.add("hide");
-        }
 
-        function createParameter() {
-            $.ajax({
-                url: "{% url "api-parameters" %}",
-                type: "POST",
-                data: {
-                    name: document.getElementById('param_name').value,
-                    help_text: document.getElementById('id_help_text').value,
-                    category: document.getElementById('category_group').value,
-                    value_type: document.getElementById('id_value_type').value,
-                }, success: function (data) {
-                    drawMessage("Parameter '" + data.name + "' Created", 'green');
-                    document.getElementById('form_parameter').reset();
-                    $('#modalParameter').modal('close');
-                }, error: function (err) {
-                    if (err.responseJSON.name) {
-                        (err.responseJSON.name).forEach(function (v) {
+            function createTemplate() {
+                var _params = [];
+                global_params.forEach(function (v) {
+                    _params.push(parseInt(v.id));
+                });
+                $.ajax({
+                    url: "{% url "api-templates" %}",
+                    type: 'POST',
+                    data: {
+                        "name": document.getElementById('id_name').value,
+                        "description": document.getElementById('id_description').value,
+                        "category": document.getElementById('id_category').value,
+                        "params": JSON.stringify(_params)
+                    }, success: function (data) {
+                        if (data.id) {
+                            window.location.href = '{% url "servers-templates" %}';
+                        }
+                    }, error: function (err) {
+                        if (err.responseJSON.name) {
+                            (err.responseJSON.name).forEach(function (v) {
 
-                            drawMessage("Name: " + v, 'red');
-                        })
+                                drawMessage("Name: " + v, 'red');
+                            })
+                        }
                     }
-                }
-            });
-        }
-
-        function createTemplate() {
-            var _params = [];
-            global_params.forEach(function (v) {
-                _params.push(parseInt(v.id));
-            });
-            $.ajax({
-                url: "{% url "api-templates" %}",
-                type: 'POST',
-                data: {
-                    "name": document.getElementById('id_name').value,
-                    "description": document.getElementById('id_description').value,
-                    "category": document.getElementById('id_category').value,
-                    "params": JSON.stringify(_params)
-                }, success: function (data) {
-                    if (data.id) {
-                        window.location.href = '{% url "servers-templates" %}';
-                    }
-                }, error: function (err) {
-                    if (err.responseJSON.name) {
-                        (err.responseJSON.name).forEach(function (v) {
-
-                            drawMessage("Name: " + v, 'red');
-                        })
-                    }
-                }
-            })
-        }
-    </script>
+                })
+            }
+        </script>
+    {% endcompress %}
 {% endblock %}

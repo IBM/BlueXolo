@@ -37,3 +37,13 @@
     left: 23px;
     right: auto;
 }
+
+.manita {
+    cursor: pointer;
+}
+
+.modal {
+    width: 80% !important;
+    height: 80% !important;
+    max-height: 100% !important;
+}

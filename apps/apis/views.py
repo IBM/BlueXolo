@@ -5,7 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q, Count
+from django.http import JsonResponse
 from rest_framework import mixins, generics, status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from string import digits, ascii_lowercase
@@ -15,15 +17,16 @@ from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
 from apps.Servers.views import run_keyword
 
-from apps.Testings.models import Keyword, Collection, TestCase, Phase
+from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
+from apps.Testings.views import apply_highlight
 from apps.Users.models import Task
 from extracts import run_extract
 from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     BasicCommandsSerializer, ServerProfileSerializer, CommandsSerializer, SourceSerialzer, CollectionSerializer, \
-    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer
-from .api_pagination import CommandsPagination, KeywordPagination
+    TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
+from .api_pagination import CommandsPagination, KeywordPagination, TestCasePagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    PhaseFilter
+    PhaseFilter, TestSuiteFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -33,6 +36,14 @@ class KeywordAPIView(LoginRequiredMixin,
     queryset = Keyword.objects.all()
     serializer_class = KeywordsSerializer
     pagination_class = KeywordPagination
+
+    def get_queryset(self):
+        script_type = self.request.query_params.get('script_type')
+        if script_type:
+            qs = Keyword.objects.filter(script_type=int(script_type))
+        else:
+            qs = Keyword.objects.all()
+        return qs
 
     def filter_queryset(self, queryset):
         name = self.request.query_params.get('name')
@@ -194,7 +205,7 @@ class CommandsApiView(mixins.ListModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
+        if self.request.query_params.get('extra') == '1' or self.request.data.get('extra') == '1':
             serializer = CommandsSerializer
         return serializer
 
@@ -202,6 +213,7 @@ class CommandsApiView(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(request, "Command Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -213,7 +225,7 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
-        if self.request.query_params.get('extra') == '1':
+        if self.request.query_params.get('extra') == '1' or self.request.data.get('extra') == '1':
             serializer = CommandsSerializer
         return serializer
 
@@ -221,6 +233,7 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        messages.success(request, "Command Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -247,6 +260,8 @@ class RunExtract(LoginRequiredMixin, APIView):
             extract = run_extract.delay(_config)
             task = Task.objects.create(
                 name="Extract commands from {0}".format(origin),
+                category=1,
+                task_info="Started",
                 task_id=extract.task_id,
                 state=extract.state
             )
@@ -333,7 +348,6 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         _arreglo.append(_param_name.name)
                         _arreglo.append(variable.get('value'))
                         _values_name.append(_arreglo)
-
             try:
                 random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                 today = time.strftime("%y_%m_%d")
@@ -344,7 +358,9 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
                     task_id=filename.task_id,
-                    state="run"
+                    state="run",
+                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                                                                            name_file)
                 )
                 request.user.tasks.add(task)
                 request.user.save()
@@ -385,9 +401,12 @@ class ArgumentsApiView(LoginRequiredMixin,
                        mixins.CreateModelMixin,
                        generics.GenericAPIView
                        ):
-    queryset = Argument.objects.all()
     serializer_class = ArgumentsSerializer
     filter_class = ArgumentFilter
+
+    def get_queryset(self):
+        qs = Argument.objects.exclude(id__in=[1, 2, 3, 4, 5, 6])
+        return qs.annotate(Count('id'))
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -455,7 +474,16 @@ class TestCaseApiView(LoginRequiredMixin,
                       ):
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
-    filter_class = TestCaseFilter
+    pagination_class = TestCasePagination
+
+    def filter_queryset(self, queryset):
+        name = self.request.query_params.get('name')
+        collection = self.request.query_params.get('collection')
+        if collection:
+            queryset = queryset.filter(collection=collection)
+        if name:
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -514,3 +542,50 @@ class PhaseDetailApiView(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class TestSuiteApiView(LoginRequiredMixin,
+                       mixins.ListModelMixin,
+                       mixins.CreateModelMixin,
+                       generics.GenericAPIView
+                       ):
+    queryset = TestSuite.objects.all()
+    serializer_class = TestSuiteSerializer
+    filter_class = TestSuiteFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.DestroyModelMixin,
+                             generics.GenericAPIView):
+    queryset = TestSuite.objects.all()
+    serializer_class = TestSuiteSerializer
+    filter_class = TestSuiteFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+@api_view(['GET'])
+def get_highlight_version(request):
+    if request.is_ajax:
+        script = request.query_params.get('script')
+        data = {}
+        if script:
+            try:
+                data = {"script_result": apply_highlight(script)}
+            except Exception as error:
+                data = {'text': '{0}'.format(error)}
+            return JsonResponse(data)

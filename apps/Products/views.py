@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, FormView
 
 from apps.Testings.models import Phase
 from apps.Users.models import Task
@@ -28,7 +28,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['user_tasks'] = self.request.user.get_all_tasks()
+        context['user_tasks'] = self.request.user.get_all_tasks()[:3]
+        context['user_tasks2'] = self.request.user.get_all_tasks()[3:]
         return context
 
 
@@ -165,6 +166,8 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
             extract = run_extract.delay(_config)
             task = Task.objects.create(
                 name="Extract commands from {0}".format(name),
+                category=1,
+                task_info="Started",
                 task_id=extract.task_id,
                 state=extract.state
             )
@@ -278,15 +281,18 @@ class CommandsView(LoginRequiredMixin, TemplateView):
     template_name = "commands.html"
 
 
-class NewCommandView(LoginRequiredMixin, CreateView):
+class NewCommandView(LoginRequiredMixin, FormView):
     model = Command
-    form_class = CommandForm
     template_name = 'create-edit-command.html'
-    success_url = reverse_lazy('commands')
+    form_class = CommandForm
+
+    def get_success_url(self):
+        return reverse_lazy('commands')
 
     def get_context_data(self, **kwargs):
         context = super(NewCommandView, self).get_context_data(**kwargs)
-        context['title'] = 'Edit Command'
+        context['title'] = 'Create Command'
+        context['ArgumentForm'] = ArgumentForm
         return context
 
 
@@ -299,7 +305,7 @@ class EditCommandView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(EditCommandView, self).get_context_data(**kwargs)
         context['title'] = 'Edit Command'
-        context['delete'] = True
+        context['ArgumentForm'] = ArgumentForm
         return context
 
 

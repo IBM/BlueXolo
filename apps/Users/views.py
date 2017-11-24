@@ -4,11 +4,11 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView, FormView, DeleteView
+from django.views.generic import TemplateView, UpdateView, FormView, DeleteView, DetailView
 
 from CTAFramework import settings
 from .forms import UserForm, EditUserForm, RequestAccessForm
-from .models import User
+from .models import User, Task
 from .ibmauth import LDAPBackend
 
 from base64 import b64encode
@@ -60,7 +60,8 @@ class EditUserView(LoginRequiredMixin, UpdateView):
             context_dict = {
                 "name": "{0}, your access has been authorized".format(self.object.email),
                 "message": "Enter on the follow link to request your password.",
-                "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=",""), token_generator.make_token(self.object)),
+                "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=", ""),
+                                                         token_generator.make_token(self.object)),
                 "action_text": "Request my Password"
             }
             email = EmailMessage(
@@ -106,7 +107,8 @@ class RequestAccessView(FormView):
                     context_dict = {
                         "name": "{0}, your access has been authorized".format(user_check.email),
                         "message": "Enter on the follow link to request your password.",
-                        "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=",""), token_generator.make_token(user_check)),
+                        "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=", ""),
+                                                                 token_generator.make_token(user_check)),
                         "action_text": "Request my Password"
                     }
                     email = EmailMessage(
@@ -144,7 +146,7 @@ class RequestAccessView(FormView):
             }
         pwd_generic = User.objects.make_random_password(length=6,
                                                         allowed_chars='#%$!abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
-                                                        
+
         try:
             user = User.objects.create_user(form.instance.email, pwd_generic, **extra_fields)
             context_dict = {
@@ -167,3 +169,11 @@ class RequestAccessView(FormView):
             return HttpResponseRedirect(reverse_lazy('request-access'))
         return HttpResponseRedirect(self.get_success_url())
 
+
+class ListTasksView(LoginRequiredMixin, TemplateView):
+    template_name = "tasks.html"
+
+
+class DetailTaskView(LoginRequiredMixin, DetailView):
+    model = Task
+    template_name = "detail-task.html"
