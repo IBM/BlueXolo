@@ -178,3 +178,7 @@ class DeleteImportedScriptView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Script deleted")
         return reverse_lazy('imported-scripts')
+
+
+class SearchRunScriptView(LoginRequiredMixin, TemplateView):
+    template_name = "search-run-script.html"

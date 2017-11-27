@@ -584,10 +584,60 @@ class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
 def get_highlight_version(request):
     if request.is_ajax:
         script = request.query_params.get('script')
+        type_script = request.query_params.get('type_script')
+        id = request.query_params.get('id_script')
         data = {}
         if script:
             try:
                 data = {"script_result": apply_highlight(script)}
             except Exception as error:
                 data = {'text': '{0}'.format(error)}
-            return JsonResponse(data)
+        elif type_script and id:
+            try:
+                if type_script == '1':
+                    kwd = Keyword.objects.get(id=id)
+                    _script = kwd.script
+                if type_script == '2':
+                    test_case = TestCase.objects.get(id=id)
+                    _script = test_case.script
+                data = {"script_result": apply_highlight(_script)}
+            except Exception as error:
+                data = {'text': '{0}'.format(error)}
+        return JsonResponse(data)
+
+
+class SearchScriptsAPIView(LoginRequiredMixin, APIView):
+    def get(self, request):
+        """Search for keywords (Native or imported) and test cases """
+        _status = status.HTTP_200_OK
+        type_script = request.query_params.get('type_script')
+        name = request.query_params.get('name')
+        id_script = request.query_params.get('id_script')
+        _data = dict()
+        try:
+            if name:
+                if type_script == '1':
+                    keywords = Keyword.objects.filter(
+                        Q(user=request.user) &
+                        Q(name__icontains=name)
+                    )
+                    serializer = KeywordsSerializer(keywords, many=True)
+                if type_script == '2':
+                    test_cases = TestCase.objects.filter(
+                        Q(user=request.user) &
+                        Q(name__icontains=name)
+                    )
+                    serializer = TestCaseSerializer(test_cases, many=True)
+                _data = serializer.data
+            if id_script:
+                if type_script == '1':
+                    keywords = Keyword.objects.get(id=id_script)
+                    serializer = KeywordsSerializer(keywords)
+                if type_script == '2':
+                    test_cases = TestCase.objects.get(id=id_script)
+                    serializer = TestCaseSerializer(test_cases)
+                _data = serializer.data
+        except Exception as error:
+            _data = serializer.errors
+            _status = status.HTTP_404_NOT_FOUND
+        return Response(status=_status, data=_data)

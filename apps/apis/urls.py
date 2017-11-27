@@ -10,7 +10,7 @@ from .views import KeywordAPIView, ServerTemplateApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
     TasksApiView, ArgumentsApiView, ParametersApiView, TestCaseApiView, TestCaseDetailApiView, ParametersDetailApiView, \
     ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView, TestSuiteApiView, TestSuiteDetailApiView, \
-    get_highlight_version
+    get_highlight_version, SearchScriptsAPIView
 
 urlpatterns = [
     url(r'^arguments/$', ArgumentsApiView.as_view(), name="api-arguments"),
@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^source/$', SourceApiView.as_view(), name="api-source"),
     url(r'^collection/$', CollectionApiView.as_view(), name="api-collection"),
     url(r'^tasks/$', TasksApiView.as_view(), name="api-tasks"),
+    url(r'^search-script/$', SearchScriptsAPIView.as_view(), name="api-search-script"),
     # DataTables Api
     url(r'^commands/arguments/$', ArgumentsListJson.as_view(), name="api-commands-arguments"),
     url(r'^commands/os/$', OSCommandsListJson.as_view(), name="api-os-commands"),
