@@ -100,7 +100,7 @@ def run_keyword_profile(host, user, passwd, filename, script, name_values, path,
     if not ssh.check_dirs(host, user, passwd, path):
         ssh.create_structure(host, user, passwd, path)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
-    ssh.run_file_named(filename, host, user, passwd, path, namefile, profilename)
+    ssh.run_file_named_profile(filename, host, user, passwd, path, namefile, profilename)
     ssh.send_results_named(host, user, passwd, namefile, path)
 
 
@@ -237,24 +237,6 @@ class SshConnect(LoginRequiredMixin):
         a.write("\t")
         for i in range(0, len(values)):
             f = '{}\t'.format(values[i])
-            a.write(f)
-        a.close()
-
-    def create_testcase_robotFile_profile(self, filename, name_values):
-        name = filename.replace(" ", "")
-        a = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
-        a.write("*** Settings ***\n\n")
-        a.write("Resource\t{}_keyword.robot\n".format(name))
-        a.write("Library\tSSHLibrary\n")
-        a.write("*** Test Cases ***\n\n")
-        name = 'TestCaseTo{}'.format(filename.replace(" ", ""))
-        a.write(name)
-        a.write("\n")
-        a.write("\t")
-        a.write(filename)
-        a.write("\t")
-        for i in range(0, len(name_values)):
-            f = '{}\t'.format(name_values[i])
             a.write(f)
         a.close()
 
