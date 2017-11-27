@@ -15,7 +15,7 @@ from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Servers.views import run_keyword
+from apps.Servers.views import run_keyword, run_keyword_profile
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Testings.views import apply_highlight
@@ -323,6 +323,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _profile_name = ""
             _values = []
             _values_name = []
+            _name_values = []
             _perfiles = json.loads(_config.get('profile'))
             for perfil in _perfiles:
                 _server_profile = ServerProfile.objects.get(pk=perfil)
@@ -346,6 +347,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         _param_name = Parameters.objects.get(pk=variable.get('id'))
                         _arreglo = []
                         _arreglo.append(_param_name.name)
+                        _name_values.append(_param_name.name)
                         _arreglo.append(variable.get('value'))
                         _values_name.append(_arreglo)
             try:
@@ -353,7 +355,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 today = time.strftime("%y_%m_%d")
                 name = kwd.name.replace(" ", "")
                 name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
+                filename = run_keyword_profile.delay(_host, _username, _passwd, kwd.name, kwd.script, _name_values, _path, name_file,
                                              _profile_name, _values_name)
                 task = Task.objects.create(
                     name="Run Keyword -  {0}".format(kwd.name),
