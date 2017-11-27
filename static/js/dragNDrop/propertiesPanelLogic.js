@@ -112,7 +112,9 @@ function drawKeywordsProperties(keywordJSON) {
                 // Create a label with the argument name 
                 var labelNode = document.createElement('label'); 
                 labelNode.innerText = arguments[i].name; 
-                labelNode.htmlFor = checkboxCounter; 
+                labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick","fixScroll(event)");
  
                 tempForm.appendChild(checkbox); 
                 tempForm.appendChild(labelNode); 
@@ -130,7 +132,9 @@ function drawKeywordsProperties(keywordJSON) {
                 // Create a label with the argument name 
                 var labelNode = document.createElement('label'); 
                 labelNode.innerText = arguments[i].name; 
-                labelNode.htmlFor = checkboxCounter; 
+                labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick","fixScroll(event)");
  
                 tempForm.appendChild(checkbox); 
                 tempForm.appendChild(labelNode); 
@@ -217,6 +221,8 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
 
+                labelNode.setAttribute("onclick","fixScroll(event)");
+
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
             } else {
@@ -234,6 +240,8 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick","fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
@@ -334,6 +342,8 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
 
+                labelNode.setAttribute("onclick","fixScroll(event)");
+
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
             } else {
@@ -351,6 +361,8 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick","fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
@@ -398,6 +410,15 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     showPropertiesPanel();
 }
 
+function fixScroll(event){
+    event.preventDefault();
+
+    var thisBelongsTo = event.target.htmlFor;
+    var checkboxToClick = document.getElementById(thisBelongsTo);
+
+    checkboxToClick.click();
+}
+
 function drawPropertiesPanel(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var arguments = droppedElement.arguments;
@@ -443,6 +464,8 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
 
+            labelNode.setAttribute("onclick","fixScroll(event)");
+
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
@@ -460,6 +483,8 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
+
+            labelNode.setAttribute("onclick","fixScroll(event)");
 
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
@@ -553,6 +578,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
 
+            labelNode.setAttribute("onclick","fixScroll(event)");
+
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
@@ -570,6 +597,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
+
+            labelNode.setAttribute("onclick","fixScroll(event)");
 
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
