@@ -91,8 +91,21 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
     ssh.run_file_named(filename, host, user, passwd, path, namefile)
     ssh.send_results_named(host, user, passwd, namefile, path)
 
+@shared_task
+def run_keyword_profile(host, user, passwd, filename, script, name_values, path, namefile, profilename, variables):
+    ssh = SshConnect()
+    ssh.create_robot_file(filename, script)
+    ssh.create_testcase_robotFile(filename, name_values)
+    ssh.create_profile_file(profilename, variables)
+    if not ssh.check_dirs(host, user, passwd, path):
+        ssh.create_structure(host, user, passwd, path)
+    ssh.send_file_user_pass(filename, host, user, passwd, path)
+    ssh.run_file_named(filename, host, user, passwd, path, namefile, profilename)
+    ssh.send_results_named(host, user, passwd, namefile, path)
+
 
 class SshConnect(LoginRequiredMixin):
+
     def check_dirs(self, host, user, passwd, path):
         """Check if dirs schema exist"""
         result = False
@@ -165,6 +178,27 @@ class SshConnect(LoginRequiredMixin):
         except Exception as error:
             return error
 
+    def run_file_named_profile(self, filename, host, user, passwd, path, namefile, profilename):
+        name = filename.replace(" ", "")
+        name_profile = profilename.replace(" ","")
+        ssh = pxssh.pxssh(timeout=50)
+        ssh.login(host, user, passwd)
+        run_path = 'cd {0}/Keywords'.format(path)
+        try:
+            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html -V {1}/{2} {3}_testcase.robot'.format(
+                namefile,
+                path,
+                name_profile,
+                name
+            )
+            print(run_keyword)
+            ssh.sendline(run_path)
+            ssh.sendline(run_keyword)
+            ssh.prompt()
+            ssh.logout()
+        except Exception as error:
+            return error
+
     def send_results_named(self, host, user, passwd, filename, path):
         t = paramiko.Transport((host, 22))
         t.connect(username=user, password=passwd)
@@ -203,6 +237,24 @@ class SshConnect(LoginRequiredMixin):
         a.write("\t")
         for i in range(0, len(values)):
             f = '{}\t'.format(values[i])
+            a.write(f)
+        a.close()
+
+    def create_testcase_robotFile_profile(self, filename, name_values):
+        name = filename.replace(" ", "")
+        a = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
+        a.write("*** Settings ***\n\n")
+        a.write("Resource\t{}_keyword.robot\n".format(name))
+        a.write("Library\tSSHLibrary\n")
+        a.write("*** Test Cases ***\n\n")
+        name = 'TestCaseTo{}'.format(filename.replace(" ", ""))
+        a.write(name)
+        a.write("\n")
+        a.write("\t")
+        a.write(filename)
+        a.write("\t")
+        for i in range(0, len(name_values)):
+            f = '{}\t'.format(name_values[i])
             a.write(f)
         a.close()
 
