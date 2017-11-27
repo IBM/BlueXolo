@@ -160,6 +160,40 @@ class SshConnect(LoginRequiredMixin):
         system.sendline(passwd)
         system.expect('100%', timeout=600)
 
+    def send_file_profile_user_pass(self, filename, host, user, passwd, path, profilename):
+        name = filename.replace(" ", "")
+        name_profile = profilename.replace(" ","")
+        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
+            settings.MEDIA_ROOT,
+            name,
+            user,
+            host,
+            path
+        )
+        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}/Keywords'.format(
+            settings.MEDIA_ROOT,
+            name,
+            user,
+            host,
+            path
+        )
+        command_profile = 'scp {0}/profiles/{1}.py {2}/@{3}:{4}/Profiles'.format(
+            settings.MEDIA_ROOT,
+            name_profile,
+            user,
+            host,
+            path
+        )
+        system = pexpect.spawn(command_keyword)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+        system = pexpect.spawn(command_testcase)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
+
     def run_file_named(self, filename, host, user, passwd, path, namefile):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
@@ -185,7 +219,7 @@ class SshConnect(LoginRequiredMixin):
         ssh.login(host, user, passwd)
         run_path = 'cd {0}/Keywords'.format(path)
         try:
-            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html -V {1}/{2} {3}_testcase.robot'.format(
+            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html -V {1}/Profiles/{2}.py {3}_testcase.robot'.format(
                 namefile,
                 path,
                 name_profile,
