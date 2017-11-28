@@ -272,16 +272,21 @@ function translateCommand(parameters){
 	return commandScript;
 }
 
+function replaceAllOccurences(search, replacement, string){
+    return string.replace(new RegExp(search, 'g'), replacement);
+}
+
 function translateTag(parameters){
 
 	var tagName = parameters[0].value;
 	var tagValue = parameters[1].value;
 
 	tagName = removeAllSpacesBeforeValue(tagName);
-	tagValue = removeAllSpacesBeforeValue(tagValue);
 
-	var scriptLine = '['+tagName+'] ';
-	scriptLine += tagValue;
+    var translationOfTagsData = replaceAllOccurences("; ", "    ", tagValue);
+
+	var scriptLine = '['+tagName+']    ';
+	scriptLine += translationOfTagsData;
 
 	return scriptLine;
 }
