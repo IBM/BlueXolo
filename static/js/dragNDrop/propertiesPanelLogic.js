@@ -531,6 +531,19 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     showPropertiesPanel();
 }
 
+function convertArrayIntoChipsData(array){
+    var chipsData = [];
+
+    for(var i=0; i<array.length; i++){
+        var newTag = {
+            tag: array[i]
+        }
+        chipsData.push(newTag);
+    }
+
+    return chipsData;
+}
+
 function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var arguments = droppedElement.arguments;
@@ -559,8 +572,6 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
     // Add arguments in the properties panel
     for (var i = 0; i < arguments.length; i++) {
         var tempForm = document.createElement("form");
-
-        console.log(arguments[i]);
 
                 // If the command need the argument in order to work
         if (arguments[i].requirement) {
@@ -613,8 +624,23 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
                 inputNode.id = "chips-"+checkboxCounter;
                 tempForm.appendChild(inputNode.cloneNode());
 
+                var tagsData = arguments[i].value.split("; ");
+                tagsData = convertArrayIntoChipsData(tagsData);
+                /*
+                $('.chips-initial').material_chip({
+                data: [{
+                  tag: 'Apple',
+                }, {
+                  tag: 'Microsoft',
+                }, {
+                  tag: 'Google',
+                }],
+                });
+                */
+
                 $(function () {
                     $('.chips-tags').material_chip({
+                        data: tagsData,
                         placeholder: 'Add Tags',
                         secondaryPlaceholder: '+Tag',
                     });

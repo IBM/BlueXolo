@@ -149,7 +149,7 @@ function getTagInputs(droppedElementIndex) {
 		 			var chipNode = data.children[j];
 		 			parameterValue += chipNode.firstChild.data;
 		 			if(j+1 < data.children.length-1){
-						parameterValue += "\t";
+						parameterValue += "; ";
 		 			}		 			
 		 		}
 			}
