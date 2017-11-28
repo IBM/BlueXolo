@@ -580,12 +580,12 @@ class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
         return self.destroy(request, *args, **kwargs)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_highlight_version(request):
     if request.is_ajax:
-        script = request.query_params.get('script')
-        type_script = request.query_params.get('type_script')
-        id = request.query_params.get('id_script')
+        script = request.data.get('script')
+        type_script = request.data.get('type_script')
+        id = request.data.get('id_script')
         data = {}
         if script:
             try:

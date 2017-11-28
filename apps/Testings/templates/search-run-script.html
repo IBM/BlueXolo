@@ -159,7 +159,7 @@
                 _script_container.innerHTML = '';
                 $.ajax({
                         url: "{% url "get-highlight" %}",
-                        type: 'GET',
+                        type: 'POST',
                         data: {
                             id_script: _id,
                             type_script: type_script
