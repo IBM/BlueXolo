@@ -92,9 +92,11 @@ function getInputsExtraInput(droppedElementIndex) {
 	var propertiesPannel = document.getElementById("propertiesPannel").getElementsByTagName("form");
 	var inputValues = [];
 
+	var indexOfExtraInputArea = 0;
+
 	for(var i=0; i<propertiesPannel.length; i++){
 
-		if(i===0){
+		if(i === indexOfExtraInputArea){
 			var formNode = propertiesPannel[i];	
 			droppedElements[droppedElementIndex].extraValue = formNode[0].value;
 		}
@@ -118,6 +120,7 @@ function getInputsExtraInput(droppedElementIndex) {
 		    inputValues.push(inputValue);
 		}
 	}
+	console.log(inputValues);
 	return inputValues;
 }
 
@@ -172,10 +175,10 @@ function saveFromInput(droppedElementIndex, elementID){
 		return;
 	}
 	var droppedElement = droppedElements[droppedElementIndex];
-    if(droppedElement.category === 1){
+    if(droppedElement.category === 1){    	
     	var values = getInputs(droppedElementIndex);        
     }
-	else{
+	else{		
         var values = getInputsExtraInput(droppedElementIndex);
     }	
 	saveValuesInJSON(droppedElementIndex, values);
@@ -350,9 +353,11 @@ function saveValuesInJSON(droppedElementIndex, values) {
         if (values[i].checked === undefined && (values[i].value === undefined || values[i].value === "")) {
             continue;
         }
-
+        
         if (values[i].checked) {
-            droppedElement.arguments[i].visible = true;
+            droppedElement.arguments[i].visible = values[i].checked;
+        }else{
+			droppedElement.arguments[i].visible = undefined;
         }
 
         if (values[i].value !== undefined) {
