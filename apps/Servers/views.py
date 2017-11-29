@@ -349,8 +349,9 @@ class SshConnect(LoginRequiredMixin):
         system.expect('100%', timeout=600)
 
     def send_keywords_collection(self, host, user, passwd,path, keywords_name, collection_name):
-        for keyword in keywords_name:
-            name = keyword.name.replace(" ","")
+        for i in range(0,len(keywords_name)):
+            keyword_name = keywords_name[i]
+            name = keyword_name.replace(" ", "")
             command_keyword = 'scp {0}/keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
                 settings.MEDIA_ROOT,
                 name,
