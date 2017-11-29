@@ -314,8 +314,10 @@ class SshConnect(LoginRequiredMixin):
         f.write("*** Collection {0} ***".format(name))
         f.write("\n")
         f.write("*** Settings ***")
+        f.write("\n")
         for keyword in keywords:
-            f.write("Resource {o}_keyword.robot".format(keyword.name.replace(" ","")))
+            _key_name = keyword.name
+            f.write("Resource {0}_keyword.robot\n".format(_key_name.replace(" ","")))
         f.close()
 
     def create_testcase(self, filename, script, path, collection_name):

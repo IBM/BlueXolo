@@ -15,7 +15,7 @@ from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Servers.views import run_keyword, run_keyword_profile
+from apps.Servers.views import run_keyword, run_keyword_profile, run_testcases
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Testings.views import apply_highlight
@@ -370,7 +370,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     request.user.tasks.add(task)
                     request.user.save()
                     _data = {
-                        'report': "{0}test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                        'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                     }
                 except Exception as errorConnection:
                     _status = 500
@@ -428,22 +428,20 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 try:
                     random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
                     today = time.strftime("%y_%m_%d")
-                    name = kwd.name.replace(" ", "")
+                    name = testcase.name.replace(" ", "")
                     name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_keyword_profile.delay(_host, _username, _passwd, kwd.name, kwd.script, _name_values,
-                                                         _path, name_file,
-                                                         _profile_name, _values_name)
+                    filename = run_testcases(_host, _username, _passwd, testcase.name, testcase.script, _path, _collection.name, _scripts, _profile_name, _values_name)
                     task = Task.objects.create(
-                        name="Run Keyword -  {0}".format(kwd.name),
+                        name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
                         state="run",
-                        task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                        task_result="{0}/{1}testcases_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
                                                                                 name_file)
                     )
                     request.user.tasks.add(task)
                     request.user.save()
                     _data = {
-                        'report': "{0}test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                        'report': "{0}/testcases_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                     }
                 except Exception as errorConnection:
                     _status = 500
