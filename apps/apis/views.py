@@ -430,7 +430,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     today = time.strftime("%y_%m_%d")
                     name = testcase.name.replace(" ", "")
                     name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_testcases(_host, _username, _passwd, testcase.name, testcase.script, _path, _collection.name, _scripts,name_file, _profile_name, _values_name)
+                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path, _collection.name, _scripts,name_file, _profile_name, _values_name)
                     task = Task.objects.create(
                         name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
