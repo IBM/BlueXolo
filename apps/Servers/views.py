@@ -100,8 +100,19 @@ def run_keyword_profile(host, user, passwd, filename, script, name_values, path,
     if not ssh.check_dirs(host, user, passwd, path):
         ssh.create_structure(host, user, passwd, path)
     ssh.send_file_user_pass(filename, host, user, passwd, path)
+    ssh.send_profile_file(host, user, passwd, path, profilename)
     ssh.run_file_named_profile(filename, host, user, passwd, path, namefile, profilename)
     ssh.send_results_named(host, user, passwd, namefile, path)
+
+@shared_task
+def run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, profilename, variables):
+    ssh = SshConnect()
+    ssh.create_testcase(filename, script,path, collection_name)
+    ssh.create_collection_files(collection_name, keywords)
+    ssh.create_profile_file(profilename, variables)
+    ssh.send_testcase(host, user, passwd, path, filename)
+    ssh.send_keywords_collection(host, user, passwd, path, keywords, collection_name)
+    ssh.send_profile_file(host,user, passwd,path, profilename)
 
 
 class SshConnect(LoginRequiredMixin):
@@ -173,13 +184,6 @@ class SshConnect(LoginRequiredMixin):
         command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}/Keywords'.format(
             settings.MEDIA_ROOT,
             name,
-            user,
-            host,
-            path
-        )
-        command_profile = 'scp {0}/profiles/{1}.py {2}/@{3}:{4}/Profiles'.format(
-            settings.MEDIA_ROOT,
-            name_profile,
             user,
             host,
             path
@@ -274,6 +278,100 @@ class SshConnect(LoginRequiredMixin):
             a.write(f)
         a.close()
 
+    def create_keywords_collections(self, filename, script):
+        name = filename.replace(" ", "")
+        f = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, name), "w")
+        f.write("*** Keywords ***\n\n")
+        f.write(filename)
+        f.write("\n")
+        f.write("\t")
+        f.write(script)
+        f.close()
+
+    def create_testcase_robotFile(self, filename, values):
+        name = filename.replace(" ", "")
+        a = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
+        a.write("*** Settings ***\n\n")
+        a.write("Resource\t{}_keyword.robot\n".format(name))
+        a.write("Library\tSSHLibrary\n")
+        a.write("*** Test Cases ***\n\n")
+        name = 'TestCaseTo{}'.format(filename.replace(" ", ""))
+        a.write(name)
+        a.write("\n")
+        a.write("\t")
+        a.write(filename)
+        a.write("\t")
+        for i in range(0, len(values)):
+            f = '{}\t'.format(values[i])
+            a.write(f)
+        a.close()
+
+    def create_collection_files(self, collection_name, keywords):
+        name = collection_name.replace(" ","")
+        for keyword in keywords:
+            self.create_keywords_collections(keyword.name, keyword.script)
+        f = open("{0}/keywords/Collection_{1}.robot".format(settings.MEDIA_ROOT, name), "w")
+        f.write("*** Collection {0} ***".format(name))
+        f.write("\n")
+        f.write("*** Settings ***")
+        f.write("\n")
+        for keyword in keywords:
+            _key_name = keyword.name
+            f.write("Resource {0}_keyword.robot\n".format(_key_name.replace(" ","")))
+        f.close()
+
+    def create_testcase(self, filename, script, path, collection_name):
+        name = filename.replace(" ","")
+        a = open("{0}/testcases/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
+        a.write("*** Settings ***")
+        a.write("Resource\t {0}/Keywords/{1}.robot".format(path, collection_name))
+        a.write("\n")
+        a.write("*** Test Cases ***")
+        a.write("\n")
+        a.write("\t{0}".format(script))
+
+    def send_testcase(self,  host, user, passwd,path, filename):
+        name = filename.replace(" ", "")
+        command_testcase = 'scp {0}/testcases/{1}_testcase.robot {2}@{3}:{4}/Testcases'.format(
+            settings.MEDIA_ROOT,
+            name,
+            user,
+            host,
+            path
+        )
+        system = pexpect.spawn(command_testcase)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
+    def send_keywords_collection(self, host, user, passwd,path, keywords, collection_name):
+        for keyword in keywords:
+            name = keyword.name.replace(" ","")
+            command_keyword = 'scp {0}/Keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
+                settings.MEDIA_ROOT,
+                name,
+                user,
+                host,
+                path
+            )
+            system = pexpect.spawn(command_keyword)
+            system.expect('password:')
+            system.sendline(passwd)
+            system.expect('100%', timeout=600)
+
+        name_collection = collection_name.name.replace(" ", "")
+        command_keyword = '{0}/keywords/Collection_{1}.robot {2}@{3}:{4}/Keywords'.format(
+            settings.MEDIA_ROOT,
+            name_collection,
+            user,
+            host,
+            path
+        )
+        system = pexpect.spawn(command_keyword)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
     def create_profile_file(self, profilename, variables):
         name = profilename.replace(" ", "")
         a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
@@ -281,6 +379,21 @@ class SshConnect(LoginRequiredMixin):
         for p in variables:
             a.write('{0} = "{1}"\n'.format(p[0], p[1]))
         a.close()
+
+    def send_profile_file(self, host, user, passwd, path, profilename):
+        name_profile = profilename.replace(" ","")
+        command_profile = 'scp {0}/profiles/{1}.py {2}/@{3}:{4}/Profiles'.format(
+            settings.MEDIA_ROOT,
+            name_profile,
+            user,
+            host,
+            path
+        )
+
+        system = pexpect.spawn(command_profile)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
 
 
 class ParametersView(LoginRequiredMixin, TemplateView):

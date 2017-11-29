@@ -26,7 +26,7 @@
             var droppedElements = [];
             var elementsInTable = 0;
             var movingElement = false;
-            var new_keyword;
+            var new_testcase;
 
             $(document).ready(function () {
                 $('.chips').material_chip();
@@ -134,7 +134,7 @@
                     success: function (data) {
                         drawMessage("TestCase Saved", "green");
                         $('#modalPreview').modal('close');
-                        new_keyword = data;
+                        new_testcase = data;
                     },
                     error: function (err) {
                         console.log(err);
@@ -239,8 +239,7 @@
                         <h4 class="app-title">Testcase Properties</h4>
                         <div class="row">
                             <div class="input-field col s12 offset-l4 l4">
-                                <select name="severs" id="selectProfiles"
-                                        onchange="document.getElementById('runScript').disabled = false;">
+                                <select name="severs" id="selectProfiles" multiple>
                                 </select>
                                 <label for="severs">Server Profile</label>
                             </div>
@@ -340,31 +339,24 @@
 
             function runScript() {
                 saveTestcase();
+                var _profiles = JSON.stringify($('#selectProfiles').val());
                 setTimeout(function () {
                     $.ajax({
                         url: "{% url "run-on-server" %}",
                         type: "post",
                         data: {
-                            keyword: new_keyword.id,
-                            profile: document.getElementById('selectProfiles').value
+                            id: new_testcase.id,
+                            profile: _profiles,
+                            type_script: 2
                         },
                         success: function (data) {
+                            drawMessage("Testcase has sent to scheduler", 'blue');
                             $('#modalPreview').modal('close');
-                            alert('Success');
-                            var win = window.open('/' + data.report + '', '_blank');
-                            if (win) {
-                                //Browser has allowed it to be opened
-                                win.focus();
-                            } else {
-                                //Browser has blocked it
-                                alert('Please allow popups for this website');
-                            }
                         }, error: function (err) {
-                            console.log('error on run script: ' + err)
+                            drawMessage(err.responseJSON.text, 'red');
                         }
                     });
                 }, 3000);
-
             }
         </script>
     {% endcompress %}
