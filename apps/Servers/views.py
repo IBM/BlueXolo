@@ -323,8 +323,8 @@ class SshConnect(LoginRequiredMixin):
     def create_testcase(self, filename, script, path, collection_name):
         name = filename.replace(" ","")
         a = open("{0}/testcases/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
-        a.write("*** Settings ***")
-        a.write("Resource\t {0}/Keywords/{1}.robot".format(path, collection_name))
+        a.write("*** Settings ***\n")
+        a.write("Resource\t {0}/Keywords/Collection_{1}.robot".format(path, collection_name))
         a.write("\n")
         a.write("*** Test Cases ***")
         a.write("\n")
