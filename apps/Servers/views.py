@@ -114,7 +114,7 @@ def run_testcases(host, user, passwd, filename, script, path, collection_name, k
     ssh.send_keywords_collection(host, user, passwd, path, keywords_name, collection_name)
     ssh.send_profile_file(host,user, passwd,path, profilename)
     ssh.run_testcases(filename, host, user, passwd, path, namefile, profilename)
-    ssh.send_results_testcases(host, user, passwd, filename, path)
+    ssh.send_results_testcases(host, user, passwd, namefile, path)
 
 
 class SshConnect(LoginRequiredMixin):
