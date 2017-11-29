@@ -136,7 +136,7 @@ class SshConnect(LoginRequiredMixin):
         ssh.login(host, user, passwd)
         run_create_path = 'mkdir {0}'.format(path)
         run_path = 'cd {0}'.format(path)
-        run_create_structure = 'mkdir Keywords Libraries Profiles Resources Templates TestScripts Tools TestSuites'
+        run_create_structure = 'mkdir Keywords Libraries Profiles Resources Templates TestScripts Tools TestSuites Testcases'
         try:
             ssh.sendline(run_create_path)
             ssh.sendline(run_path)
@@ -347,7 +347,7 @@ class SshConnect(LoginRequiredMixin):
     def send_keywords_collection(self, host, user, passwd,path, keywords, collection_name):
         for keyword in keywords:
             name = keyword.name.replace(" ","")
-            command_keyword = 'scp {0}/Keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
+            command_keyword = 'scp {0}/keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
                 settings.MEDIA_ROOT,
                 name,
                 user,
@@ -359,8 +359,8 @@ class SshConnect(LoginRequiredMixin):
             system.sendline(passwd)
             system.expect('100%', timeout=600)
 
-        name_collection = collection_name.name.replace(" ", "")
-        command_keyword = '{0}/keywords/Collection_{1}.robot {2}@{3}:{4}/Keywords'.format(
+        name_collection = collection_name.replace(" ", "")
+        command_keyword = 'scp {0}/keywords/Collection_{1}.robot {2}@{3}:{4}/Keywords'.format(
             settings.MEDIA_ROOT,
             name_collection,
             user,
@@ -382,7 +382,7 @@ class SshConnect(LoginRequiredMixin):
 
     def send_profile_file(self, host, user, passwd, path, profilename):
         name_profile = profilename.replace(" ","")
-        command_profile = 'scp {0}/profiles/{1}.py {2}/@{3}:{4}/Profiles'.format(
+        command_profile = 'scp {0}/profiles/{1}_profile.py {2}/@{3}:{4}/Profiles'.format(
             settings.MEDIA_ROOT,
             name_profile,
             user,
