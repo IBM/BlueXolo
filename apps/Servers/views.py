@@ -111,7 +111,7 @@ def run_testcases(host, user, passwd, filename, script, path, collection_name, k
     ssh.create_collection_files(collection_name, keywords_name, keywords_scripts)
     ssh.create_profile_file(profilename, variables)
     ssh.send_testcase(host, user, passwd, path, filename)
-    ssh.send_keywords_collection(host, user, passwd, path, keywords, collection_name)
+    ssh.send_keywords_collection(host, user, passwd, path, keywords_name, collection_name)
     ssh.send_profile_file(host,user, passwd,path, profilename)
     ssh.run_testcases(filename, host, user, passwd, path, namefile, profilename)
     ssh.send_results_testcases(host, user, passwd, filename, path)
@@ -313,7 +313,7 @@ class SshConnect(LoginRequiredMixin):
         for i in range(0,len(keywords_name)):
             tmp = keywords_scripts[i]
             tmp_name = keywords_name[i]
-            self.create_keywords_collections(tmp_name, keywords_scripts[i])
+            self.create_keywords_collections(tmp_name, tmp = keywords_scripts[i])
         f = open("{0}/keywords/Collection_{1}.robot".format(settings.MEDIA_ROOT, name), "w")
         f.write("*** Collection {0} ***".format(name))
         f.write("\n")
