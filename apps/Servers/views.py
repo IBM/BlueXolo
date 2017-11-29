@@ -384,7 +384,7 @@ class SshConnect(LoginRequiredMixin):
 
     def send_profile_file(self, host, user, passwd, path, profilename):
         name_profile = profilename.replace(" ","")
-        command_profile = 'scp {0}/profiles/{1}_profile.py {2}/@{3}:{4}/Profiles'.format(
+        command_profile = 'scp {0}/profiles/{1}_profile.py {2}@{3}:{4}/Profiles'.format(
             settings.MEDIA_ROOT,
             name_profile,
             user,
