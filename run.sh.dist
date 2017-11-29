@@ -10,3 +10,6 @@ ps -ef | grep 'runserver 0.0.0.0:8000' | grep -v grep | awk '{print $2}' | xargs
 ./manage.py compress &
 nohup ./manage.py runserver 0.0.0.0:8000 &
 echo "now the project is running "
+
+#script
+mkdir kw
