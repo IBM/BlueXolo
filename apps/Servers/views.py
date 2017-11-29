@@ -105,7 +105,7 @@ def run_keyword_profile(host, user, passwd, filename, script, name_values, path,
     ssh.send_results_named(host, user, passwd, namefile, path)
 
 @shared_task
-def run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, profilename, variables):
+def run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile, profilename, variables):
     ssh = SshConnect()
     ssh.create_testcase(filename, script,path, collection_name)
     ssh.create_collection_files(collection_name, keywords)
@@ -113,6 +113,8 @@ def run_testcases(host, user, passwd, filename, script, path, collection_name, k
     ssh.send_testcase(host, user, passwd, path, filename)
     ssh.send_keywords_collection(host, user, passwd, path, keywords, collection_name)
     ssh.send_profile_file(host,user, passwd,path, profilename)
+    ssh.run_testcases(filename, host, user, passwd, path, namefile, profilename)
+    ssh.send_results_testcases(host, user, passwd, filename, path)
 
 
 class SshConnect(LoginRequiredMixin):
@@ -394,6 +396,40 @@ class SshConnect(LoginRequiredMixin):
         system.expect('password:')
         system.sendline(passwd)
         system.expect('100%', timeout=600)
+
+    def run_testcases(self, filename, host, user, passwd, path, namefile, profilename):
+        name = filename.replace(" ", "")
+        name_profile = profilename.replace(" ", "")
+        ssh = pxssh.pxssh(timeout=50)
+        ssh.login(host, user, passwd)
+        run_path = 'cd {0}/Testcases'.format(path)
+        try:
+            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html -V {1}/Profiles/{2}.py {3}_testcase.robot'.format(
+                namefile,
+                path,
+                name_profile,
+                name
+            )
+            print(run_keyword)
+            ssh.sendline(run_path)
+            ssh.sendline(run_keyword)
+            ssh.prompt()
+            ssh.logout()
+        except Exception as error:
+            return error
+
+    def send_results_testcases(self, host, user, passwd, filename, path):
+        t = paramiko.Transport((host, 22))
+        t.connect(username=user, password=passwd)
+        scp = SCPClient(t)
+        scp.get('{0}/Testcases/{1}_log.html'.format(path, filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.get('{0}/Testcases/{1}_report.html'.format(path, filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.get('{0}/Testcases/{1}_output.xml'.format(path, filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.close()
+        t.close()
 
 
 class ParametersView(LoginRequiredMixin, TemplateView):
