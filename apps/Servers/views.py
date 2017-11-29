@@ -310,8 +310,10 @@ class SshConnect(LoginRequiredMixin):
 
     def create_collection_files(self, collection_name, keywords_name, keywords_scripts):
         name = collection_name.replace(" ","")
-        for keyword_name, keywords_script in keywords_name, keywords_scripts:
-            self.create_keywords_collections(keywords_name, keywords_script)
+        for i in range(0,len(keywords_name)):
+            tmp = keywords_scripts[i]
+            tmp_name = keywords_name[i]
+            self.create_keywords_collections(tmp_name, keywords_scripts[i])
         f = open("{0}/keywords/Collection_{1}.robot".format(settings.MEDIA_ROOT, name), "w")
         f.write("*** Collection {0} ***".format(name))
         f.write("\n")
