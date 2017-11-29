@@ -15,7 +15,7 @@ from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Servers.views import run_keyword, run_keyword_profile, run_testcases
+from apps.Servers.views import run_on_server
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Testings.views import apply_highlight
@@ -307,7 +307,7 @@ class CollectionApiView(LoginRequiredMixin,
         return self.create(request, *args, **kwargs)
 
 
-class RunOnServerApiView(LoginRequiredMixin, APIView):
+class RunOnServerApiView1(LoginRequiredMixin, APIView):
     """Call "functions for run scripts on servers"""
 
     def post(self, request):
@@ -385,7 +385,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             return Response(status=_status, data=_data)
         elif _id_script == '2':
             try:
-                testcase = TestCase.objects.get(pk= _config.get('id'))
+                testcase = TestCase.objects.get(pk=_config.get('id'))
                 _collection = testcase.collection.first()
                 _keywdors_collection = Keyword.objects.filter(collection=_collection)
                 _scripts = []
@@ -430,13 +430,15 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     today = time.strftime("%y_%m_%d")
                     name = testcase.name.replace(" ", "")
                     name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path, _collection.name, _scripts,name_file, _profile_name, _values_name)
+                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,
+                                                   _collection.name, _scripts, name_file, _profile_name, _values_name)
                     task = Task.objects.create(
                         name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
                         state="run",
-                        task_result="{0}/{1}testcases_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
-                                                                                name_file)
+                        task_result="{0}/{1}testcases_result/{2}_report.html".format(settings.SITE_DNS,
+                                                                                     settings.MEDIA_URL,
+                                                                                     name_file)
                     )
                     request.user.tasks.add(task)
                     request.user.save()
@@ -715,3 +717,10 @@ class SearchScriptsAPIView(LoginRequiredMixin, APIView):
             _data = serializer.errors
             _status = status.HTTP_404_NOT_FOUND
         return Response(status=_status, data=_data)
+
+
+class RunOnServerApiView(LoginRequiredMixin, APIView):
+    def post(self, request):
+        _status = status.HTTP_200_OK
+        result = run_on_server(request.data)
+        return Response(status=_status, data=result)
