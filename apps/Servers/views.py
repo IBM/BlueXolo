@@ -105,10 +105,10 @@ def run_keyword_profile(host, user, passwd, filename, script, name_values, path,
     ssh.send_results_named(host, user, passwd, namefile, path)
 
 @shared_task
-def run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile, profilename, variables):
+def run_testcases(host, user, passwd, filename, script, path, collection_name, keywords_name, keywords_scripts, namefile, profilename, variables):
     ssh = SshConnect()
     ssh.create_testcase(filename, script,path, collection_name)
-    ssh.create_collection_files(collection_name, keywords)
+    ssh.create_collection_files(collection_name, keywords_name, keywords_scripts)
     ssh.create_profile_file(profilename, variables)
     ssh.send_testcase(host, user, passwd, path, filename)
     ssh.send_keywords_collection(host, user, passwd, path, keywords, collection_name)
@@ -308,17 +308,17 @@ class SshConnect(LoginRequiredMixin):
             a.write(f)
         a.close()
 
-    def create_collection_files(self, collection_name, keywords):
+    def create_collection_files(self, collection_name, keywords_name, keywords_scripts):
         name = collection_name.replace(" ","")
-        for keyword in keywords:
-            self.create_keywords_collections(keyword.name, keyword.script)
+        for keyword_name, keywords_script in keywords_name, keywords_scripts:
+            self.create_keywords_collections(keywords_name, keywords_script)
         f = open("{0}/keywords/Collection_{1}.robot".format(settings.MEDIA_ROOT, name), "w")
         f.write("*** Collection {0} ***".format(name))
         f.write("\n")
         f.write("*** Settings ***")
         f.write("\n")
-        for keyword in keywords:
-            _key_name = keyword.name
+        for keyword in keywords_name:
+            _key_name = keyword
             f.write("Resource {0}_keyword.robot\n".format(_key_name.replace(" ","")))
         f.close()
 
@@ -346,8 +346,8 @@ class SshConnect(LoginRequiredMixin):
         system.sendline(passwd)
         system.expect('100%', timeout=600)
 
-    def send_keywords_collection(self, host, user, passwd,path, keywords, collection_name):
-        for keyword in keywords:
+    def send_keywords_collection(self, host, user, passwd,path, keywords_name, collection_name):
+        for keyword in keywords_name:
             name = keyword.name.replace(" ","")
             command_keyword = 'scp {0}/keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
                 settings.MEDIA_ROOT,

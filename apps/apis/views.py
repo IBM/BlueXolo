@@ -388,9 +388,12 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 testcase = TestCase.objects.get(pk= _config.get('id'))
                 _collection = testcase.collection.first()
                 _keywdors_collection = Keyword.objects.filter(collection=_collection)
-                _scripts = []
+                _keys_name = []
+                _keys_scripts = []
                 for _keyword in _keywdors_collection:
-                    _scripts.append(_keyword)
+                    _keytmp =  _keyword
+                    _keys_name.append(_keytmp.name)
+                    _keys_scripts.append(_keytmp.script)
                 _host = ""
                 _username = ""
                 _passwd = ""
@@ -430,7 +433,8 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     today = time.strftime("%y_%m_%d")
                     name = testcase.name.replace(" ", "")
                     name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path, _collection.name, _scripts,name_file, _profile_name, _values_name)
+                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,_collection.name, _keys_name, _keys_scripts,name_file, _profile_name, _values_name)
+                                    #run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
                     task = Task.objects.create(
                         name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
