@@ -439,13 +439,13 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                         name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
                         state="run",
-                        task_result="{0}/{1}testcases_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                        task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
                                                                                 name_file)
                     )
                     request.user.tasks.add(task)
                     request.user.save()
                     _data = {
-                        'report': "{0}/testcases_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                        'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
                     }
                 except Exception as errorConnection:
                     _status = 500
