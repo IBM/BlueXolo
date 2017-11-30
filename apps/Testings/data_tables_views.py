@@ -11,6 +11,9 @@ class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
     order_columns = ['name', 'description', 'created_at', 'pk']
     max_display_length = 100
 
+    def get_initial_queryset(self):
+        return Keyword.objects.filter(script_type=1)
+
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
@@ -98,3 +101,28 @@ class PhasesListJson(LoginRequiredMixin, BaseDatatableView):
         if search:
             qs = qs.filter(name__icontains=search)
         return qs
+
+
+class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
+    model = Keyword
+    columns = ['name', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'description', 'created_at', 'pk']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Keyword.objects.filter(script_type=2)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return qs
+
+    def render_column(self, row, column):
+        if column == 'created_at':
+            return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
+        else:
+            return super(KeywordsImportedListJson, self).render_column(row, column)

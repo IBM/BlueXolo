@@ -8,7 +8,7 @@
                 <div class="card-content">
                     <form action="" method="POST">
                         {% csrf_token %}
-                        <p class="card-title">Are you sure you want to delete the follow Keyword?</p>
+                        <p class="card-title">Are you sure you want to delete the follow Script?</p>
                         <ul>
                             <li><b>Name:</b> {{ object.name }}</li>
                             <li><b>Description:</b> {{ object.description }}</li>
@@ -21,9 +21,8 @@
             </div>
         </div>
     </div>
-
-       <div class="fixed-action-btn left-button ">
-        <a href="{% url "keywords" %}" id="btn_play"
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "imported-scripts" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey">
             <i class="material-icons">arrow_back</i></a>
     </div>

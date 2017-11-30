@@ -8,9 +8,8 @@
 *.tmlanguage.cache
 *.tmPreferences.cache
 *.stTheme.cache
-media/zips/*
-media/test_keywords/*
-media/test_result/*
+media/
+static/CACHE
 
 *.zip
 
@@ -89,3 +88,4 @@ secrets.json
 
 nohup.out
 setup.sh
+run.sh

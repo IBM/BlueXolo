@@ -2,13 +2,15 @@ from django.conf.urls import url
 
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson, ParametersListJson
-from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson, TestsuitesListJson
+from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson, \
+    TestsuitesListJson, KeywordsImportedListJson
 from apps.Users.data_tables_views import TasksListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
     CommandsApiView, CommandsDetailApiView, RunExtract, SourceApiView, CollectionApiView, RunOnServerApiView, \
     TasksApiView, ArgumentsApiView, ParametersApiView, TestCaseApiView, TestCaseDetailApiView, ParametersDetailApiView, \
-    ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView, TestSuiteApiView, TestSuiteDetailApiView
+    ArgumentsDetailApiView, PhaseApiView, PhaseDetailApiView, TestSuiteApiView, TestSuiteDetailApiView, \
+    get_highlight_version, SearchScriptsAPIView
 
 urlpatterns = [
     url(r'^arguments/$', ArgumentsApiView.as_view(), name="api-arguments"),
@@ -32,6 +34,7 @@ urlpatterns = [
     url(r'^source/$', SourceApiView.as_view(), name="api-source"),
     url(r'^collection/$', CollectionApiView.as_view(), name="api-collection"),
     url(r'^tasks/$', TasksApiView.as_view(), name="api-tasks"),
+    url(r'^search-script/$', SearchScriptsAPIView.as_view(), name="api-search-script"),
     # DataTables Api
     url(r'^commands/arguments/$', ArgumentsListJson.as_view(), name="api-commands-arguments"),
     url(r'^commands/os/$', OSCommandsListJson.as_view(), name="api-os-commands"),
@@ -45,8 +48,11 @@ urlpatterns = [
     url(r'^phases/list/$', PhasesListJson.as_view(), name="api-phases-list"),
     url(r'^parameters/list/$', ParametersListJson.as_view(), name="api-parameters-list"),
     url(r'^tasks/list/$', TasksListJson.as_view(), name="api-tasks-list"),
+    url(r'^imported/list/$', KeywordsImportedListJson.as_view(), name="api-imported-list"),
     # Extract
     url(r'^run_extract/$', RunExtract.as_view(), name="run_extract"),
+    # apply pygment
+    url(r'^get-highlight/$', get_highlight_version, name="get-highlight"),
     # Run On server
     url(r'^run_on_server/$', RunOnServerApiView.as_view(), name="run-on-server"),
 ]

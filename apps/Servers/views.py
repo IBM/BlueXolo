@@ -91,8 +91,34 @@ def run_keyword(host, user, passwd, filename, script, values, path, namefile, pr
     ssh.run_file_named(filename, host, user, passwd, path, namefile)
     ssh.send_results_named(host, user, passwd, namefile, path)
 
+@shared_task
+def run_keyword_profile(host, user, passwd, filename, script, name_values, path, namefile, profilename, variables):
+    ssh = SshConnect()
+    ssh.create_robot_file(filename, script)
+    ssh.create_testcase_robotFile(filename, name_values)
+    ssh.create_profile_file(profilename, variables)
+    if not ssh.check_dirs(host, user, passwd, path):
+        ssh.create_structure(host, user, passwd, path)
+    ssh.send_file_user_pass(filename, host, user, passwd, path)
+    ssh.send_profile_file(host, user, passwd, path, profilename)
+    ssh.run_file_named_profile(filename, host, user, passwd, path, namefile, profilename)
+    ssh.send_results_named(host, user, passwd, namefile, path)
+
+@shared_task
+def run_testcases(host, user, passwd, filename, script, path, collection_name, keywords_name, keywords_scripts, namefile, profilename, variables):
+    ssh = SshConnect()
+    ssh.create_testcase(filename, script,path, collection_name)
+    ssh.create_collection_files(collection_name, keywords_name, keywords_scripts)
+    ssh.create_profile_file(profilename, variables)
+    ssh.send_testcase(host, user, passwd, path, filename)
+    ssh.send_keywords_collection(host, user, passwd, path, keywords_name, collection_name)
+    ssh.send_profile_file(host,user, passwd,path, profilename)
+    ssh.run_testcases(filename, host, user, passwd, path, namefile, profilename)
+    ssh.send_results_testcases(host, user, passwd, namefile, path)
+
 
 class SshConnect(LoginRequiredMixin):
+
     def check_dirs(self, host, user, passwd, path):
         """Check if dirs schema exist"""
         result = False
@@ -112,7 +138,7 @@ class SshConnect(LoginRequiredMixin):
         ssh.login(host, user, passwd)
         run_create_path = 'mkdir {0}'.format(path)
         run_path = 'cd {0}'.format(path)
-        run_create_structure = 'mkdir Keywords Libraries Profiles Resources Templates TestScripts Tools TestSuites'
+        run_create_structure = 'mkdir Keywords Libraries Profiles Resources Templates TestScripts Tools TestSuites Testcases'
         try:
             ssh.sendline(run_create_path)
             ssh.sendline(run_path)
@@ -147,6 +173,33 @@ class SshConnect(LoginRequiredMixin):
         system.sendline(passwd)
         system.expect('100%', timeout=600)
 
+    def send_file_profile_user_pass(self, filename, host, user, passwd, path, profilename):
+        name = filename.replace(" ", "")
+        name_profile = profilename.replace(" ","")
+        command_keyword = 'scp {0}/test_keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
+            settings.MEDIA_ROOT,
+            name,
+            user,
+            host,
+            path
+        )
+        command_testcase = 'scp {0}/test_keywords/{1}_testcase.robot {2}@{3}:{4}/Keywords'.format(
+            settings.MEDIA_ROOT,
+            name,
+            user,
+            host,
+            path
+        )
+        system = pexpect.spawn(command_keyword)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+        system = pexpect.spawn(command_testcase)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
+
     def run_file_named(self, filename, host, user, passwd, path, namefile):
         name = filename.replace(" ", "")
         ssh = pxssh.pxssh(timeout=50)
@@ -155,6 +208,27 @@ class SshConnect(LoginRequiredMixin):
         try:
             run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html {1}_testcase.robot'.format(
                 namefile,
+                name
+            )
+            print(run_keyword)
+            ssh.sendline(run_path)
+            ssh.sendline(run_keyword)
+            ssh.prompt()
+            ssh.logout()
+        except Exception as error:
+            return error
+
+    def run_file_named_profile(self, filename, host, user, passwd, path, namefile, profilename):
+        name = filename.replace(" ", "")
+        name_profile = profilename.replace(" ","")
+        ssh = pxssh.pxssh(timeout=50)
+        ssh.login(host, user, passwd)
+        run_path = 'cd {0}/Keywords'.format(path)
+        try:
+            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html -V {1}/Profiles/{2}.py {3}_testcase.robot'.format(
+                namefile,
+                path,
+                name_profile,
                 name
             )
             print(run_keyword)
@@ -206,6 +280,103 @@ class SshConnect(LoginRequiredMixin):
             a.write(f)
         a.close()
 
+    def create_keywords_collections(self, filename, script):
+        name = filename.replace(" ", "")
+        f = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, name), "w")
+        f.write("*** Keywords ***\n\n")
+        f.write(filename)
+        f.write("\n")
+        f.write("\t")
+        f.write(script)
+        f.close()
+
+    def create_testcase_robotFile(self, filename, values):
+        name = filename.replace(" ", "")
+        a = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
+        a.write("*** Settings ***\n\n")
+        a.write("Resource\t{}_keyword.robot\n".format(name))
+        a.write("Library\tSSHLibrary\n")
+        a.write("*** Test Cases ***\n\n")
+        name = 'TestCaseTo{}'.format(filename.replace(" ", ""))
+        a.write(name)
+        a.write("\n")
+        a.write("\t")
+        a.write(filename)
+        a.write("\t")
+        for i in range(0, len(values)):
+            f = '{}\t'.format(values[i])
+            a.write(f)
+        a.close()
+
+    def create_collection_files(self, collection_name, keywords_name, keywords_scripts):
+        name = collection_name.replace(" ","")
+        for i in range(0,len(keywords_name)):
+            tmp_script = keywords_scripts[i]
+            tmp_name = keywords_name[i]
+            self.create_keywords_collections(tmp_name, tmp_script)
+        f = open("{0}/keywords/Collection_{1}.robot".format(settings.MEDIA_ROOT, name), "w")
+        f.write("*** Collection {0} ***".format(name))
+        f.write("\n")
+        f.write("*** Settings ***")
+        f.write("\n")
+        for keyword in keywords_name:
+            _key_name = keyword
+            f.write("Resource {0}_keyword.robot\n".format(_key_name.replace(" ","")))
+        f.close()
+
+    def create_testcase(self, filename, script, path, collection_name):
+        name = filename.replace(" ","")
+        a = open("{0}/testcases/{1}_testcase.robot".format(settings.MEDIA_ROOT, name), "w")
+        a.write("*** Settings ***\n")
+        a.write("Resource\t {0}/Keywords/Collection_{1}.robot".format(path, collection_name))
+        a.write("\n")
+        a.write("*** Test Cases ***")
+        a.write("\n")
+        a.write("\t{0}".format(script))
+
+    def send_testcase(self,  host, user, passwd,path, filename):
+        name = filename.replace(" ", "")
+        command_testcase = 'scp {0}/testcases/{1}_testcase.robot {2}@{3}:{4}/Testcases'.format(
+            settings.MEDIA_ROOT,
+            name,
+            user,
+            host,
+            path
+        )
+        system = pexpect.spawn(command_testcase)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
+    def send_keywords_collection(self, host, user, passwd,path, keywords_name, collection_name):
+        for i in range(0,len(keywords_name)):
+            keyword_name = keywords_name[i]
+            name = keyword_name.replace(" ", "")
+            command_keyword = 'scp {0}/keywords/{1}_keyword.robot {2}@{3}:{4}/Keywords'.format(
+                settings.MEDIA_ROOT,
+                name,
+                user,
+                host,
+                path
+            )
+            system = pexpect.spawn(command_keyword)
+            system.expect('password:')
+            system.sendline(passwd)
+            system.expect('100%', timeout=600)
+
+        name_collection = collection_name.replace(" ", "")
+        command_keyword = 'scp {0}/keywords/Collection_{1}.robot {2}@{3}:{4}/Keywords'.format(
+            settings.MEDIA_ROOT,
+            name_collection,
+            user,
+            host,
+            path
+        )
+        system = pexpect.spawn(command_keyword)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
     def create_profile_file(self, profilename, variables):
         name = profilename.replace(" ", "")
         a = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, name), "w")
@@ -213,6 +384,55 @@ class SshConnect(LoginRequiredMixin):
         for p in variables:
             a.write('{0} = "{1}"\n'.format(p[0], p[1]))
         a.close()
+
+    def send_profile_file(self, host, user, passwd, path, profilename):
+        name_profile = profilename.replace(" ","")
+        command_profile = 'scp {0}/profiles/{1}_profile.py {2}@{3}:{4}/Profiles'.format(
+            settings.MEDIA_ROOT,
+            name_profile,
+            user,
+            host,
+            path
+        )
+
+        system = pexpect.spawn(command_profile)
+        system.expect('password:')
+        system.sendline(passwd)
+        system.expect('100%', timeout=600)
+
+    def run_testcases(self, filename, host, user, passwd, path, namefile, profilename):
+        name = filename.replace(" ", "")
+        name_profile = profilename.replace(" ", "")
+        ssh = pxssh.pxssh(timeout=50)
+        ssh.login(host, user, passwd)
+        run_path = 'cd {0}/Testcases'.format(path)
+        try:
+            run_keyword = 'pybot -o {0}_output.xml -l {0}_log.html -r {0}_report.html -V {1}/Profiles/{2}.py {3}_testcase.robot'.format(
+                namefile,
+                path,
+                name_profile,
+                name
+            )
+            print(run_keyword)
+            ssh.sendline(run_path)
+            ssh.sendline(run_keyword)
+            ssh.prompt()
+            ssh.logout()
+        except Exception as error:
+            return error
+
+    def send_results_testcases(self, host, user, passwd, filename, path):
+        t = paramiko.Transport((host, 22))
+        t.connect(username=user, password=passwd)
+        scp = SCPClient(t)
+        scp.get('{0}/Testcases/{1}_log.html'.format(path, filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.get('{0}/Testcases/{1}_report.html'.format(path, filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.get('{0}/Testcases/{1}_output.xml'.format(path, filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.close()
+        t.close()
 
 
 class ParametersView(LoginRequiredMixin, TemplateView):

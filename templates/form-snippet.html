@@ -15,13 +15,25 @@
                     {{ field.label }}{% if field.field.required %}<b class="red-text">*</b>{% endif %}</label>
             </P>
         {% else %}
-            <label for="{{ field.id_for_label }}">
-                {{ field.label }}
-                {% if field.field.required %}
-                    <b class="red-text">*</b>
-                {% endif %}
-            </label>
-            {{ field }}
+            {% if field.field.widget.input_type == "file" %}
+                <div class="file-field">
+                    <div class="btn blue-grey">
+                        <span>{{ field.label }} {% if field.field.required %}*{% endif %}</span>
+                        {{ field }}
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" >
+                    </div>
+                </div>
+            {% else %}
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <b class="red-text">*</b>
+                        {% endif %}
+                    </label>
+                    {{ field }}
+            {% endif %}
         {% endif %}
         {% if  field.help_text %}
             <div>

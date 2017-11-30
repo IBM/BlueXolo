@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Edit import Script{% endblock %}{% block subtitle %}Edit Import Script{% endblock %}
+{% block content %}
+    <div class="">
+        <div class="row">
+            <div class="col s12 l4">
+
+                <div class="section">
+                    <div class="card">
+                        <div class="card-content grey lighten-3">
+                            <p>With this you can search for any script for integrate on your current imported
+                                script.</p>
+                            <p><i>* Press on result to see a preview, if want to use it, just press
+                                <b>ADD </b>button.</i></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <label for="id_label_single">
+                        Keyword Search
+                        <select id="keyword-search"></select>
+                    </label>
+                </div>
+
+                <div class="section">
+                    <div id="keywordsContainer"></div>
+                </div>
+                <div class="section center" id="btn_cotainer">
+                </div>
+
+            </div>
+            <div class="col s12 l1">
+            </div>
+            <div class="col s12 l6">
+                <div class="card">
+                    <div class="card-content">
+                        <form method="POST" enctype="multipart/form-data" novalidate name="import_script">
+                            {% csrf_token %}
+                            {% include "form-snippet.html" %}
+                            <div class="section">
+                                <div class="center">
+                                    <input type="submit" value="Update" class="btn">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed-action-btn left-button ">
+            <a href="{% url "imported-scripts" %}" id="btn_play"
+               class="btn-floating btn-large waves-effect waves-light grey ">
+                <i class="material-icons">arrow_back</i></a>
+        </div>
+
+
+        <div class="fixed-action-btn right-button ">
+            <button type="button" class="btn-floating btn-large waves-effect waves-light tooltipped"
+                    onclick="getHighlight()" data-position="left"
+                    data-tooltip="Preview Current Script">
+                <i class="material-icons">remove_red_eye</i>
+            </button>
+        </div>
+
+        <!-- Modal Preview -->
+        <div id="viewModal" class="modal">
+            <div class="modal-content">
+                <h4 id="script_name_container"></h4>
+                <div id="result">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% load staticfiles %}
+{% load compress %}
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/highlight.css" %}">
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
+{% endblock %}
+{% block extraScripts %}
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript">
+            $('.modal').modal();
+
+            function getHighlight(script, name) {
+
+                var _script_container = document.getElementById('result');
+                var _script_name_container = document.getElementById('script_name_container');
+
+                _script_container.innerHTML = '';
+                _script_name_container.innerHTML = '';
+
+
+                var _script = script || document.getElementById('id_script').value;
+                var _name = name || document.getElementById('id_name').value;
+                $.ajax({
+                        url: "{% url "get-highlight" %}",
+                        type: 'POST',
+                        data: {
+                            'script': _script
+                        }, success: function (data) {
+                            _script_container.innerHTML = data.script_result;
+                            _script_name_container.innerHTML = _name;
+                            $('#viewModal').modal('open');
+                        }, error: function (err) {
+                            drawMessage(err.text, 'red');
+                        }
+                    }
+                )
+            }
+
+            $('#keyword-search').select2({
+                ajax: {
+                    url: "{% url "api-keywords" %}",
+                    dataType: 'JSON',
+                    delay: 350,
+                    data: function (params) {
+                        return {
+                            name: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.results
+                        };
+                    }
+                },
+                escapeMarkup: function (markup) {
+                    return markup;
+                }, // let our custom formatter work
+                minimumInputLength: 2,
+                templateResult: function (results) {
+                    return results.name
+                },
+                templateSelection: function (selection) {
+                    return selection.name;
+                }
+            });
+
+
+            $('#keyword-search').on("select2:select", function (e) {
+                $.ajax({
+                    url: '/apis/keywords/' + this.value + '/',
+                    type: 'GET',
+                    success: function (data) {
+                        var _container = document.getElementById('keywordsContainer');
+                        _container.innerHTML = "";
+                        var _resultElement = document.createElement('div');
+                        var _element = document.createElement('p');
+                        var _btnContainer = document.getElementById('btn_cotainer');
+                        var _btnAdd = document.createElement('button');
+                        var _btnPreview = document.createElement('button');
+                        _btnContainer.innerHTML = "";
+
+                        _resultElement.className = 'center';
+                        _element.className += 'blue-text';
+                        _element.innerHTML = data.name.bold();
+
+                        _btnPreview.setAttribute('onClick', 'viewPreview(' + JSON.stringify(data) + ')');
+                        _btnAdd.setAttribute('onClick', 'appendValues(' + JSON.stringify(data) + ')');
+
+                        _btnAdd.className += 'btn green waves-effect';
+                        _btnPreview.className += 'btn-flat waves-effect blue-grey-text';
+                        _btnPreview.innerHTML = "Preview";
+                        _btnAdd.innerHTML = "Add";
+
+                        _resultElement.appendChild(_element);
+                        _container.appendChild(_resultElement);
+
+                        _btnContainer.appendChild(_btnPreview);
+                        _btnContainer.appendChild(_btnAdd);
+
+                    }, error: function (err) {
+                        drawMessage(err.responseJSON.text, 'red');
+                    }
+                });
+            });
+
+            function viewPreview(obj) {
+                getHighlight(obj.script, obj.name)
+            }
+
+            function appendValues(obj) {
+                document.getElementById('id_script').value += '\n \n' + obj.script;
+                drawMessage(obj.name + ' added to the bottom of script', 'blue');
+            }
+        </script>
+    {% endcompress %}
+{% endblock %}

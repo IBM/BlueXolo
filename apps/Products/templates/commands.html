@@ -12,7 +12,7 @@
                             <input name="group1" type="radio" id="category0" class="with-gap " value="" checked/>
                             <label for="category0">None</label>
                         </p>
-                          <p>
+                        <p>
                             <input name="group1" type="radio" id="category1" value="2" class="with-gap"/>
                             <label for="category1">OS Commands</label>
                         </p>
@@ -135,167 +135,174 @@
     </div>
 
 {% endblock %}
+
 {% load staticfiles %}
+{% load compress %}
+
 {% block extraStyles %}
-    <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
 {% endblock %}
+
 {% block extraScripts %}
-    <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
-    <script type="text/javascript">
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript">
 
-        function modal_extract() {
-            $('#modalExtract').modal('open');
-        }
-
-        $('#local').change(function () {
-            if ($("#local:checked").val()) {
-                $('#host').val(null);
-                $('#host').attr('disabled', true);
-                $('#port').attr('disabled', true);
-                $('#username').attr('disabled', true);
-                $('#password').attr('disabled', true);
-            } else {
-                $('#host').attr('disabled', false);
-                $('#port').attr('disabled', false);
-                $('#username').attr('disabled', false);
-                $('#password').attr('disabled', false);
+            function modal_extract() {
+                $('#modalExtract').modal('open');
             }
-            checkValues();
-        });
 
-        function checkValues() {
-            if ($('#host').val() && $('#username').val() && $('#password').val() || $("#local:checked").val()) {
-                $('#btn_run_extract').attr('disabled', false);
-            } else {
-                $('#btn_run_extract').attr('disabled', true);
-            }
-        }
-
-        $('document').ready(function () {
-            $('select').material_select('destroy');
-            $('.modal').modal();
-
-            function parseReults(results) {
-                var _print;
-                if ($("#filters input[type='radio']:checked").val() === "") {
-                    _print = results.name
+            $('#local').change(function () {
+                if ($("#local:checked").val()) {
+                    $('#host').val(null);
+                    $('#host').attr('disabled', true);
+                    $('#port').attr('disabled', true);
+                    $('#username').attr('disabled', true);
+                    $('#password').attr('disabled', true);
                 } else {
-                    if (results.source) {
-                        if (results.source.length > 1) {
+                    $('#host').attr('disabled', false);
+                    $('#port').attr('disabled', false);
+                    $('#username').attr('disabled', false);
+                    $('#password').attr('disabled', false);
+                }
+                checkValues();
+            });
 
-                            _print = 'Multiples Sources - ' + results.name
-                        } else {
+            function checkValues() {
+                if ($('#host').val() && $('#username').val() && $('#password').val() || $("#local:checked").val()) {
+                    $('#btn_run_extract').attr('disabled', false);
+                } else {
+                    $('#btn_run_extract').attr('disabled', true);
+                }
+            }
 
-                            _print = results.source[0].name + ' - ' + results.name
+            $('document').ready(function () {
+                $('select').material_select('destroy');
+                $('.modal').modal();
+
+                function parseReults(results) {
+                    var _print;
+                    if ($("#filters input[type='radio']:checked").val() === "") {
+                        _print = results.name
+                    } else {
+                        if (results.source) {
+                            if (results.source.length > 1) {
+
+                                _print = 'Multiples Sources - ' + results.name
+                            } else {
+
+                                _print = results.source[0].name + ' - ' + results.name
+                            }
+
+                        }
+                    }
+                    return _print
+                }
+
+                $('#command-search').select2({
+                    ajax: {
+                        url: "{% url "api-commands" %}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                name: params.term,   // search term
+                                category: $("#filters input[type='radio']:checked").val(),
+                                extra: 1,
+                                exact: $("#exactSearch:checked").val()
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results
+                            };
+                        }
+                    },
+                    placeholder: "Command Search",
+                    escapeMarkup: function (markup) {
+                        return markup;
+                    }, // let our custom formatter work
+                    minimumInputLength: 2,
+                    templateResult: parseReults,
+                    templateSelection: parseReults
+                });
+            });
+
+            $('#command-search').on("select2:select", function (e) {
+                printInfo($('#command-search').select2('data')[0])
+            });
+
+            function printInfo(data) {
+                $.ajax({
+                    url: '/apis/commands/' + data.id + '/',
+                    type: 'GET',
+                    data: {extra: 1},
+                    success: function (data) {
+                        var _table = $('#resultTable');
+                        _table.find('tbody').empty();
+                        var _source_list = [];
+                        var _argument_list = [];
+                        _table.find('tbody')
+                            .append($('<tr>')
+                                .append('<td><a class=" small blue-text waves-effect" href="/commands/' + data.id + '/edit/">' + data.name + '</a>  </td>')
+                                .append($('<td>')
+                                    .text(data.description)
+                                )
+                                .append($('<td class="sources">')
+                                )
+                                .append($('<td class="args">')
+                                )
+                            );
+                        if (data.source.length > 0) {
+                            $.each(data.source, function (k, v) {
+                                _source_list.push('<p>' + v.name + ' - ' + v.version + '</p>')
+                            });
                         }
 
+                        if (data.arguments.length > 0) {
+                            $.each(data.arguments, function (k, v) {
+                                _argument_list.push('<a href="{% url "arguments" %}' + v.id + '/" ' +
+                                    'class="btn-flat small  waves-effect tooltipped grey-text" data-position="bottom" data-tooltip="' + v.description + '">'
+                                    + v.name + '</a>')
+                            });
+                        }
+                        else {
+                            _argument_list.push('<span>No Arguments </span>');
+                        }
+                        {#                    _argument_list.push('<a href="{% url "new-argument" %}" class="blue btn waves-effect" id="' + data.id + '"> + </a>');#}
+                        $('.sources').append(_source_list);
+                        $('.args').append(_argument_list);
+                        $('#results_container').removeClass('hide');
+                        $('.tooltipped').tooltip({delay: 150});
+                    }, error: function (err) {
+                        console.log(err)
                     }
-                }
-                return _print
+                });
             }
 
-            $('#command-search').select2({
-                ajax: {
-                    url: "{% url "api-commands" %}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            name: params.term,   // search term
-                            category: $("#filters input[type='radio']:checked").val(),
-                            extra: 1,
-                            exact: $("#exactSearch:checked").val()
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.results
-                        };
+            function run_extract() {
+                var _data = {
+                    'category': 2,
+                    'host': document.getElementById('host').value,
+                    'port': document.getElementById('port').value || 22,
+                    'username': document.getElementById('username').value,
+                    'password': document.getElementById('password').value
+                };
+                $.ajax({
+                    url: '{% url "run_extract" %}',
+                    type: 'POST',
+                    data: _data,
+                    success: function (data) {
+                        $('#modalExtract').modal('close');
+                        {#                    alert("Extract Finished");#}
+                        document.location.reload();
+                    }, error: function (err) {
+                        console.log(err)
                     }
-                },
-                placeholder: "Command Search",
-                escapeMarkup: function (markup) {
-                    return markup;
-                }, // let our custom formatter work
-                minimumInputLength: 2,
-                templateResult: parseReults,
-                templateSelection: parseReults
-            });
-        });
-
-        $('#command-search').on("select2:select", function (e) {
-            printInfo($('#command-search').select2('data')[0])
-        });
-
-        function printInfo(data) {
-            $.ajax({
-                url: '/apis/commands/' + data.id + '/',
-                type: 'GET',
-                data: {extra: 1},
-                success: function (data) {
-                    var _table = $('#resultTable');
-                    _table.find('tbody').empty();
-                    var _source_list = [];
-                    var _argument_list = [];
-                    _table.find('tbody')
-                        .append($('<tr>')
-                            .append('<td><a class=" small blue-text waves-effect" href="/commands/' + data.id + '/edit/">' + data.name + '</a>  </td>')
-                            .append($('<td>')
-                                .text(data.description)
-                            )
-                            .append($('<td class="sources">')
-                            )
-                            .append($('<td class="args">')
-                            )
-                        );
-                    if (data.source.length > 0) {
-                        $.each(data.source, function (k, v) {
-                            _source_list.push('<p>' + v.name + ' - ' + v.version + '</p>')
-                        });
-                    }
-
-                    if (data.arguments.length > 0) {
-                        $.each(data.arguments, function (k, v) {
-                            _argument_list.push('<a href="{% url "arguments" %}' + v.id + '/" ' +
-                                'class="btn-flat small  waves-effect tooltipped grey-text" data-position="bottom" data-tooltip="' + v.description + '">'
-                                + v.name + '</a>')
-                        });
-                    }
-                    else {
-                        _argument_list.push('<span>No Arguments </span>');
-                    }
-                    {#                    _argument_list.push('<a href="{% url "new-argument" %}" class="blue btn waves-effect" id="' + data.id + '"> + </a>');#}
-                    $('.sources').append(_source_list);
-                    $('.args').append(_argument_list);
-                    $('#results_container').removeClass('hide');
-                    $('.tooltipped').tooltip({delay: 150});
-                }, error: function (err) {
-                    console.log(err)
-                }
-            });
-        }
-
-        function run_extract() {
-            var _data = {
-                'category': 2,
-                'host': document.getElementById('host').value,
-                'port': document.getElementById('port').value || 22,
-                'username': document.getElementById('username').value,
-                'password': document.getElementById('password').value
-            };
-            $.ajax({
-                url: '{% url "run_extract" %}',
-                type: 'POST',
-                data: _data,
-                success: function (data) {
-                    $('#modalExtract').modal('close');
-{#                    alert("Extract Finished");#}
-                    document.location.reload();
-                }, error: function (err) {
-                    console.log(err)
-                }
-            });
-        }
-    </script>
-
+                });
+            }
+        </script>
+    {% endcompress %}
 {% endblock %}
