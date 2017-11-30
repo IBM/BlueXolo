@@ -20,16 +20,16 @@ function handleVisualization() {
     }
 }
 
-function addExtraTextInput(propPanelNode, droppedElementIndex){
+function addExtraTextInput(propPanelNode, droppedElementIndex) {
     var droppedElement = droppedElements[droppedElementIndex];
     var tempForm = document.createElement("form");
 
     var inputNode = document.createElement("input");
     inputNode.setAttribute('placeholder', 'Write an extra value');
-    
-    if(droppedElement.extraValue!== undefined){
+
+    if (droppedElement.extraValue !== undefined) {
         inputNode.setAttribute('value', droppedElement.extraValue);
-    }      
+    }
 
     // Now it doesn't refresh the website if you press enter while typing on the form
     inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
@@ -39,7 +39,7 @@ function addExtraTextInput(propPanelNode, droppedElementIndex){
     return propPanelNode;
 }
 
-function cleanPropertiesPanel(){
+function cleanPropertiesPanel() {
     var propPanel = document.getElementById("propertiesPannel");
     while (propPanel.hasChildNodes()) {
         propPanel.removeChild(propPanel.childNodes[0]);
@@ -49,113 +49,117 @@ function cleanPropertiesPanel(){
 
     var indexOfButton = 3;
     var previousButtonNode = propPanelContainer.childNodes[indexOfButton];
-    if(previousButtonNode !== undefined){
+    if (previousButtonNode !== undefined) {
         propPanelContainer.removeChild(previousButtonNode);
     }
 }
 
-function getIfArgumentIsEmpty(argument){
+function getIfArgumentIsEmpty(argument) {
     var hasValue = false;
     var isChecked = undefined;
-    
-    if(argument.value !== undefined || argument.value !== ""){
+
+    if (argument.value !== undefined || argument.value !== "") {
         hasValue = true;
     }
-    if(argument.needs_value && argument.visible !== undefined){
+    if (argument.needs_value && argument.visible !== undefined) {
         isChecked = argument.visible;
     }
 
-    if(argument.needs_value && !hasValue){
+    if (argument.needs_value && !hasValue) {
         return false;
     }
-    else if(argument.requirement || isChecked !== undefined || argument.visible){
+    else if (argument.requirement || isChecked !== undefined || argument.visible) {
         return false;
-    }    
-    else{
+    }
+    else {
         return true;
     }
 }
 
-function drawKeywordsProperties(keywordJSON) { 
-    var checkboxCounter = 2; 
- 
-    var propPanel = document.getElementById("propertiesPannel"); 
-    commands = keywordJSON; 
- 
-    for(var j=0; j< commands.length; j++){ 
-        arguments = commands[j].arguments; 
- 
-        if(arguments === null){ 
-            continue; 
-        } 
- 
+function drawKeywordsProperties(keywordJSON) {
+    var checkboxCounter = 2;
+
+    var propPanel = document.getElementById("propertiesPannel");
+    commands = keywordJSON;
+
+    for (var j = 0; j < commands.length; j++) {
+        arguments = commands[j].arguments;
+
+        if (arguments === null) {
+            continue;
+        }
+
         // Add arguments in the properties panel 
-        for (var i = 0; i < arguments.length; i++) { 
- 
-            if(getIfArgumentIsEmpty(arguments[i])){ 
-                continue; 
-            } 
- 
-            var tempForm = document.createElement("form"); 
- 
+        for (var i = 0; i < arguments.length; i++) {
+
+            if (getIfArgumentIsEmpty(arguments[i])) {
+                continue;
+            }
+
+            var tempForm = document.createElement("form");
+
             // If the command need the argument in order to work 
-            if (arguments[i].requirement) { 
-                checkboxCounter++; 
- 
-                var checkbox = document.createElement('input'); 
-                checkbox.type = "checkbox"; 
-                checkbox.id = checkboxCounter; 
-                 
-                checkbox.setAttribute("checked", true); 
-                checkbox.setAttribute("disabled", true); 
- 
+            if (arguments[i].requirement) {
+                checkboxCounter++;
+
+                var checkbox = document.createElement('input');
+                checkbox.type = "checkbox";
+                checkbox.id = checkboxCounter;
+
+                checkbox.setAttribute("checked", true);
+                checkbox.setAttribute("disabled", true);
+
                 // Create a label with the argument name 
-                var labelNode = document.createElement('label'); 
-                labelNode.innerText = arguments[i].name; 
-                labelNode.htmlFor = checkboxCounter; 
- 
-                tempForm.appendChild(checkbox); 
-                tempForm.appendChild(labelNode); 
-            } else { 
-                checkboxCounter++; 
- 
-                var checkbox = document.createElement('input'); 
-                checkbox.type = "checkbox"; 
-                checkbox.id = checkboxCounter; 
- 
-                if(arguments[i].visible !== undefined){ 
-                    checkbox.setAttribute("checked", arguments[i].visible); 
-                }                             
- 
+                var labelNode = document.createElement('label');
+                labelNode.innerText = arguments[i].name;
+                labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick", "fixScroll(event)");
+
+                tempForm.appendChild(checkbox);
+                tempForm.appendChild(labelNode);
+            } else {
+                checkboxCounter++;
+
+                var checkbox = document.createElement('input');
+                checkbox.type = "checkbox";
+                checkbox.id = checkboxCounter;
+
+                if (arguments[i].visible !== undefined) {
+                    checkbox.setAttribute("checked", arguments[i].visible);
+                }
+
                 // Create a label with the argument name 
-                var labelNode = document.createElement('label'); 
-                labelNode.innerText = arguments[i].name; 
-                labelNode.htmlFor = checkboxCounter; 
- 
-                tempForm.appendChild(checkbox); 
-                tempForm.appendChild(labelNode); 
-            } 
- 
+                var labelNode = document.createElement('label');
+                labelNode.innerText = arguments[i].name;
+                labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick", "fixScroll(event)");
+
+                tempForm.appendChild(checkbox);
+                tempForm.appendChild(labelNode);
+            }
+
             // If the argument needs a value then add an input form 
-            if (arguments[i].needs_value) { 
-                var inputNode = document.createElement("input"); 
-                inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name); 
-                 
-                if(arguments[i].value!== undefined){ 
-                    inputNode.setAttribute('value', arguments[i].value); 
-                }             
- 
+            if (arguments[i].needs_value) {
+                var inputNode = document.createElement("input");
+                inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
+
+                if (arguments[i].value !== undefined) {
+                    inputNode.setAttribute('value', arguments[i].value);
+                }
+
                 // Now it doesn't refresh the website if you press enter while typing on the form 
-                inputNode.setAttribute('onkeypress', 'return event.keyCode != 13'); 
-                tempForm.appendChild(inputNode); 
-            } 
- 
-            propPanel.appendChild(tempForm); 
-        }         
-    } 
- 
-    return checkboxCounter; 
-} 
+                inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
+                tempForm.appendChild(inputNode);
+            }
+
+            propPanel.appendChild(tempForm);
+        }
+    }
+
+    return checkboxCounter;
+}
 
 function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
@@ -176,26 +180,26 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
     var keywordName = droppedElement.name;
     titleNode.innerText = "Currently editing: " + keywordName;
     titleNode.id = "currentEditing";
-    propPanel.appendChild(titleNode); 
- 
+    propPanel.appendChild(titleNode);
+
     var keywordsCategory = 6;
-    var testcaseCategory = 7; 
- 
-    for(var j=0; j< commands.length; j++){ 
-        arguments = commands[j].arguments; 
-        if(arguments === null){ 
-            continue; 
-        } 
- 
-        if(commands[j].category === keywordsCategory){ 
-            checkboxCounter = drawKeywordsProperties(commands[j].keywordJSON); 
-            continue; 
-        } 
- 
+    var testcaseCategory = 7;
+
+    for (var j = 0; j < commands.length; j++) {
+        arguments = commands[j].arguments;
+        if (arguments === null) {
+            continue;
+        }
+
+        if (commands[j].category === keywordsCategory) {
+            checkboxCounter = drawKeywordsProperties(commands[j].keywordJSON);
+            continue;
+        }
+
         // Add arguments in the properties panel 
         for (var i = 0; i < arguments.length; i++) {
 
-            if(getIfArgumentIsEmpty(arguments[i])){
+            if (getIfArgumentIsEmpty(arguments[i])) {
                 continue;
             }
 
@@ -208,7 +212,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
                 checkbox.id = checkboxCounter;
-                
+
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
 
@@ -216,6 +220,8 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
@@ -226,14 +232,16 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 checkbox.type = "checkbox";
                 checkbox.id = checkboxCounter;
 
-                if(arguments[i].visible !== undefined){
+                if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
-                }                            
+                }
 
                 // Create a label with the argument name
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
@@ -243,10 +251,10 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
             if (arguments[i].needs_value) {
                 var inputNode = document.createElement("input");
                 inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
-                
-                if(arguments[i].value!== undefined){
+
+                if (arguments[i].value !== undefined) {
                     inputNode.setAttribute('value', arguments[i].value);
-                }            
+                }
 
                 // Now it doesn't refresh the website if you press enter while typing on the form
                 inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
@@ -254,7 +262,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
             }
 
             propPanel.appendChild(tempForm);
-        }        
+        }
     }
 
     var tempDiv = document.createElement("div");
@@ -302,17 +310,17 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
-    for(var j=0; j< commands.length; j++){
+    for (var j = 0; j < commands.length; j++) {
         arguments = commands[j].arguments;
 
-        if(arguments === null){
+        if (arguments === null) {
             continue;
         }
 
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
 
-            if(getIfArgumentIsEmpty(arguments[i])){
+            if (getIfArgumentIsEmpty(arguments[i])) {
                 continue;
             }
 
@@ -325,7 +333,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
                 checkbox.id = checkboxCounter;
-                
+
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
 
@@ -333,6 +341,8 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
@@ -343,14 +353,16 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 checkbox.type = "checkbox";
                 checkbox.id = checkboxCounter;
 
-                if(arguments[i].visible !== undefined){
+                if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
-                }                            
+                }
 
                 // Create a label with the argument name
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
                 labelNode.htmlFor = checkboxCounter;
+
+                labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
@@ -360,10 +372,10 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
             if (arguments[i].needs_value) {
                 var inputNode = document.createElement("input");
                 inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
-                
-                if(arguments[i].value!== undefined){
+
+                if (arguments[i].value !== undefined) {
                     inputNode.setAttribute('value', arguments[i].value);
-                }            
+                }
 
                 // Now it doesn't refresh the website if you press enter while typing on the form
                 inputNode.setAttribute('onkeypress', 'return event.keyCode != 13');
@@ -371,7 +383,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
             }
 
             propPanel.appendChild(tempForm);
-        }        
+        }
     }
 
     var tempDiv = document.createElement("div");
@@ -398,6 +410,15 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     showPropertiesPanel();
 }
 
+function fixScroll(event) {
+    event.preventDefault();
+
+    var thisBelongsTo = event.target.htmlFor;
+    var checkboxToClick = document.getElementById(thisBelongsTo);
+
+    checkboxToClick.click();
+}
+
 function drawPropertiesPanel(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var arguments = droppedElement.arguments;
@@ -419,7 +440,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
-    if(droppedElement.category !== 1){
+    if (droppedElement.category !== 1) {
         propPanel = addExtraTextInput(propPanel, droppedElementIndex);
     }
 
@@ -443,6 +464,8 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
 
+            labelNode.setAttribute("onclick", "fixScroll(event)");
+
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
@@ -452,7 +475,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             checkbox.type = "checkbox";
             checkbox.id = checkboxCounter;
 
-            if(arguments[i].visible !== undefined){
+            if (arguments[i].visible !== undefined) {
                 checkbox.setAttribute("checked", arguments[i].visible);
             }
 
@@ -460,6 +483,8 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
+
+            labelNode.setAttribute("onclick", "fixScroll(event)");
 
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
@@ -470,7 +495,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             var inputNode = document.createElement("input");
             inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
 
-            if(arguments[i].value!== undefined){
+            if (arguments[i].value !== undefined) {
                 inputNode.setAttribute('value', arguments[i].value);
             }
 
@@ -506,6 +531,19 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
     showPropertiesPanel();
 }
 
+function convertArrayIntoChipsData(array) {
+    var chipsData = [];
+
+    for (var i = 0; i < array.length; i++) {
+        var newTag = {
+            tag: array[i]
+        }
+        chipsData.push(newTag);
+    }
+
+    return chipsData;
+}
+
 function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
     var droppedElement = droppedElements[droppedElementIndex];
     var arguments = droppedElement.arguments;
@@ -535,9 +573,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
     for (var i = 0; i < arguments.length; i++) {
         var tempForm = document.createElement("form");
 
-        console.log(arguments[i]);
-
-                // If the command need the argument in order to work
+        // If the command need the argument in order to work
         if (arguments[i].requirement) {
             checkboxCounter++;
 
@@ -553,6 +589,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
 
+            labelNode.setAttribute("onclick", "fixScroll(event)");
+
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
@@ -562,7 +600,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             checkbox.type = "checkbox";
             checkbox.id = checkboxCounter;
 
-            if(arguments[i].visible !== undefined){
+            if (arguments[i].visible !== undefined) {
                 checkbox.setAttribute("checked", arguments[i].visible);
             }
 
@@ -571,31 +609,39 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             labelNode.innerText = arguments[i].name;
             labelNode.htmlFor = checkboxCounter;
 
+            labelNode.setAttribute("onclick", "fixScroll(event)");
+
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         }
 
         // If the argument needs value adds a input form
         if (arguments[i].needs_value) {
-            if(arguments[i].name === "tags"){
+            if (arguments[i].name === "tags") {
                 // Draw chips
                 var inputNode = document.createElement("div");
                 inputNode.setAttribute('class', 'chips-tags');
-                inputNode.id = "chips-"+checkboxCounter;
+                inputNode.id = "chips-" + checkboxCounter;
                 tempForm.appendChild(inputNode.cloneNode());
+
+                if (arguments[i].value) {
+                    var tagsData = arguments[i].value.split("; ");
+                    tagsData = convertArrayIntoChipsData(tagsData);
+                }
 
                 $(function () {
                     $('.chips-tags').material_chip({
+                        data: tagsData,
                         placeholder: 'Add Tags',
                         secondaryPlaceholder: '+Tag',
                     });
                 });
             }
-            else{
+            else {
                 var inputNode = document.createElement("input");
                 inputNode.setAttribute('placeholder', 'Write a value for ' + arguments[i].name);
 
-                if(arguments[i].value!== undefined){
+                if (arguments[i].value !== undefined) {
                     inputNode.setAttribute('value', arguments[i].value);
                 }
 
@@ -634,7 +680,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
 function showProperties(elementID, droppedElementIndex) {
     var droppedElement = droppedElements[droppedElementIndex];
-    
+
     var resultCategory = droppedElement.category;
     var tagsCategory = 1;
     var keywordsCategory = 6;
@@ -651,7 +697,7 @@ function showProperties(elementID, droppedElementIndex) {
     }
     else if (testcaseCategory === resultCategory) {
         drawPropertiesForTestcases(droppedElementIndex, elementID);
-    }     
+    }
     else {
         drawPropertiesPanel(droppedElementIndex, elementID);
     }

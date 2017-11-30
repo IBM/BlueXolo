@@ -9,5 +9,11 @@ mkdir -p media/zip
 echo " . . "
 mkdir -p media/test_result
 echo " . . . "
+mkdir -p media/testcases
+echo " . . ."
+mkdir -p media/keywords
+echo " . . ."
+mkdir -p media/profiles
+echo " . . ."
 echo "ok, the dirs have created."
 echo "That's all"

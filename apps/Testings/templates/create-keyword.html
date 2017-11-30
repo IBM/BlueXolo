@@ -162,9 +162,7 @@
                     error: function (error) {
                         console.log(error)
                     }
-                });
-
-                hidePropertiesKeyword();
+                })
             }
 
             function saveKeyword() {
@@ -342,8 +340,9 @@
                         url: "{% url "run-on-server" %}",
                         type: "post",
                         data: {
-                            keyword: new_keyword.id,
-                            profile: _profiles
+                            id: new_keyword.id,
+                            profile: _profiles,
+                            type_script: 1
                         },
                         success: function (data) {
                             drawMessage("Keyword has sent to scheduler", 'blue');
