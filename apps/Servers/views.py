@@ -516,11 +516,11 @@ def generate_file(obj, type_script, params):
         robot_file.close()
 
         tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, obj.name), "w")
-        tc_file.write("*** Settings ***\n\n")
+        tc_file.write("*** Settings ***\n")
         tc_file.write("Resource\t{}_keyword.robot\n".format(obj.name))
         if obj.description:
             tc_file.write("[Documentation]\t\t{0}\n\n".format(obj.description))
-        # tc_file.write("Library\tSSHLibrary\n")
+        tc_file.write("Library\tOperatingSystem\n")
         tc_file.write("*** Test Cases ***")
         tc_file.write("\n")
         tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
