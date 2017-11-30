@@ -208,17 +208,17 @@ function translateExternCommand(commandData){
 
 	for(var i=0; i<arguments.length; i++){
 		if(arguments[i].visible === true){
-			scriptLine += " " + arguments[i].name;
+			scriptLine += "   " + arguments[i].name;
 		}
 		
 		if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
-			scriptLine += " " + arguments[i].value + " ";
+			scriptLine += "   " + arguments[i].value + " ";
 		}
 	
 	}
 
 	if(commandData.extraValue !== undefined){
-		scriptLine += " " + commandData.extraValue;
+		scriptLine += "    " + commandData.extraValue;
 	}		
 
 	return scriptLine;
