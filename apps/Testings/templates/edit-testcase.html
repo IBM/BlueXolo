@@ -345,6 +345,12 @@
                 }
             }
 
+            document.getElementById('selectProfiles').onchange = function () {
+                if ($('#selectProfiles').val()) {
+                    document.getElementById('runScript').disabled = false;
+                }
+            };
+
             function runScript() {
                 saveTestcase();
                 var _profiles = JSON.stringify($('#selectProfiles').val());
