@@ -504,33 +504,51 @@ def generate_filename(_script):
     return '{0}_{1}'.format(name, random_string)
 
 
-def generate_file(obj, type_script, params):
+def generate_file(obj, type_script, params, filename):
     """Generate robot files"""
     if type_script is 1:
-        robot_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, obj.name), "w")
-        robot_file.write("*** Keywords ***\n\n")
+        """First create the keyword file"""
+        arguments = params.get('global_variables')
+        robot_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+        robot_file.write("*** Keywords ***")
+        robot_file.write("\n")
         robot_file.write(obj.name)
         robot_file.write("\n")
+        if arguments:
+            robot_file.write("\t")
+            robot_file.write("[Arguments]\t\t")
+            for arg in arguments:
+                robot_file.write("${{{0}}}\t\t".format(Parameters.objects.get(pk=arg.get('id'))))
+        robot_file.write("\n")
         robot_file.write("\t")
-        robot_file.write(obj.script)
+        full_script = obj.script.splitlines(True)
+        for line in full_script:
+            robot_file.write("\t{0}".format(line))
         robot_file.close()
 
-        tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, obj.name), "w")
+        """Then Test Case file"""
+        tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, filename), "w")
         tc_file.write("*** Settings ***\n")
-        tc_file.write("Resource\t{}_keyword.robot\n".format(obj.name))
-        if obj.description:
-            tc_file.write("[Documentation]\t\t{0}\n\n".format(obj.description))
+        tc_file.write("Resource\t{}_keyword.robot\n".format(filename))
         tc_file.write("Library\tOperatingSystem\n")
         tc_file.write("*** Test Cases ***")
         tc_file.write("\n")
         tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
         tc_file.write("\n")
+        if obj.description:
+            tc_file.write("\t")
+            tc_file.write("[Documentation]\t\t{0}".format(obj.description))
+            tc_file.write("\n")
+        tc_file.write("\t")
+        tc_file.write("[Tags]  TestKeyword")
+        tc_file.write("\n")
         tc_file.write("\t")
         tc_file.write(obj.name)
-        for i in range(0, len(params.get('global_variables'))):
-            # f = '{}\t'.format(values[i])
-            # tc_file.write(f)
-            print(i)
+        if arguments:
+            tc_file.write("\t")
+            for arg in arguments:
+                tc_file.write("{0}\t\t".format(arg.get('value')))
+            tc_file.write("\n")
         tc_file.close()
 
 
@@ -554,7 +572,7 @@ def run_on_server(_data):
             """is keywords"""
             kwd = Keyword.objects.get(id=_data.get('id'))
             filename = generate_filename(kwd.name)
-            generate_file(kwd, type_script, params)
+            generate_file(kwd, type_script, params, filename)
 
     except Exception as error:
         data_result['text'] = '{0}'.format(error)
