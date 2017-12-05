@@ -1,15 +1,12 @@
 import json
-
 import paramiko
 import pexpect
-import time
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.migrations import serializer
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from pexpect import pxssh
 from random import choice
 from scp import SCPClient
@@ -498,58 +495,150 @@ def get_config_object(params):
     return data_result
 
 
+def get_connection(config):
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'))
+    return client
+
+
 def generate_filename(_script):
     name = _script.replace(" ", "")
     random_string = ''.join(choice(ascii_lowercase + digits) for i in range(15))
     return '{0}_{1}'.format(name, random_string)
 
 
-def generate_file(obj, type_script, params, filename):
-    """Generate robot files"""
-    if type_script is 1:
-        """First create the keyword file"""
-        arguments = params.get('global_variables')
-        robot_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-        robot_file.write("*** Keywords ***")
-        robot_file.write("\n")
-        robot_file.write(obj.name)
-        robot_file.write("\n")
-        if arguments:
-            robot_file.write("\t")
-            robot_file.write("[Arguments]\t\t")
-            for arg in arguments:
-                robot_file.write("${{{0}}}\t\t".format(Parameters.objects.get(pk=arg.get('id'))))
-        robot_file.write("\n")
-        robot_file.write("\t")
-        full_script = obj.script.splitlines(True)
-        for line in full_script:
-            robot_file.write("\t{0}".format(line))
-        robot_file.close()
+def check_dirs_destiny(path, client):
+    """First need to know if the dirs schema exist"""
+    exist = True
+    try:
+        _, stdout, _ = client.exec_command(
+            "if test -d '{0}'; then echo '1'; else  echo '0'; fi".format(path))
+        pre_res = stdout.read()
+        res = pre_res.decode('ascii').replace("\n", "")
+        if res == '0':
+            _, stdout, _ = client.exec_command("mkdir {0}".format(path))
+            check_dirs_destiny(path, client)
+    except Exception as error:
+        exist = False
+    return exist
 
-        """Then Test Case file"""
-        tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, filename), "w")
-        tc_file.write("*** Settings ***\n")
-        tc_file.write("Resource\t{}_keyword.robot\n".format(filename))
-        tc_file.write("Library\tOperatingSystem\n")
-        tc_file.write("*** Test Cases ***")
-        tc_file.write("\n")
-        tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
-        tc_file.write("\n")
-        if obj.description:
-            tc_file.write("\t")
-            tc_file.write("[Documentation]\t\t{0}".format(obj.description))
+
+def send_files(filename, file_type, config, client):
+    """sent files Via SSH"""
+    _data = dict()
+    try:
+        path = config.get('path')
+        dirs = ['Keywords', 'Libraries', 'Profiles', 'Resources', 'Templates', 'TestScripts', 'Tools', 'TestSuites',
+                'Results']
+        for directory in dirs:
+            res = check_dirs_destiny("{0}/{1}".format(path, directory), client)
+        # client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'))
+
+        # SCPCLient takes a paramiko transport as its only argument
+        scp = SCPClient(client.get_transport())
+        scp.put(filename, remote_path='{0}/{1}'.format(path, dirs[file_type]))
+        scp.close()
+    except Exception as error:
+        _data['text'] = error
+    return _data
+
+
+def run_script(filename, config):
+    """This execute pybot with some flags """
+    _data = dict()
+    try:
+        ssh = pxssh.pxssh()
+        ssh.login(config.get('host'), config.get('user'), config.get('passwd'))
+        ssh.sendline("cd {0}/Results".format(config.get('path')))
+        ssh.sendline("pybot -o {0}_output.xml"
+                     " -l {0}_log.html"
+                     " -r {0}_report.html"
+                     " ../TestScripts/{0}_testcase.robot".format(filename))
+        ssh.prompt()
+        _data['text'] = ssh.before
+        ssh.logout()
+    except pxssh.ExceptionPxssh as error:
+        print(error)
+    return _data
+
+
+def generate_file(obj, type_script, params, filename, client):
+    _data = ''
+    try:
+        configs = params.get('config')
+        """Generate robot files"""
+        if type_script is 1:
+            """First create the keyword file"""
+            arguments = params.get('global_variables')
+            config = params.get('config')
+            robot_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+            robot_file.write("*** Keywords ***")
+            robot_file.write("\n")
+            robot_file.write(obj.name)
+            robot_file.write("\n")
+            if arguments:
+                robot_file.write("\t")
+                robot_file.write("[Arguments]\t\t")
+                for arg in arguments:
+                    robot_file.write("{0}\t\t".format(Parameters.objects.get(pk=arg.get('id'))))
+            robot_file.write("\n")
+            robot_file.write("\t")
+            full_script = obj.script.splitlines(True)
+            for line in full_script:
+                robot_file.write("\t{0}".format(line))
+            robot_file.close()
+
+            """First need to know if the dirs schema exist"""
+            send_files(robot_file.name, 0, config, client)
+
+            """Then Test Case file"""
+            tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, filename), "w")
+            tc_file.write("*** Settings ***\n")
+            tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
+            tc_file.write("Library\tOperatingSystem\n")
+            tc_file.write("*** Test Cases ***")
             tc_file.write("\n")
-        tc_file.write("\t")
-        tc_file.write("[Tags]  TestKeyword")
-        tc_file.write("\n")
-        tc_file.write("\t")
-        tc_file.write(obj.name)
-        if arguments:
-            tc_file.write("\t")
-            for arg in arguments:
-                tc_file.write("{0}\t\t".format(arg.get('value')))
+            tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
             tc_file.write("\n")
-        tc_file.close()
+            if obj.description:
+                tc_file.write("\t")
+                tc_file.write("[Documentation]\t\t{0}".format(obj.description))
+                tc_file.write("\n")
+            tc_file.write("\t")
+            tc_file.write("[Tags]  TestKeyword")
+            tc_file.write("\n")
+            tc_file.write("\t")
+            tc_file.write(obj.name)
+            if arguments:
+                tc_file.write("\t")
+                for arg in arguments:
+                    tc_file.write("{0}\t\t".format(arg.get('value')))
+                tc_file.write("\n")
+            tc_file.close()
+            send_files(tc_file.name, 5, config, client)
+            _data = 'Created'
+    except Exception as error:
+        _data = error
+    return _data
+
+
+def get_result_files(client, filename, config):
+    _data = dict()
+    try:
+        scp = SCPClient(client.get_transport())
+        scp.get('{0}/Results/{1}_log.html'.format(config.get('path'), filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.get('{0}/Results/{1}_output.xml'.format(config.get('path'), filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.get('{0}/Results/{1}_report.html'.format(config.get('path'), filename),
+                '{0}/test_result/'.format(settings.MEDIA_ROOT))
+        scp.close()
+        client.close()
+        _data['text'] = 'Success'
+    except Exception as error:
+        _data['text'] = error
+    return _data
 
 
 @shared_task()
@@ -557,10 +646,8 @@ def run_on_server(_data):
     type_script = _data.get('type_script')
     data_result = dict()
     params = dict()
-    if type_script:
-        type_script = int(type_script)
     try:
-        profiles = ServerProfile.objects.filter(pk__in=json.loads(_data.get('profile')))
+        profiles = ServerProfile.objects.filter(pk__in=_data.get('profiles'))
         for profile in profiles:
             if profile.category == 1:
                 """is global variables"""
@@ -570,11 +657,29 @@ def run_on_server(_data):
                 params['config'] = get_config_object(json.loads(profile.config))
         if type_script is 1:
             """is keywords"""
-            kwd = Keyword.objects.get(id=_data.get('id'))
-            filename = generate_filename(kwd.name)
-            generate_file(kwd, type_script, params, filename)
-
+            obj = Keyword.objects.get(id=_data.get('obj_id'))
+            configs = params.get('config')
+            client = get_connection(configs)
+            filename = _data.get('filename')
+            """Execute the kwd"""
+            generate_file(obj, type_script, params, filename, client)
+            run_script(filename, configs)
+            res = get_result_files(client, filename, configs)
     except Exception as error:
         data_result['text'] = '{0}'.format(error)
-
     return data_result
+#
+#
+# def task_info(task, request):
+#     type_script = request.data.get('type_script')
+#     if type_script:
+#         type_script = int(type_script)
+#     if type_script is 1:
+#         obj = Keyword.objects.get(pk=request.data.get('id'))
+#     task = Task.objects.create(
+#         name="Running Script - {0}".format(obj.name),
+#         task_id=task.task_id,
+#         state="Running",
+#     )
+#     request.user.tasks.add(task)
+#     request.user.save()

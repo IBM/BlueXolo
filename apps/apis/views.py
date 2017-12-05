@@ -15,7 +15,7 @@ from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Servers.views import run_on_server
+from apps.Servers.views import generate_filename, run_on_server
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Testings.views import apply_highlight
@@ -391,7 +391,7 @@ class RunOnServerApiView1(LoginRequiredMixin, APIView):
                 _scripts = []
                 _keys_scripts = []
                 for _keyword in _keywdors_collection:
-                    _keytmp =  _keyword
+                    _keytmp = _keyword
                     _keys_name.append(_keytmp.name)
                     _keys_scripts.append(_keytmp.script)
                 _host = ""
@@ -433,8 +433,10 @@ class RunOnServerApiView1(LoginRequiredMixin, APIView):
                     today = time.strftime("%y_%m_%d")
                     name = testcase.name.replace(" ", "")
                     name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,_collection.name, _keys_name, _keys_scripts,name_file, _profile_name, _values_name)
-                                    #run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
+                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,
+                                                   _collection.name, _keys_name, _keys_scripts, name_file,
+                                                   _profile_name, _values_name)
+                    # run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
                     task = Task.objects.create(
                         name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
@@ -724,5 +726,45 @@ class SearchScriptsAPIView(LoginRequiredMixin, APIView):
 class RunOnServerApiView(LoginRequiredMixin, APIView):
     def post(self, request):
         _status = status.HTTP_200_OK
-        result = run_on_server(request.data)
-        return Response(status=_status, data=result)
+
+        type_script = request.data.get('type_script')
+        data_result = dict()
+        # params = dict()
+        _data = dict()
+        if type_script:
+            type_script = int(type_script)
+        try:
+            # profiles = ServerProfile.objects.filter(pk__in=json.loads(request.data.get('profile')))
+            # for profile in profiles:
+            #     if profile.category == 1:
+            #         """is global variables"""
+            #         params['global_variables'] = json.loads(profile.config)
+            #     elif profile.category in [2, 3]:
+            #         """is local connection or jenkins"""
+            #         params['config'] = get_config_object(json.loads(profile.config))
+            if type_script is 1:
+                """is keywords"""
+                kwd = Keyword.objects.get(id=request.data.get('id'))
+                filename = generate_filename(kwd.name)
+                _data['filename'] = filename
+                _data['obj_id'] = request.data.get('id')
+                _data['type_script'] = type_script
+                _data['profiles'] = json.loads(request.data.get('profile'))
+
+                """Execute the kwd"""
+            res = run_on_server.delay(_data)
+            # res = run_on_server(kwd.name, kwd.script, kwd.description,
+            #                     type_script, params, filename)
+
+            task = Task.objects.create(
+                name="Script -  {0}".format(kwd.name),
+                task_id=res.task_id,
+                state="run",
+                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                                                                        filename)
+            )
+            request.user.tasks.add(task)
+            request.user.save()
+        except Exception as error:
+            data_result['text'] = '{0}'.format(error)
+        return Response(status=_status, data=data_result)
