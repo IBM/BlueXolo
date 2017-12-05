@@ -4,6 +4,8 @@ function allowDrop(ev) {
 
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    createEmptyRowsBetweenCommands();
+    movingElement = true;
 }
 
 function moveDroppedElement(ev) {
@@ -26,6 +28,33 @@ function startDragDroppedElement(ev) {
 }
 
 function dropBeforeThisElement(ev) {
+    var data = ev.dataTransfer.getData("text");
+    var dragAndDropPanel = "drag-drop";
+
+    var belongsToPanel = data.slice(data.length - dragAndDropPanel.length);
+
+    if(belongsToPanel === dragAndDropPanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addElementToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }
+
     // Because is moving, the drop event is going to delete the original element after drop it
     movingElement = true;
     var insertBeforeThisEmptyRow = ev.target.parentNode;
@@ -88,6 +117,11 @@ function moveElements(movedFromID, movedToID) {
 function createEmptyRowsBetweenCommands() {
     var dragDropSpace = document.getElementById('dragDropSpace');
     var nextRow = dragDropSpace.firstChild;
+
+    if(nextRow === null){
+        return;
+    }
+
     var tempEmptyRows = 0;
 
     var td = document.createElement("tr");
@@ -162,8 +196,7 @@ function drop(ev) {
     ev.preventDefault();
     deleteTemporaryRows();
 
-    if (movingElement) {
-        movingElement = false;
+    if(ev.target.parentNode.parentNode === null){
         return;
     }
 
