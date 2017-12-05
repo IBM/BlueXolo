@@ -23,11 +23,25 @@
     color: #2866ed;
 }
 
+.drop-1 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;    
+}
+
 .drop-2 {
     font-weight: bold;
     margin-left: 4em;
     cursor: pointer;
     color: #28edd6;
+}
+
+.drop-2 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;
 }
 
 .drop-3 {
@@ -37,11 +51,25 @@
     color: #28ed38;
 }
 
+.drop-3 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;
+}
+
 .drop-4 {
     font-weight: bold;
     margin-left: 8em;
     cursor: pointer;
     color: #a1ed28;
+}
+
+.drop-4 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;
 }
 
 .drop-5 {
@@ -51,6 +79,13 @@
     color: #edb528;
 }
 
+.drop-5 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;
+}
+
 .drop-6 {
     font-weight: bold;
     margin-left: 12em;
@@ -58,11 +93,25 @@
     color: #fc7b02;
 }
 
+.drop-6 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;
+}
+
 .drop-7 {
     font-weight: bold;
     margin-left: 14em;
     cursor: pointer;
     color: #f7390e;
+}
+
+.drop-7 text{
+    padding: 10px;
+
+    border: 2px solid lightgrey;
+    border-radius: 5px;
 }
 
 .parameter {
