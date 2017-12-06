@@ -31,9 +31,14 @@ function startDragDroppedElement(ev) {
 
 function dropBeforeThisElement(ev) {
     var data = ev.dataTransfer.getData("text");
-    var dragAndDropPanel = "drag-drop";
 
-    var belongsToPanel = data.slice(data.length - dragAndDropPanel.length);
+    var dragAndDropPanel = "drag-drop";
+    var keywordsPanel = "keyword-drag-drop";
+    var testcasePanel = "testcase-drag-drop";
+
+    var positionOfFirstDash = data.indexOf("-");
+
+    var belongsToPanel = data.slice(positionOfFirstDash + 1);
 
     if(belongsToPanel === dragAndDropPanel){    
         
@@ -56,6 +61,48 @@ function dropBeforeThisElement(ev) {
 
         return true;
     }
+    else if(belongsToPanel === keywordsPanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addKeywordToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }
+    else if(belongsToPanel === testcasePanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addTestcaseToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }    
 
     // Because is moving, the drop event is going to delete the original element after drop it
     movingElement = true;
