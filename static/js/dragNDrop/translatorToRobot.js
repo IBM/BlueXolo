@@ -175,6 +175,7 @@ function handleTranslationOf(data, parameters){
 	var translatedRow = '';
   
     var elementType = data.name;
+    var elementType = elementType.toLowerCase();
 
     if(elementType === "comment"){
         translatedRow += translateComment(parameters);
@@ -193,6 +194,9 @@ function handleTranslationOf(data, parameters){
     }
     else if(elementType === "tags"){
         translatedRow += translateTag(parameters);
+    }
+    else if(elementType === "list"){
+        translatedRow += translateList(parameters);
     }else{
     	// Command from R-Extract or M-Extract
     	translatedRow += translateExternCommand(data);
@@ -254,6 +258,20 @@ function translateForInRange(parameters){
 	end = removeAllSpacesBeforeValue(end);
 
 	return ":FOR " + start + " IN RANGE " + end;
+}
+
+function translateList(parameters){
+    var tagName = parameters[0].value;
+    var tagValue = parameters[1].value;
+
+    tagName = removeAllSpacesBeforeValue(tagName);
+
+    var translationOfTagsData = replaceAllOccurences("; ", "    ", tagValue);
+
+    var scriptLine = '@{'+tagName+'}=    ';
+    scriptLine += translationOfTagsData;
+
+    return scriptLine;
 }
 
 function translateVariable(parameters){
