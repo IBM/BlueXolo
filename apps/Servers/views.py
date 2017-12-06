@@ -14,7 +14,7 @@ from scp import SCPClient
 from string import ascii_lowercase, digits
 
 from apps.Products.models import Source
-from apps.Testings.models import Keyword
+from apps.Testings.models import Keyword, TestCase
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
 from .models import TemplateServer, ServerProfile, Parameters
 
@@ -544,7 +544,7 @@ def send_files(filename, file_type, config, client):
     return _data
 
 
-def run_script(filename, config):
+def run_script(filename, config, type_script):
     """This execute pybot with some flags """
     _data = dict()
     try:
@@ -664,6 +664,7 @@ def run_on_server(_data):
     type_script = _data.get('type_script')
     data_result = dict()
     params = dict()
+    profile_category = 0
     try:
         profiles = ServerProfile.objects.filter(pk__in=_data.get('profiles'))
         for profile in profiles:
@@ -671,33 +672,23 @@ def run_on_server(_data):
                 """is global variables"""
                 params['global_variables'] = json.loads(profile.config)
             elif profile.category in [2, 3]:
+                profile_category = profile.category
                 """is local connection or jenkins"""
                 params['config'] = get_config_object(json.loads(profile.config))
+        configs = params.get('config')
+        filename = _data.get('filename')
+        client = get_connection(configs)
         if type_script is 1:
             """is keywords"""
             obj = Keyword.objects.get(id=_data.get('obj_id'))
-            configs = params.get('config')
-            client = get_connection(configs)
-            filename = _data.get('filename')
             """Execute the kwd"""
-            generate_file(obj, type_script, params, filename, client)
-            run_script(filename, configs)
-            res = get_result_files(client, filename, configs)
+        elif type_script is 2:
+            obj = TestCase.objects.get(id=_data.get('obj_id'))
+        generate_file(obj, type_script, params, filename, client)
+        if profile_category is 2:
+            """Local Network connection"""
+            run_script(filename, configs, type_script)
+        get_result_files(client, filename, configs)
     except Exception as error:
         data_result['text'] = '{0}'.format(error)
     return data_result
-#
-#
-# def task_info(task, request):
-#     type_script = request.data.get('type_script')
-#     if type_script:
-#         type_script = int(type_script)
-#     if type_script is 1:
-#         obj = Keyword.objects.get(pk=request.data.get('id'))
-#     task = Task.objects.create(
-#         name="Running Script - {0}".format(obj.name),
-#         task_id=task.task_id,
-#         state="Running",
-#     )
-#     request.user.tasks.add(task)
-#     request.user.save()

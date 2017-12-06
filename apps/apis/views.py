@@ -727,32 +727,36 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
     def post(self, request):
         _status = status.HTTP_200_OK
         type_script = request.data.get('type_script')
+        obj_id = request.data.get('id')
         data_result = dict()
         _data = dict()
         if type_script:
             type_script = int(type_script)
         try:
+            _data['obj_id'] = obj_id
+            _data['type_script'] = type_script
+            _data['profiles'] = json.loads(request.data.get('profile'))
             if type_script is 1:
                 """is keywords"""
-                kwd = Keyword.objects.get(id=request.data.get('id'))
-                filename = generate_filename(kwd.name)
-                _data['filename'] = filename
-                _data['obj_id'] = request.data.get('id')
-                _data['type_script'] = type_script
-                _data['profiles'] = json.loads(request.data.get('profile'))
-
-                """Execute the kwd"""
-            res = run_on_server.delay(_data)
-            task = Task.objects.create(
-                name="Script -  {0}".format(kwd.name),
-                task_id=res.task_id,
-                state="run",
-                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
-                                                                        settings.MEDIA_URL,
-                                                                        filename)
-            )
-            request.user.tasks.add(task)
-            request.user.save()
+                kwd = Keyword.objects.get(id=obj_id)
+                _data['filename'] = generate_filename(kwd.name)
+            elif type_script is 2:
+                """is Test Case"""
+                tc = TestCase.objects.get(id=obj_id)
+                _data['filename'] = generate_filename(tc.name)
+            """Run script"""
+            # res = run_on_server.delay(_data)
+            res = run_on_server(_data)
+            # task = Task.objects.create(
+            #     name="Script -  {0}".format(kwd.name),
+            #     task_id=res.task_id,
+            #     state="run",
+            #     task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
+            #                                                             settings.MEDIA_URL,
+            #                                                             filename)
+            # )
+            # request.user.tasks.add(task)
+            # request.user.save()
         except Exception as error:
             data_result['text'] = '{0}'.format(error)
         return Response(status=_status, data=data_result)
