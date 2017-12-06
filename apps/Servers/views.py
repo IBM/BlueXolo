@@ -498,6 +498,7 @@ def get_config_object(params):
 
 
 def get_connection(config):
+    """Create a paramiko connection for ssh communication"""
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'))
@@ -505,8 +506,9 @@ def get_connection(config):
 
 
 def generate_filename(_script):
+    """Generate a string like NAME_w0ln0t3j39wm"""
     name = _script.replace(" ", "")
-    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(15))
+    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
     return '{0}_{1}'.format(name, random_string)
 
 
@@ -535,7 +537,7 @@ def send_files(filename, file_type, config, client):
                 'Results']
         for directory in dirs:
             check_dirs_destiny("{0}/{1}".format(path, directory), client)
-        # SCPCLient takes a paramiko transport as its only argument
+        """SCPCLient takes a paramiko transport as its only argument"""
         scp = SCPClient(client.get_transport())
         scp.put(filename, remote_path='{0}/{1}'.format(path, dirs[file_type]))
         scp.close()
@@ -544,7 +546,7 @@ def send_files(filename, file_type, config, client):
     return _data
 
 
-def run_script(filename, config, type_script):
+def run_script(filename, config):
     """This execute pybot with some flags """
     _data = dict()
     try:
@@ -554,7 +556,7 @@ def run_script(filename, config, type_script):
         ssh.sendline("pybot -o {0}_output.xml"
                      " -l {0}_log.html"
                      " -r {0}_report.html"
-                     " ../TestScripts/{0}_testcase.robot".format(filename))
+                     " ../TestScripts/{0}_test_case.robot".format(filename))
         ssh.prompt()
         _data['text'] = ssh.before
         ssh.logout()
@@ -573,7 +575,7 @@ def get_libraries():
 
 def generate_profile(params, filename):
     arguments = params.get('global_variables')
-    var_file = open("{0}/profiles/{1}_variables.py".format(settings.MEDIA_ROOT, filename), "w")
+    var_file = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, filename), "w")
     for arg in arguments:
         param = Parameters.objects.get(pk=arg.get('id'))
         var_file.write("{0} = {1}".format(param.name, arg.get('value')))
@@ -585,63 +587,88 @@ def generate_profile(params, filename):
 def generate_file(obj, type_script, params, filename, client):
     _data = ''
     try:
+        config = params.get('config')
+        libraries = get_libraries()
         """Generate robot files"""
         if type_script is 1:
             """First create the keyword file"""
-
-            config = params.get('config')
-            robot_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-            robot_file.write("*** Keywords ***")
-            robot_file.write("\n")
-            robot_file.write(obj.name)
-            robot_file.write("\n")
-            robot_file.write("\t")
+            kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+            kwd_file.write("*** Keywords ***")
+            kwd_file.write("\n")
+            kwd_file.write(obj.name)
+            kwd_file.write("\n")
+            kwd_file.write("\t")
             full_script = obj.script.splitlines(True)
             for line in full_script:
-                robot_file.write("\t{0}".format(line))
-            robot_file.close()
+                kwd_file.write("\t{0}".format(line))
+            kwd_file.close()
 
-            """First need to know if the dirs schema exist and then send the files"""
-            send_files(robot_file.name, 0, config, client)
-
-            """Need a variables File"""
-            profile = generate_profile(params, filename)
-            send_files(profile, 2, config, client)
+            """need to know if the dirs schema exist and then send the files"""
+            send_files(kwd_file.name, 0, config, client)
 
             """Then Test Case file"""
-            tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, filename), "w")
-            tc_file.write("*** Settings ***\n")
-            tc_file.write("Variables\t{0}/Profiles/{1}_variables.py\n".format(config.get('path'), filename))
-            tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
+            dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
+            dummy_tc_file.write("*** Settings ***\n")
+            dummy_tc_file.write("Variables\t{0}/Profiles/{1}_profile.py\n".format(config.get('path'), filename))
+            dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
             """Now add the libraries """
-            libraries = get_libraries()
-            for lib in libraries:
-                tc_file.write("Library\t{0}\n".format(lib.name))
-            tc_file.write("\n")
-            tc_file.write("*** Test Cases ***")
-            tc_file.write("\n")
-            tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
-            tc_file.write("\n")
+            if libraries:
+                for lib in libraries:
+                    dummy_tc_file.write("Library\t{0}\n".format(lib.name))
+                dummy_tc_file.write("\n")
+            dummy_tc_file.write("*** Test Cases ***")
+            dummy_tc_file.write("\n")
+            dummy_tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
+            dummy_tc_file.write("\n")
             if obj.description:
-                tc_file.write("\t")
-                tc_file.write("[Documentation]\t\t{0}".format(obj.description))
-                tc_file.write("\n")
-            tc_file.write("\t")
-            tc_file.write("[Tags]  TestKeyword")
-            tc_file.write("\n")
-            tc_file.write("\t")
-            tc_file.write(obj.name)
-            tc_file.close()
+                dummy_tc_file.write("\t")
+                dummy_tc_file.write("[Documentation]\t\t{0}".format(obj.description))
+                dummy_tc_file.write("\n")
+            dummy_tc_file.write("\t")
+            dummy_tc_file.write("[Tags]  TestKeyword")
+            dummy_tc_file.write("\n")
+            dummy_tc_file.write("\t")
+            dummy_tc_file.write(obj.name)
+            dummy_tc_file.close()
 
-            send_files(tc_file.name, 5, config, client)
+            send_files(dummy_tc_file.name, 5, config, client)
 
             _data = 'Created'
+        elif type_script is 2:
+            """Test Case"""
+            tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
+            tc_file.write("*** Settings ***\n")
+            tc_file.write("Variables\t{0}/Profiles/{1}_profile.py\n".format(config.get('path'), filename))
+            """Now add the libraries """
+            if libraries:
+                for lib in libraries:
+                    tc_file.write("Library\t{0}\n".format(lib.name))
+                tc_file.write("\n")
+            tc_file.write("*** Test Cases ***")
+            tc_file.write("\n")
+            tc_file.write(obj.name)
+            tc_file.write("\n")
+            tc_file.write("\t")
+            tc_file.write("[Tags]\t\t{0}".format(obj.phase.name))
+            tc_file.write("\n")
+            tc_file.write("\t")
+            full_script = obj.script.splitlines(True)
+            for line in full_script:
+                tc_file.write("\t{0}".format(line))
+            tc_file.close()
+            send_files(tc_file.name, 5, config, client)
+
+        """Need a variables Profile File"""
+        profile = generate_profile(params, filename)
+        send_files(profile, 2, config, client)
+
     except Exception as error:
         _data = error
     return _data
 
 
 def get_result_files(client, filename, config):
+    """Obtain the Results files (html and xml) for show it"""
     _data = dict()
     try:
         scp = SCPClient(client.get_transport())
@@ -686,8 +713,8 @@ def run_on_server(_data):
             obj = TestCase.objects.get(id=_data.get('obj_id'))
         generate_file(obj, type_script, params, filename, client)
         if profile_category is 2:
-            """Local Network connection"""
-            run_script(filename, configs, type_script)
+            """Run pybot only if the user choose -> Local Network connection"""
+            run_script(filename, configs)
         get_result_files(client, filename, configs)
     except Exception as error:
         data_result['text'] = '{0}'.format(error)
