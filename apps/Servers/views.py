@@ -5,6 +5,7 @@ import pexpect
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from pexpect import pxssh
@@ -12,6 +13,7 @@ from random import choice
 from scp import SCPClient
 from string import ascii_lowercase, digits
 
+from apps.Products.models import Source
 from apps.Testings.models import Keyword
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
 from .models import TemplateServer, ServerProfile, Parameters
@@ -532,9 +534,7 @@ def send_files(filename, file_type, config, client):
         dirs = ['Keywords', 'Libraries', 'Profiles', 'Resources', 'Templates', 'TestScripts', 'Tools', 'TestSuites',
                 'Results']
         for directory in dirs:
-            res = check_dirs_destiny("{0}/{1}".format(path, directory), client)
-        # client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'))
-
+            check_dirs_destiny("{0}/{1}".format(path, directory), client)
         # SCPCLient takes a paramiko transport as its only argument
         scp = SCPClient(client.get_transport())
         scp.put(filename, remote_path='{0}/{1}'.format(path, dirs[file_type]))
@@ -563,25 +563,37 @@ def run_script(filename, config):
     return _data
 
 
+def get_libraries():
+    libraries = Source.objects.filter(
+        Q(category=5) &
+        Q(depends__category=4)
+    )
+    return libraries
+
+
+def generate_profile(params, filename):
+    arguments = params.get('global_variables')
+    var_file = open("{0}/profiles/{1}_variables.py".format(settings.MEDIA_ROOT, filename), "w")
+    for arg in arguments:
+        param = Parameters.objects.get(pk=arg.get('id'))
+        var_file.write("{0} = {1}".format(param.name, arg.get('value')))
+        var_file.write("\n")
+    var_file.close()
+    return var_file.name
+
+
 def generate_file(obj, type_script, params, filename, client):
     _data = ''
     try:
-        configs = params.get('config')
         """Generate robot files"""
         if type_script is 1:
             """First create the keyword file"""
-            arguments = params.get('global_variables')
+
             config = params.get('config')
             robot_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
             robot_file.write("*** Keywords ***")
             robot_file.write("\n")
             robot_file.write(obj.name)
-            robot_file.write("\n")
-            if arguments:
-                robot_file.write("\t")
-                robot_file.write("[Arguments]\t\t")
-                for arg in arguments:
-                    robot_file.write("{0}\t\t".format(Parameters.objects.get(pk=arg.get('id'))))
             robot_file.write("\n")
             robot_file.write("\t")
             full_script = obj.script.splitlines(True)
@@ -589,14 +601,23 @@ def generate_file(obj, type_script, params, filename, client):
                 robot_file.write("\t{0}".format(line))
             robot_file.close()
 
-            """First need to know if the dirs schema exist"""
+            """First need to know if the dirs schema exist and then send the files"""
             send_files(robot_file.name, 0, config, client)
+
+            """Need a variables File"""
+            profile = generate_profile(params, filename)
+            send_files(profile, 2, config, client)
 
             """Then Test Case file"""
             tc_file = open("{0}/test_keywords/{1}_testcase.robot".format(settings.MEDIA_ROOT, filename), "w")
             tc_file.write("*** Settings ***\n")
+            tc_file.write("Variables\t{0}/Profiles/{1}_variables.py\n".format(config.get('path'), filename))
             tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
-            tc_file.write("Library\tOperatingSystem\n")
+            """Now add the libraries """
+            libraries = get_libraries()
+            for lib in libraries:
+                tc_file.write("Library\t{0}\n".format(lib.name))
+            tc_file.write("\n")
             tc_file.write("*** Test Cases ***")
             tc_file.write("\n")
             tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
@@ -610,13 +631,10 @@ def generate_file(obj, type_script, params, filename, client):
             tc_file.write("\n")
             tc_file.write("\t")
             tc_file.write(obj.name)
-            if arguments:
-                tc_file.write("\t")
-                for arg in arguments:
-                    tc_file.write("{0}\t\t".format(arg.get('value')))
-                tc_file.write("\n")
             tc_file.close()
+
             send_files(tc_file.name, 5, config, client)
+
             _data = 'Created'
     except Exception as error:
         _data = error
