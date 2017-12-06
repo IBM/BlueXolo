@@ -726,22 +726,12 @@ class SearchScriptsAPIView(LoginRequiredMixin, APIView):
 class RunOnServerApiView(LoginRequiredMixin, APIView):
     def post(self, request):
         _status = status.HTTP_200_OK
-
         type_script = request.data.get('type_script')
         data_result = dict()
-        # params = dict()
         _data = dict()
         if type_script:
             type_script = int(type_script)
         try:
-            # profiles = ServerProfile.objects.filter(pk__in=json.loads(request.data.get('profile')))
-            # for profile in profiles:
-            #     if profile.category == 1:
-            #         """is global variables"""
-            #         params['global_variables'] = json.loads(profile.config)
-            #     elif profile.category in [2, 3]:
-            #         """is local connection or jenkins"""
-            #         params['config'] = get_config_object(json.loads(profile.config))
             if type_script is 1:
                 """is keywords"""
                 kwd = Keyword.objects.get(id=request.data.get('id'))
@@ -753,14 +743,12 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
 
                 """Execute the kwd"""
             res = run_on_server.delay(_data)
-            # res = run_on_server(kwd.name, kwd.script, kwd.description,
-            #                     type_script, params, filename)
-
             task = Task.objects.create(
                 name="Script -  {0}".format(kwd.name),
                 task_id=res.task_id,
                 state="run",
-                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
+                                                                        settings.MEDIA_URL,
                                                                         filename)
             )
             request.user.tasks.add(task)
