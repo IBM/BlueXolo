@@ -347,11 +347,12 @@
                         url: "{% url "run-on-server" %}",
                         type: "post",
                         data: {
-                            keyword: new_keyword.id,
-                            profile: _profiles
+                            id: new_testSuite.id,
+                            profile: _profiles,
+                            type_script: 3
                         },
                         success: function (data) {
-                            drawMessage("Keyword has sent to scheduler", 'blue');
+                            drawMessage("Test suite send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
                             drawMessage(err.responseJSON.text, 'red');
