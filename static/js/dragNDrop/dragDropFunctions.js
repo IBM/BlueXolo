@@ -4,6 +4,7 @@ function allowDrop(ev) {
 
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    deleteTemporaryRows();
     createEmptyRowsBetweenCommands();
     movingElement = true;
 }
@@ -24,6 +25,7 @@ function moveDroppedElement(ev) {
 
 function startDragDroppedElement(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    deleteTemporaryRows();
     createEmptyRowsBetweenCommands();
 }
 
