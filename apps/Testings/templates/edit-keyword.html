@@ -403,7 +403,7 @@
                             drawMessage("Keyword send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
-                            console.log('error on run script: ' + err)
+                            drawMessage(err.responseJSON.text, 'red');
                         }
                     });
                 }, 3000);
