@@ -165,17 +165,26 @@
         <div class="col s12">
             <div class="input-field col s6 m4 l2">
                 <select id="keyword_collection" onchange="hasValues()"></select>
-                <label for="keyword_collection">Collection</label>
+                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <ul>
+                    <li class="red-text"><i id="error_field_collection"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 m4 l2">
                 <select id="phases_list" onchange="hasValues()">
                     <option value="" selected>- - - - -</option>
                 </select>
-                <label for="phases_list">Phase</label>
+                <label for="phases_list">Phase <b class="red-text">*</b></label>
+                 <ul>
+                    <li class="red-text"><i id="error_field_phase"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 m4 l2">
-                <label for="testcase_name">Name</label>
+                <label for="testcase_name">Name <b class="red-text">*</b></label>
                 <input type="text" id="testcase_name" onblur="hasValues()" placeholder="Required">
+                <ul>
+                    <li class="red-text"><i id="error_field_name"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 m4 l3">
                 <label for="testcase_description">Description</label>
@@ -325,23 +334,35 @@
             }
 
             function hasValues() {
-                var _keyName = document.getElementById('testcase_name');
+                var _name = document.getElementById('testcase_name');
                 var _keyCollection = document.getElementById('keyword_collection');
                 var _phase = document.getElementById('phases_list');
+                var _error_filed_collection = document.getElementById('error_field_collection');
+                var _error_filed_phase = document.getElementById('error_field_phase');
+                var _error_filed_name = document.getElementById('error_field_name');
+                showError(_keyCollection, _error_filed_collection);
+                showError(_phase, _error_filed_phase);
+                showError(_name, _error_filed_name);
+            }
+
+
+            function showError(element, destiny) {
                 var _btn_save = document.getElementById('btn_play');
-                if (!(_keyCollection.value && _keyName.value && _phase.value)) {
+                if (!element.value) {
                     _btn_save.disabled = true;
-                    drawMessage("Collection, Phase and  name are necessary", "yellow black-text");
+                    destiny.innerHTML = "This field is required";
                 } else {
                     _btn_save.disabled = false;
+                    destiny.innerHTML = "";
                 }
             }
 
-              document.getElementById('selectProfiles').onchange = function () {
+            document.getElementById('selectProfiles').onchange = function () {
                 if ($('#selectProfiles').val()) {
                     document.getElementById('runScript').disabled = false;
                 }
             };
+
             function runScript() {
                 saveTestcase();
                 var _profiles = JSON.stringify($('#selectProfiles').val());
@@ -355,7 +376,7 @@
                             type_script: 2
                         },
                         success: function (data) {
-                            drawMessage("Testcase has sent to scheduler", 'blue');
+                            drawMessage("Test Case send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
                             drawMessage(err.responseJSON.text, 'red');

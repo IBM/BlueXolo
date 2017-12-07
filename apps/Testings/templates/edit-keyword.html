@@ -204,12 +204,18 @@
 
             <div class="input-field col s6 l4">
                 <select id="keyword_collection" onchange="hasValues()"></select>
-                <label for="keyword_collection">Keyword Collection</label>
+                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <ul>
+                    <li class="red-text"><i id="error_field_collection"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_name">Keyword Name</label>
+                <label for="keyword_name">Name <b class="red-text">*</b></label>
                 <input type="text" id="keyword_name" onblur="hasValues()" value="{{ object.name }}"
                        placeholder="required">
+                <ul>
+                    <li class="red-text"><i id="error_field_name"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 l4">
                 <label for="keyword_description">Keyword Description</label>
@@ -356,14 +362,24 @@
             function hasValues() {
                 var _keyName = document.getElementById('keyword_name');
                 var _keyCollection = document.getElementById('keyword_collection');
+                var _error_filed_name = document.getElementById('error_field_name');
+                var _error_filed_collection = document.getElementById('error_field_collection');
+
+                showError(_keyCollection, _error_filed_collection);
+                showError(_keyName, _error_filed_name);
+            }
+
+            function showError(element, destiny) {
                 var _btn_save = document.getElementById('btn_play');
-                if (!(_keyCollection.value && _keyName.value)) {
+                if (!element.value) {
                     _btn_save.disabled = true;
-                    drawMessage("Collection and Keyword name are necessary", "yellow black-text");
+                    destiny.innerHTML = "This field is required";
                 } else {
                     _btn_save.disabled = false;
+                    destiny.innerHTML = "";
                 }
             }
+
 
             document.getElementById('selectProfiles').onchange = function () {
                 if ($('#selectProfiles').val()) {
@@ -381,10 +397,10 @@
                         data: {
                             id: new_keyword.id,
                             profile: _profiles,
-                            type_script : 1
+                            type_script: 1
                         },
                         success: function (data) {
-                            drawMessage("Keyword has sent to scheduler", 'blue');
+                            drawMessage("Keyword send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
                             console.log('error on run script: ' + err)

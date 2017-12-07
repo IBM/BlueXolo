@@ -4,6 +4,9 @@ function allowDrop(ev) {
 
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    deleteTemporaryRows();
+    createEmptyRowsBetweenCommands();
+    movingElement = true;
 }
 
 function moveDroppedElement(ev) {
@@ -22,10 +25,85 @@ function moveDroppedElement(ev) {
 
 function startDragDroppedElement(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    deleteTemporaryRows();
     createEmptyRowsBetweenCommands();
 }
 
 function dropBeforeThisElement(ev) {
+    var data = ev.dataTransfer.getData("text");
+
+    var dragAndDropPanel = "drag-drop";
+    var keywordsPanel = "keyword-drag-drop";
+    var testcasePanel = "testcase-drag-drop";
+
+    var positionOfFirstDash = data.indexOf("-");
+
+    var belongsToPanel = data.slice(positionOfFirstDash + 1);
+
+    if(belongsToPanel === dragAndDropPanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addElementToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }
+    else if(belongsToPanel === keywordsPanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addKeywordToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }
+    else if(belongsToPanel === testcasePanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addTestcaseToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }    
+
     // Because is moving, the drop event is going to delete the original element after drop it
     movingElement = true;
     var insertBeforeThisEmptyRow = ev.target.parentNode;
@@ -88,6 +166,11 @@ function moveElements(movedFromID, movedToID) {
 function createEmptyRowsBetweenCommands() {
     var dragDropSpace = document.getElementById('dragDropSpace');
     var nextRow = dragDropSpace.firstChild;
+
+    if(nextRow === null){
+        return;
+    }
+
     var tempEmptyRows = 0;
 
     var td = document.createElement("tr");
@@ -162,8 +245,7 @@ function drop(ev) {
     ev.preventDefault();
     deleteTemporaryRows();
 
-    if (movingElement) {
-        movingElement = false;
+    if(ev.target.parentNode.parentNode === null){
         return;
     }
 
