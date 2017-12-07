@@ -345,7 +345,7 @@
                             type_script: 1
                         },
                         success: function (data) {
-                            drawMessage("Keyword has sent to scheduler", 'blue');
+                            drawMessage("Keyword send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
                             drawMessage(err.responseJSON.text, 'red');

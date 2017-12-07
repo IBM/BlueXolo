@@ -15,7 +15,7 @@ from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Servers.views import run_keyword, run_keyword_profile, run_testcases
+from apps.Servers.views import generate_filename, run_on_server
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Testings.views import apply_highlight
@@ -307,7 +307,7 @@ class CollectionApiView(LoginRequiredMixin,
         return self.create(request, *args, **kwargs)
 
 
-class RunOnServerApiView(LoginRequiredMixin, APIView):
+class RunOnServerApiView1(LoginRequiredMixin, APIView):
     """Call "functions for run scripts on servers"""
 
     def post(self, request):
@@ -385,13 +385,13 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             return Response(status=_status, data=_data)
         elif _id_script == '2':
             try:
-                testcase = TestCase.objects.get(pk= _config.get('id'))
+                testcase = TestCase.objects.get(pk=_config.get('id'))
                 _collection = testcase.collection.first()
                 _keywdors_collection = Keyword.objects.filter(collection=_collection)
-                _keys_name = []
+                _scripts = []
                 _keys_scripts = []
                 for _keyword in _keywdors_collection:
-                    _keytmp =  _keyword
+                    _keytmp = _keyword
                     _keys_name.append(_keytmp.name)
                     _keys_scripts.append(_keytmp.script)
                 _host = ""
@@ -433,8 +433,10 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                     today = time.strftime("%y_%m_%d")
                     name = testcase.name.replace(" ", "")
                     name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,_collection.name, _keys_name, _keys_scripts,name_file, _profile_name, _values_name)
-                                    #run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
+                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,
+                                                   _collection.name, _keys_name, _keys_scripts, name_file,
+                                                   _profile_name, _values_name)
+                    # run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
                     task = Task.objects.create(
                         name="Run Testcases -  {0}".format(testcase.name),
                         task_id=filename.task_id,
@@ -719,3 +721,43 @@ class SearchScriptsAPIView(LoginRequiredMixin, APIView):
             _data = serializer.errors
             _status = status.HTTP_404_NOT_FOUND
         return Response(status=_status, data=_data)
+
+
+class RunOnServerApiView(LoginRequiredMixin, APIView):
+    def post(self, request):
+        _status = status.HTTP_200_OK
+        type_script = request.data.get('type_script')
+        obj_id = request.data.get('id')
+        data_result = dict()
+        _data = dict()
+        if type_script:
+            type_script = int(type_script)
+        try:
+            _data['obj_id'] = obj_id
+            _data['type_script'] = type_script
+            _data['profiles'] = json.loads(request.data.get('profile'))
+            if type_script is 1:
+                """is keywords"""
+                kwd = Keyword.objects.get(id=obj_id)
+                _data['filename'] = generate_filename(kwd.name)
+                _data['name'] = kwd.name
+            elif type_script is 2:
+                """is Test Case"""
+                tc = TestCase.objects.get(id=obj_id)
+                _data['filename'] = generate_filename(tc.name)
+                _data['name'] = tc.name
+            """Run script"""
+            res = run_on_server.delay(_data)
+            task = Task.objects.create(
+                name="Script -  {0}".format(_data.get('name')),
+                task_id=res.task_id,
+                state="run",
+                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
+                                                                        settings.MEDIA_URL,
+                                                                        _data.get('filename'))
+            )
+            request.user.tasks.add(task)
+            request.user.save()
+        except Exception as error:
+            data_result['text'] = '{0}'.format(error)
+        return Response(status=_status, data=data_result)

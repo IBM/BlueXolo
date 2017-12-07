@@ -355,7 +355,7 @@
                             type_script: 2
                         },
                         success: function (data) {
-                            drawMessage("Testcase has sent to scheduler", 'blue');
+                            drawMessage("Test Case send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
                             drawMessage(err.responseJSON.text, 'red');

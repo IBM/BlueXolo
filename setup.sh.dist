@@ -9,7 +9,7 @@ mkdir -p media/zip
 echo " . . "
 mkdir -p media/test_result
 echo " . . . "
-mkdir -p media/testcases
+mkdir -p media/test_cases
 echo " . . ."
 mkdir -p media/keywords
 echo " . . ."
