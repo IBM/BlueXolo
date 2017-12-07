@@ -553,7 +553,8 @@ def run_script(filename, config):
         ssh = pxssh.pxssh()
         ssh.login(config.get('host'), config.get('user'), config.get('passwd'))
         ssh.sendline("cd {0}/Results".format(config.get('path')))
-        ssh.sendline("pybot -o {0}_output.xml"
+        ssh.sendline("pybot -V ../Profiles/{0}_profile.py"
+                     " -o {0}_output.xml"
                      " -l {0}_log.html"
                      " -r {0}_report.html"
                      " ../TestScripts/{0}_test_case.robot".format(filename))
@@ -609,7 +610,6 @@ def generate_file(obj, type_script, params, filename, client):
             """Then Test Case file"""
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
             dummy_tc_file.write("*** Settings ***\n")
-            dummy_tc_file.write("Variables\t{0}/Profiles/{1}_profile.py\n".format(config.get('path'), filename))
             dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
             """Now add the libraries """
             if libraries:
@@ -620,10 +620,6 @@ def generate_file(obj, type_script, params, filename, client):
             dummy_tc_file.write("\n")
             dummy_tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
             dummy_tc_file.write("\n")
-            if obj.description:
-                dummy_tc_file.write("\t")
-                dummy_tc_file.write("[Documentation]\t\t{0}".format(obj.description))
-                dummy_tc_file.write("\n")
             dummy_tc_file.write("\t")
             dummy_tc_file.write("[Tags]  TestKeyword")
             dummy_tc_file.write("\n")
@@ -633,12 +629,10 @@ def generate_file(obj, type_script, params, filename, client):
 
             send_files(dummy_tc_file.name, 5, config, client)
 
-            _data = 'Created'
         elif type_script is 2:
             """Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
             tc_file.write("*** Settings ***\n")
-            tc_file.write("Variables\t{0}/Profiles/{1}_profile.py\n".format(config.get('path'), filename))
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
@@ -661,7 +655,7 @@ def generate_file(obj, type_script, params, filename, client):
         """Need a variables Profile File"""
         profile = generate_profile(params, filename)
         send_files(profile, 2, config, client)
-
+        _data = 'Created'
     except Exception as error:
         _data = error
     return _data
@@ -688,6 +682,7 @@ def get_result_files(client, filename, config):
 
 @shared_task()
 def run_on_server(_data):
+    """The main function to send scripts """
     type_script = _data.get('type_script')
     data_result = dict()
     params = dict()
