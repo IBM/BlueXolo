@@ -1,11 +1,9 @@
 from django.conf.urls import url
 
 from .views import KeyWordsView, NewKeywordView, DeleteKeywordView, CollectionsView, NewCollectionsView, \
-    EditCollectionsView, \
-    DeleteCollectionsView, EditKeywordView, TestcaseView, NewTestcaseView, EditTestcaseView, DeleteTestcaseView, \
-    TestsuiteView, \
-    NewTestsuiteView, EditTestsuiteView, DeleteTestsuiteView, NewKeywordImportedView, EditKeywordImportedView, \
-    KeywordsImportedView, DeleteImportedScriptView
+    EditCollectionsView, DeleteCollectionsView, EditKeywordView, TestcaseView, NewTestcaseView, EditTestcaseView, \
+    DeleteTestcaseView, TestsuiteView, NewTestsuiteView, EditTestsuiteView, DeleteTestsuiteView, \
+    NewKeywordImportedView, EditKeywordImportedView, KeywordsImportedView, DeleteImportedScriptView, RunScriptView
 
 urlpatterns = [
     url(r'^keywords/$', KeyWordsView.as_view(), name="keywords"),
@@ -32,4 +30,6 @@ urlpatterns = [
     url(r'^import/$', NewKeywordImportedView.as_view(), name="new-import-script"),
     url(r'^import/(?P<pk>\d+)/edit/$', EditKeywordImportedView.as_view(), name="edit-import-script"),
     url(r'^import/(?P<pk>\d+)/delete/$', DeleteImportedScriptView.as_view(), name="delete-import-script"),
+    # Run scripts
+    url(r'^(?P<pk>\d+)/(?P<type_script>\d+)/run$', RunScriptView.as_view(), name="run-script"),
 ]

@@ -227,8 +227,7 @@
                 data: {
                     name: document.getElementById('param_name').value,
                     help_text: document.getElementById('id_help_text').value,
-                    category: document.getElementById('category_group').value,
-                    value_type: document.getElementById('id_value_type').value,
+                    category: document.getElementById('category_group').value
                 }, success: function (data) {
                     drawMessage("Parameter '" + data.name + "' Created", 'green');
                     document.getElementById('form_parameter').reset();

@@ -15,7 +15,7 @@ from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
-from apps.Servers.views import run_keyword
+from apps.Servers.views import generate_filename, run_on_server
 
 from apps.Testings.models import Keyword, Collection, TestCase, Phase, TestSuite
 from apps.Testings.views import apply_highlight
@@ -26,7 +26,7 @@ from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
 from .api_pagination import CommandsPagination, KeywordPagination, TestCasePagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    PhaseFilter, TestSuiteFilter
+    PhaseFilter, TestSuiteFilter, ProfileFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -83,7 +83,7 @@ class ServerTemplateApiView(LoginRequiredMixin,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin,
                             generics.GenericAPIView):
-    queryset = TemplateServer.objects.all()
+    queryset = TemplateServer.objects.all().order_by('id')
     serializer_class = TemplateServerSerializer
 
     def get(self, request, *args, **kwargs):
@@ -119,6 +119,7 @@ class ServerProfileApiView(LoginRequiredMixin,
                            generics.GenericAPIView):
     queryset = ServerProfile.objects.all()
     serializer_class = ServerProfileSerializer
+    filter_class = ProfileFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -135,6 +136,7 @@ class ServerProfileDetailApiView(LoginRequiredMixin,
                                  generics.GenericAPIView):
     queryset = ServerProfile.objects.all()
     serializer_class = ServerProfileSerializer
+    filter_class = ProfileFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -307,77 +309,159 @@ class CollectionApiView(LoginRequiredMixin,
         return self.create(request, *args, **kwargs)
 
 
-class RunOnServerApiView(LoginRequiredMixin, APIView):
+class RunOnServerApiView1(LoginRequiredMixin, APIView):
     """Call "functions for run scripts on servers"""
 
     def post(self, request):
         _status = status.HTTP_200_OK
         _config = request.data
         _data = {}
-        try:
-            kwd = Keyword.objects.get(pk=_config.get('keyword'))
-            _host = ""
-            _username = ""
-            _passwd = ""
-            _path = ""
-            _profile_name = ""
-            _values = []
-            _values_name = []
-            _perfiles = json.loads(_config.get('profile'))
-            for perfil in _perfiles:
-                _server_profile = ServerProfile.objects.get(pk=perfil)
-                if _server_profile.category == 2:
-                    _parametros = json.loads(_server_profile.config)
-                    for p in _parametros:
-                        _parametro = Parameters.objects.get(pk=p.get('id'))
-                        if _parametro.name == 'host':
-                            _host = p.get('value')
-                        if _parametro.name == 'user':
-                            _username = p.get('value')
-                        if _parametro.name == 'passwd':
-                            _passwd = p.get('value')
-                        if _parametro.name == 'path':
-                            _path = p.get('value')
-                elif _server_profile.category == 1:
-                    _global_variables = json.loads(_server_profile.config)
-                    _profile_name = _server_profile.name
-                    for variable in _global_variables:
-                        _values.append(variable.get('value'))
-                        _param_name = Parameters.objects.get(pk=variable.get('id'))
-                        _arreglo = []
-                        _arreglo.append(_param_name.name)
-                        _arreglo.append(variable.get('value'))
-                        _values_name.append(_arreglo)
+        _id_script = _config.get('type_script')
+        if _id_script == '1':
             try:
-                random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
-                today = time.strftime("%y_%m_%d")
-                name = kwd.name.replace(" ", "")
-                name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                filename = run_keyword.delay(_host, _username, _passwd, kwd.name, kwd.script, _values, _path, name_file,
-                                             _profile_name, _values_name)
-                task = Task.objects.create(
-                    name="Run Keyword -  {0}".format(kwd.name),
-                    task_id=filename.task_id,
-                    state="run",
-                    task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
-                                                                            name_file)
-                )
-                request.user.tasks.add(task)
-                request.user.save()
-                _data = {
-                    'report': "{0}test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
-                }
-            except Exception as errorConnection:
+                kwd = Keyword.objects.get(pk=_config.get('id'))
+                _host = ""
+                _username = ""
+                _passwd = ""
+                _path = ""
+                _profile_name = ""
+                _values = []
+                _values_name = []
+                _name_values = []
+                _perfiles = json.loads(_config.get('profile'))
+                for perfil in _perfiles:
+                    _server_profile = ServerProfile.objects.get(pk=perfil)
+                    if _server_profile.category == 2:
+                        _parametros = json.loads(_server_profile.config)
+                        for p in _parametros:
+                            _parametro = Parameters.objects.get(pk=p.get('id'))
+                            if _parametro.name == 'host':
+                                _host = p.get('value')
+                            if _parametro.name == 'user':
+                                _username = p.get('value')
+                            if _parametro.name == 'passwd':
+                                _passwd = p.get('value')
+                            if _parametro.name == 'path':
+                                _path = p.get('value')
+                    elif _server_profile.category == 1:
+                        _global_variables = json.loads(_server_profile.config)
+                        _profile_name = _server_profile.name
+                        for variable in _global_variables:
+                            _values.append(variable.get('value'))
+                            _param_name = Parameters.objects.get(pk=variable.get('id'))
+                            _arreglo = []
+                            _arreglo.append(_param_name.name)
+                            _name_values.append(_param_name.name)
+                            _arreglo.append(variable.get('value'))
+                            _values_name.append(_arreglo)
+                try:
+                    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
+                    today = time.strftime("%y_%m_%d")
+                    name = kwd.name.replace(" ", "")
+                    name_file = "{0}_{1}_{2}".format(name, random_string, today)
+                    filename = run_keyword_profile.delay(_host, _username, _passwd, kwd.name, kwd.script, _name_values,
+                                                         _path, name_file,
+                                                         _profile_name, _values_name)
+                    task = Task.objects.create(
+                        name="Run Keyword -  {0}".format(kwd.name),
+                        task_id=filename.task_id,
+                        state="run",
+                        task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                                                                                name_file)
+                    )
+                    request.user.tasks.add(task)
+                    request.user.save()
+                    _data = {
+                        'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                    }
+                except Exception as errorConnection:
+                    _status = 500
+                    _data = {
+                        'text': "{0}".format(errorConnection)
+                    }
+            except Exception as Error:
                 _status = 500
                 _data = {
-                    'text': "{0}".format(errorConnection)
+                    'text': "{0}".format(Error)
                 }
-        except Exception as Error:
-            _status = 500
-            _data = {
-                'text': "{0}".format(Error)
-            }
-        return Response(status=_status, data=_data)
+            return Response(status=_status, data=_data)
+        elif _id_script == '2':
+            try:
+                testcase = TestCase.objects.get(pk=_config.get('id'))
+                _collection = testcase.collection.first()
+                _keywdors_collection = Keyword.objects.filter(collection=_collection)
+                _scripts = []
+                _keys_scripts = []
+                for _keyword in _keywdors_collection:
+                    _keytmp = _keyword
+                    _keys_name.append(_keytmp.name)
+                    _keys_scripts.append(_keytmp.script)
+                _host = ""
+                _username = ""
+                _passwd = ""
+                _path = ""
+                _profile_name = ""
+                _values = []
+                _values_name = []
+                _name_values = []
+                _perfiles = json.loads(_config.get('profile'))
+                for perfil in _perfiles:
+                    _server_profile = ServerProfile.objects.get(pk=perfil)
+                    if _server_profile.category == 2:
+                        _parametros = json.loads(_server_profile.config)
+                        for p in _parametros:
+                            _parametro = Parameters.objects.get(pk=p.get('id'))
+                            if _parametro.name == 'host':
+                                _host = p.get('value')
+                            if _parametro.name == 'user':
+                                _username = p.get('value')
+                            if _parametro.name == 'passwd':
+                                _passwd = p.get('value')
+                            if _parametro.name == 'path':
+                                _path = p.get('value')
+                    elif _server_profile.category == 1:
+                        _global_variables = json.loads(_server_profile.config)
+                        _profile_name = _server_profile.name
+                        for variable in _global_variables:
+                            _values.append(variable.get('value'))
+                            _param_name = Parameters.objects.get(pk=variable.get('id'))
+                            _arreglo = []
+                            _arreglo.append(_param_name.name)
+                            _name_values.append(_param_name.name)
+                            _arreglo.append(variable.get('value'))
+                            _values_name.append(_arreglo)
+                try:
+                    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
+                    today = time.strftime("%y_%m_%d")
+                    name = testcase.name.replace(" ", "")
+                    name_file = "{0}_{1}_{2}".format(name, random_string, today)
+                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,
+                                                   _collection.name, _keys_name, _keys_scripts, name_file,
+                                                   _profile_name, _values_name)
+                    # run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
+                    task = Task.objects.create(
+                        name="Run Testcases -  {0}".format(testcase.name),
+                        task_id=filename.task_id,
+                        state="run",
+                        task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
+                                                                                name_file)
+                    )
+                    request.user.tasks.add(task)
+                    request.user.save()
+                    _data = {
+                        'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
+                    }
+                except Exception as errorConnection:
+                    _status = 500
+                    _data = {
+                        'text': "{0}".format(errorConnection)
+                    }
+            except Exception as Error:
+                _status = 500
+                _data = {
+                    'text': "{0}".format(Error)
+                }
+            return Response(status=_status, data=_data)
 
 
 class TasksApiView(LoginRequiredMixin,
@@ -578,14 +662,101 @@ class TestSuiteDetailApiView(mixins.RetrieveModelMixin,
         return self.destroy(request, *args, **kwargs)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_highlight_version(request):
     if request.is_ajax:
-        script = request.query_params.get('script')
+        script = request.data.get('script')
+        type_script = request.data.get('type_script')
+        id = request.data.get('id_script')
         data = {}
         if script:
             try:
                 data = {"script_result": apply_highlight(script)}
             except Exception as error:
                 data = {'text': '{0}'.format(error)}
-            return JsonResponse(data)
+        elif type_script and id:
+            try:
+                if type_script == '1':
+                    kwd = Keyword.objects.get(id=id)
+                    _script = kwd.script
+                if type_script == '2':
+                    test_case = TestCase.objects.get(id=id)
+                    _script = test_case.script
+                data = {"script_result": apply_highlight(_script)}
+            except Exception as error:
+                data = {'text': '{0}'.format(error)}
+        return JsonResponse(data)
+
+
+class SearchScriptsAPIView(LoginRequiredMixin, APIView):
+    def get(self, request):
+        """Search for keywords (Native or imported) and test cases """
+        _status = status.HTTP_200_OK
+        type_script = request.query_params.get('type_script')
+        name = request.query_params.get('name')
+        id_script = request.query_params.get('id_script')
+        _data = dict()
+        try:
+            if name:
+                if type_script == '1':
+                    keywords = Keyword.objects.filter(
+                        Q(user=request.user) &
+                        Q(name__icontains=name)
+                    )
+                    serializer = KeywordsSerializer(keywords, many=True)
+                if type_script == '2':
+                    test_cases = TestCase.objects.filter(
+                        Q(user=request.user) &
+                        Q(name__icontains=name)
+                    )
+                    serializer = TestCaseSerializer(test_cases, many=True)
+                _data = serializer.data
+            if id_script:
+                if type_script == '1':
+                    keywords = Keyword.objects.get(id=id_script)
+                    serializer = KeywordsSerializer(keywords)
+                if type_script == '2':
+                    test_cases = TestCase.objects.get(id=id_script)
+                    serializer = TestCaseSerializer(test_cases)
+                _data = serializer.data
+        except Exception as error:
+            _data = serializer.errors
+            _status = status.HTTP_404_NOT_FOUND
+        return Response(status=_status, data=_data)
+
+
+class RunOnServerApiView(LoginRequiredMixin, APIView):
+    def post(self, request):
+        _status = status.HTTP_200_OK
+        type_script = request.data.get('type_script')
+        obj_id = request.data.get('id')
+        data_result = dict()
+        _data = dict()
+        if type_script:
+            type_script = int(type_script)
+        try:
+            _data['obj_id'] = obj_id
+            _data['type_script'] = type_script
+            _data['profiles'] = json.loads(request.data.get('profile'))
+            if type_script is 1:
+                """is keywords"""
+                kwd = Keyword.objects.get(id=obj_id)
+                _data['filename'] = generate_filename(kwd.name)
+                _data['name'] = kwd.name
+            elif type_script is 2:
+                """is Test Case"""
+                tc = TestCase.objects.get(id=obj_id)
+                _data['filename'] = generate_filename(tc.name)
+                _data['name'] = tc.name
+            """Run script"""
+            res = run_on_server.delay(_data)
+            task = Task.objects.create(
+                name="Script -  {0}".format(_data.get('name')),
+                task_id=res.task_id,
+                state="RUNNING"
+            )
+            request.user.tasks.add(task)
+            request.user.save()
+        except Exception as error:
+            data_result['text'] = '{0}'.format(error)
+        return Response(status=_status, data=data_result)

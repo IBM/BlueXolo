@@ -13,7 +13,7 @@
                         <div class="card">
                             <div class="card-content">
                                 {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
-                                {% if task.state == "PENDING" or task.state == "run" %}
+                                {% if task.state == "PENDING" or task.state == "RUNNING" %}
                                     <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
                                         Running {{ task.name }} </h5>
                                     <div class="progress">

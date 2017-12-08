@@ -178,3 +178,22 @@ class DeleteImportedScriptView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Script deleted")
         return reverse_lazy('imported-scripts')
+
+
+class RunScriptView(LoginRequiredMixin, TemplateView):
+    template_name = "run_script.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(RunScriptView, self).get_context_data(**kwargs)
+        type_script = int(kwargs.get('type_script'))
+        scripts = ['Keyword', 'Test Case', 'Test Suite']
+        if type_script:
+            if type_script is 1:
+                obj = Keyword.objects.get(pk=kwargs.get('pk'))
+            if type_script is 2:
+                obj = TestCase.objects.get(pk=kwargs.get('pk'))
+            context['obj'] = obj
+            context['type'] = scripts[type_script - 1]
+            context['type_id'] = type_script
+            context['script'] = apply_highlight(obj.script)
+        return context

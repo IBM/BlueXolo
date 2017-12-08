@@ -103,7 +103,7 @@
                 var _name = name || document.getElementById('id_name').value;
                 $.ajax({
                         url: "{% url "get-highlight" %}",
-                        type: 'GET',
+                        type: 'POST',
                         data: {
                             'script': _script
                         }, success: function (data) {

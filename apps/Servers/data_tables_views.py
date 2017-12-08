@@ -33,10 +33,11 @@ class ServerProfilesListJson(LoginRequiredMixin, BaseDatatableView):
             qs = qs.filter(name__icontains=search)
         return qs
 
+
 class ParametersListJson(LoginRequiredMixin, BaseDatatableView):
     model = Parameters
-    columns = ['name','category', 'pk']
-    order_columns = ['name', 'description', 'pk']
+    columns = ['name', 'category', 'pk']
+    order_columns = ['name', 'category', 'pk']
     max_display_length = 200
 
     def filter_queryset(self, qs):
