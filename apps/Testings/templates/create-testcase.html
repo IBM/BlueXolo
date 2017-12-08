@@ -132,7 +132,7 @@
                     "functions": JSON.stringify(testcaseFunctions),
                     "phase": testcasePhase,
                     "values": JSON.stringify(testcaseValues),
-                    "extra_imports": usedElements
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-testcases" %}",

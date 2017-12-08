@@ -156,7 +156,7 @@
                     "script": testSuiteScript,
                     "values": JSON.stringify(testSuiteValues),
                     "collection": testSuiteCollection,
-                    "extra_imports": usedElements
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-testsuite" %}",

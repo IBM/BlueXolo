@@ -177,7 +177,7 @@
                     "script": keywordScript,
                     "values": JSON.stringify(keywordValues),
                     "collection": keywordCollection,
-                    "extra_imports": usedElements
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-keywords" object.pk %}",
