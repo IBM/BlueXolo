@@ -144,6 +144,12 @@
             var testSuiteCollection = document.getElementById('keyword_collection').value;
             var testSuiteScript = document.getElementById("terminal").value;
 
+            var usedElements = {
+                extra: usedExtras,
+                keywords: usedKeywords,
+                testcases: usedTestcases
+            }
+
             var newTestSuite = {
                 "name": testSuiteName,
                 "description": testSuiteDescription,
