@@ -26,7 +26,7 @@ from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
 from .api_pagination import CommandsPagination, KeywordPagination, TestCasePagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    PhaseFilter, TestSuiteFilter
+    PhaseFilter, TestSuiteFilter, ProfileFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -119,6 +119,7 @@ class ServerProfileApiView(LoginRequiredMixin,
                            generics.GenericAPIView):
     queryset = ServerProfile.objects.all()
     serializer_class = ServerProfileSerializer
+    filter_class = ProfileFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -135,6 +136,7 @@ class ServerProfileDetailApiView(LoginRequiredMixin,
                                  generics.GenericAPIView):
     queryset = ServerProfile.objects.all()
     serializer_class = ServerProfileSerializer
+    filter_class = ProfileFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
