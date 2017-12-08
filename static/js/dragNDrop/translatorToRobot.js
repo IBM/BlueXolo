@@ -1,29 +1,4 @@
-usedKeywords = [];
-usedTestcases = [];
-usedExtras = [];
-
-function resetUsedArraysVariables(){
-    usedKeywords = [];
-    usedTestcases = [];
-    usedExtras = [];
-}
-
-function checkIfExtraElementsExist(){
-    if(extraUsed.length === 0){
-        extraUsed = null;
-    }
-    if(keywordsUsed.length === 0){
-        keywordsUsed = null;
-    }
-    if(testcasesUsed.length === 0){
-        testcasesUsed = null;
-    }  
-}
-
 function translateToRobot(callBackFunction) {
-
-    resetUsedArraysVariables();
-
     var dragNDrop = document.getElementById("dragDropSpace");
     var rowsInTable = dragNDrop.children;
 
@@ -35,33 +10,17 @@ function translateToRobot(callBackFunction) {
     var inForLoop = false;
     var identationForLoop = 1;
 
-    var commandProductCategory = 3;
-    var externalLibrariesCategory = 5;
-
     var keywordDroppedCategory = 6;
     var testcaseDroppedCategory = 7;
 
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
-
-            var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel);
-
-            translatedRow += droppedElements[i].name;
-            terminal.value += translatedRow;
-            terminal.value += "\n";
-            
-            var keywordUsedID = droppedElements[i].id;
-            var newKeywordUsed = droppedElements[i].keywordJSON;
-            addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
-            //translateDroppedKeyword(droppedElements[i].keywordJSON);
-            
+            translateDroppedKeyword(droppedElements[i].keywordJSON);
             if ((i + 1) >= rowsInTable.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }
-                testArrays();
                 return true;
             } else {
                 continue;
@@ -69,35 +28,16 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
-
-            var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel);
-
-            translatedRow += droppedElements[i].name;
-            terminal.value += translatedRow;
-            terminal.value += "\n";
-
-            var testcaseUsedID = droppedElements[i].id;
-            var newTestcaseUsed = droppedElements[i].keywordJSON;            
-            addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
-            //translateDroppedTestcase(droppedElements[i].keywordJSON);
-
+            translateDroppedTestcase(droppedElements[i].keywordJSON);
             if ((i + 1) >= rowsInTable.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }
-                testArrays();
                 return true;
             } else {
                 continue;
             }
         }        
-
-        if(droppedElements[i].category === commandProductCategory
-            || droppedElements[i].category === externalLibrariesCategory){
-                var commandID = droppedElements[i].id;
-                addExtraToUsedArray(commandID);
-        }
 
         var elementType = droppedElements[i].id;
         var identationLevel = droppedElements[i].indentation;
@@ -130,29 +70,35 @@ function translateToRobot(callBackFunction) {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
         }
+
     }
-    testArrays();
 }
 
-function getTranslationOfKeyword(keyword){
-    var translation = "";
+function translateDroppedTestcase(testcase) {
+    var dragNDrop = document.getElementById("dragDropSpace");
+    var rowsInTable = dragNDrop.children;
+
+    var terminal = document.getElementById("terminal");
+    var translation = [];
 
     var inForLoop = false;
     var identationForLoop = 1;
 
-    var commandProductCategory = 3;
-    var externalLibrariesCategory = 5;
+	var keywordDroppedCategory = 6;
 
-    for (var i = 0; i < keyword.length; i++) {
-        var elementType = keyword[i].id;
-        var identationLevel = keyword[i].indentation;
-        var parameters = keyword[i].arguments;
-
-        if(keyword[i].category === commandProductCategory
-            || keyword[i].category === externalLibrariesCategory){
-                var commandID = keyword[i].id;
-                addExtraToUsedArray(commandID);
+    for (var i = 0; i < testcase.length; i++) {
+        if (testcase[i].category === keywordDroppedCategory) {
+            translateDroppedKeyword(testcase[i].keywordJSON);
+            if ((i + 1) >= rowsInTable.length) {
+                return true;
+            } else {
+                continue;
+            }
         }
+
+        var elementType = testcase[i].id;
+        var identationLevel = testcase[i].indentation;
+        var parameters = testcase[i].arguments;
 
         if (inForLoop && Number(identationLevel) <= identationForLoop) {
             inForLoop = false;
@@ -167,121 +113,15 @@ function getTranslationOfKeyword(keyword){
             var translatedRow = handleIdentation(identationLevel);
         }
 
-        translatedRow += handleTranslationOf(keyword[i], parameters);
-        translation += translatedRow;
-        translation += "\n";
+        translatedRow += handleTranslationOf(testcase[i], parameters);
+        terminal.value += translatedRow;
 
-
-        if (keyword[i].name === "for in" || keyword[i].name === "for in range") {
+        if (testcase[i].name === "for in" || testcase[i].name === "for in range") {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
         }
+
     }
-
-    return translation;
-}
-
-function getTranslationOfTestcase(testcase){
-    var translation = "";
-
-    var inForLoop = false;
-    var identationForLoop = 1;
-
-    var commandProductCategory = 3;
-    var externalLibrariesCategory = 5;
-
-    var keywordDroppedCategory = 6;
-
-    for (var i = 0; i < testcase.length; i++) {
-        if (testcase[i].category === keywordDroppedCategory) {
-
-            var keywordUsedID = testcase[i].id;
-            var newKeywordUsed = testcase[i].keywordJSON;
-            addKeywordToUsedArray( keywordUsedID, newKeywordUsed)
-
-            var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel);
-
-            translatedRow += testcase[i].name;
-            translation += translatedRow;
-            translation += "\n";
-        }
-        else{
-
-            if(testcase[i].category === commandProductCategory
-                || testcase[i].category === externalLibrariesCategory){
-                    var commandID = testcase[i].id;
-                    addExtraToUsedArray(commandID);
-            }
-
-            var elementType = testcase[i].id;
-            var identationLevel = testcase[i].indentation;
-            var parameters = testcase[i].arguments;
-
-            if (inForLoop && Number(identationLevel) <= identationForLoop) {
-                inForLoop = false;
-            }
-
-            if (inForLoop) {
-                var translatedRow = handleIdentation(identationForLoop - 1);
-                translatedRow += "\\    ";
-                translatedRow += handleIdentation(identationLevel);
-            }
-            else {
-                var translatedRow = handleIdentation(identationLevel);
-            }
-
-            translatedRow += handleTranslationOf(testcase[i], parameters);
-            translation += translatedRow;
-            translation += "\n";
-
-            if (testcase[i].name === "for in" || testcase[i].name === "for in range") {
-                inForLoop = true;
-                identationForLoop = (Number(identationLevel));
-            }
-        }
-    }
-
-    return translation;
-}
-
-function addKeywordToUsedArray( keywordID, keyword){
-    var translation = getTranslationOfKeyword(keyword);    
-
-    var newElement = {
-        id: keywordID,
-        script: translation,
-    };
-
-    usedKeywords.push(newElement);
-}
-
-function addExtraToUsedArray(commandID){
-
-    var newElement = {
-        id: commandID,
-    };
-
-    usedExtras.push(newElement);
-}
-
-function testArrays(){
-    console.log("test used elements");
-    console.log(usedKeywords);
-    console.log(usedTestcases);
-    console.log(usedExtras);
-    console.log("------------");
-}
-
-function addTestcaseToUsedArray( testcaseID, testcase){
-    var translation = getTranslationOfTestcase(testcase);
-
-    var newElement = {
-        id: testcaseID,
-        script: translation,
-    };
-
-    usedTestcases.push(newElement);
 }
 
 function translateDroppedKeyword(keyword) {
@@ -316,56 +156,6 @@ function translateDroppedKeyword(keyword) {
         terminal.value += translatedRow;
 
         if (keyword[i].name === "for in" || keyword[i].name === "for in range") {
-            inForLoop = true;
-            identationForLoop = (Number(identationLevel));
-        }
-
-    }
-}
-
-function translateDroppedTestcase(testcase) {
-    var dragNDrop = document.getElementById("dragDropSpace");
-    var rowsInTable = dragNDrop.children;
-
-    var terminal = document.getElementById("terminal");
-    var translation = [];
-
-    var inForLoop = false;
-    var identationForLoop = 1;
-
-    var keywordDroppedCategory = 6;
-
-    for (var i = 0; i < testcase.length; i++) {
-        if (testcase[i].category === keywordDroppedCategory) {
-            translateDroppedKeyword(testcase[i].keywordJSON);
-            if ((i + 1) >= rowsInTable.length) {
-                return true;
-            } else {
-                continue;
-            }
-        }
-
-        var elementType = testcase[i].id;
-        var identationLevel = testcase[i].indentation;
-        var parameters = testcase[i].arguments;
-
-        if (inForLoop && Number(identationLevel) <= identationForLoop) {
-            inForLoop = false;
-        }
-
-        if (inForLoop) {
-            var translatedRow = handleIdentation(identationForLoop - 1);
-            translatedRow += "\\    ";
-            translatedRow += handleIdentation(identationLevel);
-        }
-        else {
-            var translatedRow = handleIdentation(identationLevel);
-        }
-
-        translatedRow += handleTranslationOf(testcase[i], parameters);
-        terminal.value += translatedRow;
-
-        if (testcase[i].name === "for in" || testcase[i].name === "for in range") {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
         }
