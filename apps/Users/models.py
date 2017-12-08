@@ -87,7 +87,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                     task.task_info = res.result.get('error')
                 else:
                     task.state = res.state
-                    task.task_info = res.result or ''
+                    task.task_info = res.result.get('link') or res.result or ''
+                    task.task_result = res.result.get('link') or''
                 task.save()
             user_tasks.append(task)
         return user_tasks
