@@ -711,6 +711,9 @@ def run_on_server(_data):
             """Run pybot only if the user choose -> Local Network connection"""
             run_script(filename, configs)
         get_result_files(client, filename, configs)
+        data_result['link'] = "{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
+                                                                          settings.MEDIA_URL,
+                                                                          filename)
     except Exception as error:
-        data_result['text'] = '{0}'.format(error)
+        data_result['error'] = '{0}'.format(error)
     return data_result
