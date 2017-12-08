@@ -751,10 +751,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             task = Task.objects.create(
                 name="Script -  {0}".format(_data.get('name')),
                 task_id=res.task_id,
-                state="run",
-                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
-                                                                        settings.MEDIA_URL,
-                                                                        _data.get('filename'))
+                state="RUNNING"
             )
             request.user.tasks.add(task)
             request.user.save()
