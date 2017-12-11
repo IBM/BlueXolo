@@ -192,6 +192,8 @@ class RunScriptView(LoginRequiredMixin, TemplateView):
                 obj = Keyword.objects.get(pk=kwargs.get('pk'))
             if type_script is 2:
                 obj = TestCase.objects.get(pk=kwargs.get('pk'))
+            if type_script is 3:
+                    obj = TestSuite.objects.get(pk=kwargs.get('pk'))
             context['obj'] = obj
             context['type'] = scripts[type_script - 1]
             context['type_id'] = type_script
