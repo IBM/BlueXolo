@@ -40,7 +40,10 @@
                     data: function (row) {
                         return "<div class='center'>" +
                             {#                        "<a class='btn' href='/testings/testsuites/edit/" + row[3] + "'><i class='material-icons'>edit</i></a>" +#}
+                            '     ' +
                             "<a class='btn red' href='/testings/testsuites/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            '     ' +
+                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/3/run'><i class='material-icons'>play_arrow</i></a>" +
                             "</div>";
                     }
                 }];
