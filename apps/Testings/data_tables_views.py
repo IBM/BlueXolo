@@ -83,10 +83,11 @@ class TestsuitesListJson(LoginRequiredMixin, BaseDatatableView):
         search = self.request.GET.get(u'search[value]', None)
         if search:
             qs = qs.filter(
-                Q(name_icontains=search) |
+                Q(name__istartswith=search) |
                 Q(description__icontains=search)
             )
         return qs
+
 
     def render_column(self, row, column):
         if column == 'created_at':

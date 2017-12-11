@@ -16,7 +16,7 @@ class Parameters(models.Model):
         (1, 'String'),
         (2, 'List'),
     )
-    name = models.CharField(_('name'), max_length=100, unique=True)
+    name = models.CharField(_('name'), max_length=100)
     help_text = models.CharField(_('help text'), max_length=255, blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
     value_type = models.IntegerField(_('value type'), choices=VALUES_TYPES_CHOICES, default=1)

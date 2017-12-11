@@ -165,12 +165,19 @@
                 var keywordCollection = document.getElementById('keyword_collection').value;
                 var keywordScript = document.getElementById("terminal").value;
 
+                var usedElements = {
+                    extra: usedExtras,
+                    keywords: usedKeywords,
+                    testcases: usedTestcases
+                }                 
+
                 var newKeyword = {
                     "name": keywordName,
                     "description": keywordDescription,
                     "script": keywordScript,
                     "values": JSON.stringify(keywordValues),
-                    "collection": keywordCollection
+                    "collection": keywordCollection,
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-keywords" object.pk %}",
@@ -403,7 +410,7 @@
                             drawMessage("Keyword send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
-                            console.log('error on run script: ' + err)
+                            drawMessage(err.responseJSON.text, 'red');
                         }
                     });
                 }, 3000);

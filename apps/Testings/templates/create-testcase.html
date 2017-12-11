@@ -118,6 +118,12 @@
                 var testcaseFunctions = $('#testecase_functions').material_chip('data');
                 var testcasePhase = document.getElementById("phases_list").value;
 
+                var usedElements = {
+                    extra: usedExtras,
+                    keywords: usedKeywords,
+                    testcases: usedTestcases
+                }              
+
                 var newTestcase = {
                     "name": testcaseName,
                     "description": testcaseDescription,
@@ -125,7 +131,8 @@
                     "script": testcaseScript,
                     "functions": JSON.stringify(testcaseFunctions),
                     "phase": testcasePhase,
-                    "values": JSON.stringify(testcaseValues)
+                    "values": JSON.stringify(testcaseValues),
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-testcases" %}",

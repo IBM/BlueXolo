@@ -32,6 +32,7 @@ class Keyword(models.Model):
     user = models.ForeignKey(User)
     script = models.TextField(_('script'))
     values = models.TextField(_('values'), blank=True)
+    extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
     collection = models.ManyToManyField(Collection, blank=True)
@@ -68,6 +69,7 @@ class TestCase(models.Model):
     functions = models.CharField(_('functions'), blank=True, max_length=100)
     phase = models.ForeignKey(Phase)
     values = models.TextField(_('values'), blank=True)
+    extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
 
@@ -87,6 +89,7 @@ class TestSuite(models.Model):
     user = models.ForeignKey(User)
     collection = models.ManyToManyField(Collection)
     values = models.TextField(_('values'), blank=True)
+    extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True, editable=False)
     modified = models.DateTimeField(_('modified'), auto_now=True)
 

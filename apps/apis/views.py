@@ -26,7 +26,7 @@ from .serializers import TemplateServerSerializer, KeywordsSerializer, \
     TaskSerializer, ArgumentsSerializer, ParametersSerializer, TestCaseSerializer, PhaseSerializer, TestSuiteSerializer
 from .api_pagination import CommandsPagination, KeywordPagination, TestCasePagination
 from .api_filters import SourceFilter, CollectionFilter, TaskFilter, ArgumentFilter, ParametersFilter, TestCaseFilter, \
-    PhaseFilter, TestSuiteFilter
+    PhaseFilter, TestSuiteFilter, ProfileFilter
 
 
 class KeywordAPIView(LoginRequiredMixin,
@@ -83,7 +83,7 @@ class ServerTemplateApiView(LoginRequiredMixin,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin,
                             generics.GenericAPIView):
-    queryset = TemplateServer.objects.all()
+    queryset = TemplateServer.objects.all().order_by('id')
     serializer_class = TemplateServerSerializer
 
     def get(self, request, *args, **kwargs):
@@ -119,6 +119,7 @@ class ServerProfileApiView(LoginRequiredMixin,
                            generics.GenericAPIView):
     queryset = ServerProfile.objects.all()
     serializer_class = ServerProfileSerializer
+    filter_class = ProfileFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -135,6 +136,7 @@ class ServerProfileDetailApiView(LoginRequiredMixin,
                                  generics.GenericAPIView):
     queryset = ServerProfile.objects.all()
     serializer_class = ServerProfileSerializer
+    filter_class = ProfileFilter
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -751,10 +753,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             task = Task.objects.create(
                 name="Script -  {0}".format(_data.get('name')),
                 task_id=res.task_id,
-                state="run",
-                task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
-                                                                        settings.MEDIA_URL,
-                                                                        _data.get('filename'))
+                state="RUNNING"
             )
             request.user.tasks.add(task)
             request.user.save()

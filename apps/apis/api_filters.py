@@ -1,7 +1,7 @@
 import django_filters
 
 from apps.Products.models import Source, Argument
-from apps.Servers.models import Parameters
+from apps.Servers.models import Parameters, ServerProfile
 from apps.Testings.models import Collection, TestCase, Keyword, Phase, TestSuite
 from apps.Users.models import Task
 
@@ -62,3 +62,9 @@ class TestSuiteFilter(django_filters.FilterSet):
     class Meta:
         model = TestSuite
         fields = ('name', 'id')
+
+
+class ProfileFilter(django_filters.FilterSet):
+    class Meta:
+        model = ServerProfile
+        fields = ('category', 'name', 'id',)

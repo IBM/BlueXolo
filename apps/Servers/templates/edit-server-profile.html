@@ -115,7 +115,7 @@
             params.forEach(function (v, k) {
                 var _listElement = document.createElement('li');
                 var _txtParam = document.createElement('span');
-                _txtParam.innerHTML = v.name.toUpperCase();
+                _txtParam.innerHTML = v.name;
                 _listElement.appendChild(_txtParam);
                 if (v.help_text) {
                     var _help_icon = document.createElement('i');
