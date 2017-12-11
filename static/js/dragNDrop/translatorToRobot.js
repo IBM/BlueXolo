@@ -95,7 +95,7 @@ function translateToRobot(callBackFunction) {
 
         if(droppedElements[i].category === commandProductCategory
             || droppedElements[i].category === externalLibrariesCategory){
-                var commandID = droppedElements[i].id;
+                var commandID = droppedElements[i].source.id;
                 addExtraToUsedArray(commandID);
         }
 
@@ -150,7 +150,7 @@ function getTranslationOfKeyword(keyword){
 
         if(keyword[i].category === commandProductCategory
             || keyword[i].category === externalLibrariesCategory){
-                var commandID = keyword[i].id;
+                var commandID = keyword[i].source.id;;
                 addExtraToUsedArray(commandID);
         }
 
@@ -210,7 +210,7 @@ function getTranslationOfTestcase(testcase){
 
             if(testcase[i].category === commandProductCategory
                 || testcase[i].category === externalLibrariesCategory){
-                    var commandID = testcase[i].id;
+                    var commandID = testcase[i].source.id;;
                     addExtraToUsedArray(commandID);
             }
 
@@ -256,10 +256,10 @@ function addKeywordToUsedArray( keywordID, keyword){
     usedKeywords.push(newElement);
 }
 
-function addExtraToUsedArray(commandID){
+function addExtraToUsedArray(sourceID){
 
     var newElement = {
-        id: commandID,
+        source: sourceID,
     };
 
     usedExtras.push(newElement);
@@ -439,6 +439,9 @@ function translateExternCommand(commandData){
 }
 
 function removeAllSpacesBeforeValue(originalString){
+    if(originalString === undefined){
+        return;
+    }
     while(originalString.charAt(0) === " "){
         originalString = originalString.substr(1);
     }
