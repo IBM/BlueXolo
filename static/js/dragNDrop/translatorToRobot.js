@@ -20,6 +20,52 @@ function checkIfExtraElementsExist(){
     }  
 }
 
+function addDocumentationSection(){
+    var translatedRow = "    [Documentation]    ";
+
+    var keywordDescriptionTextArea = document.getElementById("keyword_description");
+    var testcaseDescriptionTextArea = document.getElementById("testcase_description");
+    
+    if(keywordDescriptionTextArea !== null){
+        translatedRow += keywordDescriptionTextArea.value;
+        translatedRow += "\n    ";
+        return translatedRow;
+    }
+    else if(testcaseDescriptionTextArea !== null){
+        translatedRow += testcaseDescriptionTextArea.value;
+        translatedRow += "\n    ";
+        return translatedRow;
+    }
+    else{
+        return "";
+    }    
+}
+
+function addKeywordName(){
+    var keywordNameTextArea = document.getElementById("keyword_name");
+    var testcaseNameTextArea = document.getElementById("testcase_name");
+    
+    var translatedRow = "\n";
+
+    if(keywordNameTextArea !== null){
+        translatedRow += "*** Keywords ***";
+        translatedRow += "\n";
+        translatedRow += keywordNameTextArea.value;
+        translatedRow += "\n";
+        return translatedRow;
+    }
+    else if(testcaseNameTextArea !== null){
+        translatedRow += "*** Test Cases ***";
+        translatedRow += "\n";
+        translatedRow += testcaseNameTextArea.value;
+        translatedRow += "\n";
+        return translatedRow;
+    }    
+    else{
+        return "";
+    }
+}
+
 function translateToRobot(callBackFunction) {
 
     resetUsedArraysVariables();
@@ -31,6 +77,9 @@ function translateToRobot(callBackFunction) {
     terminal.value = "";
 
     var translation = [];
+
+    var variablesSection      = false;
+    var variablesSectionEnded = false;
 
     var inForLoop = false;
     var identationForLoop = 1;
@@ -46,7 +95,7 @@ function translateToRobot(callBackFunction) {
         if (droppedElements[i].category === keywordDroppedCategory) {
 
             var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIdentation(identationLevel, variablesSectionEnded);
 
             translatedRow += droppedElements[i].name;
             terminal.value += translatedRow;
@@ -61,7 +110,6 @@ function translateToRobot(callBackFunction) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }
-                testArrays();
                 return true;
             } else {
                 continue;
@@ -71,7 +119,7 @@ function translateToRobot(callBackFunction) {
         if (droppedElements[i].category === testcaseDroppedCategory) {
 
             var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIdentation(identationLevel, variablesSectionEnded);
 
             translatedRow += droppedElements[i].name;
             terminal.value += translatedRow;
@@ -86,7 +134,6 @@ function translateToRobot(callBackFunction) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }
-                testArrays();
                 return true;
             } else {
                 continue;
@@ -108,12 +155,26 @@ function translateToRobot(callBackFunction) {
         }
 
         if (inForLoop) {
-            var translatedRow = handleIdentation(identationForLoop - 1);
+            var translatedRow = handleIdentation(identationForLoop - 1, variablesSectionEnded);
             translatedRow += "\\    ";
-            translatedRow += handleIdentation(identationLevel);
+            translatedRow += handleIdentation(identationLevel, variablesSectionEnded);
         }
         else {
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIdentation(identationLevel, variablesSectionEnded);
+        }
+
+        if (droppedElements[i].name === "variable" && !variablesSection && !variablesSectionEnded) {
+            variablesSection = true;
+            translatedRow += "*** Variables ***";
+            translatedRow += "\n";
+        }
+
+        if (variablesSection && droppedElements[i].name !== "variable") {
+            variablesSection = false;
+            variablesSectionEnded = true;
+
+            translatedRow += addKeywordName();
+            translatedRow += addDocumentationSection();
         }
 
         translatedRow += handleTranslationOf(droppedElements[i], parameters);
@@ -129,9 +190,8 @@ function translateToRobot(callBackFunction) {
         if (droppedElements[i].name === "for in" || droppedElements[i].name === "for in range") {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
-        }
+        }        
     }
-    testArrays();
 }
 
 function getTranslationOfKeyword(keyword){
@@ -265,14 +325,6 @@ function addExtraToUsedArray(sourceID){
     usedExtras.push(newElement);
 }
 
-function testArrays(){
-    console.log("test used elements");
-    console.log(usedKeywords);
-    console.log(usedTestcases);
-    console.log(usedExtras);
-    console.log("------------");
-}
-
 function addTestcaseToUsedArray( testcaseID, testcase){
     var translation = getTranslationOfTestcase(testcase);
 
@@ -373,7 +425,12 @@ function translateDroppedTestcase(testcase) {
     }
 }
 
-function handleIdentation(identationLevel){
+function handleIdentation(identationLevel, variablesSectionEnded){
+
+    if(variablesSectionEnded){        
+        identationLevel += 1;
+    }
+
     var identation = '';
     for(var i=0; i<identationLevel-1; i++){
         identation += '\t';
@@ -481,7 +538,7 @@ function translateList(parameters){
 
     var translationOfTagsData = replaceAllOccurences("; ", "    ", tagValue);
 
-    var scriptLine = '@{'+tagName+'}=    ';
+    var scriptLine = '@{'+tagName+'}    ';
     scriptLine += translationOfTagsData;
 
     return scriptLine;
@@ -494,7 +551,7 @@ function translateVariable(parameters){
     variableName = removeAllSpacesBeforeValue(variableName);
     variableValue = removeAllSpacesBeforeValue(variableValue);
 
-    var scriptLine =  "    " + '${'+variableName+'}= ' + variableValue;
+    var scriptLine =  '${'+variableName+'} ' + variableValue;
     return scriptLine;
 }
 
