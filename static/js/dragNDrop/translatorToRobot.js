@@ -21,19 +21,19 @@ function checkIfExtraElementsExist(){
 }
 
 function addDocumentationSection(){
-    var translatedRow = "    [Documentation]    ";
+    var translatedRow = "\t[Documentation]\t";
 
     var keywordDescriptionTextArea = document.getElementById("keyword_description");
     var testcaseDescriptionTextArea = document.getElementById("testcase_description");
     
     if(keywordDescriptionTextArea !== null){
         translatedRow += keywordDescriptionTextArea.value;
-        translatedRow += "\n    ";
+        translatedRow += "\n\t";
         return translatedRow;
     }
     else if(testcaseDescriptionTextArea !== null){
         translatedRow += testcaseDescriptionTextArea.value;
-        translatedRow += "\n    ";
+        translatedRow += "\n\t";
         return translatedRow;
     }
     else{
@@ -435,8 +435,10 @@ function translateDroppedTestcase(testcase) {
 function handleIdentation(identationLevel, variablesSectionEnded){
 
     if(variablesSectionEnded){        
-        identationLevel += 1;
+        identationLevel = parseInt(identationLevel) + 1;
     }
+
+    console.log(identationLevel);
 
     var identation = '';
     for(var i=0; i<identationLevel-1; i++){
@@ -558,7 +560,7 @@ function translateVariable(parameters){
     variableName = removeAllSpacesBeforeValue(variableName);
     variableValue = removeAllSpacesBeforeValue(variableValue);
 
-    var scriptLine =  '${'+variableName+'} ' + variableValue;
+    var scriptLine =  '${'+variableName+'}    ' + variableValue;
     return scriptLine;
 }
 
