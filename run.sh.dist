@@ -4,7 +4,7 @@
 echo 'Welcome back Mr. Anderson'
 echo "Ruuuun! :-D "
 ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
-nohup celery -A CTAFramework worker -l info &
+nohup celery -A CTAFramework worker -l info  --concurrency=10 &
 echo "Then run python"
 ps -ef | grep 'runserver 0.0.0.0:8000' | grep -v grep | awk '{print $2}' | xargs kill
 ./manage.py compress &

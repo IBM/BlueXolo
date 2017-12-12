@@ -21,19 +21,19 @@ function checkIfExtraElementsExist(){
 }
 
 function addDocumentationSection(){
-    var translatedRow = "    [Documentation]    ";
+    var translatedRow = "\t[Documentation]\t";
 
     var keywordDescriptionTextArea = document.getElementById("keyword_description");
     var testcaseDescriptionTextArea = document.getElementById("testcase_description");
     
     if(keywordDescriptionTextArea !== null){
         translatedRow += keywordDescriptionTextArea.value;
-        translatedRow += "\n    ";
+        translatedRow += "\n\t";
         return translatedRow;
     }
     else if(testcaseDescriptionTextArea !== null){
         translatedRow += testcaseDescriptionTextArea.value;
-        translatedRow += "\n    ";
+        translatedRow += "\n\t";
         return translatedRow;
     }
     else{
@@ -81,6 +81,9 @@ function translateToRobot(callBackFunction) {
     var variablesSection      = false;
     var variablesSectionEnded = false;
 
+    var keywordSection        = false;
+    var testcaseSection       = false;
+
     var inForLoop = false;
     var identationForLoop = 1;
 
@@ -94,12 +97,23 @@ function translateToRobot(callBackFunction) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
 
-            var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel, variablesSectionEnded);
+            var translatedRow = "\n";
 
-            translatedRow += droppedElements[i].name;
+            if(!testcaseSection){
+                translatedRow += "*** Keywords ***";
+                translatedRow += "\n";
+                translatedRow += droppedElements[i].name;
+                translatedRow += "\n";
+        
+                variablesSectionEnded = true;        
+                testcaseSection = true;
+            }
+            else{                
+                translatedRow += droppedElements[i].name;
+                translatedRow += "\n";
+            }
+
             terminal.value += translatedRow;
-            terminal.value += "\n";
             
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i].keywordJSON;
@@ -118,12 +132,23 @@ function translateToRobot(callBackFunction) {
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
 
-            var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel, variablesSectionEnded);
+            var translatedRow = "\n";
 
-            translatedRow += droppedElements[i].name;
+            if(!keywordSection){
+                translatedRow += "*** Test Cases ***";
+                translatedRow += "\n";
+                translatedRow += droppedElements[i].name;
+                translatedRow += "\n";
+        
+                variablesSectionEnded = true;
+                keywordSection = true;
+            }
+            else{                
+                translatedRow += droppedElements[i].name;
+                translatedRow += "\n";
+            }
+
             terminal.value += translatedRow;
-            terminal.value += "\n";
 
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i].keywordJSON;            
@@ -155,12 +180,12 @@ function translateToRobot(callBackFunction) {
         }
 
         if (inForLoop) {
-            var translatedRow = handleIdentation(identationForLoop - 1, variablesSectionEnded);
+            var translatedRow = handleIndentation(identationForLoop - 1, variablesSectionEnded);
             translatedRow += "\\    ";
-            translatedRow += handleIdentation(identationLevel, variablesSectionEnded);
+            translatedRow += handleIndentation(identationLevel, variablesSectionEnded);
         }
         else {
-            var translatedRow = handleIdentation(identationLevel, variablesSectionEnded);
+            var translatedRow = handleIndentation(identationLevel, variablesSectionEnded);
         }
 
         if (droppedElements[i].name === "variable" && !variablesSection && !variablesSectionEnded) {
@@ -226,12 +251,12 @@ function getTranslationOfKeyword(keyword){
         }
 
         if (inForLoop) {
-            var translatedRow = handleIdentation(identationForLoop - 1);
+            var translatedRow = handleIndentation(identationForLoop - 1);
             translatedRow += "\\    ";
-            translatedRow += handleIdentation(identationLevel);
+            translatedRow += handleIndentation(identationLevel);
         }
         else {
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIndentation(identationLevel);
         }
 
         translatedRow += handleTranslationOf(keyword[i], parameters);
@@ -267,7 +292,7 @@ function getTranslationOfTestcase(testcase){
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed)
 
             var identationLevel = droppedElements[i].indentation;
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIndentation(identationLevel);
 
             translatedRow += testcase[i].name;
             translation += translatedRow;
@@ -290,12 +315,12 @@ function getTranslationOfTestcase(testcase){
             }
 
             if (inForLoop) {
-                var translatedRow = handleIdentation(identationForLoop - 1);
+                var translatedRow = handleIndentation(identationForLoop - 1);
                 translatedRow += "\\    ";
-                translatedRow += handleIdentation(identationLevel);
+                translatedRow += handleIndentation(identationLevel);
             }
             else {
-                var translatedRow = handleIdentation(identationLevel);
+                var translatedRow = handleIndentation(identationLevel);
             }
 
             translatedRow += handleTranslationOf(testcase[i], parameters);
@@ -363,12 +388,12 @@ function translateDroppedKeyword(keyword) {
         }
 
         if (inForLoop) {
-            var translatedRow = handleIdentation(identationForLoop - 1);
+            var translatedRow = handleIndentation(identationForLoop - 1);
             translatedRow += "\\    ";
-            translatedRow += handleIdentation(identationLevel);
+            translatedRow += handleIndentation(identationLevel);
         }
         else {
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIndentation(identationLevel);
         }
 
         translatedRow += handleTranslationOf(keyword[i], parameters);
@@ -413,12 +438,12 @@ function translateDroppedTestcase(testcase) {
         }
 
         if (inForLoop) {
-            var translatedRow = handleIdentation(identationForLoop - 1);
+            var translatedRow = handleIndentation(identationForLoop - 1);
             translatedRow += "\\    ";
-            translatedRow += handleIdentation(identationLevel);
+            translatedRow += handleIndentation(identationLevel);
         }
         else {
-            var translatedRow = handleIdentation(identationLevel);
+            var translatedRow = handleIndentation(identationLevel);
         }
 
         translatedRow += handleTranslationOf(testcase[i], parameters);
@@ -432,10 +457,10 @@ function translateDroppedTestcase(testcase) {
     }
 }
 
-function handleIdentation(identationLevel, variablesSectionEnded){
+function handleIndentation(identationLevel, variablesSectionEnded){
 
     if(variablesSectionEnded){        
-        identationLevel += 1;
+        identationLevel = parseInt(identationLevel) + 1;
     }
 
     var identation = '';
@@ -558,7 +583,7 @@ function translateVariable(parameters){
     variableName = removeAllSpacesBeforeValue(variableName);
     variableValue = removeAllSpacesBeforeValue(variableValue);
 
-    var scriptLine =  '${'+variableName+'} ' + variableValue;
+    var scriptLine =  '${'+variableName+'}    ' + variableValue;
     return scriptLine;
 }
 
