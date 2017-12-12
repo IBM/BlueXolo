@@ -82,13 +82,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         for task in self.tasks.all().order_by('-created_at')[:6]:
             res = AsyncResult(task.task_id)
             if res.ready() and res.state != task.state:
-                if res.result.get('error'):
-                    task.state = 'FAILURE'
-                    task.task_info = res.result.get('error')
-                else:
+                if task.category is 1:
                     task.state = res.state
-                    task.task_info = res.result.get('link') or res.result or ''
-                    task.task_result = res.result.get('link') or''
+                    task.task_info = res.result or ''
+                if task.category is 2:
+                    if res.result.get('error'):
+                        task.state = 'FAILURE'
+                        task.task_info = res.result.get('error')
+                    else:
+                        task.state = res.state
+                        task.task_info = res.result.get('link') or res.result or ''
+                        task.task_result = res.result.get('link') or ''
                 task.save()
             user_tasks.append(task)
         return user_tasks

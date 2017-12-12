@@ -749,15 +749,15 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 _data['filename'] = generate_filename(tc.name)
                 _data['name'] = tc.name
             """Run script"""
-            res = run_on_server(_data)
-            #res = run_on_server.delay(_data)
-            #task = Task.objects.create(
-            #    name="Script -  {0}".format(_data.get('name')),
-            #    task_id=res.task_id,
-            #    state="RUNNING"
-            #)
-            #request.user.tasks.add(task)
-            #request.user.save()
+            #res = run_on_server(_data)
+            res = run_on_server.delay(_data)
+            task = Task.objects.create(
+                name="Script -  {0}".format(_data.get('name')),
+                task_id=res.task_id,
+                state="RUNNING"
+            )
+            request.user.tasks.add(task)
+            request.user.save()
         except Exception as error:
             data_result['text'] = '{0}'.format(error)
         return Response(status=_status, data=data_result)

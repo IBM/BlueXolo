@@ -187,7 +187,7 @@ def send_files(filename, file_type, config, client):
         for directory in dirs:
             res = check_dirs_destiny("{0}/{1}".format(path, directory), client)
             if not res:
-                raise Exception("Can't create dir")
+                raise Exception("Destination directory does not exist, you don't have write permission.")
         """SCPCLient takes a paramiko transport as its only argument"""
         scp = SCPClient(client.get_transport())
         scp.put(filename, remote_path='{0}/{1}'.format(path, dirs[file_type]))
