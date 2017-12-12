@@ -176,6 +176,13 @@ function translateToRobot(callBackFunction) {
             translatedRow += addKeywordName();
             translatedRow += addDocumentationSection();
         }
+        else if (!variablesSection && !variablesSectionEnded && droppedElements[i].name !== "variable") {
+            variablesSection = false;
+            variablesSectionEnded = true;
+
+            translatedRow += addKeywordName();
+            translatedRow += addDocumentationSection();
+        }
 
         translatedRow += handleTranslationOf(droppedElements[i], parameters);
         terminal.value += translatedRow;
