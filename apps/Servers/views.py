@@ -145,7 +145,8 @@ def get_connection(config):
     """Create a paramiko connection for ssh communication"""
     client = paramiko.SSHClient()
     client.load_system_host_keys()
-    client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'))
+    _port = int(config.get('port')) or 22
+    client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'), port=_port)
     return client
 
 
@@ -156,17 +157,21 @@ def generate_filename(_script):
     return '{0}_{1}'.format(name, random_string)
 
 
-def check_dirs_destiny(path, client):
+def check_dirs_destiny(path, client, attempt=None):
     """First need to know if the dirs schema exist"""
     exist = True
+    _attempt = attempt or 0
     try:
         _, stdout, _ = client.exec_command(
             "if test -d '{0}'; then echo '1'; else  echo '0'; fi".format(path))
         pre_res = stdout.read()
         res = pre_res.decode('ascii').replace("\n", "")
-        if res == '0':
-            _, stdout, _ = client.exec_command("mkdir {0}".format(path))
-            check_dirs_destiny(path, client)
+        if res == '0' and _attempt < 1:
+            stdin, stdout, stderr = client.exec_command("mkdir {0}".format(path))
+            _attemp += 1
+            exist = check_dirs_destiny(path, client, _attemp)
+        else:
+            raise Exception()
     except Exception as error:
         exist = False
     return exist
@@ -180,7 +185,9 @@ def send_files(filename, file_type, config, client):
         dirs = ['Keywords', 'Libraries', 'Profiles', 'Resources', 'Templates', 'TestScripts', 'Tools', 'TestSuites',
                 'Results']
         for directory in dirs:
-            check_dirs_destiny("{0}/{1}".format(path, directory), client)
+            res = check_dirs_destiny("{0}/{1}".format(path, directory), client)
+            if not res:
+                raise Exception("Can't create dir")
         """SCPCLient takes a paramiko transport as its only argument"""
         scp = SCPClient(client.get_transport())
         scp.put(filename, remote_path='{0}/{1}'.format(path, dirs[file_type]))
@@ -249,7 +256,9 @@ def generate_file(obj, type_script, params, filename, client):
             kwd_file.close()
 
             """need to know if the dirs schema exist and then send the files"""
-            send_files(kwd_file.name, 0, config, client)
+            _data = send_files(kwd_file.name, 0, config, client)
+            if _data['text']:
+                raise Exception(_data['text'])
 
             """Then Test Case file"""
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -301,7 +310,7 @@ def generate_file(obj, type_script, params, filename, client):
         send_files(profile, 2, config, client)
         _data = 'Created'
     except Exception as error:
-        _data = error
+        _data['error'] = error
     return _data
 
 
@@ -350,7 +359,9 @@ def run_on_server(_data):
             """Execute the kwd"""
         elif type_script is 2:
             obj = TestCase.objects.get(id=_data.get('obj_id'))
-        generate_file(obj, type_script, params, filename, client)
+        _data = generate_file(obj, type_script, params, filename, client)
+        if _data['error']:
+            raise Exception(_data['error'])
         if profile_category is 2:
             """Run pybot only if the user choose -> Local Network connection"""
             run_script(filename, configs)
