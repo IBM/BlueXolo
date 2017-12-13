@@ -84,6 +84,9 @@ function translateToRobot(callBackFunction) {
     var keywordSection        = false;
     var testcaseSection       = false;
 
+    var alreadyAdded = false;
+    var ownDescription = false;
+
     var inForLoop = false;
     var identationForLoop = 1;
 
@@ -192,6 +195,10 @@ function translateToRobot(callBackFunction) {
             variablesSection = true;
             translatedRow += "*** Variables ***";
             translatedRow += "\n";
+
+            translatedRow += handleTranslationOf(droppedElements[i], parameters);
+            terminal.value += translatedRow;
+            alreadyAdded = true;
         }
 
         if (variablesSection && droppedElements[i].name !== "variable") {
@@ -200,17 +207,33 @@ function translateToRobot(callBackFunction) {
 
             translatedRow += addKeywordName();
             translatedRow += addDocumentationSection();
+            ownDescription = true;
         }
         else if (!variablesSection && !variablesSectionEnded && droppedElements[i].name !== "variable") {
+            variablesSectionEnded = true;
+
+            translatedRow += addKeywordName();
+            translatedRow += addDocumentationSection();
+            ownDescription = true;
+        }
+        else if (!ownDescription) {
             variablesSection = false;
             variablesSectionEnded = true;
 
             translatedRow += addKeywordName();
             translatedRow += addDocumentationSection();
+
+            ownDescription = true;
         }
 
-        translatedRow += handleTranslationOf(droppedElements[i], parameters);
-        terminal.value += translatedRow;
+
+        if(!alreadyAdded){
+            translatedRow += handleTranslationOf(droppedElements[i], parameters);
+            terminal.value += translatedRow;
+        }else{
+            alreadyAdded = false;
+        }
+
 
         if ((i + 1) >= rowsInTable.length) {
             if (callBackFunction !== undefined) {
