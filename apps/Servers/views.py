@@ -350,18 +350,10 @@ def generate_file(obj, type_script, params, filename, client):
             """ Dummy Test Case file"""
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
                                  "w")
-            dummy_tc_file.write("*** Test Cases ***")
-            dummy_tc_file.write("\n")
-            dummy_tc_file.write('Test {}'.format(obj.name))
-            dummy_tc_file.write("\n")
-            dummy_tc_file.write("\t")
-            dummy_tc_file.write("[Tags]  TestKeyword")
-            dummy_tc_file.write("\n")
-            dummy_tc_file.write("\t")
-            dummy_tc_file.write(obj.name)
-            dummy_tc_file.write("\n")
-            if obj.description:
-                dummy_tc_file.write("\t[Documentation]\t{0}".format(obj.description))
+            dummy_tc_file.write("*** Settings ***\n")
+            libraries = Source.objects.filter(category=5, depends__category=4)
+            for lib in libraries:
+                dummy_tc_file.write("Library\t\t{0}\n".format(lib.name))
             dummy_tc_file.write("\n")
             dummy_tc_file.write(obj.script)
             dummy_tc_file.close()
@@ -411,8 +403,8 @@ def run_on_server(_data):
                 """is global variables"""
                 params['global_variables'] = json.loads(profile.config)
             elif profile.category in [2, 3]:
-                profile_category = profile.category
                 """is local connection or jenkins"""
+                profile_category = profile.category
                 params['config'] = get_config_object(json.loads(profile.config))
         configs = params.get('config')
         filename = _data.get('filename')
