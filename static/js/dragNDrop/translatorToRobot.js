@@ -11,6 +11,8 @@ var keywordSectionEnded   = false;
 var testcaseSection       = false;
 var testcaseSectionEnded  = false;
 
+var addedOwnDescription   = false;
+
 function resetUsedArraysVariables(){
     usedExtras = [];
     usedKeywords = [];
@@ -26,6 +28,8 @@ function resetSections(){
 
     testcaseSection       = false;
     testcaseSectionEnded  = false;
+
+    addedOwnDescription   = false;
 }
 
 function checkIfExtraElementsExist(){
@@ -153,9 +157,7 @@ function handleKeywordSection(keywordName){
     var translatedRow = "\n";
 
     if(!keywordSection){
-        translatedRow += "*** Keywords ***\n";        
-        //translatedRow += addKeywordName();
-        //translatedRow += addDocumentationSection();
+        translatedRow += "*** Keywords ***\n";
         keywordSection = true;
     }
     
@@ -308,12 +310,43 @@ function translateToRobot(callBackFunction) {
             variablesSectionEnded = true;        
         }
 
-        /*
         if(!addedOwnDescription){
 
+            //NECESITO crear variable addedOwnDescription
+            //se hace true cuando se agrega sus elementos (su nombre y su descripción)
+            
+            if(!keywordSectionEnded && isKeyword()){
+                //never was added *** Keyword ***
+                translatedRow = "\n";
+                translatedRow += "*** Keyword ***\n";
+
+                translatedRow += addKeywordName();
+                translatedRow += "\n";
+                translatedRow += addDocumentationSection();
+            }
+            else if(keywordSectionEnded && isKeyword()){
+                translatedRow = "\n";
+                translatedRow += addKeywordName();
+                translatedRow += addDocumentationSection();
+            }
+            
+            if(!testcaseSectionEnded && isTestcase()){
+                //never was added *** Testcase ***
+                translatedRow = "\n";
+                translatedRow += "*** Test Cases ***\n";
+
+                translatedRow += addKeywordName();
+                translatedRow += "\n";
+                translatedRow += addDocumentationSection();
+            }            
+            else if(testcaseSectionEnded && isTestcase()){
+                translatedRow = "\n";
+                translatedRow += addKeywordName();
+                translatedRow += addDocumentationSection();
+            }
+
+            addedOwnDescription = true;
         }
-        */
-        //translatedRow += addDocumentationSection();
 
         translatedRow += handleTranslationOf(droppedElements[i], parameters);
         terminal.value += translatedRow;
