@@ -69,12 +69,12 @@ function addDocumentationSection(){
     
     if(keywordDescriptionTextArea !== null){
         translatedRow += keywordDescriptionTextArea.value;
-        translatedRow += "\n\t";
+        translatedRow += "\n";
         return translatedRow;
     }
     else if(testcaseDescriptionTextArea !== null){
         translatedRow += testcaseDescriptionTextArea.value;
-        translatedRow += "\n\t";
+        translatedRow += "\n";
         return translatedRow;
     }
     else{
@@ -146,7 +146,6 @@ function handleSections(startedSection){
 }
 
 function handleKeywordSection(keywordName){
-    console.log("Kappa");
     if(keywordSectionEnded){
         return;
     }
@@ -230,6 +229,8 @@ function translateToRobot(callBackFunction) {
     var keywordDroppedCategory = 6;
     var testcaseDroppedCategory = 7;
 
+    var alreadyAdded = false;
+
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
@@ -302,7 +303,14 @@ function translateToRobot(callBackFunction) {
 
         // Handles variables
         if (droppedElements[i].name === "variable") {
-            translatedRow += handleVariablesSection();
+            //translatedRow += handleVariablesSection();
+            terminal.value += "\n";
+            terminal.value += handleVariablesSection();
+
+            translatedRow = handleTranslationOf(droppedElements[i], parameters);
+            terminal.value += translatedRow;
+
+            alreadyAdded = true;
         }
 
         if (variablesSection && droppedElements[i].name !== "variable") {
@@ -315,26 +323,31 @@ function translateToRobot(callBackFunction) {
             if(isKeyword()){
                 //never was added *** Keyword ***            
                 var keywordName = addKeywordName();
-                var translatedRow = handleKeywordSection(keywordName);
+                var keywordDescription = handleKeywordSection(keywordName);
 
-                translatedRow += addDocumentationSection();
-                terminal.value += translatedRow;
+                keywordDescription += addDocumentationSection();                
+                terminal.value += keywordDescription;
             }
             
             if(isTestcase()){
                 //never was added *** Testcase ***
-                 var keywordName = addKeywordName();
-                var translatedRow = handleKeywordSection(keywordName);
+                var keywordName = addKeywordName();
+                var keywordDescription = handleTestcaseSection(keywordName);
 
-                translatedRow += addDocumentationSection();
-                terminal.value += translatedRow;
+                keywordDescription += addDocumentationSection();
+                terminal.value += keywordDescription;
             }
 
             addedOwnDescription = true;
         }
 
-        translatedRow += handleTranslationOf(droppedElements[i], parameters);
-        terminal.value += translatedRow;
+        if(!alreadyAdded){
+            translatedRow += handleTranslationOf(droppedElements[i], parameters);
+            terminal.value += translatedRow;            
+        }
+
+        alreadyAdded = false;
+
 
         //
         if ((i + 1) >= rowsInTable.length) {
