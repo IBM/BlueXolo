@@ -49,11 +49,11 @@ function addKeywordName(){
     var testcaseNameTextArea = document.getElementById("testcase_name");
 
     if(keywordNameTextArea !== null){
-        translatedRow += keywordNameTextArea.value;
+        translatedRow = keywordNameTextArea.value;
         return translatedRow;
     }
     else if(testcaseNameTextArea !== null){
-        translatedRow += testcaseNameTextArea.value;
+        translatedRow = testcaseNameTextArea.value;
         return translatedRow;
     }
     else{
@@ -146,7 +146,7 @@ function handleSections(startedSection){
 }
 
 function handleKeywordSection(keywordName){
-
+    console.log("Kappa");
     if(keywordSectionEnded){
         return;
     }
@@ -311,38 +311,23 @@ function translateToRobot(callBackFunction) {
         }
 
         if(!addedOwnDescription){
-
-            //NECESITO crear variable addedOwnDescription
-            //se hace true cuando se agrega sus elementos (su nombre y su descripción)
             
-            if(!keywordSectionEnded && isKeyword()){
-                //never was added *** Keyword ***
-                translatedRow = "\n";
-                translatedRow += "*** Keyword ***\n";
+            if(isKeyword()){
+                //never was added *** Keyword ***            
+                var keywordName = addKeywordName();
+                var translatedRow = handleKeywordSection(keywordName);
 
-                translatedRow += addKeywordName();
-                translatedRow += "\n";
                 translatedRow += addDocumentationSection();
-            }
-            else if(keywordSectionEnded && isKeyword()){
-                translatedRow = "\n";
-                translatedRow += addKeywordName();
-                translatedRow += addDocumentationSection();
+                terminal.value += translatedRow;
             }
             
-            if(!testcaseSectionEnded && isTestcase()){
+            if(isTestcase()){
                 //never was added *** Testcase ***
-                translatedRow = "\n";
-                translatedRow += "*** Test Cases ***\n";
+                 var keywordName = addKeywordName();
+                var translatedRow = handleKeywordSection(keywordName);
 
-                translatedRow += addKeywordName();
-                translatedRow += "\n";
                 translatedRow += addDocumentationSection();
-            }            
-            else if(testcaseSectionEnded && isTestcase()){
-                translatedRow = "\n";
-                translatedRow += addKeywordName();
-                translatedRow += addDocumentationSection();
+                terminal.value += translatedRow;
             }
 
             addedOwnDescription = true;
