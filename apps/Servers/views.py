@@ -238,11 +238,11 @@ def generate_profile(params, filename):
 
 def generate_resource_files(extra_import, type_Script):
     list_resources = []
-    if type_Script is 1:
+    result = dict()
+    if type_Script in [1, 2, 3]:
         kwds = extra_import.get('keywords')
         if kwds:
             for k in kwds:
-                result = dict()
                 obj = Keyword.objects.get(pk=k.get('id'))
                 filename = generate_filename(obj.name)
                 kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -260,6 +260,13 @@ def generate_resource_files(extra_import, type_Script):
                 result['filename'] = filename
                 result['resource'] = kwd_file.name
                 list_resources.append(result)
+    elif type_Script is 3:
+        testcases = extra_import.get('testcases')
+        if testcases:
+            for tc in testcases:
+                obj = TestCase.objects.get(pk=tc.get('id'))
+                result = dict()
+
     return list_resources
 
 
@@ -321,7 +328,7 @@ def generate_file(obj, type_script, params, filename, client):
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
-                    tc_file.write("Library\t{0}\n".format(lib.name))
+                    tc_file.write("Library\t{0}\n".format(lib))
                 tc_file.write("\n")
             tc_file.write("*** Test Cases ***")
             tc_file.write("\n")
