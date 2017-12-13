@@ -82,7 +82,10 @@ function translateToRobot(callBackFunction) {
     var variablesSectionEnded = false;
 
     var keywordSection        = false;
+    var keywordSectionEnded   = false;
+
     var testcaseSection       = false;
+    var testcaseSectionEnded  = false;
 
     var alreadyAdded = false;
     var ownDescription = false;
@@ -102,14 +105,14 @@ function translateToRobot(callBackFunction) {
 
             var translatedRow = "\n";
 
-            if(!testcaseSection){
+            if(!keywordSectionEnded){
                 translatedRow += "*** Keywords ***";
                 translatedRow += "\n";
                 translatedRow += droppedElements[i].name;
                 translatedRow += "\n";
         
-                variablesSectionEnded = true;        
-                testcaseSection = true;
+                variablesSectionEnded = true;
+                keywordSectionEnded = true;
             }
             else{                
                 translatedRow += droppedElements[i].name;
@@ -137,14 +140,14 @@ function translateToRobot(callBackFunction) {
 
             var translatedRow = "\n";
 
-            if(!keywordSection){
+            if(!testcaseSectionEnded){
                 translatedRow += "*** Test Cases ***";
                 translatedRow += "\n";
                 translatedRow += droppedElements[i].name;
                 translatedRow += "\n";
         
                 variablesSectionEnded = true;
-                keywordSection = true;
+                testcaseSectionEnded = true;
             }
             else{                
                 translatedRow += droppedElements[i].name;
