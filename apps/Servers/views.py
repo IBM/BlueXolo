@@ -145,7 +145,9 @@ def get_connection(config):
     """Create a paramiko connection for ssh communication"""
     client = paramiko.SSHClient()
     client.load_system_host_keys()
-    _port = int(config.get('port')) or 22
+    _port = 22
+    if config.get('port'):
+        _port = int(config.get('port'))
     client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'), port=_port)
     return client
 
@@ -157,21 +159,15 @@ def generate_filename(_script):
     return '{0}_{1}'.format(name, random_string)
 
 
-def check_dirs_destiny(path, client, attempt=None):
+def check_dirs_destiny(path, client):
     """First need to know if the dirs schema exist"""
-    exist = True
-    _attempt = attempt or 0
     try:
-        _, stdout, _ = client.exec_command(
-            "if test -d '{0}'; then echo '1'; else  echo '0'; fi".format(path))
-        pre_res = stdout.read()
-        res = pre_res.decode('ascii').replace("\n", "")
-        if res == '0' and _attempt < 1:
-            stdin, stdout, stderr = client.exec_command("mkdir {0}".format(path))
-            _attemp += 1
-            exist = check_dirs_destiny(path, client, _attemp)
-        else:
-            raise Exception()
+        exist = True
+        sftp = client.open_sftp()
+        try:
+            sftp.listdir(path)
+        except IOError:
+            sftp.mkdir(path)
     except Exception as error:
         exist = False
     return exist
@@ -185,7 +181,8 @@ def send_files(filename, file_type, config, client):
         dirs = ['Keywords', 'Libraries', 'Profiles', 'Resources', 'Templates', 'TestScripts', 'Tools', 'TestSuites',
                 'Results']
         for directory in dirs:
-            res = check_dirs_destiny("{0}/{1}".format(path, directory), client)
+            new_path = "{0}/{1}".format(path, directory)
+            res = check_dirs_destiny(new_path, client)
             if not res:
                 raise Exception("Destination directory does not exist, you don't have write permission.")
         """SCPCLient takes a paramiko transport as its only argument"""
@@ -217,11 +214,10 @@ def run_script(filename, config):
     return _data
 
 
-def get_libraries():
-    libraries = Source.objects.filter(
-        Q(category=5) &
-        Q(depends__category=4)
-    )
+def get_libraries(obj):
+    libraries = []
+    for element in obj:
+        libraries.append(Source.objects.get(pk=element.get('source')).name)
     return libraries
 
 
@@ -236,29 +232,27 @@ def generate_profile(params, filename):
     return var_file.name
 
 
+def generate_resource_files(obj):
+    return True
+
+
 def generate_file(obj, type_script, params, filename, client):
     _data = ''
     try:
         config = params.get('config')
-        libraries = get_libraries()
+        extra_elements = json.loads(obj.extra_imports).get('extra')
+        libraries = get_libraries(extra_elements)
         """Generate robot files"""
         if type_script is 1:
             """First create the keyword file"""
             kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-            kwd_file.write("*** Keywords ***")
-            kwd_file.write("\n")
-            kwd_file.write(obj.name)
-            kwd_file.write("\n")
-            kwd_file.write("\t")
-            full_script = obj.script.splitlines(True)
-            for line in full_script:
-                kwd_file.write("\t{0}".format(line))
+            kwd_file.write(obj.script)
             kwd_file.close()
 
             """need to know if the dirs schema exist and then send the files"""
             _data = send_files(kwd_file.name, 0, config, client)
-            if _data['text']:
-                raise Exception(_data['text'])
+            if _data.get('text'):
+                raise Exception(_data.get('text'))
 
             """Then Test Case file"""
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -267,7 +261,7 @@ def generate_file(obj, type_script, params, filename, client):
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
-                    dummy_tc_file.write("Library\t{0}\n".format(lib.name))
+                    dummy_tc_file.write("Library\t{0}\n".format(lib))
                 dummy_tc_file.write("\n")
             dummy_tc_file.write("*** Test Cases ***")
             dummy_tc_file.write("\n")
@@ -308,7 +302,7 @@ def generate_file(obj, type_script, params, filename, client):
         """Need a variables Profile File"""
         profile = generate_profile(params, filename)
         send_files(profile, 2, config, client)
-        _data = 'Created'
+        _data['text'] = 'Created'
     except Exception as error:
         _data['error'] = error
     return _data
@@ -360,7 +354,7 @@ def run_on_server(_data):
         elif type_script is 2:
             obj = TestCase.objects.get(id=_data.get('obj_id'))
         _data = generate_file(obj, type_script, params, filename, client)
-        if _data['error']:
+        if _data.get('error'):
             raise Exception(_data['error'])
         if profile_category is 2:
             """Run pybot only if the user choose -> Local Network connection"""
