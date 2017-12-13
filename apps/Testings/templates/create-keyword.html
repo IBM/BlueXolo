@@ -147,8 +147,8 @@
                     extra: usedExtras,
                     keywords: usedKeywords,
                     testcases: usedTestcases
-                }
-                                
+                };
+
                 var newKeyword = {
                     "name": keywordName,
                     "description": keywordDescription,
@@ -162,8 +162,9 @@
                     type: 'POST',
                     data: newKeyword,
                     success: function (data) {
-                        drawMessage("Keyword Created", 'green');
-                        $('#modalPreview').modal('close');
+                        var $toastContent = $('<span>Keyword Created, Click button to edit </span>').add($(
+                            '<a href="/testings/keywords/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'green');
                         new_keyword = data;
                     },
                     error: function (error) {

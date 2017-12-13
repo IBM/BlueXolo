@@ -139,8 +139,9 @@
                     type: 'POST',
                     data: newTestcase,
                     success: function (data) {
-                        drawMessage("TestCase Created", "green");
-                        $('#modalPreview').modal('close');
+                          var $toastContent = $('<span>Test Case Created, Click button to edit </span>').add($(
+                            '<a href="/testings/testcases/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'green');
                         new_testcase = data;
                     },
                     error: function (err) {
