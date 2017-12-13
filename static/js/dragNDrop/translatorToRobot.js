@@ -145,7 +145,7 @@ function handleSections(startedSection){
     }    
 }
 
-function handleKeywordSection(keywordName){
+function handleKeywordSection(keywordName, customKeyword){
     if(keywordSectionEnded){
         return;
     }
@@ -160,7 +160,13 @@ function handleKeywordSection(keywordName){
         keywordSection = true;
     }
     
-    translatedRow += keywordName+"\n";
+    if(customKeyword){
+        translatedRow += "\t"+keywordName+"\n";    
+    }
+    else{
+        translatedRow += keywordName+"\n";    
+    }
+    
 
     return translatedRow;
 }
@@ -236,7 +242,8 @@ function translateToRobot(callBackFunction) {
         if (droppedElements[i].category === keywordDroppedCategory) {
 
             var keywordName = droppedElements[i].name;
-            var translatedRow = handleKeywordSection(keywordName);
+            var customKeyword = true;
+            var translatedRow = handleKeywordSection(keywordName, customKeyword);
 
             terminal.value += translatedRow;
             
@@ -323,10 +330,12 @@ function translateToRobot(callBackFunction) {
             if(isKeyword()){
                 //never was added *** Keyword ***            
                 var keywordName = addKeywordName();
-                var keywordDescription = handleKeywordSection(keywordName);
+                var customKeyword = false;
+                var keywordDescription = handleKeywordSection(keywordName, customKeyword);
 
                 keywordDescription += addDocumentationSection();                
                 terminal.value += keywordDescription;
+                terminal.value += "\t";
             }
             
             if(isTestcase()){
@@ -336,6 +345,7 @@ function translateToRobot(callBackFunction) {
 
                 keywordDescription += addDocumentationSection();
                 terminal.value += keywordDescription;
+                terminal.value += "\t";
             }
 
             addedOwnDescription = true;
