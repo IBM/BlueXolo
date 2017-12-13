@@ -749,7 +749,6 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
                 _data['filename'] = generate_filename(tc.name)
                 _data['name'] = tc.name
             """Run script"""
-            #res = run_on_server(_data)
             res = run_on_server.delay(_data)
             task = Task.objects.create(
                 name="Script -  {0}".format(_data.get('name')),

@@ -216,8 +216,12 @@ def run_script(filename, config):
 
 def get_libraries(obj):
     libraries = []
+    current = []
     for element in obj:
-        libraries.append(Source.objects.get(pk=element.get('source')).name)
+        _id = element.get('source')
+        if _id not in current:
+            libraries.append(Source.objects.get(pk=_id).name)
+            current.append(_id)
     return libraries
 
 
@@ -232,16 +236,40 @@ def generate_profile(params, filename):
     return var_file.name
 
 
-def generate_resource_files(obj):
-    return True
+def generate_resource_files(extra_import, type_Script):
+    list_resources = []
+    if type_Script is 1:
+        kwds = extra_import.get('keywords')
+        if kwds:
+            for k in kwds:
+                result = dict()
+                obj = Keyword.objects.get(pk=k.get('id'))
+                filename = generate_filename(obj.name)
+                kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                kwd_file.write("*** Keywords ***")
+                kwd_file.write("\n")
+                kwd_file.write(obj.name)
+                kwd_file.write("\n")
+                if obj.description:
+                    kwd_file.write("\t[Documentation]\t{0}".format(obj.description))
+                    kwd_file.write("\n")
+                full_script = k.get('script').splitlines(True)
+                for line in full_script:
+                    kwd_file.write("\t{0}".format(line))
+                kwd_file.close()
+                result['filename'] = filename
+                result['resource'] = kwd_file.name
+                list_resources.append(result)
+    return list_resources
 
 
 def generate_file(obj, type_script, params, filename, client):
     _data = ''
     try:
         config = params.get('config')
-        extra_elements = json.loads(obj.extra_imports).get('extra')
-        libraries = get_libraries(extra_elements)
+        extra_elements = json.loads(obj.extra_imports)
+        libraries = get_libraries(extra_elements.get('extra'))
+        resources = generate_resource_files(extra_elements, type_script)
         """Generate robot files"""
         if type_script is 1:
             """First create the keyword file"""
@@ -258,10 +286,20 @@ def generate_file(obj, type_script, params, filename, client):
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
             dummy_tc_file.write("*** Settings ***\n")
             dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
+            """ Adding some resources"""
+            if resources:
+                for resource in resources:
+                    dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(
+                        config.get('path'),
+                        resource.get('filename')
+                    ))
+                    _data = send_files(resource.get('resource'), 0, config, client)
+                    if _data.get('text'):
+                        raise Exception(_data.get('text'))
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
-                    dummy_tc_file.write("Library\t{0}\n".format(lib))
+                    dummy_tc_file.write("Library\t\t{0}\n".format(lib))
                 dummy_tc_file.write("\n")
             dummy_tc_file.write("*** Test Cases ***")
             dummy_tc_file.write("\n")
