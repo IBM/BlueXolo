@@ -168,6 +168,7 @@ def check_dirs_destiny(path, client):
             sftp.listdir(path)
         except IOError:
             sftp.mkdir(path)
+        sftp.close()
     except Exception as error:
         exist = False
     return exist
@@ -253,12 +254,11 @@ def generate_resource_files(extra_import, type_Script):
                 if obj.description:
                     kwd_file.write("\t[Documentation]\t{0}".format(obj.description))
                     kwd_file.write("\n")
-                full_script = k.get('script').splitlines(True)
-                for line in full_script:
-                    kwd_file.write("\t{0}".format(line))
+                kwd_file.write(k.get('script'))
                 kwd_file.close()
                 result['filename'] = filename
                 result['resource'] = kwd_file.name
+                result['name'] = obj.name
                 list_resources.append(result)
     elif type_Script is 3:
         testcases = extra_import.get('testcases')
@@ -318,6 +318,12 @@ def generate_file(obj, type_script, params, filename, client):
                 dummy_tc_file.write("\n")
                 dummy_tc_file.write("\t")
                 dummy_tc_file.write(obj.name)
+                dummy_tc_file.write("\n")
+                # if resources:
+                #     for resource in resources:
+                #         dummy_tc_file.write("\t")
+                #         dummy_tc_file.write(resource.get('name'))
+                #         dummy_tc_file.write("\n")
                 dummy_tc_file.close()
 
                 send_files(dummy_tc_file.name, 5, config, client)
