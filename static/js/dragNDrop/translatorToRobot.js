@@ -1,11 +1,31 @@
-usedExtras = [];
-usedKeywords = [];
-usedTestcases = [];
+var usedExtras = [];
+var usedKeywords = [];
+var usedTestcases = [];
+
+var variablesSection      = false;
+var variablesSectionEnded = false;
+
+var keywordSection        = false;
+var keywordSectionEnded   = false;
+
+var testcaseSection       = false;
+var testcaseSectionEnded  = false;
 
 function resetUsedArraysVariables(){
     usedExtras = [];
     usedKeywords = [];
     usedTestcases = [];
+}
+
+function resetSections(){
+    variablesSection      = false;
+    variablesSectionEnded = false;
+
+    keywordSection        = false;
+    keywordSectionEnded   = false;
+
+    testcaseSection       = false;
+    testcaseSectionEnded  = false;
 }
 
 function checkIfExtraElementsExist(){
@@ -18,6 +38,23 @@ function checkIfExtraElementsExist(){
     if(usedTestcases.length === 0){
         usedTestcases = null;
     }  
+}
+
+function addKeywordName(){
+    var keywordNameTextArea = document.getElementById("keyword_name");
+    var testcaseNameTextArea = document.getElementById("testcase_name");
+
+    if(keywordNameTextArea !== null){
+        translatedRow += keywordNameTextArea.value;
+        return translatedRow;
+    }
+    else if(testcaseNameTextArea !== null){
+        translatedRow += testcaseNameTextArea.value;
+        return translatedRow;
+    }
+    else{
+        return "";
+    }
 }
 
 function addDocumentationSection(){
@@ -41,34 +78,138 @@ function addDocumentationSection(){
     }    
 }
 
-function addKeywordName(){
+function isKeyword(){
     var keywordNameTextArea = document.getElementById("keyword_name");
+    if(keywordNameTextArea !== null){
+        return true
+    }
+    else{
+        return false;
+    }
+}
+
+function isTestcase(){
     var testcaseNameTextArea = document.getElementById("testcase_name");
-    
+    if(testcaseNameTextArea !== null){
+        return true
+    }
+    else{
+        return false;
+    }
+}
+
+function handleSections(startedSection){
+
+    if(startedSection == "keywords"){
+
+        if(variablesSection){
+            variablesSection = false;
+            variablesSectionEnded = true;
+        }
+        if(testcaseSection){
+            testcaseSection = false;
+            testcaseSectionEnded = true;
+        }
+
+    }
+    else if(startedSection == "variables"){
+
+        if(keywordSection){
+            keywordSection = false;
+            keywordSectionEnded = true;
+        }
+        if(testcaseSection){
+            testcaseSection = false;
+            testcaseSectionEnded = true;
+        }
+
+    }
+    else if(startedSection == "testcases"){
+
+        if(variablesSection){
+            variablesSection = false;
+            variablesSectionEnded = true;
+        }
+        if(keywordSection){
+            keywordSection = false;
+            keywordSectionEnded = true;
+        }
+
+    }
+    else{
+        console.log("Error handling sections");
+    }    
+}
+
+function handleKeywordSection(keywordName){
+
+    if(keywordSectionEnded){
+        return;
+    }
+
+    var startedSection = "keywords";
+    handleSections(startedSection);
+
     var translatedRow = "\n";
 
-    if(keywordNameTextArea !== null){
-        translatedRow += "*** Keywords ***";
-        translatedRow += "\n";
-        translatedRow += keywordNameTextArea.value;
-        translatedRow += "\n";
-        return translatedRow;
+    if(!keywordSection){
+        translatedRow += "*** Keywords ***\n";        
+        //translatedRow += addKeywordName();
+        //translatedRow += addDocumentationSection();
+        keywordSection = true;
     }
-    else if(testcaseNameTextArea !== null){
-        translatedRow += "*** Test Cases ***";
-        translatedRow += "\n";
-        translatedRow += testcaseNameTextArea.value;
-        translatedRow += "\n";
-        return translatedRow;
-    }    
-    else{
-        return "";
+    
+    translatedRow += keywordName+"\n";
+
+    return translatedRow;
+}
+
+function handleTestcaseSection(testcaseName){
+
+    if(testcaseSectionEnded){
+        return;
     }
+
+    var startedSection = "testcases";
+    handleSections(startedSection);
+
+    var translatedRow = "\n";
+
+    if(!testcaseSection){
+        translatedRow += "*** Test Cases ***\n";
+
+        testcaseSection = true;
+    }
+    
+    translatedRow += testcaseName + "\n";
+
+    return translatedRow;
+}
+
+function handleVariablesSection(){
+
+    if(variablesSectionEnded){
+        return;
+    }
+
+    var startedSection = "variables";
+    handleSections(startedSection);
+
+    var translatedRow = "";
+
+    if(!variablesSection){
+        translatedRow += "*** Variables ***";
+
+        variablesSection = true;
+    }
+    
+    return translatedRow + "\n";
 }
 
 function translateToRobot(callBackFunction) {
 
     resetUsedArraysVariables();
+    resetSections();
 
     var dragNDrop = document.getElementById("dragDropSpace");
     var rowsInTable = dragNDrop.children;
@@ -77,18 +218,6 @@ function translateToRobot(callBackFunction) {
     terminal.value = "";
 
     var translation = [];
-
-    var variablesSection      = false;
-    var variablesSectionEnded = false;
-
-    var keywordSection        = false;
-    var keywordSectionEnded   = false;
-
-    var testcaseSection       = false;
-    var testcaseSectionEnded  = false;
-
-    var alreadyAdded = false;
-    var ownDescription = false;
 
     var inForLoop = false;
     var identationForLoop = 1;
@@ -103,21 +232,8 @@ function translateToRobot(callBackFunction) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
 
-            var translatedRow = "\n";
-
-            if(!keywordSectionEnded){
-                translatedRow += "*** Keywords ***";
-                translatedRow += "\n";
-                translatedRow += droppedElements[i].name;
-                translatedRow += "\n";
-        
-                variablesSectionEnded = true;
-                keywordSectionEnded = true;
-            }
-            else{                
-                translatedRow += droppedElements[i].name;
-                translatedRow += "\n";
-            }
+            var keywordName = droppedElements[i].name;
+            var translatedRow = handleKeywordSection(keywordName);
 
             terminal.value += translatedRow;
             
@@ -138,21 +254,8 @@ function translateToRobot(callBackFunction) {
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
 
-            var translatedRow = "\n";
-
-            if(!testcaseSectionEnded){
-                translatedRow += "*** Test Cases ***";
-                translatedRow += "\n";
-                translatedRow += droppedElements[i].name;
-                translatedRow += "\n";
-        
-                variablesSectionEnded = true;
-                testcaseSectionEnded = true;
-            }
-            else{                
-                translatedRow += droppedElements[i].name;
-                translatedRow += "\n";
-            }
+            var testcaseName = droppedElements[i].name;
+            var translatedRow = handleTestcaseSection(testcaseName);
 
             terminal.value += translatedRow;
 
@@ -181,6 +284,7 @@ function translateToRobot(callBackFunction) {
         var identationLevel = droppedElements[i].indentation;
         var parameters = droppedElements[i].arguments;
 
+        // Handles for
         if (inForLoop && Number(identationLevel) <= identationForLoop) {
             inForLoop = false;
         }
@@ -194,50 +298,27 @@ function translateToRobot(callBackFunction) {
             var translatedRow = handleIndentation(identationLevel, variablesSectionEnded);
         }
 
-        if (droppedElements[i].name === "variable" && !variablesSection && !variablesSectionEnded) {
-            variablesSection = true;
-            translatedRow += "*** Variables ***";
-            translatedRow += "\n";
-
-            translatedRow += handleTranslationOf(droppedElements[i], parameters);
-            terminal.value += translatedRow;
-            alreadyAdded = true;
+        // Handles variables
+        if (droppedElements[i].name === "variable") {
+            translatedRow += handleVariablesSection();
         }
 
         if (variablesSection && droppedElements[i].name !== "variable") {
             variablesSection = false;
-            variablesSectionEnded = true;
-
-            translatedRow += addKeywordName();
-            translatedRow += addDocumentationSection();
-            ownDescription = true;
-        }
-        else if (!variablesSection && !variablesSectionEnded && droppedElements[i].name !== "variable") {
-            variablesSectionEnded = true;
-
-            translatedRow += addKeywordName();
-            translatedRow += addDocumentationSection();
-            ownDescription = true;
-        }
-        else if (!ownDescription) {
-            variablesSection = false;
-            variablesSectionEnded = true;
-
-            translatedRow += addKeywordName();
-            translatedRow += addDocumentationSection();
-
-            ownDescription = true;
+            variablesSectionEnded = true;        
         }
 
+        /*
+        if(!addedOwnDescription){
 
-        if(!alreadyAdded){
-            translatedRow += handleTranslationOf(droppedElements[i], parameters);
-            terminal.value += translatedRow;
-        }else{
-            alreadyAdded = false;
         }
+        */
+        //translatedRow += addDocumentationSection();
 
+        translatedRow += handleTranslationOf(droppedElements[i], parameters);
+        terminal.value += translatedRow;
 
+        //
         if ((i + 1) >= rowsInTable.length) {
             if (callBackFunction !== undefined) {
                 callBackFunction();
@@ -483,9 +564,9 @@ function translateDroppedTestcase(testcase) {
     }
 }
 
-function handleIndentation(identationLevel, variablesSectionEnded){
+function handleIndentation(identationLevel){
 
-    if(variablesSectionEnded){        
+    if(variablesSectionEnded || keywordSection || testcaseSection){        
         identationLevel = parseInt(identationLevel) + 1;
     }
 
