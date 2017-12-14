@@ -151,8 +151,7 @@
                     type: 'PUT',
                     data: newTestcase,
                     success: function (data) {
-                        drawMessage("TestCase Saved", "green");
-                        $('#modalPreview').modal('close');
+                        drawMessage("TestCase Updated", "green");
                         new_testcase = data;
                     },
                     error: function (err) {
