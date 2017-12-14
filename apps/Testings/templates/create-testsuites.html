@@ -163,8 +163,9 @@
                     type: 'POST',
                     data: newTestSuite,
                     success: function (data) {
-                        drawMessage("Test suite Saved", 'green');
-                        $('#modalPreview').modal('close');
+                        var $toastContent = $('<span>Test Case Created, Click button to edit </span>').add($(
+                            '<a href="/testings/testsuites/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'green');
                         new_testSuite = data;
                     },
                     error: function (error) {
@@ -194,15 +195,21 @@
         <div class="col s12">
             <div class="input-field col s6 l4">
                 <select id="keyword_collection"></select>
-                <label for="keyword_collection">Collection</label>
+                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <ul>
+                    <li class="red-text"><i id="error_field_collection"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_name">Test Suite Name</label>
-                <input type="text" id="keyword_name" onblur="hasValues()">
+                <label for="keyword_name">Name <b class="red-text">*</b></label>
+                <input type="text" id="keyword_name" onblur="hasValues()" placeholder="Required">
+                <ul>
+                    <li class="red-text"><i id="error_field_name"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 l4">
                 <label for="keyword_description">Test Suite Description</label>
-                <input type="text" id="keyword_description">
+                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()">
             </div>
         </div>
     </div>
@@ -283,10 +290,10 @@
 
     </div>
     <div class="fixed-action-btn">
-        <button onclick="translateToRobot(populatePreview)" id="btn_play"
-                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-                data-tooltip="Preview Script" disabled="true">
-            <i class="material-icons">play_arrow</i></button>
+        <button onclick="saveTestsuite()" id="btn_play"
+                class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="left"
+                data-tooltip="Create" disabled="true">
+            <i class="material-icons">save</i></button>
     </div>
 
 
@@ -342,8 +349,22 @@
             function hasValues() {
                 var _keyName = document.getElementById('keyword_name');
                 var _keyCollection = document.getElementById('keyword_collection');
+                var _error_filed_name = document.getElementById('error_field_name');
+                var _error_filed_collection = document.getElementById('error_field_collection');
+
+                showError(_keyCollection, _error_filed_collection);
+                showError(_keyName, _error_filed_name);
+            }
+
+            function showError(element, destiny) {
                 var _btn_save = document.getElementById('btn_play');
-                _btn_save.disabled = !(_keyCollection.value && _keyName.value);
+                if (!element.value) {
+                    _btn_save.disabled = true;
+                    destiny.innerHTML = "This field is required";
+                } else {
+                    _btn_save.disabled = false;
+                    destiny.innerHTML = "";
+                }
             }
 
             function runScript() {
