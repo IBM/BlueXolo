@@ -740,23 +740,29 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _data['profiles'] = json.loads(request.data.get('profile'))
             if type_script is 1:
                 """is keywords"""
-                kwd = Keyword.objects.get(id=obj_id)
-                _data['filename'] = generate_filename(kwd.name)
-                _data['name'] = kwd.name
+                obj = Keyword.objects.get(id=obj_id)
             elif type_script is 2:
                 """is Test Case"""
-                tc = TestCase.objects.get(id=obj_id)
-                _data['filename'] = generate_filename(tc.name)
-                _data['name'] = tc.name
-            """Run script"""
-            res = run_on_server.delay(_data)
-            task = Task.objects.create(
-                name="Script -  {0}".format(_data.get('name')),
-                task_id=res.task_id,
-                state="RUNNING"
-            )
-            request.user.tasks.add(task)
-            request.user.save()
+                obj = TestCase.objects.get(id=obj_id)
+            elif type_script is 3:
+                """is Test Suite"""
+                obj = TestSuite.objects.get(id=obj_id)
+            if obj:
+                _data['filename'] = generate_filename(obj.name)
+                _data['name'] = obj.name
+
+                """Run script"""
+                # res = run_on_server(_data)
+                res = run_on_server.delay(_data)
+                task = Task.objects.create(
+                    name="Script -  {0}".format(_data.get('name')),
+                    task_id=res.task_id,
+                    state="RUNNING"
+                )
+                request.user.tasks.add(task)
+                request.user.save()
+            else:
+                raise Exception('The object not exist')
         except Exception as error:
             data_result['text'] = '{0}'.format(error)
         return Response(status=_status, data=data_result)

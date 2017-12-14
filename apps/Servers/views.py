@@ -275,12 +275,12 @@ def generate_file(obj, type_script, params, filename, client):
     _data = dict()
     try:
         config = params.get('config')
-
-        extra_elements = json.loads(obj.extra_imports)
-        libraries = get_libraries(extra_elements.get('extra'))
-        resources = generate_resource_files(extra_elements, type_script)
         """Generate robot files"""
         if type_script is 1:
+            extra_elements = json.loads(obj.extra_imports)
+            libraries = get_libraries(extra_elements.get('extra'))
+            resources = generate_resource_files(extra_elements, type_script)
+
             """First create the keyword file"""
             kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
             kwd_file.write(obj.script)
@@ -325,6 +325,9 @@ def generate_file(obj, type_script, params, filename, client):
             send_files(dummy_tc_file.name, 5, config, client)
 
         elif type_script is 2:
+            extra_elements = json.loads(obj.extra_imports)
+            libraries = get_libraries(extra_elements.get('extra'))
+            resources = generate_resource_files(extra_elements, type_script)
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
             tc_file.write("*** Settings ***\n")
@@ -359,9 +362,9 @@ def generate_file(obj, type_script, params, filename, client):
             dummy_tc_file.write("\n")
             dummy_tc_file.write(obj.script)
             dummy_tc_file.close()
-            _data = send_files(dummy_tc_file.name, 5, config, client)
-            if _data.get('text'):
-                raise Exception(_data.get('text'))
+            check = send_files(dummy_tc_file.name, 5, config, client)
+            if check.get('text'):
+                raise Exception(check.get('text'))
 
         """Need a variables Profile File"""
         profile = generate_profile(params, filename)
@@ -369,7 +372,7 @@ def generate_file(obj, type_script, params, filename, client):
         _data_result['text'] = 'Created'
     except Exception as error:
         _data_result['error'] = error
-    return _data
+    return _data_result
 
 
 def get_result_files(client, filename, config):
