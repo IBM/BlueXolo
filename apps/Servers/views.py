@@ -271,87 +271,83 @@ def generate_resource_files(extra_import, type_Script):
 
 
 def generate_file(obj, type_script, params, filename, client):
-    _data = ''
+    _data_result = dict()
+    _data = dict()
     try:
         config = params.get('config')
-        if obj.script_type is not 2:
-            extra_elements = json.loads(obj.extra_imports)
-            libraries = get_libraries(extra_elements.get('extra'))
-            resources = generate_resource_files(extra_elements, type_script)
-            """Generate robot files"""
-            if type_script is 1:
-                """First create the keyword file"""
-                kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                kwd_file.write(obj.script)
-                kwd_file.close()
 
-                """need to know if the dirs schema exist and then send the files"""
-                _data = send_files(kwd_file.name, 0, config, client)
-                if _data.get('text'):
-                    raise Exception(_data.get('text'))
+        extra_elements = json.loads(obj.extra_imports)
+        libraries = get_libraries(extra_elements.get('extra'))
+        resources = generate_resource_files(extra_elements, type_script)
+        """Generate robot files"""
+        if type_script is 1:
+            """First create the keyword file"""
+            kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+            kwd_file.write(obj.script)
+            kwd_file.close()
 
-                """Then Test Case file"""
-                dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
-                dummy_tc_file.write("*** Settings ***\n")
-                dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
-                """ Adding some resources"""
-                if resources:
-                    for resource in resources:
-                        dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(
-                            config.get('path'),
-                            resource.get('filename')
-                        ))
-                        _data = send_files(resource.get('resource'), 0, config, client)
-                        if _data.get('text'):
-                            raise Exception(_data.get('text'))
-                """Now add the libraries """
-                if libraries:
-                    for lib in libraries:
-                        dummy_tc_file.write("Library\t\t{0}\n".format(lib))
-                    dummy_tc_file.write("\n")
-                dummy_tc_file.write("*** Test Cases ***")
-                dummy_tc_file.write("\n")
-                dummy_tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
-                dummy_tc_file.write("\n")
-                dummy_tc_file.write("\t")
-                dummy_tc_file.write("[Tags]  TestKeyword")
-                dummy_tc_file.write("\n")
-                dummy_tc_file.write("\t")
-                dummy_tc_file.write(obj.name)
-                dummy_tc_file.write("\n")
-                # if resources:
-                #     for resource in resources:
-                #         dummy_tc_file.write("\t")
-                #         dummy_tc_file.write(resource.get('name'))
-                #         dummy_tc_file.write("\n")
-                dummy_tc_file.close()
+            """need to know if the dirs schema exist and then send the files"""
+            _data = send_files(kwd_file.name, 0, config, client)
+            if _data.get('text'):
+                raise Exception(_data.get('text'))
 
-                send_files(dummy_tc_file.name, 5, config, client)
+            """Then Test Case file"""
+            dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
+            dummy_tc_file.write("*** Settings ***\n")
+            dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(config.get('path'), filename))
+            """ Adding some resources"""
+            if resources:
+                for resource in resources:
+                    dummy_tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(
+                        config.get('path'),
+                        resource.get('filename')
+                    ))
+                    _data = send_files(resource.get('resource'), 0, config, client)
+                    if _data.get('text'):
+                        raise Exception(_data.get('text'))
+            """Now add the libraries """
+            if libraries:
+                for lib in libraries:
+                    dummy_tc_file.write("Library\t\t{0}\n".format(lib))
+                dummy_tc_file.write("\n")
+            dummy_tc_file.write("*** Test Cases ***")
+            dummy_tc_file.write("\n")
+            dummy_tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
+            dummy_tc_file.write("\n")
+            dummy_tc_file.write("\t")
+            dummy_tc_file.write("[Tags]  TestKeyword")
+            dummy_tc_file.write("\n")
+            dummy_tc_file.write("\t")
+            dummy_tc_file.write(obj.name)
+            dummy_tc_file.write("\n")
+            dummy_tc_file.close()
 
-            elif type_script is 2:
-                """ Test Case"""
-                tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
-                tc_file.write("*** Settings ***\n")
-                """Now add the libraries """
-                if libraries:
-                    for lib in libraries:
-                        tc_file.write("Library\t{0}\n".format(lib))
-                    tc_file.write("\n")
-                tc_file.write("*** Test Cases ***")
+            send_files(dummy_tc_file.name, 5, config, client)
+
+        elif type_script is 2:
+            """ Test Case"""
+            tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
+            tc_file.write("*** Settings ***\n")
+            """ Adding some resources"""
+            if resources:
+                for resource in resources:
+                    tc_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(
+                        config.get('path'),
+                        resource.get('filename')
+                    ))
+                    _data = send_files(resource.get('resource'), 0, config, client)
+                    if _data.get('text'):
+                        raise Exception(_data.get('text'))
+            """Now add the libraries """
+            if libraries:
+                for lib in libraries:
+                    tc_file.write("Library\t{0}\n".format(lib))
                 tc_file.write("\n")
-                tc_file.write(obj.name)
-                tc_file.write("\n")
-                tc_file.write("\t")
-                tc_file.write("[Tags]\t\t{0}".format(obj.phase.name))
-                tc_file.write("\n")
-                tc_file.write("\t")
-                full_script = obj.script.splitlines(True)
-                for line in full_script:
-                    tc_file.write("\t{0}".format(line))
-                tc_file.close()
-                send_files(tc_file.name, 5, config, client)
+            tc_file.write(obj.script)
+            tc_file.close()
+            send_files(tc_file.name, 5, config, client)
 
-        elif obj.script_type is 2:
+        elif type_script is 4:
             """ Imported Keywords """
             """ Dummy Test Case file"""
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
@@ -370,9 +366,9 @@ def generate_file(obj, type_script, params, filename, client):
         """Need a variables Profile File"""
         profile = generate_profile(params, filename)
         send_files(profile, 2, config, client)
-        _data['text'] = 'Created'
+        _data_result['text'] = 'Created'
     except Exception as error:
-        _data['error'] = error
+        _data_result['error'] = error
     return _data
 
 
@@ -418,8 +414,10 @@ def run_on_server(_data):
         if type_script is 1:
             """is keywords"""
             obj = Keyword.objects.get(id=_data.get('obj_id'))
-            """Execute the kwd"""
+            if obj.script_type is 2:
+                type_script = 4
         elif type_script is 2:
+            """is Test Case"""
             obj = TestCase.objects.get(id=_data.get('obj_id'))
         _data = generate_file(obj, type_script, params, filename, client)
         if _data.get('error'):
