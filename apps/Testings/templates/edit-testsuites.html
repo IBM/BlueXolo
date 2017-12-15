@@ -39,7 +39,17 @@
                 "container": "keyword_collection"
             };
             selectServerSide(_config);
+            getTestSuiteToEdit();
         });
+
+        function getTestSuiteToEdit() {
+            var testsuiteData = document.getElementById('ts_values').value;
+            {#            var testsuite = "{{object.values}}";#}
+            //console.log(testsuite.replace(/&quot;/g,'"'));
+            droppedElements = JSON.parse(testsuite);
+            //console.log(droppedElements);
+            drawElementsFromJSON();
+        }
 
         function createParametersList(node, iDTarget) {
             var attributeList = document.createElement("ul");
