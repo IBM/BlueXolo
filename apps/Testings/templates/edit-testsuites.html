@@ -44,9 +44,9 @@
 
         function getTestSuiteToEdit() {
             var testsuiteData = document.getElementById('ts_values').value;
-            {#            var testsuite = "{{object.values}}";#}
-            //console.log(testsuite.replace(/&quot;/g,'"'));
-            droppedElements = JSON.parse(testsuite);
+            {#            var testsuiteData = "{{object.values}}";#}
+            //console.log(testsuiteData.replace(/&quot;/g,'"'));
+            droppedElements = JSON.parse(testsuiteData);
             //console.log(droppedElements);
             drawElementsFromJSON();
         }
