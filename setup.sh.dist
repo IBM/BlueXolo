@@ -10,10 +10,12 @@ echo " . . "
 mkdir -p media/test_result
 echo " . . . "
 mkdir -p media/test_cases
-echo " . . ."
+echo " . . . . "
+mkdir -p media/test_suites
+echo " . . . . ."
 mkdir -p media/keywords
-echo " . . ."
+echo " . . . . . ."
 mkdir -p media/profiles
-echo " . . ."
+echo " . . . . . . . "
 echo "ok, the dirs have created."
 echo "That's all"
