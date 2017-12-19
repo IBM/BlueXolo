@@ -184,8 +184,11 @@
                     type: 'PUT',
                     data: newKeyword,
                     success: function (data) {
-
                         drawMessage("Keyword Updated", 'green');
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
+
                         $('#modalPreview').modal('close');
                         new_keyword = data;
                     },
