@@ -43,6 +43,15 @@
         });
 
         function getTestSuiteToEdit() {
+            var keywordData = document.getElementById('keyword_values').value;
+            {#            var keywordData = "{{object.values}}";#}
+            //console.log(testsuiteData.replace(/&quot;/g,'"'));
+            droppedElements = JSON.parse(keywordData);
+            //console.log(droppedElements);
+            drawElementsFromJSON();
+        }
+
+        function getTestSuiteToEdit() {
             var testsuiteData = document.getElementById('ts_values').value;
             {#            var testsuiteData = "{{object.values}}";#}
             //console.log(testsuiteData.replace(/&quot;/g,'"'));
