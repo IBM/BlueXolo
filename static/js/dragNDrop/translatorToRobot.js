@@ -657,6 +657,12 @@ function translateExternCommand(commandData){
     var scriptLine = commandData.name;
     var arguments = commandData.arguments;
 
+    var keywordsCategory = 6;
+
+    if(commandData.category === keywordsCategory){
+        return scriptLine;
+    }
+
     for(var i=0; i<arguments.length; i++){
         if(arguments[i].visible === true){
             scriptLine += "   " + arguments[i].name;

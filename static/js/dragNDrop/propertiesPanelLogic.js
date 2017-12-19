@@ -87,7 +87,7 @@ function drawKeywordsProperties(keywordJSON) {
 
         if (arguments === null) {
             continue;
-        }
+        }        
 
         // Add arguments in the properties panel 
         for (var i = 0; i < arguments.length; i++) {
@@ -310,13 +310,21 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
+    var keywordsCategory = 6;
+
     for (var j = 0; j < commands.length; j++) {
         arguments = commands[j].arguments;
 
         if (arguments === null) {
             continue;
         }
-        
+
+        if(commands[j].category === keywordsCategory){
+            continue;
+        }
+
+        console.log(commands[j].arguments)
+
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
             
