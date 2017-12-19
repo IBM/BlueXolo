@@ -58,21 +58,21 @@ function getIfArgumentIsEmpty(argument) {
     var hasValue = false;
     var isChecked = undefined;
 
-    if (argument.value !== undefined || argument.value !== "") {
+    if (argument.value !== undefined && argument.value !== "") {
         hasValue = true;
     }
-    if (argument.needs_value && argument.visible !== undefined) {
+
+    if(argument.visible === undefined) {
+        isChecked = false;
+    }
+    else{
         isChecked = argument.visible;
     }
 
-    if (argument.needs_value && !hasValue) {
-        return false;
-    }
-    else if (argument.requirement || isChecked !== undefined || argument.visible) {
-        return false;
-    }
-    else {
+    if(!isChecked && !hasValue){
         return true;
+    }else{
+        return false;
     }
 }
 
@@ -100,11 +100,11 @@ function drawKeywordsProperties(keywordJSON) {
 
             // If the command need the argument in order to work 
             if (arguments[i].requirement) {
-                checkboxCounter++;
+                var checkboxID = "checkbox-" + checkboxCounter++;
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
@@ -112,18 +112,18 @@ function drawKeywordsProperties(keywordJSON) {
                 // Create a label with the argument name 
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
-                labelNode.htmlFor = checkboxCounter;
+                labelNode.htmlFor = checkboxID;
 
                 labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
             } else {
-                checkboxCounter++;
+                var checkboxID = "checkbox-" + checkboxCounter++;
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
@@ -132,7 +132,7 @@ function drawKeywordsProperties(keywordJSON) {
                 // Create a label with the argument name 
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
-                labelNode.htmlFor = checkboxCounter;
+                labelNode.htmlFor = checkboxID;
 
                 labelNode.setAttribute("onclick", "fixScroll(event)");
 
@@ -207,11 +207,11 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
 
             // If the command need the argument in order to work
             if (arguments[i].requirement) {
-                checkboxCounter++;
+                var checkboxID = "checkbox-" + checkboxCounter++;
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
@@ -219,18 +219,18 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 // Create a label with the argument name
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
-                labelNode.htmlFor = checkboxCounter;
+                labelNode.htmlFor = checkboxID;
 
                 labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
             } else {
-                checkboxCounter++;
+                var checkboxID = "checkbox-" + checkboxCounter++;
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
@@ -239,7 +239,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
                 // Create a label with the argument name
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
-                labelNode.htmlFor = checkboxCounter;
+                labelNode.htmlFor = checkboxID;
 
                 labelNode.setAttribute("onclick", "fixScroll(event)");
 
@@ -316,10 +316,10 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         if (arguments === null) {
             continue;
         }
-
+        
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
-
+            
             if (getIfArgumentIsEmpty(arguments[i])) {
                 continue;
             }
@@ -328,11 +328,11 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
             // If the command need the argument in order to work
             if (arguments[i].requirement) {
-                checkboxCounter++;
+                var checkboxID = "checkbox-" + checkboxCounter++;
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
@@ -340,18 +340,18 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 // Create a label with the argument name
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
-                labelNode.htmlFor = checkboxCounter;
+                labelNode.htmlFor = checkboxID;
 
                 labelNode.setAttribute("onclick", "fixScroll(event)");
 
                 tempForm.appendChild(checkbox);
                 tempForm.appendChild(labelNode);
             } else {
-                checkboxCounter++;
+                var checkboxID = "checkbox-" + checkboxCounter++;
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
@@ -360,7 +360,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
                 // Create a label with the argument name
                 var labelNode = document.createElement('label');
                 labelNode.innerText = arguments[i].name;
-                labelNode.htmlFor = checkboxCounter;
+                labelNode.htmlFor = checkboxID;
 
                 labelNode.setAttribute("onclick", "fixScroll(event)");
 
@@ -450,11 +450,11 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
         // If the command need the argument in order to work
         if (arguments[i].requirement) {
-            checkboxCounter++;
+            var checkboxID = "checkbox-" + checkboxCounter++;
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
@@ -462,18 +462,18 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             // Create a label with the argument name
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
-            labelNode.htmlFor = checkboxCounter;
+            labelNode.htmlFor = checkboxID;
 
             labelNode.setAttribute("onclick", "fixScroll(event)");
 
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
-            checkboxCounter++;
+            var checkboxID = "checkbox-" + checkboxCounter++;
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             if (arguments[i].visible !== undefined) {
                 checkbox.setAttribute("checked", arguments[i].visible);
@@ -482,7 +482,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
             // Create a label with the argument name
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
-            labelNode.htmlFor = checkboxCounter;
+            labelNode.htmlFor = checkboxID;
 
             labelNode.setAttribute("onclick", "fixScroll(event)");
 
@@ -579,7 +579,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
@@ -587,7 +587,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             // Create a label with the argument name
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
-            labelNode.htmlFor = checkboxCounter;
+            labelNode.htmlFor = checkboxID;
 
             labelNode.setAttribute("onclick", "fixScroll(event)");
 
@@ -598,7 +598,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             if (arguments[i].visible !== undefined) {
                 checkbox.setAttribute("checked", arguments[i].visible);
@@ -607,7 +607,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             // Create a label with the argument name
             var labelNode = document.createElement('label');
             labelNode.innerText = arguments[i].name;
-            labelNode.htmlFor = checkboxCounter;
+            labelNode.htmlFor = checkboxID;
 
             labelNode.setAttribute("onclick", "fixScroll(event)");
 

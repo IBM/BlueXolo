@@ -89,3 +89,6 @@ secrets.json
 nohup.out
 setup.sh
 run.sh
+# Visual studio Code configs
+.vscode/launch.json
+.vscode/settings.json

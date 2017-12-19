@@ -146,9 +146,13 @@
 
             function setProfiles() {
                 var _profiles = [];
-                $('#variables').val().forEach(function (v, k) {
-                    _profiles.push(v)
-                });
+                if ($('#variables').val()) {
+                    $('#variables').val().forEach(function (v, k) {
+                        _profiles.push(v)
+                    });
+                }
+
+
                 _profiles.push(_selectConnection.value);
                 return JSON.stringify(_profiles)
             }

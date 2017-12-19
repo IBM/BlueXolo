@@ -184,8 +184,11 @@
                     type: 'PUT',
                     data: newKeyword,
                     success: function (data) {
-
                         drawMessage("Keyword Updated", 'green');
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
+
                         $('#modalPreview').modal('close');
                         new_keyword = data;
                     },
@@ -315,12 +318,13 @@
         {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
-    <div class="fixed-action-btn">
-        <button onclick="translateToRobot(populatePreview)" id="btn_play"
-                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-                data-tooltip="Preview Script">
-            <i class="material-icons">play_arrow</i></button>
+   <div class="fixed-action-btn">
+        <button onclick="saveKeyword()" id="btn_play"
+                class="btn-floating btn-large waves-effect waves-light blue tooltipped" data-position="left"
+                data-tooltip="Save">
+            <i class="material-icons">save</i></button>
     </div>
+
 
 
     <div class="fixed-action-btn left-button ">

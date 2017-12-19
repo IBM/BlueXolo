@@ -147,8 +147,8 @@
                     extra: usedExtras,
                     keywords: usedKeywords,
                     testcases: usedTestcases
-                }
-                                
+                };
+
                 var newKeyword = {
                     "name": keywordName,
                     "description": keywordDescription,
@@ -162,8 +162,13 @@
                     type: 'POST',
                     data: newKeyword,
                     success: function (data) {
-                        drawMessage("Keyword Saved", 'green');
-                        $('#modalPreview').modal('close');
+                        var $toastContent = $('<span>Keyword Created, Click button to edit </span>').add($(
+                            '<a href="/testings/keywords/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'green');
+
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                         new_keyword = data;
                     },
                     error: function (error) {
@@ -276,10 +281,10 @@
 
     </div>
     <div class="fixed-action-btn">
-        <button onclick="translateToRobot(populatePreview)" id="btn_play"
-                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-                data-tooltip="Preview Script" disabled="true">
-            <i class="material-icons">play_arrow</i></button>
+        <button onclick="saveKeyword()" id="btn_play"
+                class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="left"
+                data-tooltip="Create" disabled="true">
+            <i class="material-icons">save</i></button>
     </div>
 
 
