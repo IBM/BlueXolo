@@ -165,6 +165,10 @@
                         var $toastContent = $('<span>Keyword Created, Click button to edit </span>').add($(
                             '<a href="/testings/keywords/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
                         Materialize.toast($toastContent, 12000, 'green');
+
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                         new_keyword = data;
                     },
                     error: function (error) {
