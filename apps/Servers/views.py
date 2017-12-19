@@ -198,15 +198,24 @@ def send_files(filename, file_type, config, client):
 def run_script(filename, config):
     """This execute pybot with some flags """
     _data = dict()
+    
     try:
+        arguments = config.get('global_variables')
         ssh = pxssh.pxssh()
         ssh.login(config.get('host'), config.get('user'), config.get('passwd'))
         ssh.sendline("cd {0}/Results".format(config.get('path')))
-        ssh.sendline("pybot -V ../Profiles/{0}_profile.py"
-                     " -o {0}_output.xml"
-                     " -l {0}_log.html"
-                     " -r {0}_report.html"
-                     " ../TestScripts/{0}_test_case.robot".format(filename))
+        if arguments:
+            ssh.sendline("pybot -V ../Profiles/{0}_profile.py"
+                        " -o {0}_output.xml"
+                        " -l {0}_log.html"
+                        " -r {0}_report.html"
+                        " ../TestScripts/{0}_test_case.robot".format(filename))
+        else:
+            ssh.sendline("pybot "
+                        " -o {0}_output.xml"
+                        " -l {0}_log.html"
+                        " -r {0}_report.html"
+                        " ../TestScripts/{0}_test_case.robot".format(filename))
         ssh.prompt()
         _data['text'] = ssh.before
         ssh.logout()
@@ -422,8 +431,10 @@ def generate_file(obj, type_script, params, filename, client):
                 raise Exception(check.get('text'))
 
         """Need a variables Profile File"""
-        profile = generate_profile(params, filename)
-        send_files(profile, 2, config, client)
+        arguments = params.get('global_variables')
+        if arguments:
+            profile = generate_profile(params, filename)
+            send_files(profile, 2, config, client)
         _data_result['text'] = 'Created'
     except Exception as error:
         _data_result['error'] = error
