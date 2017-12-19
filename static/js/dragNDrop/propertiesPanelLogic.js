@@ -58,21 +58,21 @@ function getIfArgumentIsEmpty(argument) {
     var hasValue = false;
     var isChecked = undefined;
 
-    if (argument.value !== undefined || argument.value !== "") {
+    if (argument.value !== undefined && argument.value !== "") {
         hasValue = true;
     }
-    if (argument.needs_value && argument.visible !== undefined) {
+
+    if(argument.visible === undefined) {
+        isChecked = false;
+    }
+    else{
         isChecked = argument.visible;
     }
 
-    if (argument.needs_value && !hasValue) {
-        return false;
-    }
-    else if (argument.requirement || isChecked !== undefined || argument.visible) {
-        return false;
-    }
-    else {
+    if(!isChecked && !hasValue){
         return true;
+    }else{
+        return false;
     }
 }
 
@@ -104,7 +104,7 @@ function drawKeywordsProperties(keywordJSON) {
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
@@ -123,7 +123,7 @@ function drawKeywordsProperties(keywordJSON) {
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
@@ -211,7 +211,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
@@ -230,7 +230,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
@@ -316,10 +316,10 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
         if (arguments === null) {
             continue;
         }
-
+        
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
-
+            
             if (getIfArgumentIsEmpty(arguments[i])) {
                 continue;
             }
@@ -332,7 +332,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 checkbox.setAttribute("checked", true);
                 checkbox.setAttribute("disabled", true);
@@ -351,7 +351,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
                 var checkbox = document.createElement('input');
                 checkbox.type = "checkbox";
-                checkbox.id = checkboxCounter;
+                checkbox.id = checkboxID;
 
                 if (arguments[i].visible !== undefined) {
                     checkbox.setAttribute("checked", arguments[i].visible);
@@ -454,7 +454,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
@@ -579,7 +579,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             checkbox.setAttribute("checked", true);
             checkbox.setAttribute("disabled", true);
@@ -598,7 +598,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
-            checkbox.id = checkboxCounter;
+            checkbox.id = checkboxID;
 
             if (arguments[i].visible !== undefined) {
                 checkbox.setAttribute("checked", arguments[i].visible);
