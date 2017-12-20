@@ -323,7 +323,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
             continue;
         }
 
-        console.log(commands[j].arguments)
+        // console.log(commands[j].arguments)
 
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
