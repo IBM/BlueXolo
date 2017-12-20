@@ -433,6 +433,7 @@ function getTranslationOfTestcase(testcase){
     var keywordDroppedCategory = 6;
 
     for (var i = 0; i < testcase.length; i++) {
+
         if (testcase[i].category === keywordDroppedCategory) {
 
             var keywordUsedID = testcase[i].id;
@@ -531,6 +532,10 @@ function translateDroppedKeyword(keyword) {
         var identationLevel = keyword[i].indentation;
         var parameters = keyword[i].arguments;
 
+        if(identationLevel === undefined){
+            identationLevel = 0;
+        }
+
         if (inForLoop && Number(identationLevel) <= identationForLoop) {
             inForLoop = false;
         }
@@ -580,6 +585,10 @@ function translateDroppedTestcase(testcase) {
         var elementType = testcase[i].id;
         var identationLevel = testcase[i].indentation;
         var parameters = testcase[i].arguments;
+
+        if(identationLevel === undefined){
+            identationLevel = 0;
+        }
 
         if (inForLoop && Number(identationLevel) <= identationForLoop) {
             inForLoop = false;
