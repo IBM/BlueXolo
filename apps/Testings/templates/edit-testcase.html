@@ -152,6 +152,9 @@
                     data: newTestcase,
                     success: function (data) {
                         drawMessage("TestCase Updated", "green");
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/2/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                         new_testcase = data;
                     },
                     error: function (err) {
@@ -299,7 +302,7 @@
     <div class="fixed-action-btn">
         <button onclick="saveTestcase()" id="btn_play"
                 class="btn-floating btn-large waves-effect waves-light blue tooltipped" data-position="left"
-                data-tooltip="Save" disabled="true">
+                data-tooltip="Save">
             <i class="material-icons">save</i></button>
     </div>
 

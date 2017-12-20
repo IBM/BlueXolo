@@ -13,7 +13,7 @@ from scp import SCPClient
 from string import ascii_lowercase, digits
 
 from apps.Products.models import Source
-from apps.Testings.models import Keyword, TestCase
+from apps.Testings.models import Keyword, TestCase, TestSuite
 from .forms import ServerProfileForm, ServerTemplateForm, ParametersForm
 from .models import TemplateServer, ServerProfile, Parameters
 
@@ -198,15 +198,24 @@ def send_files(filename, file_type, config, client):
 def run_script(filename, config):
     """This execute pybot with some flags """
     _data = dict()
+    
     try:
+        arguments = config.get('global_variables')
         ssh = pxssh.pxssh()
         ssh.login(config.get('host'), config.get('user'), config.get('passwd'))
         ssh.sendline("cd {0}/Results".format(config.get('path')))
-        ssh.sendline("pybot -V ../Profiles/{0}_profile.py"
-                     " -o {0}_output.xml"
-                     " -l {0}_log.html"
-                     " -r {0}_report.html"
-                     " ../TestScripts/{0}_test_case.robot".format(filename))
+        if arguments:
+            ssh.sendline("pybot -V ../Profiles/{0}_profile.py"
+                        " -o {0}_output.xml"
+                        " -l {0}_log.html"
+                        " -r {0}_report.html"
+                        " ../TestScripts/{0}_test_case.robot".format(filename))
+        else:
+            ssh.sendline("pybot "
+                        " -o {0}_output.xml"
+                        " -l {0}_log.html"
+                        " -r {0}_report.html"
+                        " ../TestScripts/{0}_test_case.robot".format(filename))
         ssh.prompt()
         _data['text'] = ssh.before
         ssh.logout()
@@ -237,36 +246,56 @@ def generate_profile(params, filename):
     return var_file.name
 
 
-def generate_resource_files(extra_import, type_Script):
+def generate_resource_files(extra_import, type_script):
     list_resources = []
     result = dict()
-    if type_Script in [1, 2, 3]:
-        kwds = extra_import.get('keywords')
-        if kwds:
-            for k in kwds:
-                obj = Keyword.objects.get(pk=k.get('id'))
-                filename = generate_filename(obj.name)
-                kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                kwd_file.write("*** Keywords ***")
-                kwd_file.write("\n")
-                kwd_file.write(obj.name)
-                kwd_file.write("\n")
-                if obj.description:
-                    kwd_file.write("\t[Documentation]\t{0}".format(obj.description))
+    try:
+        if type_script in [1, 2, 3]:
+            kwds = extra_import.get('keywords')
+            if kwds:
+                for k in kwds:
+                    obj = Keyword.objects.get(pk=k.get('id'))
+                    filename = generate_filename(obj.name)
+                    kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file.write("*** Keywords ***")
                     kwd_file.write("\n")
-                kwd_file.write(k.get('script'))
-                kwd_file.close()
-                result['filename'] = filename
-                result['resource'] = kwd_file.name
-                result['name'] = obj.name
-                list_resources.append(result)
-    elif type_Script is 3:
-        testcases = extra_import.get('testcases')
-        if testcases:
-            for tc in testcases:
-                obj = TestCase.objects.get(pk=tc.get('id'))
-                result = dict()
-
+                    kwd_file.write(obj.name)
+                    kwd_file.write("\n")
+                    if obj.description:
+                        kwd_file.write("\t[Documentation]\t{0}".format(obj.description))
+                        kwd_file.write("\n")
+                    kwd_file.write(k.get('script'))
+                    kwd_file.close()
+                    result['filename'] = filename
+                    result['resource'] = kwd_file.name
+                    result['name'] = obj.name
+                    """Object type: 0= kwd, 1= test case"""
+                    result['obj_type'] = 0
+                    list_resources.append(result)
+        elif type_script is 3:
+            test_cases = extra_import.get('testcases')
+            if test_cases:
+                for tc in test_cases:
+                    obj = TestCase.objects.get(pk=tc.get('id'))
+                    filename = generate_filename(obj.name)
+                    tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    tc_file.write("*** Test Cases ***")
+                    tc_file.write("\n")
+                    tc_file.write(obj.name)
+                    tc_file.write("\n")
+                    if obj.description:
+                        tc_file.write("\t[Documentation]\t{0}".format(obj.description))
+                        tc_file.write("\n")
+                        tc_file.write(tc.get('script'))
+                    tc_file.close()
+                    result['filename'] = filename
+                    result['resource'] = tc_file.name
+                    result['name'] = obj.name
+                    """Object type: 0= kwd, 1= test case"""
+                    result['obj_type'] = 1
+                    list_resources.append(result)
+    except Exception as error:
+        list_resources.append(error)
     return list_resources
 
 
@@ -338,7 +367,7 @@ def generate_file(obj, type_script, params, filename, client):
                         config.get('path'),
                         resource.get('filename')
                     ))
-                    _data = send_files(resource.get('resource'), 0, config, client)
+                    _data = send_files(resource.get('resource'), resource.get('obj_type'), config, client)
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
@@ -349,6 +378,41 @@ def generate_file(obj, type_script, params, filename, client):
             tc_file.write(obj.script)
             tc_file.close()
             send_files(tc_file.name, 5, config, client)
+
+        elif type_script is 3:
+            """Test Suite """
+
+            extra_elements = json.loads(obj.extra_imports)
+            libraries = get_libraries(extra_elements.get('extra'))
+            resources = generate_resource_files(extra_elements, type_script)
+            dirs = ['Keywords', 'TestScripts']
+            ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
+                           "w")
+            ts_file.write("*** Settings ***\n")
+            if obj.description:
+                ts_file.write("Documentation\t{0}".format(obj.description))
+                ts_file.write("\n")
+            """ Adding some resources"""
+            if resources:
+                for resource in resources:
+                    ts_file.write("Resource\t{0}/{1}/{2}_keyword.robot\n".format(
+                        config.get('path'),
+                        dirs[resource.get('obj_type')],
+                        resource.get('filename')
+                    ))
+                    _data = send_files(resource.get('resource'), resource.get('obj_type'), config, client)
+                    if _data.get('text'):
+                        raise Exception(_data.get('text'))
+            """Now add the libraries """
+            if libraries:
+                for lib in libraries:
+                    ts_file.write("Library\t{0}\n".format(lib))
+                    ts_file.write("\n")
+            ts_file.write(obj.script)
+            ts_file.close()
+            check = send_files(ts_file.name, 7, config, client)
+            if check.get('text'):
+                raise Exception(check.get('text'))
 
         elif type_script is 4:
             """ Imported Keywords """
@@ -367,8 +431,10 @@ def generate_file(obj, type_script, params, filename, client):
                 raise Exception(check.get('text'))
 
         """Need a variables Profile File"""
-        profile = generate_profile(params, filename)
-        send_files(profile, 2, config, client)
+        arguments = params.get('global_variables')
+        if arguments:
+            profile = generate_profile(params, filename)
+            send_files(profile, 2, config, client)
         _data_result['text'] = 'Created'
     except Exception as error:
         _data_result['error'] = error
@@ -422,6 +488,9 @@ def run_on_server(_data):
         elif type_script is 2:
             """is Test Case"""
             obj = TestCase.objects.get(id=_data.get('obj_id'))
+        elif type_script is 3:
+            """is Test Case"""
+            obj = TestSuite.objects.get(id=_data.get('obj_id'))
         _data = generate_file(obj, type_script, params, filename, client)
         if _data.get('error'):
             raise Exception(_data['error'])
