@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Edit Test Suite{% endblock %}
 {% block subtitle %}Edit Test Suite{% endblock %}
+{% load staticfiles %}
+{% load compress %}
 
 {% block content %}
 
-    {% load staticfiles %}
-
-    {% block extraStyles %}
+    {% compress css %}
         <link rel="stylesheet" href="{% static 'css/keywords.css' %}">
         <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
-    {% endblock %}
+    {% endcompress %}
 
-    {% block extraScript %}
+    {% compress js %}
         <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/dragNDrop/getInitial.js" %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/interpreter.js' %}"></script>
@@ -22,7 +22,6 @@
         <script type="text/javascript" src="{% static '/js/dragNDrop/dragDropFunctions.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/dropCreator.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/jsonManipulator.js' %}"></script>
-    {% endblock %}
 
     <script type="text/javascript">
         var counterJSON = [];
@@ -36,7 +35,7 @@
             var _config = {
                 "url": "{% url "api-collection" %}",
                 "data": {},
-                "container": "testSuite_collection"
+                "container": "keyword_collection"
             };
             selectServerSide(_config);
             getTestSuiteToEdit();
@@ -183,6 +182,9 @@
                 data: newTestSuite,
                 success: function (data) {
                     drawMessage("Test Suite Updated", 'green');
+                    var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/3/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                     new_testSuite = data;
                 },
                 error: function (error) {
@@ -206,7 +208,7 @@
             {#            floatingDiv.style.visibility = 'hidden';#}
         }
     </script>
-
+{% endcompress %}
 
     <div class="row">
         <div class="col s12">
@@ -216,8 +218,8 @@
 
 
             <div class="input-field col s6 l4">
-                <select id="testSuite_collection"></select>
-                <label for="testSuite_collection">Collection <b class="red-text">*</b></label>
+                <select id="keyword_collection"></select>
+                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
                 <ul>
                     <li class="red-text"><i id="error_field_collection"></i></li>
                 </ul>
@@ -316,7 +318,7 @@
     <div class="fixed-action-btn">
         <button onclick="saveTestsuite()" id="btn_play"
                 class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="left"
-                data-tooltip="Create" disabled="true">
+                data-tooltip="Create">
             <i class="material-icons">save</i></button>
     </div>
 
@@ -330,10 +332,9 @@
 
 {% endblock %}
 {% block extraScripts %}
+{% compress js %}
     <script type="text/javascript">
-        $('.modal').modal();
-
-
+        
         function populateSelect() {
             var _select = document.getElementById('selectProfiles');
             $.ajax({
@@ -372,7 +373,7 @@
 
         function hasValues() {
             var _keyName = document.getElementById('testSuite_name');
-            var _keyCollection = document.getElementById('testSuite_collection');
+            var _keyCollection = document.getElementById('keyword_collection');
             var _error_filed_name = document.getElementById('error_field_name');
             var _error_filed_collection = document.getElementById('error_field_collection');
 
@@ -413,4 +414,5 @@
 
         }
     </script>
+    {% endcompress %}
 {% endblock %}

@@ -166,6 +166,10 @@
                         var $toastContent = $('<span>Test Case Created, Click button to edit </span>').add($(
                             '<a href="/testings/testsuites/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
                         Materialize.toast($toastContent, 12000, 'green');
+
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/3/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                         new_testSuite = data;
                     },
                     error: function (error) {
@@ -308,8 +312,7 @@
 {% block extraScripts %}
     {% compress js %}
         <script type="text/javascript">
-            $('.modal').modal();
-
+        
             function populateSelect() {
                 var _select = document.getElementById('selectProfiles');
                 $.ajax({
