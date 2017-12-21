@@ -165,8 +165,6 @@ function handleKeywordSection(keywordName, customKeyword){
         return translatedRow;
     }
 
-    console.log("??");
-
     if(!keywordSection){
         translatedRow += "*** Keywords ***\n";
         keywordSection = true;
