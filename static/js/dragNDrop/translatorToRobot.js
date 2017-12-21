@@ -252,7 +252,7 @@ function translateToRobot(callBackFunction) {
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
             //translateDroppedKeyword(droppedElements[i].keywordJSON);
             
-            if ((i + 1) >= rowsInTable.length) {
+            if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }
@@ -266,15 +266,15 @@ function translateToRobot(callBackFunction) {
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
-
             terminal.value += translatedRow;
 
             var testcaseUsedID = droppedElements[i].id;
-            var newTestcaseUsed = droppedElements[i].keywordJSON;            
+            var newTestcaseUsed = droppedElements[i].keywordJSON;
+
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
-            if ((i + 1) >= rowsInTable.length) {
+            if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }
@@ -282,7 +282,7 @@ function translateToRobot(callBackFunction) {
             } else {
                 continue;
             }
-        }        
+        }
 
         if(droppedElements[i].category === commandProductCategory
             || droppedElements[i].category === externalLibrariesCategory){
@@ -358,8 +358,6 @@ function translateToRobot(callBackFunction) {
 
         alreadyAdded = false;
 
-
-        //
         if ((i + 1) >= rowsInTable.length) {
             if (callBackFunction !== undefined) {
                 callBackFunction();
@@ -440,8 +438,12 @@ function getTranslationOfTestcase(testcase){
             var newKeywordUsed = testcase[i].keywordJSON;
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed)
 
-            var identationLevel = droppedElements[i].indentation;
+            var identationLevel = testcase[i].indentation;
             var translatedRow = handleIndentation(identationLevel);
+
+            if(identationLevel === undefined){
+                identationLevel = 0;
+            }
 
             translatedRow += testcase[i].name;
             translation += translatedRow;
