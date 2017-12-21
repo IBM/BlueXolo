@@ -155,13 +155,20 @@ function handleKeywordSection(keywordName, customKeyword){
 
     var translatedRow = "\n";
 
+    // Version 3
+    if(!isKeyword){
+        translatedRow += "\t"+keywordName+"\n";
+        keywordSection = true;
+        return translatedRow;
+    }
+
     if(!keywordSection){
         translatedRow += "*** Keywords ***\n";
         keywordSection = true;
     }
     
     if(customKeyword){
-        translatedRow += "\t"+keywordName+"\n";    
+        translatedRow += "\t"+keywordName+"\n";
     }
     else{
         translatedRow += keywordName+"\n";    
