@@ -1,13 +1,10 @@
 import json
 import paramiko
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
-from pexpect import pxssh
 from random import choice
 from scp import SCPClient
 from string import ascii_lowercase, digits
@@ -143,12 +140,19 @@ def get_config_object(params):
 
 def get_connection(config):
     """Create a paramiko connection for ssh communication"""
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    _port = 22
-    if config.get('port'):
-        _port = int(config.get('port'))
-    client.connect(config.get('host'), username=config.get('user'), password=config.get('passwd'), port=_port)
+    try:
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        _port = 22
+        if config.get('port'):
+            _port = int(config.get('port'))
+        client.connect(
+            config.get('host'),
+            username=config.get('user'),
+            password=config.get('passwd'),
+            port=_port)
+    except expression as identifier:
+        client = identifier
     return client
 
 
@@ -195,32 +199,38 @@ def send_files(filename, file_type, config, client):
     return _data
 
 
-def run_script(filename, config):
+def run_script(filename, params, client):
     """This execute pybot with some flags """
     _data = dict()
-    
     try:
-        arguments = config.get('global_variables')
-        ssh = pxssh.pxssh()
-        ssh.login(config.get('host'), config.get('user'), config.get('passwd'))
-        ssh.sendline("cd {0}/Results".format(config.get('path')))
+        config = params.get('config')
+        arguments = params.get('global_variables')
         if arguments:
-            ssh.sendline("pybot -V ../Profiles/{0}_profile.py"
-                        " -o {0}_output.xml"
-                        " -l {0}_log.html"
-                        " -r {0}_report.html"
-                        " ../TestScripts/{0}_test_case.robot".format(filename))
+            stdin, stdout, stderr = client.exec_command("cd {0}/Results && pybot -V ../Profiles/{1}_profile.py"
+                                                        " -o {1}_output.xml"
+                                                        " -l {1}_log.html"
+                                                        " -r {1}_report.html"
+                                                        " ../TestScripts/{1}_test_case.robot".format(config.get('path'),
+                                                                                                     filename),
+                                                        get_pty=True)
+            stdin.flush()
+            output = "{0}".format(stdout.read())
         else:
-            ssh.sendline("pybot "
-                        " -o {0}_output.xml"
-                        " -l {0}_log.html"
-                        " -r {0}_report.html"
-                        " ../TestScripts/{0}_test_case.robot".format(filename))
-        ssh.prompt()
-        _data['text'] = ssh.before
-        ssh.logout()
-    except pxssh.ExceptionPxssh as error:
-        print(error)
+            stdin, stdout, stderr = client.exec_command("cd {0}/Results && pybot "
+                                                        " -o {1}_output.xml"
+                                                        " -l {1}_log.html"
+                                                        " -r {1}_report.html"
+                                                        " ../TestScripts/{1}_test_case.robot".format(config.get('path'),
+                                                                                                     filename),
+                                                        get_pty=True)
+            stdin.flush()
+            output = "{0}".format(stdout.read())
+        if "command not found: pybot" in output:
+            raise Exception(output)
+        else:
+            _data['text'] = stdout.read()
+    except Exception as error:
+        _data['error'] = error
     return _data
 
 
@@ -456,7 +466,7 @@ def get_result_files(client, filename, config):
         client.close()
         _data['text'] = 'Success'
     except Exception as error:
-        _data['text'] = error
+        _data['error'] = error
     return _data
 
 
@@ -496,8 +506,12 @@ def run_on_server(_data):
             raise Exception(_data['error'])
         if profile_category is 2:
             """Run pybot only if the user choose -> Local Network connection"""
-            run_script(filename, configs)
-            get_result_files(client, filename, configs)
+            result = run_script(filename, params, client)
+            if result.get('error'):
+                raise Exception(result.get('error'))
+            result = get_result_files(client, filename, configs)
+            if result.get('error'):
+                raise Exception(result.get('error'))
             data_result['link'] = "{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
                                                                               settings.MEDIA_URL,
                                                                               filename)
