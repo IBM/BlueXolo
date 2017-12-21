@@ -31,7 +31,7 @@
                                     </div>
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
                                     {% if task.category == 2 %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -49,7 +49,7 @@
                                     </div>
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
                                     {% if task.category == 2 and task.result %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -95,7 +95,7 @@
                                     </div>
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
                                     {% if task.category == 2 %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -113,7 +113,7 @@
                                     </div>
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Completed: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
                                     {% if task.category == 2 and task.result %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
