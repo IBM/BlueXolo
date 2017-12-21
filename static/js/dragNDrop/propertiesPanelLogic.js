@@ -581,7 +581,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
         // If the command need the argument in order to work
         if (arguments[i].requirement) {
-            checkboxCounter++;
+            var checkboxID = "checkbox-" + checkboxCounter++;
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
@@ -600,7 +600,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
-            checkboxCounter++;
+            var checkboxID = "checkbox-" + checkboxCounter++;
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
