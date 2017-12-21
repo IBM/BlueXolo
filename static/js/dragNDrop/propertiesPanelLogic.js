@@ -638,8 +638,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
                 $(function () {
                     $('.chips-tags').material_chip({
                         data: tagsData,
-                        placeholder: 'Add Tags',
-                        secondaryPlaceholder: '+Tag',
+                        placeholder: 'Press ENTER',
+                        secondaryPlaceholder: '+ Tag',
                     });
                 });
             }
