@@ -358,7 +358,6 @@ function translateToRobot(callBackFunction) {
 
         alreadyAdded = false;
 
-        //
         if ((i + 1) >= rowsInTable.length) {
             if (callBackFunction !== undefined) {
                 callBackFunction();
