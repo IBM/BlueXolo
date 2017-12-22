@@ -103,7 +103,7 @@ function isTestcase(){
 }
 
 function isAVariable(dropppedCommandName){
-    if(dropppedCommandName === "variable") {
+    if(dropppedCommandName === "Global variable") {
         return true;
     }
     else{
@@ -340,7 +340,8 @@ function translateToRobot(callBackFunction) {
             alreadyAdded = true;
         }        
 
-        if (variablesSection && droppedElements[i].name !== "variable") {
+        //if (variablesSection && droppedElements[i].name !== "variable") {
+        if (variablesSection && !isAVariableFlag) {            
             variablesSection = false;
             variablesSectionEnded = true;
         }
@@ -692,7 +693,7 @@ function handleTranslationOf(data, parameters){
     else if(elementType === "for in range"){
         translatedRow += translateForInRange(parameters);
     }    
-    else if(elementType === "variable"){
+    else if(elementType === "variable" || elementType === "global variable"){
         translatedRow += translateVariable(parameters);
     }
     else if(elementType === "command"){
