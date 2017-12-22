@@ -103,7 +103,7 @@ function isTestcase(){
 }
 
 function isAVariable(dropppedCommandName){
-    if(dropppedCommandName === "Global variable") {
+    if(dropppedCommandName.toLowerCase() === "global variable") {
         return true;
     }
     else{
