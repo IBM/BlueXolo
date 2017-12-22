@@ -102,6 +102,15 @@ function isTestcase(){
     }
 }
 
+function isAVariable(dropppedCommandName){
+    if(dropppedCommandName === "variable") {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 function handleSections(startedSection){
 
     if(startedSection == "keywords"){
@@ -216,11 +225,11 @@ function handleVariablesSection(){
 
     if(!variablesSection){
         translatedRow += "*** Variables ***";
-
+        translatedRow += "\n";
         variablesSection = true;
     }
     
-    return translatedRow + "\n";
+    return translatedRow;
 }
 
 function translateToRobot(callBackFunction) {
@@ -319,23 +328,24 @@ function translateToRobot(callBackFunction) {
         }
 
         // Handles variables
-        if (droppedElements[i].name === "variable") {
+        var isAVariableFlag = isAVariable(droppedElements[i].name);
+
+        if (isAVariableFlag) {
             //translatedRow += handleVariablesSection();
-            terminal.value += "\n";
             terminal.value += handleVariablesSection();
 
             translatedRow = handleTranslationOf(droppedElements[i], parameters);
             terminal.value += translatedRow;
 
             alreadyAdded = true;
-        }
+        }        
 
         if (variablesSection && droppedElements[i].name !== "variable") {
             variablesSection = false;
-            variablesSectionEnded = true;        
+            variablesSectionEnded = true;
         }
 
-        if(!addedOwnDescription){
+        if(!addedOwnDescription && !isAVariableFlag){
             
             if(isKeyword()){
                 //never was added *** Keyword ***            
@@ -369,6 +379,34 @@ function translateToRobot(callBackFunction) {
         alreadyAdded = false;
 
         if ((i + 1) >= rowsInTable.length) {
+
+
+        if(!addedOwnDescription){
+            
+            if(isKeyword()){
+                //never was added *** Keyword ***            
+                var keywordName = addKeywordName();
+                var customKeyword = false;
+                var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+
+                keywordDescription += addDocumentationSection();                
+                terminal.value += keywordDescription;
+                terminal.value += "\t";
+            }
+            
+            if(isTestcase()){
+                //never was added *** Testcase ***
+                var keywordName = addKeywordName();
+                var keywordDescription = handleTestcaseSection(keywordName);
+
+                keywordDescription += addDocumentationSection();
+                terminal.value += keywordDescription;
+                terminal.value += "\t";
+            }
+
+            addedOwnDescription = true;
+        }
+
             if (callBackFunction !== undefined) {
                 callBackFunction();
             }
