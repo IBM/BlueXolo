@@ -6,6 +6,7 @@ django-datatables-view==1.14.0
 djangorestframework==3.6.4
 django-filter==1.0.4
 drfdocs==0.0.11
+ipython==6.2.1
 ldap3==2.3
 paramiko==2.3.1
 psycopg2==2.7.3.1
