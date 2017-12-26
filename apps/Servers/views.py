@@ -258,15 +258,15 @@ def generate_profile(params, filename):
 
 def generate_resource_files(extra_import, type_script):
     list_resources = []
-    result = dict()
     try:
         if type_script in [1, 2, 3]:
             kwds = extra_import.get('keywords')
             if kwds:
                 for k in kwds:
+                    result = dict()
                     obj = Keyword.objects.get(pk=k.get('id'))
                     filename = generate_filename(obj.name)
-                    kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
                     kwd_file.write("*** Keywords ***")
                     kwd_file.write("\n")
                     kwd_file.write(obj.name)
@@ -286,6 +286,7 @@ def generate_resource_files(extra_import, type_script):
             test_cases = extra_import.get('testcases')
             if test_cases:
                 for tc in test_cases:
+                    result = dict()
                     obj = TestCase.objects.get(pk=tc.get('id'))
                     filename = generate_filename(obj.name)
                     tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
