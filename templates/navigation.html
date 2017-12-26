@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load permission_tags %}
+
 <ul id="slide-out" class="side-nav ">
     <li>
         <div class="user-view">
@@ -10,9 +12,6 @@
         </div>
     </li>
     <li><a class="subheader blue-grey-text">Testing</a></li>
-{#    <li><a class="waves-effect" href="{% url "search-run-script" %}"><i#}
-{#            class="material-icons">navigate_next</i>Run Scripts</a></li>#}
-{#    <li>#}
     <li><a class="waves-effect" href="{% url "keywords" %}"><i class="material-icons">navigate_next</i>Keywords</a></li>
     <li><a class="waves-effect" href="{% url "testcases" %}"><i class="material-icons">navigate_next</i> Test Cases</a>
     </li>
@@ -28,10 +27,17 @@
 
     </li>
     <li><a class="subheader blue-grey-text">Servers</a></li>
-    <li><a class="waves-effect" href="{% url "parameters" %}"><i class="material-icons">navigate_next</i>Parameters</a>
+    {% if user|can:'read_server_parameter' %}
+        <li>
+            <a class="waves-effect" href="{% url "parameters" %}"><i class="material-icons">navigate_next</i>Parameters</a>
+        </li>
+    {% endif %}
     <li><a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
-    <li><a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
-    </li>
+        {% if user|can:'read_server_profile' %}
+            <li>
+                <a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
+            </li>
+        {% endif %}
     <li>
 
     <li><a class="subheader blue-grey-text">Sources</a></li>
@@ -53,15 +59,6 @@
     <li>
         <a class="waves-effect" href="{% url "phases" %}"><i class="material-icons">navigate_next</i>Phases</a>
     </li>
-
-
-    {#    <li><a class="waves-effect" href="{% url "os" %}"><i class="material-icons">navigate_next</i>Operations Systems</a>#}
-    {#    </li>#}
-
-    {#    <li><a class="waves-effect" href="{% url "arguments" %}"><i class="material-icons">navigate_next</i>Arguments</a>#}
-    {#    </li>#}
-    {#    <li><a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i>Commands</a></li>#}
-
     {% if user.is_staff %}
 
         <li><a class="subheader blue-grey-text">Admin</a></li>

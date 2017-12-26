@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from random import choice
+
+from rolepermissions.mixins import HasRoleMixin, HasPermissionsMixin
 from scp import SCPClient
 from string import ascii_lowercase, digits
 
@@ -54,40 +56,46 @@ class DeleteServerTemplate(LoginRequiredMixin, DeleteView):
         return reverse_lazy('servers-templates')
 
 
-class ServerProfileView(LoginRequiredMixin, TemplateView):
+class ServerProfileView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "server-profiles.html"
+    required_permission = 'read_server_profile'
 
 
-class NewServerProfileView(LoginRequiredMixin, CreateView):
+class NewServerProfileView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     template_name = "create-server-profile.html"
     success_url = reverse_lazy('servers-profiles')
     form_class = ServerProfileForm
+    required_permission = 'create_server_profile'
 
 
-class EditServerProfileView(LoginRequiredMixin, UpdateView):
+class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     template_name = "edit-server-profile.html"
     success_url = reverse_lazy('servers-profiles')
     form_class = ServerProfileForm
     model = ServerProfile
+    required_permission = 'update_server_profile'
 
 
-class DeleteServerProfile(LoginRequiredMixin, DeleteView):
+class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = ServerProfile
     template_name = "delete-profile.html"
+    required_permission = 'delete_server_profile'
 
     def get_success_url(self):
         messages.success(self.request, "Profile Deleted")
         return reverse_lazy('servers-profiles')
 
 
-class ParametersView(LoginRequiredMixin, TemplateView):
+class ParametersView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "parameters.html"
+    required_permission = 'read_server_parameter'
 
 
-class NewParametersView(LoginRequiredMixin, CreateView):
+class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     template_name = 'create-edit-parameter.html'
     success_url = reverse_lazy('parameters')
     form_class = ParametersForm
+    required_permission = 'create_server_parameter'
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Created")
@@ -99,11 +107,12 @@ class NewParametersView(LoginRequiredMixin, CreateView):
         return context
 
 
-class EditParametersView(LoginRequiredMixin, UpdateView):
+class EditParametersView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     template_name = "create-edit-parameter.html"
     success_url = reverse_lazy("parameters")
     form_class = ParametersForm
     model = Parameters
+    required_permission = 'update_server_parameter'
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Edited")
@@ -115,9 +124,10 @@ class EditParametersView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class DeleteParametersView(LoginRequiredMixin, DeleteView):
+class DeleteParametersView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = Parameters
     template_name = "delete-parameters.html"
+    required_permission = 'delete_server_parameter'
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Deleted")
