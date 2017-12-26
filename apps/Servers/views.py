@@ -3,11 +3,13 @@ import paramiko
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from random import choice
 
-from rolepermissions.mixins import HasRoleMixin, HasPermissionsMixin
+from rolepermissions.mixins import HasPermissionsMixin
 from scp import SCPClient
 from string import ascii_lowercase, digits
 
@@ -41,6 +43,14 @@ class EditServerTemplate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('servers-templates')
     form_class = ServerTemplateForm
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(EditServerTemplate, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-templates')
+
     def get_context_data(self, **kwargs):
         context = super(EditServerTemplate, self).get_context_data(**kwargs)
         context['ParametersForm'] = ParametersForm
@@ -54,6 +64,14 @@ class DeleteServerTemplate(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Template Deleted")
         return reverse_lazy('servers-templates')
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(DeleteServerTemplate, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-templates')
 
 
 class ServerProfileView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
@@ -75,6 +93,14 @@ class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView)
     model = ServerProfile
     required_permission = 'update_server_profile'
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(EditServerProfileView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-profiles')
+
 
 class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = ServerProfile
@@ -84,6 +110,14 @@ class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Profile Deleted")
         return reverse_lazy('servers-profiles')
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(DeleteServerProfile, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-profiles')
 
 
 class ParametersView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
@@ -118,6 +152,14 @@ class EditParametersView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
         messages.success(self.request, "Parameter Edited")
         return reverse_lazy('parameters')
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(EditParametersView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('parameters')
+
     def get_context_data(self, **kwargs):
         context = super(EditParametersView, self).get_context_data(**kwargs)
         context['title'] = 'Edit Parameter'
@@ -128,6 +170,14 @@ class DeleteParametersView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = Parameters
     template_name = "delete-parameters.html"
     required_permission = 'delete_server_parameter'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(DeleteParametersView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('parameters')
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Deleted")
