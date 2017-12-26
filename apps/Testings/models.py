@@ -15,6 +15,7 @@ class Collection(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     product = models.ForeignKey(Source, related_name="products")
+    user = models.ForeignKey(User)
 
     class Meta:
         db_table = "collections"
@@ -50,6 +51,7 @@ class Keyword(models.Model):
 class Phase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     product = models.ForeignKey(Source)
+    user = models.ForeignKey(User)
 
     class Meta:
         db_table = "phases"
