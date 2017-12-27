@@ -168,6 +168,13 @@ function handleKeywordSection(keywordName, customKeyword){
     // ToDo
     // Version 3 will handle a flag if the user wants to add the section or not.
     // At this moment it will not add the section if the current object is not a keyword
+    if(!keywordSection && isTestcase()){
+        translatedRow += "*** Keywords ***\n";
+        keywordSection = true;
+        translatedRow += keywordName+"\n";
+        return translatedRow;        
+    }
+
     if(!isKeyword()){
         translatedRow = "\t"+keywordName+"\n";
         keywordSection = true;
@@ -232,8 +239,36 @@ function handleVariablesSection(){
     return translatedRow;
 }
 
-function translateToRobot(callBackFunction) {
+function createTerminalWithColors(scriptText){
+    $.ajax({
 
+        "url": "/apis/get-highlight/",
+        type: 'POST',
+        data: {
+            'script': scriptText,
+        }, success: function (data) {
+
+            var colorfulTerminal = document.getElementById("colorfulTerminal");            
+            if(colorfulTerminal !== undefined && colorfulTerminal !== null){
+                colorfulTerminal.parentNode.removeChild(colorfulTerminal);
+            }
+
+            var terminal = document.getElementById("terminal");
+            var newTerminal = document.createElement("div");
+            newTerminal.id = "colorfulTerminal";
+
+            newTerminal.innerHTML = data.script_result;
+            terminal.parentNode.append(newTerminal);
+
+            terminal.style.display = 'none';
+        }, error: function (err) {
+            drawMessage(err.text, 'red');
+        }
+
+    })
+}
+
+function translateToRobot(callBackFunction) {
     resetUsedArraysVariables();
     resetSections();
 
@@ -259,7 +294,6 @@ function translateToRobot(callBackFunction) {
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
-
             var keywordName = droppedElements[i].name;
             var customKeyword = true;
             var translatedRow = handleKeywordSection(keywordName, customKeyword);
@@ -274,6 +308,8 @@ function translateToRobot(callBackFunction) {
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
+                }else{
+                    createTerminalWithColors(terminal.value);
                 }
                 return true;
             } else {
@@ -296,6 +332,8 @@ function translateToRobot(callBackFunction) {
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
+                }else{
+                    createTerminalWithColors(terminal.value);
                 }
                 return true;
             } else {
@@ -347,7 +385,7 @@ function translateToRobot(callBackFunction) {
         }
 
         if(!addedOwnDescription && !isAVariableFlag){
-            
+
             if(isKeyword()){
                 //never was added *** Keyword ***            
                 var keywordName = addKeywordName();
@@ -379,37 +417,19 @@ function translateToRobot(callBackFunction) {
 
         alreadyAdded = false;
 
-        if ((i + 1) >= rowsInTable.length) {
+        if ((i + 1) >= droppedElements.length) {
 
 
-        if(!addedOwnDescription){
-            
-            if(isKeyword()){
-                //never was added *** Keyword ***            
-                var keywordName = addKeywordName();
-                var customKeyword = false;
-                var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+            if(!addedOwnDescription){
+                addOwnDescription();
 
-                keywordDescription += addDocumentationSection();                
-                terminal.value += keywordDescription;
-                terminal.value += "\t";
+                addedOwnDescription = true;
             }
-            
-            if(isTestcase()){
-                //never was added *** Testcase ***
-                var keywordName = addKeywordName();
-                var keywordDescription = handleTestcaseSection(keywordName);
-
-                keywordDescription += addDocumentationSection();
-                terminal.value += keywordDescription;
-                terminal.value += "\t";
-            }
-
-            addedOwnDescription = true;
-        }
 
             if (callBackFunction !== undefined) {
                 callBackFunction();
+            }else{
+                createTerminalWithColors(terminal.value);
             }
             return true;
         }
@@ -418,6 +438,29 @@ function translateToRobot(callBackFunction) {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
         }        
+    }
+}
+
+function addOwnDescription(){
+    if(isKeyword()){
+        //never was added *** Keyword ***            
+        var keywordName = addKeywordName();
+        var customKeyword = false;
+        var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+
+        keywordDescription += addDocumentationSection();                
+        terminal.value += keywordDescription;
+        terminal.value += "\t";
+    }
+
+    if(isTestcase()){
+        //never was added *** Testcase ***
+        var keywordName = addKeywordName();
+        var keywordDescription = handleTestcaseSection(keywordName);
+
+        keywordDescription += addDocumentationSection();
+        terminal.value += keywordDescription;
+        terminal.value += "\t";
     }
 }
 
