@@ -232,8 +232,36 @@ function handleVariablesSection(){
     return translatedRow;
 }
 
-function translateToRobot(callBackFunction) {
+function createTerminalWithColors(scriptText){
+    $.ajax({
 
+        "url": "/apis/get-highlight/",
+        type: 'POST',
+        data: {
+            'script': scriptText,
+        }, success: function (data) {
+
+            var colorfulTerminal = document.getElementById("colorfulTerminal");            
+            if(colorfulTerminal !== undefined && colorfulTerminal !== null){
+                colorfulTerminal.parentNode.removeChild(colorfulTerminal);
+            }
+
+            var terminal = document.getElementById("terminal");
+            var newTerminal = document.createElement("div");
+            newTerminal.id = "colorfulTerminal";
+
+            newTerminal.innerHTML = data.script_result;
+            terminal.parentNode.append(newTerminal);
+
+            terminal.style.display = 'none';
+        }, error: function (err) {
+            drawMessage(err.text, 'red');
+        }
+
+    })
+}
+
+function translateToRobot(callBackFunction) {
     resetUsedArraysVariables();
     resetSections();
 
@@ -274,6 +302,8 @@ function translateToRobot(callBackFunction) {
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
+                }else{
+                    createTerminalWithColors(terminal.value);
                 }
                 return true;
             } else {
@@ -296,6 +326,8 @@ function translateToRobot(callBackFunction) {
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
+                }else{
+                    createTerminalWithColors(terminal.value);
                 }
                 return true;
             } else {
@@ -347,7 +379,7 @@ function translateToRobot(callBackFunction) {
         }
 
         if(!addedOwnDescription && !isAVariableFlag){
-            
+
             if(isKeyword()){
                 //never was added *** Keyword ***            
                 var keywordName = addKeywordName();
@@ -382,34 +414,36 @@ function translateToRobot(callBackFunction) {
         if ((i + 1) >= rowsInTable.length) {
 
 
-        if(!addedOwnDescription){
-            
-            if(isKeyword()){
-                //never was added *** Keyword ***            
-                var keywordName = addKeywordName();
-                var customKeyword = false;
-                var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+            if(!addedOwnDescription){
 
-                keywordDescription += addDocumentationSection();                
-                terminal.value += keywordDescription;
-                terminal.value += "\t";
+                if(isKeyword()){
+                    //never was added *** Keyword ***            
+                    var keywordName = addKeywordName();
+                    var customKeyword = false;
+                    var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+
+                    keywordDescription += addDocumentationSection();                
+                    terminal.value += keywordDescription;
+                    terminal.value += "\t";
+                }
+
+                if(isTestcase()){
+                    //never was added *** Testcase ***
+                    var keywordName = addKeywordName();
+                    var keywordDescription = handleTestcaseSection(keywordName);
+
+                    keywordDescription += addDocumentationSection();
+                    terminal.value += keywordDescription;
+                    terminal.value += "\t";
+                }
+
+                addedOwnDescription = true;
             }
-            
-            if(isTestcase()){
-                //never was added *** Testcase ***
-                var keywordName = addKeywordName();
-                var keywordDescription = handleTestcaseSection(keywordName);
-
-                keywordDescription += addDocumentationSection();
-                terminal.value += keywordDescription;
-                terminal.value += "\t";
-            }
-
-            addedOwnDescription = true;
-        }
 
             if (callBackFunction !== undefined) {
                 callBackFunction();
+            }else{
+                createTerminalWithColors(terminal.value);
             }
             return true;
         }
