@@ -157,9 +157,9 @@ def get_connection(config):
 
 
 def generate_filename(_script):
-    """Generate a string like NAME_w0ln0t3j39wm"""
+    """Generate a string like NAME_w0ln0t"""
     name = _script.replace(" ", "")
-    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
+    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(6))
     return '{0}_{1}'.format(name, random_string)
 
 
@@ -199,19 +199,22 @@ def send_files(filename, file_type, config, client):
     return _data
 
 
-def run_script(filename, params, client):
+def run_script(filename, params, client, type_script):
     """This execute pybot with some flags """
     _data = dict()
     try:
+        exec_command = "../TestScripts/{0}_test_case.robot".format(filename)
+        if type_script is 3:
+            exec_command = "../TestSuites/{0}_test_suite.robot".format(filename)
         config = params.get('config')
         arguments = params.get('global_variables')
         if arguments:
             stdin, stdout, stderr = client.exec_command("cd {0}/Results && pybot -V ../Profiles/{1}_profile.py"
                                                         " -o {1}_output.xml"
                                                         " -l {1}_log.html"
-                                                        " -r {1}_report.html"
-                                                        " ../TestScripts/{1}_test_case.robot".format(config.get('path'),
-                                                                                                     filename),
+                                                        " -r {1}_report.html {2}".format(config.get('path'),
+                                                                                         filename,
+                                                                                         exec_command),
                                                         get_pty=True)
             stdin.flush()
             output = "{0}".format(stdout.read())
@@ -219,9 +222,9 @@ def run_script(filename, params, client):
             stdin, stdout, stderr = client.exec_command("cd {0}/Results && pybot "
                                                         " -o {1}_output.xml"
                                                         " -l {1}_log.html"
-                                                        " -r {1}_report.html"
-                                                        " ../TestScripts/{1}_test_case.robot".format(config.get('path'),
-                                                                                                     filename),
+                                                        " -r {1}_report.html {2}".format(config.get('path'),
+                                                                                         filename,
+                                                                                         exec_command),
                                                         get_pty=True)
             stdin.flush()
             output = "{0}".format(stdout.read())
@@ -256,10 +259,10 @@ def generate_profile(params, filename):
     return var_file.name
 
 
-def generate_resource_files(extra_import, type_script):
+def generate_resource_files(extra_import, type_script, extra_scripts=None):
     list_resources = []
     try:
-        if type_script in [1, 2, 3]:
+        if type_script in [1, 2]:
             kwds = extra_import.get('keywords')
             if kwds:
                 for k in kwds:
@@ -272,7 +275,7 @@ def generate_resource_files(extra_import, type_script):
                     kwd_file.write(obj.name)
                     kwd_file.write("\n")
                     if obj.description:
-                        kwd_file.write("\t[Documentation]\t{0}".format(obj.description))
+                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
                         kwd_file.write("\n")
                     kwd_file.write(k.get('script'))
                     kwd_file.close()
@@ -289,13 +292,13 @@ def generate_resource_files(extra_import, type_script):
                     result = dict()
                     obj = TestCase.objects.get(pk=tc.get('id'))
                     filename = generate_filename(obj.name)
-                    tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
                     tc_file.write("*** Test Cases ***")
                     tc_file.write("\n")
                     tc_file.write(obj.name)
                     tc_file.write("\n")
                     if obj.description:
-                        tc_file.write("\t[Documentation]\t{0}".format(obj.description))
+                        tc_file.write("\t[Documentation]\t\t{0}".format(obj.description))
                         tc_file.write("\n")
                         tc_file.write(tc.get('script'))
                     tc_file.close()
@@ -392,10 +395,9 @@ def generate_file(obj, type_script, params, filename, client):
 
         elif type_script is 3:
             """Test Suite """
-
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
-            resources = generate_resource_files(extra_elements, type_script)
+            kwd_resources = generate_resource_files(extra_elements, 2)
             dirs = ['Keywords', 'TestScripts']
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
                            "w")
@@ -404,14 +406,15 @@ def generate_file(obj, type_script, params, filename, client):
                 ts_file.write("Documentation\t{0}".format(obj.description))
                 ts_file.write("\n")
             """ Adding some resources"""
-            if resources:
-                for resource in resources:
+            if kwd_resources:
+                """First keywords"""
+                for kwd in kwd_resources:
                     ts_file.write("Resource\t{0}/{1}/{2}_keyword.robot\n".format(
                         config.get('path'),
-                        dirs[resource.get('obj_type')],
-                        resource.get('filename')
+                        dirs[0],
+                        kwd.get('filename')
                     ))
-                    _data = send_files(resource.get('resource'), resource.get('obj_type'), config, client)
+                    _data = send_files(kwd.get('resource'), 0, config, client)
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
@@ -507,7 +510,7 @@ def run_on_server(_data):
             raise Exception(_data['error'])
         if profile_category is 2:
             """Run pybot only if the user choose -> Local Network connection"""
-            result = run_script(filename, params, client)
+            result = run_script(filename, params, client, type_script)
             if result.get('error'):
                 raise Exception(result.get('error'))
             result = get_result_files(client, filename, configs)
