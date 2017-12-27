@@ -168,6 +168,13 @@ function handleKeywordSection(keywordName, customKeyword){
     // ToDo
     // Version 3 will handle a flag if the user wants to add the section or not.
     // At this moment it will not add the section if the current object is not a keyword
+    if(!keywordSection && isTestcase()){
+        translatedRow += "*** Keywords ***\n";
+        keywordSection = true;
+        translatedRow += keywordName+"\n";
+        return translatedRow;        
+    }
+
     if(!isKeyword()){
         translatedRow = "\t"+keywordName+"\n";
         keywordSection = true;
@@ -287,7 +294,6 @@ function translateToRobot(callBackFunction) {
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
-
             var keywordName = droppedElements[i].name;
             var customKeyword = true;
             var translatedRow = handleKeywordSection(keywordName, customKeyword);
@@ -411,31 +417,11 @@ function translateToRobot(callBackFunction) {
 
         alreadyAdded = false;
 
-        if ((i + 1) >= rowsInTable.length) {
+        if ((i + 1) >= droppedElements.length) {
 
 
             if(!addedOwnDescription){
-
-                if(isKeyword()){
-                    //never was added *** Keyword ***            
-                    var keywordName = addKeywordName();
-                    var customKeyword = false;
-                    var keywordDescription = handleKeywordSection(keywordName, customKeyword);
-
-                    keywordDescription += addDocumentationSection();                
-                    terminal.value += keywordDescription;
-                    terminal.value += "\t";
-                }
-
-                if(isTestcase()){
-                    //never was added *** Testcase ***
-                    var keywordName = addKeywordName();
-                    var keywordDescription = handleTestcaseSection(keywordName);
-
-                    keywordDescription += addDocumentationSection();
-                    terminal.value += keywordDescription;
-                    terminal.value += "\t";
-                }
+                addOwnDescription();
 
                 addedOwnDescription = true;
             }
@@ -452,6 +438,29 @@ function translateToRobot(callBackFunction) {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
         }        
+    }
+}
+
+function addOwnDescription(){
+    if(isKeyword()){
+        //never was added *** Keyword ***            
+        var keywordName = addKeywordName();
+        var customKeyword = false;
+        var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+
+        keywordDescription += addDocumentationSection();                
+        terminal.value += keywordDescription;
+        terminal.value += "\t";
+    }
+
+    if(isTestcase()){
+        //never was added *** Testcase ***
+        var keywordName = addKeywordName();
+        var keywordDescription = handleTestcaseSection(keywordName);
+
+        keywordDescription += addDocumentationSection();
+        terminal.value += keywordDescription;
+        terminal.value += "\t";
     }
 }
 
