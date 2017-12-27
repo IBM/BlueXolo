@@ -87,7 +87,7 @@ function drawKeywordsProperties(keywordJSON) {
 
         if (arguments === null) {
             continue;
-        }
+        }        
 
         // Add arguments in the properties panel 
         for (var i = 0; i < arguments.length; i++) {
@@ -310,13 +310,19 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
     titleNode.id = "currentEditing";
     propPanel.appendChild(titleNode);
 
+    var keywordsCategory = 6;
+
     for (var j = 0; j < commands.length; j++) {
         arguments = commands[j].arguments;
 
         if (arguments === null) {
             continue;
         }
-        
+
+        if(commands[j].category === keywordsCategory){
+            continue;
+        }
+
         // Add arguments in the properties panel
         for (var i = 0; i < arguments.length; i++) {
             
@@ -575,7 +581,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
         // If the command need the argument in order to work
         if (arguments[i].requirement) {
-            checkboxCounter++;
+            var checkboxID = "checkbox-" + checkboxCounter++;
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
@@ -594,7 +600,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
             tempForm.appendChild(checkbox);
             tempForm.appendChild(labelNode);
         } else {
-            checkboxCounter++;
+            var checkboxID = "checkbox-" + checkboxCounter++;
 
             var checkbox = document.createElement('input');
             checkbox.type = "checkbox";
@@ -632,8 +638,8 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
                 $(function () {
                     $('.chips-tags').material_chip({
                         data: tagsData,
-                        placeholder: 'Add Tags',
-                        secondaryPlaceholder: '+Tag',
+                        placeholder: 'Press ENTER',
+                        secondaryPlaceholder: '+ Tag',
                     });
                 });
             }

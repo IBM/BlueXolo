@@ -264,8 +264,15 @@ function saveKeywordFromInput(droppedElementIndex, elementID){
     var indexStart = 0;
     var indexEnd = 0;
 
+    var keywordsCategory = 6;
+
     for(var i=0; i<commands.length; i++){
         arguments = commands[i].arguments;
+
+        if(commands[i].category === keywordsCategory){
+        	continue;
+        }
+
 		argumentsDisplayed = getIndexesOfArgumentsDisplayed(arguments);
 		indexEnd = indexStart + argumentsDisplayed.length;
 

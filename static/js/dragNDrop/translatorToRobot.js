@@ -102,6 +102,15 @@ function isTestcase(){
     }
 }
 
+function isAVariable(dropppedCommandName){
+    if(dropppedCommandName.toLowerCase() === "global variable") {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 function handleSections(startedSection){
 
     if(startedSection == "keywords"){
@@ -155,13 +164,30 @@ function handleKeywordSection(keywordName, customKeyword){
 
     var translatedRow = "\n";
 
+    // Version 3
+    // ToDo
+    // Version 3 will handle a flag if the user wants to add the section or not.
+    // At this moment it will not add the section if the current object is not a keyword
+    if(!keywordSection && isTestcase()){
+        translatedRow += "*** Keywords ***\n";
+        keywordSection = true;
+        translatedRow += keywordName+"\n";
+        return translatedRow;        
+    }
+
+    if(!isKeyword()){
+        translatedRow = "\t"+keywordName+"\n";
+        keywordSection = true;
+        return translatedRow;
+    }
+
     if(!keywordSection){
         translatedRow += "*** Keywords ***\n";
         keywordSection = true;
     }
     
     if(customKeyword){
-        translatedRow += "\t"+keywordName+"\n";    
+        translatedRow += "\t"+keywordName+"\n";
     }
     else{
         translatedRow += keywordName+"\n";    
@@ -206,15 +232,43 @@ function handleVariablesSection(){
 
     if(!variablesSection){
         translatedRow += "*** Variables ***";
-
+        translatedRow += "\n";
         variablesSection = true;
     }
     
-    return translatedRow + "\n";
+    return translatedRow;
+}
+
+function createTerminalWithColors(scriptText){
+    $.ajax({
+
+        "url": "/apis/get-highlight/",
+        type: 'POST',
+        data: {
+            'script': scriptText,
+        }, success: function (data) {
+
+            var colorfulTerminal = document.getElementById("colorfulTerminal");            
+            if(colorfulTerminal !== undefined && colorfulTerminal !== null){
+                colorfulTerminal.parentNode.removeChild(colorfulTerminal);
+            }
+
+            var terminal = document.getElementById("terminal");
+            var newTerminal = document.createElement("div");
+            newTerminal.id = "colorfulTerminal";
+
+            newTerminal.innerHTML = data.script_result;
+            terminal.parentNode.append(newTerminal);
+
+            terminal.style.display = 'none';
+        }, error: function (err) {
+            drawMessage(err.text, 'red');
+        }
+
+    })
 }
 
 function translateToRobot(callBackFunction) {
-
     resetUsedArraysVariables();
     resetSections();
 
@@ -240,7 +294,6 @@ function translateToRobot(callBackFunction) {
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
-
             var keywordName = droppedElements[i].name;
             var customKeyword = true;
             var translatedRow = handleKeywordSection(keywordName, customKeyword);
@@ -252,9 +305,11 @@ function translateToRobot(callBackFunction) {
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
             //translateDroppedKeyword(droppedElements[i].keywordJSON);
             
-            if ((i + 1) >= rowsInTable.length) {
+            if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
+                }else{
+                    createTerminalWithColors(terminal.value);
                 }
                 return true;
             } else {
@@ -266,23 +321,25 @@ function translateToRobot(callBackFunction) {
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
-
             terminal.value += translatedRow;
 
             var testcaseUsedID = droppedElements[i].id;
-            var newTestcaseUsed = droppedElements[i].keywordJSON;            
+            var newTestcaseUsed = droppedElements[i].keywordJSON;
+
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
-            if ((i + 1) >= rowsInTable.length) {
+            if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
                     callBackFunction();
+                }else{
+                    createTerminalWithColors(terminal.value);
                 }
                 return true;
             } else {
                 continue;
             }
-        }        
+        }
 
         if(droppedElements[i].category === commandProductCategory
             || droppedElements[i].category === externalLibrariesCategory){
@@ -309,24 +366,26 @@ function translateToRobot(callBackFunction) {
         }
 
         // Handles variables
-        if (droppedElements[i].name === "variable") {
+        var isAVariableFlag = isAVariable(droppedElements[i].name);
+
+        if (isAVariableFlag) {
             //translatedRow += handleVariablesSection();
-            terminal.value += "\n";
             terminal.value += handleVariablesSection();
 
             translatedRow = handleTranslationOf(droppedElements[i], parameters);
             terminal.value += translatedRow;
 
             alreadyAdded = true;
-        }
+        }        
 
-        if (variablesSection && droppedElements[i].name !== "variable") {
+        //if (variablesSection && droppedElements[i].name !== "variable") {
+        if (variablesSection && !isAVariableFlag) {            
             variablesSection = false;
-            variablesSectionEnded = true;        
+            variablesSectionEnded = true;
         }
 
-        if(!addedOwnDescription){
-            
+        if(!addedOwnDescription && !isAVariableFlag){
+
             if(isKeyword()){
                 //never was added *** Keyword ***            
                 var keywordName = addKeywordName();
@@ -358,11 +417,19 @@ function translateToRobot(callBackFunction) {
 
         alreadyAdded = false;
 
+        if ((i + 1) >= droppedElements.length) {
 
-        //
-        if ((i + 1) >= rowsInTable.length) {
+
+            if(!addedOwnDescription){
+                addOwnDescription();
+
+                addedOwnDescription = true;
+            }
+
             if (callBackFunction !== undefined) {
                 callBackFunction();
+            }else{
+                createTerminalWithColors(terminal.value);
             }
             return true;
         }
@@ -371,6 +438,29 @@ function translateToRobot(callBackFunction) {
             inForLoop = true;
             identationForLoop = (Number(identationLevel));
         }        
+    }
+}
+
+function addOwnDescription(){
+    if(isKeyword()){
+        //never was added *** Keyword ***            
+        var keywordName = addKeywordName();
+        var customKeyword = false;
+        var keywordDescription = handleKeywordSection(keywordName, customKeyword);
+
+        keywordDescription += addDocumentationSection();                
+        terminal.value += keywordDescription;
+        terminal.value += "\t";
+    }
+
+    if(isTestcase()){
+        //never was added *** Testcase ***
+        var keywordName = addKeywordName();
+        var keywordDescription = handleTestcaseSection(keywordName);
+
+        keywordDescription += addDocumentationSection();
+        terminal.value += keywordDescription;
+        terminal.value += "\t";
     }
 }
 
@@ -433,14 +523,19 @@ function getTranslationOfTestcase(testcase){
     var keywordDroppedCategory = 6;
 
     for (var i = 0; i < testcase.length; i++) {
+
         if (testcase[i].category === keywordDroppedCategory) {
 
             var keywordUsedID = testcase[i].id;
             var newKeywordUsed = testcase[i].keywordJSON;
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed)
 
-            var identationLevel = droppedElements[i].indentation;
+            var identationLevel = testcase[i].indentation;
             var translatedRow = handleIndentation(identationLevel);
+
+            if(identationLevel === undefined){
+                identationLevel = 0;
+            }
 
             translatedRow += testcase[i].name;
             translation += translatedRow;
@@ -531,6 +626,10 @@ function translateDroppedKeyword(keyword) {
         var identationLevel = keyword[i].indentation;
         var parameters = keyword[i].arguments;
 
+        if(identationLevel === undefined){
+            identationLevel = 0;
+        }
+
         if (inForLoop && Number(identationLevel) <= identationForLoop) {
             inForLoop = false;
         }
@@ -580,6 +679,10 @@ function translateDroppedTestcase(testcase) {
         var elementType = testcase[i].id;
         var identationLevel = testcase[i].indentation;
         var parameters = testcase[i].arguments;
+
+        if(identationLevel === undefined){
+            identationLevel = 0;
+        }
 
         if (inForLoop && Number(identationLevel) <= identationForLoop) {
             inForLoop = false;
@@ -633,7 +736,7 @@ function handleTranslationOf(data, parameters){
     else if(elementType === "for in range"){
         translatedRow += translateForInRange(parameters);
     }    
-    else if(elementType === "variable"){
+    else if(elementType === "variable" || elementType === "global variable"){
         translatedRow += translateVariable(parameters);
     }
     else if(elementType === "command"){
@@ -656,6 +759,12 @@ function handleTranslationOf(data, parameters){
 function translateExternCommand(commandData){
     var scriptLine = commandData.name;
     var arguments = commandData.arguments;
+
+    var keywordsCategory = 6;
+
+    if(commandData.category === keywordsCategory){
+        return scriptLine;
+    }
 
     for(var i=0; i<arguments.length; i++){
         if(arguments[i].visible === true){

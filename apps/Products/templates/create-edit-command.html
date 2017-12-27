@@ -256,9 +256,12 @@
                         needs_value: document.getElementById('id_needs_value').checked,
                         requirement: document.getElementById('id_requirement').checked
                     }, success: function (data) {
+                        populateObj(data);
+
                         drawMessage("Argument '" + data.name + "' Created", 'green');
                         document.getElementById('form_argument').reset();
                         $('#modalArgument').modal('close');
+                        _btn_create.disabled = false;
                     }, error: function (err) {
                         if (err.responseJSON.name) {
                             (err.responseJSON.name).forEach(function (v) {

@@ -58,7 +58,7 @@
         <div class="col s12 l4">
             <div class="section">
                 <div class="input-field col s12">
-                    <select id="connection">
+                    <select id="connection" onchange="enable_run()">
                         <option value="" disabled selected>Choose your option</option>
 
                     </select>
@@ -72,7 +72,7 @@
                     <label>Variables Profile</label>
                 </div>
                 <div class="center">
-                    <button type="button" class="btn waves-effect waves-light" onclick="runScript()">Run</button>
+                    <button id="btn_run" type="button" class="btn waves-effect waves-light" onclick="runScript()" disabled>Run</button>
                 </div>
             </div>
         </div>
@@ -151,8 +151,6 @@
                         _profiles.push(v)
                     });
                 }
-
-
                 _profiles.push(_selectConnection.value);
                 return JSON.stringify(_profiles)
             }
@@ -167,11 +165,19 @@
                         type_script: _object_type
                     },
                     success: function (data) {
-                        drawMessage("Script send to Queue", 'blue');
+                        drawMessage("Script send to Queue", 'green');
+                        var $toastContent = $('<span>Click on "GO" button to go Task list </span>').add($(
+                            '<a href="/home/" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                     }, error: function (err) {
                         drawMessage(err.responseJSON.text, 'red');
                     }
                 });
+            }
+
+            function enable_run(){
+                var _btn_run = document.getElementById('btn_run');
+                _btn_run.disabled = false;
             }
         </script>
     {% endcompress %}

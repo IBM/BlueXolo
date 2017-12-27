@@ -8,13 +8,24 @@ from django import setup
 
 setup()
 
-from apps.Servers.models import Parameters
+from apps.Servers.models import Parameters, TemplateServer
 
 
-def run(name):
+def run_base_migration(file_name, template_name=None, category=None):
+    """Function for add parameters from csv file.
+    @param file_name[String] = something.csv
+    @param template_name[String][Optional] = ExampleTemplate
+    @param category[Integer][Optional] = 1 
+    """
     base_path = os.path.dirname(__file__)
-    file = os.path.join(base_path,  'base_migrations', name)
+    file = os.path.join(base_path,  'base_migrations', file_name)
     try:
+        if template_name and category:
+                template, created = TemplateServer.objects.get_or_create(
+                    name=template_name,
+                    description="Base template from base migration",
+                    category=category
+                )
         with open(file) as f:
             reader = csv.reader(f, dialect='excel')
             for idx, row in enumerate(reader):
@@ -25,10 +36,14 @@ def run(name):
                         category=row[2],
                         value_type=row[3]
                     )
+                    if template_name and category:
+                        template.parameters.add(param)
                     print(param)
             print("Parameters added")
     except Exception as error:
         print(error)
 
 
-run('parameters.csv')
+# run_base_migration('parameters_connection.csv', 'BaseConnection', 2)
+
+# run_base_migration('parameters_global.csv', 'GlobalVariables', 1)
