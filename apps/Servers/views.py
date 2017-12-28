@@ -151,8 +151,8 @@ def get_connection(config):
             username=config.get('user'),
             password=config.get('passwd'),
             port=_port)
-    except expression as identifier:
-        client = identifier
+    except Exception as error:
+        client = error
     return client
 
 
@@ -259,55 +259,29 @@ def generate_profile(params, filename):
     return var_file.name
 
 
-def generate_resource_files(extra_import, type_script, extra_scripts=None):
+def generate_resource_files(extra_import):
     list_resources = []
     try:
-        if type_script in [1, 2]:
-            kwds = extra_import.get('keywords')
-            if kwds:
-                for k in kwds:
-                    result = dict()
-                    obj = Keyword.objects.get(pk=k.get('id'))
-                    filename = generate_filename(obj.name)
-                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                    kwd_file.write("*** Keywords ***")
+        kwds = extra_import.get('keywords')
+        if kwds:
+            for k in kwds:
+                result = dict()
+                obj = Keyword.objects.get(pk=k.get('id'))
+                filename = generate_filename(obj.name)
+                kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                kwd_file.write("*** Keywords ***")
+                kwd_file.write("\n")
+                kwd_file.write(obj.name)
+                kwd_file.write("\n")
+                if obj.description:
+                    kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
                     kwd_file.write("\n")
-                    kwd_file.write(obj.name)
-                    kwd_file.write("\n")
-                    if obj.description:
-                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
-                        kwd_file.write("\n")
-                    kwd_file.write(k.get('script'))
-                    kwd_file.close()
-                    result['filename'] = filename
-                    result['resource'] = kwd_file.name
-                    result['name'] = obj.name
-                    """Object type: 0= kwd, 1= test case"""
-                    result['obj_type'] = 0
-                    list_resources.append(result)
-        elif type_script is 3:
-            test_cases = extra_import.get('testcases')
-            if test_cases:
-                for tc in test_cases:
-                    result = dict()
-                    obj = TestCase.objects.get(pk=tc.get('id'))
-                    filename = generate_filename(obj.name)
-                    tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
-                    tc_file.write("*** Test Cases ***")
-                    tc_file.write("\n")
-                    tc_file.write(obj.name)
-                    tc_file.write("\n")
-                    if obj.description:
-                        tc_file.write("\t[Documentation]\t\t{0}".format(obj.description))
-                        tc_file.write("\n")
-                        tc_file.write(tc.get('script'))
-                    tc_file.close()
-                    result['filename'] = filename
-                    result['resource'] = tc_file.name
-                    result['name'] = obj.name
-                    """Object type: 0= kwd, 1= test case"""
-                    result['obj_type'] = 1
-                    list_resources.append(result)
+                kwd_file.write(k.get('script'))
+                kwd_file.close()
+                result['filename'] = filename
+                result['resource'] = kwd_file.name
+                result['name'] = obj.name
+                list_resources.append(result)
     except Exception as error:
         list_resources.append(error)
     return list_resources
@@ -322,7 +296,7 @@ def generate_file(obj, type_script, params, filename, client):
         if type_script is 1:
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
-            resources = generate_resource_files(extra_elements, type_script)
+            resources = generate_resource_files(extra_elements)
 
             """First create the keyword file"""
             kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -370,7 +344,7 @@ def generate_file(obj, type_script, params, filename, client):
         elif type_script is 2:
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
-            resources = generate_resource_files(extra_elements, type_script)
+            resources = generate_resource_files(extra_elements)
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
             tc_file.write("*** Settings ***\n")
@@ -397,8 +371,7 @@ def generate_file(obj, type_script, params, filename, client):
             """Test Suite """
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
-            kwd_resources = generate_resource_files(extra_elements, 2)
-            dirs = ['Keywords', 'TestScripts']
+            kwd_resources = generate_resource_files(extra_elements)
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
                            "w")
             ts_file.write("*** Settings ***\n")
@@ -409,9 +382,8 @@ def generate_file(obj, type_script, params, filename, client):
             if kwd_resources:
                 """First keywords"""
                 for kwd in kwd_resources:
-                    ts_file.write("Resource\t{0}/{1}/{2}_keyword.robot\n".format(
+                    ts_file.write("Resource\t{0}/Keywords/{1}_keyword.robot\n".format(
                         config.get('path'),
-                        dirs[0],
                         kwd.get('filename')
                     ))
                     _data = send_files(kwd.get('resource'), 0, config, client)
@@ -421,7 +393,6 @@ def generate_file(obj, type_script, params, filename, client):
             if libraries:
                 for lib in libraries:
                     ts_file.write("Library\t{0}\n".format(lib))
-                    ts_file.write("\n")
             ts_file.write(obj.script)
             ts_file.close()
             check = send_files(ts_file.name, 7, config, client)
