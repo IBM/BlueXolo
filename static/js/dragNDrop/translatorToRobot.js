@@ -179,10 +179,10 @@ function handleKeywordSection(keywordName, customKeyword){
     // Version 3 will handle a flag if the user wants to add the section or not.
     // At this moment it will not add the section if the current object is not a keyword
     if(!keywordSection && isTestcase()){
-        translatedRow += "*** Keywords ***\n";
+        //translatedRow += "*** Keywords ***\n";
         keywordSection = true;
-        translatedRow += keywordName+"\n";
-        return translatedRow;        
+        translatedRow = "\t"+keywordName+"\n";
+        return translatedRow;      
     }
 
     if(!isKeyword()){
@@ -336,6 +336,14 @@ function translateToRobot(callBackFunction) {
             var newTestcaseUsed = droppedElements[i].keywordJSON;
 
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
+
+            if(isTestsuite()){
+                var testCaseToTranslate = droppedElements[i].keywordJSON;
+
+                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
+
+                terminal.value += testCaseTranslation;
+            }
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
             if ((i + 1) >= droppedElements.length) {
