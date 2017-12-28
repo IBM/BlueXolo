@@ -157,7 +157,7 @@
         }
 
         function writeTestSuiteDatabase() {
-            var testSuiteName = document.getElementById("testSuite_name").value;
+            var testSuiteName = document.getElementById("testsuite_name").value;
             var testSuiteDescription = document.getElementById("testSuite_description").value;
             var testSuiteValues = droppedElements;
             var testSuiteCollection = document.getElementById('testSuite_collection').value;
@@ -226,8 +226,8 @@
                 </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="testSuite_name">Name <b class="red-text">*</b></label>
-                <input type="text" id="testSuite_name" onblur="hasValues()" value="{{ object.name }}"
+                <label for="testsuite_name">Name <b class="red-text">*</b></label>
+                <input type="text" id="testsuite_name" onblur="hasValues()" value="{{ object.name }}"
                        placeholder="Required">
                 <ul>
                     <li class="red-text"><i id="error_field_name"></i></li>
@@ -373,7 +373,7 @@
         };
 
         function hasValues() {
-            var _keyName = document.getElementById('testSuite_name');
+            var _keyName = document.getElementById('testsuite_name');
             var _keyCollection = document.getElementById('keyword_collection');
             var _error_filed_name = document.getElementById('error_field_name');
             var _error_filed_collection = document.getElementById('error_field_collection');
