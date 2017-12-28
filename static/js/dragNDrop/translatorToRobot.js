@@ -102,6 +102,16 @@ function isTestcase(){
     }
 }
 
+function isTestsuite(){
+    var testcaseNameTextArea = document.getElementById("testsuite_name");
+    if(testcaseNameTextArea !== null){
+        return true
+    }
+    else{
+        return false;
+    }
+}
+
 function isAVariable(dropppedCommandName){
     if(dropppedCommandName.toLowerCase() === "global variable") {
         return true;
@@ -303,7 +313,6 @@ function translateToRobot(callBackFunction) {
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i].keywordJSON;
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
-            //translateDroppedKeyword(droppedElements[i].keywordJSON);
             
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
