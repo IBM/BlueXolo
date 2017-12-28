@@ -178,14 +178,8 @@ function handleKeywordSection(keywordName, customKeyword){
     // ToDo
     // Version 3 will handle a flag if the user wants to add the section or not.
     // At this moment it will not add the section if the current object is not a keyword
-    if(!keywordSection && isTestcase()){
-        //translatedRow += "*** Keywords ***\n";
-        keywordSection = true;
-        translatedRow = "\t"+keywordName+"\n";
-        return translatedRow;      
-    }
-
     if(!isKeyword()){
+        //translatedRow += "*** Keywords ***\n";
         translatedRow = "\t"+keywordName+"\n";
         keywordSection = true;
         return translatedRow;
