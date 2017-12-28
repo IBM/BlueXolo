@@ -336,6 +336,14 @@ function translateToRobot(callBackFunction) {
             var newTestcaseUsed = droppedElements[i].keywordJSON;
 
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
+
+            if(isTestsuite()){
+                var testCaseToTranslate = droppedElements[i].keywordJSON;
+
+                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
+
+                terminal.value += testCaseTranslation;
+            }
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
             if ((i + 1) >= droppedElements.length) {
