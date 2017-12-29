@@ -424,8 +424,13 @@ def generate_file(obj, type_script, params, filename, client):
 
         elif type_script is 3:
             """Test Suite """
+            items = search_for_script_names(obj.script)
+            if items.get('error'):
+                raise Exception(items.get('error'))
+
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
                            "w")
