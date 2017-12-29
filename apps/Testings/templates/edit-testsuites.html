@@ -36,7 +36,7 @@
             var _config = {
                 "url": "{% url "api-collection" %}",
                 "data": {},
-                "container": "keyword_collection"
+                "container": "testsuite_collection"
             };
             selectServerSide(_config);
             getTestSuiteToEdit();
@@ -219,8 +219,8 @@
 
 
             <div class="input-field col s6 l4">
-                <select id="keyword_collection"></select>
-                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <select id="testsuite_collection"></select>
+                <label for="testsuite_collection">Collection <b class="red-text">*</b></label>
                 <ul>
                     <li class="red-text"><i id="error_field_collection"></i></li>
                 </ul>
@@ -247,6 +247,7 @@
         <div class="row">
             <div class="col s12 l3">
                 {% include "search-block.html" %}
+                {% include "search-keyword-block.html" %}
                 {% include "search-testcase-block.html" %}
             </div>
             <div class="col l6 s12">
@@ -374,7 +375,7 @@
 
         function hasValues() {
             var _keyName = document.getElementById('testsuite_name');
-            var _keyCollection = document.getElementById('keyword_collection');
+            var _keyCollection = document.getElementById('testsuite_collection');
             var _error_filed_name = document.getElementById('error_field_name');
             var _error_filed_collection = document.getElementById('error_field_collection');
 

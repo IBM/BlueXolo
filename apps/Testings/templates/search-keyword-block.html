@@ -2,24 +2,24 @@
     <div class="card-content">
         <div class="row">
             <label for="id_label_single">
-                Test Case Search
-                <select id="testcase-search"></select>
+                Keyword Search
+                <select id="keyword-search"></select>
             </label>
         </div>
-        <div id="TestCaseContainer"></div>
+        <div id="keywordsContainer"></div>
     </div>
 </div>
 
 <script>
 
-    $('#testcase-search').select2({
+    $('#keyword-search').select2({
         ajax: {
-            url: "{% url "api-testcases" %}",
+            url: "{% url "api-keywords" %}",
             dataType: 'json',
             delay: 350,
             data: function (params) {
                 return {
-                    collection: document.getElementById('testsuite_collection').value,
+                    collection: document.getElementById('keyword_collection').value,
                     name: params.term, // search term
                 };
             },
@@ -41,16 +41,16 @@
         }
     });
 
-    $('#testcase-search').on("select2:select", function (e) {
+    $('#keyword-search').on("select2:select", function (e) {
         $.ajax({
-            url: '/apis/testcases/' + this.value + '/',
+            url: '/apis/keywords/' + this.value + '/',
             type: 'GET',
             success: function (data) {
-                var _container = document.getElementById('TestCaseContainer');
+                var _container = document.getElementById('keywordsContainer');
                 _container.innerHTML = "";
                 var _resultElement = document.createElement('div');
                 _resultElement.className = 'drag-drop-item center';
-                _resultElement.id = data.id + "-testcase-drag-drop";
+                _resultElement.id = data.id + "-keyword-drag-drop";
                 _resultElement.draggable = true;
                 _resultElement.setAttribute("ondragstart", "drag(event)");
                 _resultElement.innerHTML = data.name;
