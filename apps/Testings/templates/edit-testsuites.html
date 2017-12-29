@@ -158,9 +158,9 @@
 
         function writeTestSuiteDatabase() {
             var testSuiteName = document.getElementById("testsuite_name").value;
-            var testSuiteDescription = document.getElementById("testSuite_description").value;
+            var testSuiteDescription = document.getElementById("testsuite_description").value;
             var testSuiteValues = droppedElements;
-            var testSuiteCollection = document.getElementById('testSuite_collection').value;
+            var testSuiteCollection = document.getElementById('ts_collection').value;
             var testSuiteScript = document.getElementById("terminal").value;
 
             var usedElements = {
@@ -234,8 +234,8 @@
                 </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="testSuite_description">Test Suite Description</label>
-                <input type="text" id="testSuite_description" placeholder="Optional" onblur="hasValues()"
+                <label for="testsuite_description">Test Suite Description</label>
+                <input type="text" id="testsuite_description" placeholder="Optional" onblur="hasValues()"
                        value="{{ object.description }}">
             </div>
         </div>

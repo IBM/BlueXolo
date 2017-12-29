@@ -37,7 +37,7 @@
                 var _config = {
                     "url": "{% url "api-collection" %}",
                     "data": {},
-                    "container": "keyword_collection"
+                    "container": "testsuite_collection"
                 };
                 selectServerSide(_config);
             });
@@ -140,9 +140,9 @@
 
             function writeTestSuiteDatabase() {
                 var testSuiteName = document.getElementById("testsuite_name").value;
-                var testSuiteDescription = document.getElementById("keyword_description").value;
+                var testSuiteDescription = document.getElementById("testsuite_description").value;
                 var testSuiteValues = droppedElements;
-                var testSuiteCollection = document.getElementById('keyword_collection').value;
+                var testSuiteCollection = document.getElementById('testsuite_collection').value;                
                 var testSuiteScript = document.getElementById("terminal").value;
 
                 var usedElements = {
@@ -199,8 +199,8 @@
     <div class="row">
         <div class="col s12">
             <div class="input-field col s6 l4">
-                <select id="keyword_collection"></select>
-                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <select id="testsuite_collection"></select>
+                <label for="testsuite_collection">Collection <b class="red-text">*</b></label>
                 <ul>
                     <li class="red-text"><i id="error_field_collection"></i></li>
                 </ul>
@@ -213,8 +213,8 @@
                 </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_description">Test Suite Description</label>
-                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()">
+                <label for="testsuite_description">Test Suite Description</label>
+                <input type="text" id="testsuite_description" placeholder="Optional" onblur="hasValues()">
             </div>
         </div>
     </div>
@@ -352,7 +352,7 @@
 
             function hasValues() {
                 var _keyName = document.getElementById('testsuite_name');
-                var _keyCollection = document.getElementById('keyword_collection');
+                var _keyCollection = document.getElementById('testsuite_collection');
                 var _error_filed_name = document.getElementById('error_field_name');
                 var _error_filed_collection = document.getElementById('error_field_collection');
 
