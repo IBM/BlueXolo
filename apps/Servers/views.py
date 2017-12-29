@@ -3,6 +3,7 @@ import paramiko
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from random import choice
@@ -178,6 +179,21 @@ def check_dirs_destiny(path, client):
     return exist
 
 
+def search_for_script_names(script):
+    _items = dict()
+    result = []
+    try:
+        kwd_names = Keyword.objects.values_list('name', flat=True)
+        for name in kwd_names:
+            if name in script:
+                kwd = Keyword.objects.get(name=name)
+                result.append(kwd.id)
+            _items['items'] = result
+    except Exception as error:
+        _items['error'] = error
+    return _items
+
+
 def send_files(filename, file_type, config, client):
     """sent files Via SSH"""
     _data = dict()
@@ -267,6 +283,7 @@ def generate_resource_files(extra_import):
     pks_useds = []
     try:
         kwds = extra_import.get('keywords')
+        extras = extra_import.get('extra_resources')
         if kwds:
             for k in kwds:
                 current_pk = k.get('id')
@@ -284,6 +301,27 @@ def generate_resource_files(extra_import):
                         kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
                         kwd_file.write("\n")
                     kwd_file.write(k.get('script'))
+                    kwd_file.close()
+                    result['filename'] = filename
+                    result['resource'] = kwd_file.name
+                    result['name'] = obj.name
+                    list_resources.append(result)
+        if extras:
+            for pk in extras:
+                if str(pk) not in pks_useds:
+                    result = dict()
+                    pks_useds.append(str(pk))
+                    obj = Keyword.objects.get(pk=pk)
+                    filename = generate_filename(obj.name)
+                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file.write("*** Keywords ***")
+                    kwd_file.write("\n")
+                    kwd_file.write(obj.name)
+                    kwd_file.write("\n")
+                    if obj.description:
+                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
+                        kwd_file.write("\n")
+                    kwd_file.write(obj.script)
                     kwd_file.close()
                     result['filename'] = filename
                     result['resource'] = kwd_file.name
@@ -349,9 +387,15 @@ def generate_file(obj, type_script, params, filename, client):
             send_files(dummy_tc_file.name, 5, config, client)
 
         elif type_script is 2:
+            items = search_for_script_names(obj.script)
+            if items.get('error'):
+                raise Exception(items.get('error'))
+
             extra_elements = json.loads(obj.extra_imports)
-            libraries = get_libraries(extra_elements.get('extra'))
+            extra_elements['extra_resources'] = items.get('items')
             resources = generate_resource_files(extra_elements)
+            libraries = get_libraries(extra_elements.get('extra'))
+
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
             tc_file.write("*** Settings ***\n")
@@ -365,6 +409,10 @@ def generate_file(obj, type_script, params, filename, client):
                     _data = send_files(resource.get('resource'), 0, config, client)
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
+
+            """ Find for extra resources needed """
+            # if extra_resources:
+            #     for resource in extra_resources:
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
