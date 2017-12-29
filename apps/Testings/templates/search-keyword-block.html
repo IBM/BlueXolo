@@ -9,7 +9,7 @@
         <div id="keywordsContainer"></div>
     </div>
 </div>
-
+{{ object.script_type }}
 <script>
 
     $('#keyword-search').select2({
@@ -19,7 +19,7 @@
             delay: 350,
             data: function (params) {
                 return {
-                    collection: document.getElementById('keyword_collection').value,
+                    collection: document.getElementById('collection').value,
                     name: params.term, // search term
                 };
             },
