@@ -359,7 +359,7 @@ def generate_file(obj, type_script, params, filename, client):
                         config.get('path'),
                         resource.get('filename')
                     ))
-                    _data = send_files(resource.get('resource'), resource.get('obj_type'), config, client)
+                    _data = send_files(resource.get('resource'), 0, config, client)
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
