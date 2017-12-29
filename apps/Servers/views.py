@@ -261,27 +261,31 @@ def generate_profile(params, filename):
 
 def generate_resource_files(extra_import):
     list_resources = []
+    pks_useds = []
     try:
         kwds = extra_import.get('keywords')
         if kwds:
             for k in kwds:
-                result = dict()
-                obj = Keyword.objects.get(pk=k.get('id'))
-                filename = generate_filename(obj.name)
-                kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                kwd_file.write("*** Keywords ***")
-                kwd_file.write("\n")
-                kwd_file.write(obj.name)
-                kwd_file.write("\n")
-                if obj.description:
-                    kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
+                current_pk = k.get('id')
+                if current_pk not in pks_useds:
+                    result = dict()
+                    pks_useds.append(current_pk)
+                    obj = Keyword.objects.get(pk=current_pk)
+                    filename = generate_filename(obj.name)
+                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file.write("*** Keywords ***")
                     kwd_file.write("\n")
-                kwd_file.write(k.get('script'))
-                kwd_file.close()
-                result['filename'] = filename
-                result['resource'] = kwd_file.name
-                result['name'] = obj.name
-                list_resources.append(result)
+                    kwd_file.write(obj.name)
+                    kwd_file.write("\n")
+                    if obj.description:
+                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
+                        kwd_file.write("\n")
+                    kwd_file.write(k.get('script'))
+                    kwd_file.close()
+                    result['filename'] = filename
+                    result['resource'] = kwd_file.name
+                    result['name'] = obj.name
+                    list_resources.append(result)
     except Exception as error:
         list_resources.append(error)
     return list_resources
