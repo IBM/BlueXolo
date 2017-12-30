@@ -102,6 +102,16 @@ function isTestcase(){
     }
 }
 
+function isTestsuite(){
+    var testcaseNameTextArea = document.getElementById("testsuite_name");
+    if(testcaseNameTextArea !== null){
+        return true
+    }
+    else{
+        return false;
+    }
+}
+
 function isAVariable(dropppedCommandName){
     if(dropppedCommandName.toLowerCase() === "global variable") {
         return true;
@@ -168,14 +178,8 @@ function handleKeywordSection(keywordName, customKeyword){
     // ToDo
     // Version 3 will handle a flag if the user wants to add the section or not.
     // At this moment it will not add the section if the current object is not a keyword
-    if(!keywordSection && isTestcase()){
-        translatedRow += "*** Keywords ***\n";
-        keywordSection = true;
-        translatedRow += keywordName+"\n";
-        return translatedRow;        
-    }
-
     if(!isKeyword()){
+        //translatedRow += "*** Keywords ***\n";
         translatedRow = "\t"+keywordName+"\n";
         keywordSection = true;
         return translatedRow;
@@ -303,7 +307,6 @@ function translateToRobot(callBackFunction) {
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i].keywordJSON;
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
-            //translateDroppedKeyword(droppedElements[i].keywordJSON);
             
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
@@ -327,6 +330,14 @@ function translateToRobot(callBackFunction) {
             var newTestcaseUsed = droppedElements[i].keywordJSON;
 
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
+
+            if(isTestsuite()){
+                var testCaseToTranslate = droppedElements[i].keywordJSON;
+
+                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
+
+                terminal.value += testCaseTranslation;
+            }
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
             if ((i + 1) >= droppedElements.length) {

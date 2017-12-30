@@ -35,7 +35,7 @@
                 var _config = {
                     "url": "{% url "api-collection" %}",
                     "data": {},
-                    "container": "keyword_collection"
+                    "container": "collection"
                 };
                 selectServerSide(_config);
 
@@ -141,7 +141,7 @@
                 var keywordName = document.getElementById("keyword_name").value;
                 var keywordDescription = document.getElementById("keyword_description").value;
                 var keywordValues = droppedElements;
-                var keywordCollection = document.getElementById('keyword_collection').value;
+                var keywordCollection = document.getElementById('collection').value;
                 var keywordScript = document.getElementById("terminal").value;
 
                 var usedElements = {
@@ -187,8 +187,8 @@
     <div class="row">
         <div class="col s12">
             <div class="input-field col s6 l4">
-                <select id="keyword_collection" onchange="hasValues()"></select>
-                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <select id="collection" onchange="hasValues()"></select>
+                <label for="collection">Collection <b class="red-text">*</b></label>
                 <ul>
                     <li class="red-text"><i id="error_field_collection"></i></li>
                 </ul>
@@ -341,7 +341,7 @@
 
             function hasValues() {
                 var _keyName = document.getElementById('keyword_name');
-                var _keyCollection = document.getElementById('keyword_collection');
+                var _keyCollection = document.getElementById('collection');
                 var _error_filed_name = document.getElementById('error_field_name');
                 var _error_filed_collection = document.getElementById('error_field_collection');
 

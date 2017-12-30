@@ -37,7 +37,7 @@
                 var _config = {
                     "url": "{% url "api-collection" %}",
                     "data": {},
-                    "container": "keyword_collection"
+                    "container": "collection"
                 };
                 selectServerSide(_config);
             });
@@ -139,10 +139,10 @@
             }
 
             function writeTestSuiteDatabase() {
-                var testSuiteName = document.getElementById("keyword_name").value;
-                var testSuiteDescription = document.getElementById("keyword_description").value;
+                var testSuiteName = document.getElementById("testsuite_name").value;
+                var testSuiteDescription = document.getElementById("testsuite_description").value;
                 var testSuiteValues = droppedElements;
-                var testSuiteCollection = document.getElementById('keyword_collection').value;
+                var testSuiteCollection = document.getElementById('collection').value;
                 var testSuiteScript = document.getElementById("terminal").value;
 
                 var usedElements = {
@@ -199,22 +199,22 @@
     <div class="row">
         <div class="col s12">
             <div class="input-field col s6 l4">
-                <select id="keyword_collection"></select>
-                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <select id="collection"></select>
+                <label for="collection">Collection <b class="red-text">*</b></label>
                 <ul>
                     <li class="red-text"><i id="error_field_collection"></i></li>
                 </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_name">Name <b class="red-text">*</b></label>
-                <input type="text" id="keyword_name" onblur="hasValues()" placeholder="Required">
+                <label for="testsuite_name">Name <b class="red-text">*</b></label>
+                <input type="text" id="testsuite_name" onblur="hasValues()" placeholder="Required">
                 <ul>
                     <li class="red-text"><i id="error_field_name"></i></li>
                 </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_description">Test Suite Description</label>
-                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()">
+                <label for="testsuite_description">Test Suite Description</label>
+                <input type="text" id="testsuite_description" placeholder="Optional" onblur="hasValues()">
             </div>
         </div>
     </div>
@@ -225,6 +225,7 @@
         <div class="row">
             <div class="col s12 l3">
                 {% include "search-block.html" %}
+                {% include "search-keyword-block.html" %}
                 {% include "search-testcase-block.html" %}
             </div>
             <div class="col l6 s12">
@@ -351,8 +352,8 @@
             };
 
             function hasValues() {
-                var _keyName = document.getElementById('keyword_name');
-                var _keyCollection = document.getElementById('keyword_collection');
+                var _keyName = document.getElementById('testsuite_name');
+                var _keyCollection = document.getElementById('collection');
                 var _error_filed_name = document.getElementById('error_field_name');
                 var _error_filed_collection = document.getElementById('error_field_collection');
 

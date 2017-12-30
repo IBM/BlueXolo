@@ -36,7 +36,7 @@
                 var _configCollections = {
                     "url": "{% url "api-collection" %}",
                     "data": {},
-                    "container": "keyword_collection"
+                    "container": "collection"
                 };
                 selectServerSide(_configCollections);
 
@@ -48,7 +48,7 @@
                     var _configPhases = {
                         "url": "{% url "api-phases" %}",
                         "data": {
-                            "collection": document.getElementById("keyword_collection").value
+                            "collection": document.getElementById("collection").value
                         },
                         "container": "phases_list"
                     };
@@ -125,7 +125,7 @@
             function writeTestcaseDatabase() {
                 var testcaseName = document.getElementById("testcase_name").value;
                 var testcaseDescription = document.getElementById("testcase_description").value;
-                var testcaseCollection = document.getElementById("keyword_collection").value;
+                var testcaseCollection = document.getElementById("collection").value;
                 var testcaseValues = droppedElements;
                 var testcaseScript = document.getElementById("terminal").value;
                 var testcaseFunctions = $('#testecase_functions').material_chip('data');
@@ -191,8 +191,8 @@
 
         <div class="col s12">
             <div class="input-field col s6 m4 l2">
-                <select id="keyword_collection" onchange="hasValues()" value="{{ object.collection }}"></select>
-                <label for="keyword_collection">Collection <b class="red-text">*</b></label>
+                <select id="collection" onchange="hasValues()" value="{{ object.collection }}"></select>
+                <label for="collection">Collection <b class="red-text">*</b></label>
                 <ul>
                     <li class="red-text"><i id="error_field_collection"></i></li>
                 </ul>
@@ -232,6 +232,7 @@
         <div class="row">
             <div class="col s12 l3">
                 {% include "search-block.html" %}
+                {% include "search-keyword-block.html" %}
             </div>
             <div class="col l6 s12">
                 <ul class="tabs">
@@ -352,7 +353,7 @@
             }
    function hasValues() {
                 var _name = document.getElementById('testcase_name');
-                var _keyCollection = document.getElementById('keyword_collection');
+                var _keyCollection = document.getElementById('collection');
                 var _phase = document.getElementById('phases_list');
                 var _error_filed_collection = document.getElementById('error_field_collection');
                 var _error_filed_phase = document.getElementById('error_field_phase');
