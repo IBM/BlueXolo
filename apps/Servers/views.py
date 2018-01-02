@@ -279,10 +279,9 @@ def get_libraries(obj=None, extra=None):
                 current.append(_id)
     if extra:
         for element in extra:
-            _id = element.get('items')
-            if _id not in current:
-                libraries.append(Source.objects.get(pk=_id).name)
-                current.append(_id)
+            if element not in current:
+                libraries.append(Source.objects.get(pk=element).name)
+                current.append(element)
     return libraries
 
 
@@ -350,7 +349,7 @@ def generate_file(obj, type_script, params, filename, client):
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
             extra_libs = search_for_libraries_names(obj.script)
-            extra_libraries = get_libraries(extra=extra_libs)
+            extra_libraries = get_libraries(extra=extra_libs.get('items'))
             resources = generate_resource_files(extra_elements)
 
             """First create the keyword file"""
@@ -410,7 +409,7 @@ def generate_file(obj, type_script, params, filename, client):
             resources = generate_resource_files(extra_elements)
             libraries = get_libraries(extra_elements.get('extra'))
             extra_libs = search_for_libraries_names(obj.script)
-            extra_libraries = get_libraries(extra=extra_libs)
+            extra_libraries = get_libraries(extra=extra_libs.get('items'))
 
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -446,7 +445,7 @@ def generate_file(obj, type_script, params, filename, client):
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
             extra_libs = search_for_libraries_names(obj.script)
-            extra_libraries = get_libraries(extra=extra_libs)
+            extra_libraries = get_libraries(extra=extra_libs.get('items'))
             extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
