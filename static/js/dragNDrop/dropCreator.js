@@ -213,6 +213,9 @@ function createButtonToDeleteRow(rowID) {
     buttonNode.setAttribute("class", "btn-flat red-text");
 
     buttonNode.addEventListener("click", function () {
+        cleanPropertiesPanel();
+        hidePropertiesPanel();
+
         deleteAllChildren(rowID);
         deleteElement(rowID);
     });
