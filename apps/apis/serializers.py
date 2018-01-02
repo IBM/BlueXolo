@@ -78,6 +78,8 @@ class BasicCommandsSerializer(serializers.ModelSerializer):
 
 
 class ParametersSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Parameters
         fields = '__all__'
@@ -127,12 +129,16 @@ class KeywordsSerializer(serializers.ModelSerializer):
 
 
 class ServerProfileSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = ServerProfile
         fields = '__all__'
 
 
 class CollectionSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Collection
         fields = '__all__'
