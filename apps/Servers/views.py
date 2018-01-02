@@ -198,10 +198,7 @@ def search_for_libraries_names(script):
     _items = dict()
     result = []
     try:
-        _names = Source.objects.filter(
-            Q(category=5) &
-            Q(depends__category=4)
-        ).values_list('name', flat=True)
+        _names = Source.objects.filter(category=5, depends__category=4).values_list('name', flat=True)
         for name in _names:
             if name in script:
                 library = Source.objects.get(name=name)
@@ -282,9 +279,10 @@ def get_libraries(obj=None, extra=None):
                 current.append(_id)
     if extra:
         for element in extra:
-            if element not in current:
-                libraries.append(Source.objects.get(pk=element).name)
-                current.append(element)
+            _id = element.get('items')
+            if _id not in current:
+                libraries.append(Source.objects.get(pk=_id).name)
+                current.append(_id)
     return libraries
 
 
