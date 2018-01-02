@@ -194,6 +194,24 @@ def search_for_script_names(script):
     return _items
 
 
+def search_for_libraries_names(script):
+    _items = dict()
+    result = []
+    try:
+        _names = Source.objects.filter(
+            Q(category=5) &
+            Q(depends__category=4)
+        ).values_list('name', flat=True)
+        for name in _names:
+            if name in script:
+                library = Source.objects.get(name=name)
+                result.append(library.id)
+            _items['items'] = result
+    except Exception as error:
+        _items['error'] = error
+    return _items
+
+
 def send_files(filename, file_type, config, client):
     """sent files Via SSH"""
     _data = dict()
@@ -253,14 +271,20 @@ def run_script(filename, params, client, type_script):
     return _data
 
 
-def get_libraries(obj):
+def get_libraries(obj=None, extra=None):
     libraries = []
     current = []
-    for element in obj:
-        _id = element.get('source')
-        if _id not in current:
-            libraries.append(Source.objects.get(pk=_id).name)
-            current.append(_id)
+    if obj:
+        for element in obj:
+            _id = element.get('source')
+            if _id not in current:
+                libraries.append(Source.objects.get(pk=_id).name)
+                current.append(_id)
+    if extra:
+        for element in extra:
+            if element not in current:
+                libraries.append(Source.objects.get(pk=element).name)
+                current.append(element)
     return libraries
 
 
@@ -293,13 +317,6 @@ def generate_resource_files(extra_import):
                     obj = Keyword.objects.get(pk=current_pk)
                     filename = generate_filename(obj.name)
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                    kwd_file.write("*** Keywords ***")
-                    kwd_file.write("\n")
-                    kwd_file.write(obj.name)
-                    kwd_file.write("\n")
-                    if obj.description:
-                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
-                        kwd_file.write("\n")
                     kwd_file.write(k.get('script'))
                     kwd_file.close()
                     result['filename'] = filename
@@ -314,13 +331,6 @@ def generate_resource_files(extra_import):
                     obj = Keyword.objects.get(pk=pk)
                     filename = generate_filename(obj.name)
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                    kwd_file.write("*** Keywords ***")
-                    kwd_file.write("\n")
-                    kwd_file.write(obj.name)
-                    kwd_file.write("\n")
-                    if obj.description:
-                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
-                        kwd_file.write("\n")
                     kwd_file.write(obj.script)
                     kwd_file.close()
                     result['filename'] = filename
@@ -341,6 +351,8 @@ def generate_file(obj, type_script, params, filename, client):
         if type_script is 1:
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_libs = search_for_libraries_names(obj.script)
+            extra_libraries = get_libraries(extra=extra_libs)
             resources = generate_resource_files(extra_elements)
 
             """First create the keyword file"""
@@ -372,6 +384,10 @@ def generate_file(obj, type_script, params, filename, client):
                 for lib in libraries:
                     dummy_tc_file.write("Library\t\t{0}\n".format(lib))
                 dummy_tc_file.write("\n")
+            if extra_libraries:
+                for lib in extra_libraries:
+                    dummy_tc_file.write("Library\t\t{0}\n".format(lib))
+                dummy_tc_file.write("\n")
             dummy_tc_file.write("*** Test Cases ***")
             dummy_tc_file.write("\n")
             dummy_tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
@@ -395,6 +411,8 @@ def generate_file(obj, type_script, params, filename, client):
             extra_elements['extra_resources'] = items.get('items')
             resources = generate_resource_files(extra_elements)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_libs = search_for_libraries_names(obj.script)
+            extra_libraries = get_libraries(extra=extra_libs)
 
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -409,15 +427,14 @@ def generate_file(obj, type_script, params, filename, client):
                     _data = send_files(resource.get('resource'), 0, config, client)
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
-
-            """ Find for extra resources needed """
-            # if extra_resources:
-            #     for resource in extra_resources:
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
                     tc_file.write("Library\t{0}\n".format(lib))
                 tc_file.write("\n")
+            if extra_libraries:
+                for lib in extra_libraries:
+                    tc_file.write("Library\t\t{0}\n".format(lib))
             tc_file.write(obj.script)
             tc_file.close()
             send_files(tc_file.name, 5, config, client)
@@ -430,6 +447,8 @@ def generate_file(obj, type_script, params, filename, client):
 
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_libs = search_for_libraries_names(obj.script)
+            extra_libraries = get_libraries(extra=extra_libs)
             extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
@@ -453,6 +472,9 @@ def generate_file(obj, type_script, params, filename, client):
             if libraries:
                 for lib in libraries:
                     ts_file.write("Library\t{0}\n".format(lib))
+            if extra_libraries:
+                for lib in extra_libraries:
+                    ts_file.write("Library\t\t{0}\n".format(lib))
             ts_file.write(obj.script)
             ts_file.close()
             check = send_files(ts_file.name, 7, config, client)
