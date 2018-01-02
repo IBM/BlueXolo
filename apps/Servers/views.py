@@ -3,14 +3,10 @@ import paramiko
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
-from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from random import choice
-
-from rolepermissions.mixins import HasPermissionsMixin
 from scp import SCPClient
 from string import ascii_lowercase, digits
 
@@ -75,24 +71,25 @@ class DeleteServerTemplate(LoginRequiredMixin, DeleteView):
             return redirect('servers-templates')
 
 
-class ServerProfileView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class ServerProfileView(LoginRequiredMixin, TemplateView):
     template_name = "server-profiles.html"
-    required_permission = 'read_server_profile'
+    # required_permission = 'read_server_profile'
 
 
-class NewServerProfileView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
+class NewServerProfileView(LoginRequiredMixin, CreateView):
     template_name = "create-server-profile.html"
     success_url = reverse_lazy('servers-profiles')
     form_class = ServerProfileForm
-    required_permission = 'create_server_profile'
+    # required_permission = 'create_server_profile'
 
 
-class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
+class EditServerProfileView(LoginRequiredMixin, UpdateView):
     template_name = "edit-server-profile.html"
     success_url = reverse_lazy('servers-profiles')
     form_class = ServerProfileForm
     model = ServerProfile
-    required_permission = 'update_server_profile'
+
+    # required_permission = 'update_server_profile'
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -103,10 +100,11 @@ class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView)
             return redirect('servers-profiles')
 
 
-class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteServerProfile(LoginRequiredMixin, DeleteView):
     model = ServerProfile
     template_name = "delete-profile.html"
-    required_permission = 'delete_server_profile'
+
+    # required_permission = 'delete_server_profile'
 
     def get_success_url(self):
         messages.success(self.request, "Profile Deleted")
@@ -121,16 +119,17 @@ class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
             return redirect('servers-profiles')
 
 
-class ParametersView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class ParametersView(LoginRequiredMixin, TemplateView):
     template_name = "parameters.html"
     required_permission = 'read_server_parameter'
 
 
-class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
+class NewParametersView(LoginRequiredMixin, CreateView):
     template_name = 'create-edit-parameter.html'
     success_url = reverse_lazy('parameters')
     form_class = ParametersForm
-    required_permission = 'create_server_parameter'
+
+    # required_permission = 'create_server_parameter'
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Created")
@@ -142,12 +141,13 @@ class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         return context
 
 
-class EditParametersView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
+class EditParametersView(LoginRequiredMixin, UpdateView):
     template_name = "create-edit-parameter.html"
     success_url = reverse_lazy("parameters")
     form_class = ParametersForm
     model = Parameters
-    required_permission = 'update_server_parameter'
+
+    # required_permission = 'update_server_parameter'
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Edited")
@@ -167,10 +167,11 @@ class EditParametersView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
         return context
 
 
-class DeleteParametersView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteParametersView(LoginRequiredMixin, DeleteView):
     model = Parameters
     template_name = "delete-parameters.html"
-    required_permission = 'delete_server_parameter'
+
+    # required_permission = 'delete_server_parameter'
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()

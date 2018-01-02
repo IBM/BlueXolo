@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% load permission_tags %}
+{#{% load permission_tags %}#}
 
 <ul id="slide-out" class="side-nav ">
     <li>
@@ -12,46 +12,46 @@
         </div>
     </li>
     <li><a class="subheader blue-grey-text">Testing</a></li>
-    {% if user|can:'read_keyword' %}
+{#    {% if user|can:'read_keyword' %}#}
         <li>
             <a class="waves-effect" href="{% url "keywords" %}"><i class="material-icons">navigate_next</i>Keywords</a>
         </li>
-    {% endif %}
-    {% if user|can:'read_test_case' %}
+{#    {% endif %}#}
+{#    {% if user|can:'read_test_case' %}#}
         <li>
             <a class="waves-effect" href="{% url "testcases" %}"><i class="material-icons">navigate_next</i> Test Cases</a>
         </li>
-    {% endif %}
-    {% if user|can:'read_test_suite' %}
+{#    {% endif %}#}
+{#    {% if user|can:'read_test_suite' %}#}
         <li>
             <a class="waves-effect" href="{% url "testsuites" %}"><i class="material-icons">navigate_next</i> Test
                 Suites</a>
         </li>
-    {% endif %}
-    {% if user|can:'read_imported_script' %}
+{#    {% endif %}#}
+{#    {% if user|can:'read_imported_script' %}#}
         <li>
             <a class="waves-effect" href="{% url "imported-scripts" %}"><i class="material-icons">navigate_next</i>Imported
                 Scripts</a>
         <li>
-    {% endif %}
-    {% if user|can:'read_collection' %}
+{#    {% endif %}#}
+{#    {% if user|can:'read_collection' %}#}
         <li>
             <a class="waves-effect" href="{% url "collections" %}"><i class="material-icons">navigate_next</i>Collections</a>
         </li>
-    {% endif %}
+{#    {% endif %}#}
 
     <li><a class="subheader blue-grey-text">Servers</a></li>
-    {% if user|can:'read_server_parameter' %}
+{#    {% if user|can:'read_server_parameter' %}#}
         <li>
             <a class="waves-effect" href="{% url "parameters" %}"><i class="material-icons">navigate_next</i>Parameters</a>
         </li>
-    {% endif %}
+{#    {% endif %}#}
     <li><a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
-        {% if user|can:'read_server_profile' %}
+{#        {% if user|can:'read_server_profile' %}#}
             <li>
                 <a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
             </li>
-        {% endif %}
+{#        {% endif %}#}
     <li>
 
     <li><a class="subheader blue-grey-text">Sources</a></li>
@@ -73,12 +73,12 @@
     <li>
         <a class="waves-effect" href="{% url "phases" %}"><i class="material-icons">navigate_next</i>Phases</a>
     </li>
-    {% if user.is_staff %}
+{#    {% if user.is_staff %}#}
 
         <li><a class="subheader blue-grey-text">Admin</a></li>
         <li><a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
         <li>
-    {% endif %}
+{#    {% endif %}#}
     </li>
 
 </ul>

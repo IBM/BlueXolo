@@ -6,32 +6,32 @@ from django.views.generic import TemplateView, DeleteView, CreateView, UpdateVie
 from pygments import highlight
 from pygments.formatters.html import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
-from rolepermissions.mixins import HasPermissionsMixin
 
 from apps.Testings.models import Keyword, Collection, TestCase, TestSuite
 from apps.Testings.forms import CollectionForm, ImportScriptForm, EditImportScriptForm
 
 
-class KeyWordsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class KeyWordsView(LoginRequiredMixin, TemplateView):
     template_name = "keywords.html"
-    required_permission = "read_keyword"
+    # required_permission = "read_keyword"
 
 
-class NewKeywordView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class NewKeywordView(LoginRequiredMixin, TemplateView):
     template_name = "create-keyword.html"
-    required_permission = "create_keyword"
+    # required_permission = "create_keyword"
 
 
-class EditKeywordView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
+class EditKeywordView(LoginRequiredMixin, DetailView):
     model = Keyword
     template_name = "edit-keyword.html"
-    required_permission = "update_keyword"
+    # required_permission = "update_keyword"
 
 
-class DeleteKeywordView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteKeywordView(LoginRequiredMixin, DeleteView):
     template_name = "delete-keyword.html"
     model = Keyword
-    required_permission = "delete_keyword"
+
+    # required_permission = "delete_keyword"
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -46,26 +46,27 @@ class DeleteKeywordView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
         return reverse_lazy('keywords')
 
 
-class TestCaseView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class TestCaseView(LoginRequiredMixin, TemplateView):
     template_name = "testcases.html"
-    required_permission = "read_test_case"
+    # required_permission = "read_test_case"
 
 
-class NewTestCaseView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class NewTestCaseView(LoginRequiredMixin, TemplateView):
     template_name = "create-testcase.html"
-    required_permission = "create_test_case"
+    # required_permission = "create_test_case"
 
 
-class EditTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
+class EditTestCaseView(LoginRequiredMixin, DetailView):
     model = TestCase
     template_name = "edit-testcase.html"
-    required_permission = "update_test_case"
+    # required_permission = "update_test_case"
 
 
-class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteTestCaseView(LoginRequiredMixin, DeleteView):
     template_name = "delete-testcase.html"
     model = TestCase
-    required_permission = "delete_test_case"
+
+    # required_permission = "delete_test_case"
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -80,26 +81,27 @@ class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
         return reverse_lazy('testcases')
 
 
-class TestSuiteView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class TestSuiteView(LoginRequiredMixin, TemplateView):
     template_name = "testsuites.html"
-    required_permission = "read_test_suite"
+    # required_permission = "read_test_suite"
 
 
-class NewTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class NewTestSuiteView(LoginRequiredMixin, TemplateView):
     template_name = "create-testsuites.html"
-    required_permission = "create_test_suite"
+    # required_permission = "create_test_suite"
 
 
-class EditTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
+class EditTestSuiteView(LoginRequiredMixin, DetailView):
     model = TestSuite
     template_name = "edit-testsuites.html"
-    required_permission = "update_test_suite"
+    # required_permission = "update_test_suite"
 
 
-class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteTestSuiteView(LoginRequiredMixin, DeleteView):
     template_name = "delete-testsuite.html"
     model = TestSuite
-    required_permission = "delete_test_suite"
+
+    # required_permission = "delete_test_suite"
 
     def get_success_url(self):
         messages.success(self.request, "Test Suite Deleted")
@@ -114,16 +116,17 @@ class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
             return redirect('testsuites')
 
 
-class CollectionsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class CollectionsView(LoginRequiredMixin, TemplateView):
     template_name = "collections.html"
-    required_permission = "read_collection"
+    # required_permission = "read_collection"
 
 
-class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
+class NewCollectionsView(LoginRequiredMixin, CreateView):
     model = Collection
     form_class = CollectionForm
     template_name = "create-edit-collection.html"
-    required_permission = "create_collection"
+
+    # required_permission = "create_collection"
 
     def get_success_url(self):
         messages.success(self.request, "Collection Created")
@@ -135,11 +138,12 @@ class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         return context
 
 
-class EditCollectionsView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
+class EditCollectionsView(LoginRequiredMixin, UpdateView):
     model = Collection
     form_class = CollectionForm
     template_name = "create-edit-collection.html"
-    required_permission = "update_collection"
+
+    # required_permission = "update_collection"
 
     def get_success_url(self):
         messages.success(self.request, "Collection Edited")
@@ -151,10 +155,11 @@ class EditCollectionsView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
         return context
 
 
-class DeleteCollectionsView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteCollectionsView(LoginRequiredMixin, DeleteView):
     model = Collection
     template_name = "delete-collections.html"
-    required_permission = "delete_collection"
+
+    # required_permission = "delete_collection"
 
     def get_success_url(self):
         messages.success(self.request, "Collection Deleted")
@@ -169,16 +174,17 @@ class DeleteCollectionsView(LoginRequiredMixin, HasPermissionsMixin, DeleteView)
             return redirect('collections')
 
 
-class KeywordsImportedView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class KeywordsImportedView(LoginRequiredMixin, TemplateView):
     template_name = "list-import-script.html"
-    required_permission = "read_imported_script"
+    # required_permission = "read_imported_script"
 
 
-class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
+class NewKeywordImportedView(LoginRequiredMixin, CreateView):
     template_name = "import-script.html"
     form_class = ImportScriptForm
     model = Keyword
-    required_permission = "create_imported_script"
+
+    # required_permission = "create_imported_script"
 
     def form_valid(self, form):
         file = form.files.get('file_script')
@@ -201,11 +207,12 @@ class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, CreateView
         return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
 
 
-class EditKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
+class EditKeywordImportedView(LoginRequiredMixin, UpdateView):
     form_class = EditImportScriptForm
     template_name = "edit-import-script.html"
     model = Keyword
-    required_permission = "update_imported_script"
+
+    # required_permission = "update_imported_script"
 
     def form_valid(self, form):
         messages.success(self.request, "Script updated")
@@ -218,10 +225,11 @@ class EditKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateVie
         return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
 
 
-class DeleteImportedScriptView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
+class DeleteImportedScriptView(LoginRequiredMixin, DeleteView):
     model = Keyword
     template_name = 'delete-imported-script.html'
-    required_permission = "delete_imported_script"
+
+    # required_permission = "delete_imported_script"
 
     def get_success_url(self):
         messages.success(self.request, "Script deleted")
@@ -248,9 +256,10 @@ def apply_highlight(script):
             print(error)
 
 
-class RunScriptView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class RunScriptView(LoginRequiredMixin, TemplateView):
     template_name = "run_script.html"
-    required_permission = "run_scripts"
+
+    # required_permission = "run_scripts"
 
     def get_context_data(self, **kwargs):
         context = super(RunScriptView, self).get_context_data(**kwargs)
