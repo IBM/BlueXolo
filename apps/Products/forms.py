@@ -19,7 +19,10 @@ class ArgumentForm(forms.ModelForm):
 class PhaseForm(forms.ModelForm):
     class Meta:
         model = Phase
-        fields = '__all__'
+        fields = {
+            'name',
+            'product'
+        }
 
     def __init__(self, *args, **kwargs):
         """This filter only for sources in the category 4(Robot)"""
