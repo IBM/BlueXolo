@@ -128,6 +128,10 @@ class NewCollectionsView(LoginRequiredMixin, CreateView):
 
     # required_permission = "create_collection"
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(NewCollectionsView, self).form_valid(form)
+
     def get_success_url(self):
         messages.success(self.request, "Collection Created")
         return reverse_lazy('collections')
@@ -144,6 +148,10 @@ class EditCollectionsView(LoginRequiredMixin, UpdateView):
     template_name = "create-edit-collection.html"
 
     # required_permission = "update_collection"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(EditCollectionsView, self).form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Collection Edited")
