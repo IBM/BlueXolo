@@ -710,6 +710,12 @@ class SearchScriptsAPIView(LoginRequiredMixin, APIView):
                         Q(name__icontains=name)
                     )
                     serializer = TestCaseSerializer(test_cases, many=True)
+                if type_script == '3':
+                    test_suites = TestSuite.objects.filter(
+                        Q(user=request.user) &
+                        Q(name__icontains=name)
+                    )
+                    serializer = TestSuiteSerializer(test_suites, many=True)
                 _data = serializer.data
             if id_script:
                 if type_script == '1':
@@ -718,6 +724,9 @@ class SearchScriptsAPIView(LoginRequiredMixin, APIView):
                 if type_script == '2':
                     test_cases = TestCase.objects.get(id=id_script)
                     serializer = TestCaseSerializer(test_cases)
+                if type_script == '3':
+                    test_suites = TestSuite.objects.get(id=id_script)
+                    serializer = TestSuiteSerializer(test_suites)
                 _data = serializer.data
         except Exception as error:
             _data = serializer.errors
