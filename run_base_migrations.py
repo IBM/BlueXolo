@@ -47,6 +47,8 @@ def run_base_migration(file_name, template_name=None, category=None):
     except Exception as error:
         print(error)
 
-# run_base_migration('parameters_connection.csv', 'BaseConnection', 2)
 
-# run_base_migration('parameters_global.csv', 'GlobalVariables', 1)
+# Connection Profile
+run_base_migration('parameters_connection.csv', 'BaseConnection', 2)
+# Global variables Profile
+run_base_migration('parameters_global.csv', 'GlobalVariables', 1)
