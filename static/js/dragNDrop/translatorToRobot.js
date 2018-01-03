@@ -298,6 +298,13 @@ function translateToRobot(callBackFunction) {
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
+
+            if(!addedOwnDescription){
+                addOwnDescription();
+
+                addedOwnDescription = true;
+            }
+
             var keywordName = droppedElements[i].name;
             var customKeyword = true;
             var translatedRow = handleKeywordSection(keywordName, customKeyword);
@@ -321,6 +328,13 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
+            
+            if(!addedOwnDescription){
+                addOwnDescription();
+
+                addedOwnDescription = true;
+            }
+
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
@@ -341,6 +355,7 @@ function translateToRobot(callBackFunction) {
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
             if ((i + 1) >= droppedElements.length) {
+
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }else{
