@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+
 # | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
 # |    Script for create the directory schema on media     |
 # |                Last update January 2018                |
@@ -8,7 +9,7 @@ mkdir -p media/test_keywords media/zip media/test_result media/test_cases media/
 echo "DONE"
 echo ""
 echo "2nd -> installing python dependencies"
-python pip install -r requirements.txt
+pip install -r requirements.txt
 echo "DONE"
 echo ""
 echo "3rd -> create some variables"
