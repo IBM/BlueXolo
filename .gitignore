@@ -92,3 +92,7 @@ run.sh
 # Visual studio Code configs
 .vscode/launch.json
 .vscode/settings.json
+
+# LOGS
+celery_log.txt
+xolo_log.txt
