@@ -86,6 +86,7 @@ class ParametersSerializer(serializers.ModelSerializer):
 
 
 class TemplateServerSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     parameters = ParametersSerializer(many=True)
 
     class Meta:
@@ -97,7 +98,8 @@ class TemplateServerSerializer(serializers.ModelSerializer):
         template = TemplateServer.objects.create(
             name=validated_data['name'],
             description=validated_data['description'],
-            category=validated_data['category']
+            category=validated_data['category'],
+            user=validated_data['user']
         )
         for param in params:
             template.parameters.add(param)
