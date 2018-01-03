@@ -106,7 +106,7 @@
         {% endfor %}
 
         global_params.forEach(function (v) {
-            drawParamter(v)
+            drawParameter(v)
         });
         /* - - - -  End On Start  - - - - */
 
@@ -157,10 +157,10 @@
             if (!_objCont) {
                 _objCont = 0;
             }
-            drawParamter(data);
+            drawParameter(data);
         }
 
-        function drawParamter(data) {
+        function drawParameter(data) {
             _table_containenr.classList.remove("hide");
 
             var _tr_params = document.createElement('tr');
