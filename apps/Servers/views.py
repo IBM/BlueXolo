@@ -363,8 +363,10 @@ def generate_profile(params, filename):
 def generate_resource_files(extra_import):
     list_resources = []
     pks_used = []
+    inner_extras = []
     try:
         elements = extra_import.get('keywords')
+        extras = extra_import.get('extra_resources')
         if elements:
             for k in elements:
                 current_pk = k.get('id')
@@ -376,15 +378,27 @@ def generate_resource_files(extra_import):
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
                     kwd_file.write(k.get('script'))
                     kwd_file.close()
-                    extras = search_for_script_names(obj.script)
-                    if extras:
-                        result['extras'] = extras
+                    inner_extras = search_for_script_names(obj.script)
                     result['filename'] = filename
                     result['resource'] = kwd_file.name
                     result['name'] = obj.name
                     list_resources.append(result)
         if extras:
-            for pk in extras.get('items'):
+            for pk in extras:
+                if str(pk) not in pks_used:
+                    result = dict()
+                    pks_used.append(str(pk))
+                    obj = Keyword.objects.get(pk=pk)
+                    filename = generate_filename(obj.name)
+                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file.write(obj.script)
+                    kwd_file.close()
+                    result['filename'] = filename
+                    result['resource'] = kwd_file.name
+                    result['name'] = obj.name
+                    list_resources.append(result)
+        if inner_extras:
+            for pk in inner_extras:
                 if str(pk) not in pks_used:
                     result = dict()
                     pks_used.append(str(pk))
@@ -404,7 +418,6 @@ def generate_resource_files(extra_import):
 
 def generate_file(obj, type_script, params, filename, client):
     _data_result = dict()
-    _data = dict()
     try:
         config = params.get('config')
         """Generate robot files"""
@@ -501,10 +514,15 @@ def generate_file(obj, type_script, params, filename, client):
 
         elif type_script is 3:
             """Test Suite """
+
+            items = search_for_script_names(obj.script)
+            if items.get('error'):
+                raise Exception(items.get('error'))
+
             extra_elements = json.loads(obj.extra_imports)
-            # libraries = get_libraries(extra_elements.get('extra'))
             extra_libs = search_for_libraries_names(obj.script)
             extra_libraries = get_libraries(extra=extra_libs.get('items'))
+            extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
 
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
