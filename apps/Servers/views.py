@@ -362,30 +362,32 @@ def generate_profile(params, filename):
 
 def generate_resource_files(extra_import):
     list_resources = []
-    pks_useds = []
+    pks_used = []
     try:
-        kwds = extra_import.get('keywords')
-        extras = extra_import.get('extra_resources')
-        if kwds:
-            for k in kwds:
+        elements = extra_import.get('keywords')
+        if elements:
+            for k in elements:
                 current_pk = k.get('id')
-                if current_pk not in pks_useds:
+                if current_pk not in pks_used:
                     result = dict()
-                    pks_useds.append(current_pk)
+                    pks_used.append(current_pk)
                     obj = Keyword.objects.get(pk=current_pk)
                     filename = generate_filename(obj.name)
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
                     kwd_file.write(k.get('script'))
                     kwd_file.close()
+                    extras = search_for_script_names(obj.script)
+                    if extras:
+                        result['extras'] = extras
                     result['filename'] = filename
                     result['resource'] = kwd_file.name
                     result['name'] = obj.name
                     list_resources.append(result)
         if extras:
-            for pk in extras:
-                if str(pk) not in pks_useds:
+            for pk in extras.get('items'):
+                if str(pk) not in pks_used:
                     result = dict()
-                    pks_useds.append(str(pk))
+                    pks_used.append(str(pk))
                     obj = Keyword.objects.get(pk=pk)
                     filename = generate_filename(obj.name)
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -499,16 +501,12 @@ def generate_file(obj, type_script, params, filename, client):
 
         elif type_script is 3:
             """Test Suite """
-            items = search_for_script_names(obj.script)
-            if items.get('error'):
-                raise Exception(items.get('error'))
-
             extra_elements = json.loads(obj.extra_imports)
-            libraries = get_libraries(extra_elements.get('extra'))
+            # libraries = get_libraries(extra_elements.get('extra'))
             extra_libs = search_for_libraries_names(obj.script)
             extra_libraries = get_libraries(extra=extra_libs.get('items'))
-            extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
+
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
                            "w")
             ts_file.write("*** Settings ***\n")
@@ -527,9 +525,9 @@ def generate_file(obj, type_script, params, filename, client):
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
-            if libraries:
-                for lib in libraries:
-                    ts_file.write("Library\t{0}\n".format(lib))
+            libraries = Source.objects.filter(category=5, depends__category=4)
+            for lib in libraries:
+                ts_file.write("Library\t\t{0}\n".format(lib.name))
             if extra_libraries:
                 for lib in extra_libraries:
                     ts_file.write("Library\t\t{0}\n".format(lib))
