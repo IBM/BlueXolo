@@ -61,6 +61,7 @@ THIRD_PARTY_APPS = [
     'rest_framework_docs',
     'django_filters',
     'compressor',
+    'rolepermissions'
 ]
 
 PROJECT_APPS = [
@@ -209,3 +210,7 @@ CELERY_BROKER_URL = get_secret('CELERY_BROKER_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+ROLEPERMISSIONS_MODULE = 'CTAFramework.roles'
+ROLEPERMISSIONS_REDIRECT_TO_LOGIN = True
+

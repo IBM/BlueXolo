@@ -83,7 +83,7 @@ class ServerTemplateApiView(LoginRequiredMixin,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin,
                             generics.GenericAPIView):
-    queryset = TemplateServer.objects.all().order_by('id')
+    queryset = TemplateServer.objects.all()
     serializer_class = TemplateServerSerializer
 
     def get(self, request, *args, **kwargs):

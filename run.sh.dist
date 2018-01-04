@@ -1,12 +1,18 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-#script
-echo 'Welcome back Mr. Anderson'
-echo "Ruuuun! :-D "
+# | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
+# |                 Script run on background               |
+# |                Last update January 2018                |
+# | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
+
+echo "1st -> seek and destroy (older instance ;-) ) "
 ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
-nohup celery -A CTAFramework worker -l info  --concurrency=10 &
-echo "Then run python"
 ps -ef | grep 'runserver 0.0.0.0:8000' | grep -v grep | awk '{print $2}' | xargs kill
-./manage.py compress &
-nohup ./manage.py runserver 0.0.0.0:8000 &
-echo "now the project is running "
+echo ""
+echo "2nd - > run in background celery (you can check Log in: celery_log.txt)"
+nohup celery -A CTAFramework worker -l info  --concurrency=10 > celery_log.txt &
+echo ""
+echo "3rd - > run in background django in port 8000 (you can check Log in: xolo_log.txt )"
+nohup ./manage.py runserver 0.0.0.0:8000 > xolo_log.txt &
+echo ""
+echo "That's all, remember the logs: xolo_log.txt and celery_log.txt"

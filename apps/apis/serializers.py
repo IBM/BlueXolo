@@ -78,12 +78,15 @@ class BasicCommandsSerializer(serializers.ModelSerializer):
 
 
 class ParametersSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Parameters
         fields = '__all__'
 
 
 class TemplateServerSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     parameters = ParametersSerializer(many=True)
 
     class Meta:
@@ -95,7 +98,8 @@ class TemplateServerSerializer(serializers.ModelSerializer):
         template = TemplateServer.objects.create(
             name=validated_data['name'],
             description=validated_data['description'],
-            category=validated_data['category']
+            category=validated_data['category'],
+            user=validated_data['user']
         )
         for param in params:
             template.parameters.add(param)
@@ -127,12 +131,16 @@ class KeywordsSerializer(serializers.ModelSerializer):
 
 
 class ServerProfileSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = ServerProfile
         fields = '__all__'
 
 
 class CollectionSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Collection
         fields = '__all__'
@@ -153,6 +161,8 @@ class TestCaseSerializer(serializers.ModelSerializer):
 
 
 class PhaseSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Phase
         fields = '__all__'

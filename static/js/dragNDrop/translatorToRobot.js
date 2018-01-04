@@ -298,6 +298,13 @@ function translateToRobot(callBackFunction) {
     for (var i = 0; i < droppedElements.length; i++) {
 
         if (droppedElements[i].category === keywordDroppedCategory) {
+
+            if(!addedOwnDescription){
+                addOwnDescription();
+
+                addedOwnDescription = true;
+            }
+
             var keywordName = droppedElements[i].name;
             var customKeyword = true;
             var translatedRow = handleKeywordSection(keywordName, customKeyword);
@@ -305,7 +312,7 @@ function translateToRobot(callBackFunction) {
             terminal.value += translatedRow;
             
             var keywordUsedID = droppedElements[i].id;
-            var newKeywordUsed = droppedElements[i].keywordJSON;
+            var newKeywordUsed = droppedElements[i];
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
             
             if ((i + 1) >= droppedElements.length) {
@@ -321,13 +328,20 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
+            
+            if(!addedOwnDescription){
+                addOwnDescription();
+
+                addedOwnDescription = true;
+            }
+
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
             terminal.value += translatedRow;
 
             var testcaseUsedID = droppedElements[i].id;
-            var newTestcaseUsed = droppedElements[i].keywordJSON;
+            var newTestcaseUsed = droppedElements[i];
 
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
 
@@ -341,6 +355,7 @@ function translateToRobot(callBackFunction) {
             //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
             if ((i + 1) >= droppedElements.length) {
+
                 if (callBackFunction !== undefined) {
                     callBackFunction();
                 }else{
@@ -538,7 +553,7 @@ function getTranslationOfTestcase(testcase){
         if (testcase[i].category === keywordDroppedCategory) {
 
             var keywordUsedID = testcase[i].id;
-            var newKeywordUsed = testcase[i].keywordJSON;
+            var newKeywordUsed = testcase[i];
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed)
 
             var identationLevel = testcase[i].indentation;
@@ -592,7 +607,12 @@ function getTranslationOfTestcase(testcase){
 }
 
 function addKeywordToUsedArray( keywordID, keyword){
-    var translation = getTranslationOfKeyword(keyword);    
+    var translation = "*** Keywords ***\n";
+    translation += keyword.name + "\n";
+    translation += "\t[Documentation]\t";
+    translation += keyword.description + "\n";
+
+    translation += getTranslationOfKeyword(keyword.keywordJSON);
 
     var newElement = {
         id: keywordID,
@@ -612,7 +632,12 @@ function addExtraToUsedArray(sourceID){
 }
 
 function addTestcaseToUsedArray( testcaseID, testcase){
-    var translation = getTranslationOfTestcase(testcase);
+    var translation = "*** Test Cases ***\n";
+    translation += testcase.name + "\n";
+    translation += "\t[Documentation]\t";
+    translation += testcase.description + "\n";
+
+    translation += getTranslationOfTestcase(testcase.keywordJSON);
 
     var newElement = {
         id: testcaseID,

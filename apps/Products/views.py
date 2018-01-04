@@ -324,6 +324,10 @@ class NewPhaseView(LoginRequiredMixin, CreateView):
     form_class = PhaseForm
     template_name = 'create-edit-phase.html'
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(NewPhaseView, self).form_valid(form)
+
     def get_success_url(self):
         messages.success(self.request, "Phase Created")
         return reverse_lazy('phases')
@@ -333,6 +337,10 @@ class EditPhaseView(LoginRequiredMixin, UpdateView):
     model = Phase
     form_class = PhaseForm
     template_name = 'create-edit-phase.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(EditPhaseView, self).form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Phase Edited")

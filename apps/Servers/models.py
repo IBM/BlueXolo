@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from apps.Users.models import User
+
 VARIABLES = 1
 LOCAL = 2
 JENKINS = 3
@@ -20,6 +22,7 @@ class Parameters(models.Model):
     help_text = models.CharField(_('help text'), max_length=255, blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
     value_type = models.IntegerField(_('value type'), choices=VALUES_TYPES_CHOICES, default=1)
+    user = models.ForeignKey(User)
 
     class Meta:
         db_table = 'parameters'
@@ -36,6 +39,7 @@ class TemplateServer(models.Model):
     description = models.TextField(_('description'), blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
     parameters = models.ManyToManyField(Parameters, blank=True)
+    user = models.ForeignKey(User)
 
     class Meta:
         db_table = 'servers_templates'
@@ -52,6 +56,7 @@ class ServerProfile(models.Model):
     template = models.ForeignKey(TemplateServer)
     config = models.TextField(blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
+    user = models.ForeignKey(User)
 
     class Meta:
         db_table = 'servers_profiles'

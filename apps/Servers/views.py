@@ -3,7 +3,7 @@ import paramiko
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from random import choice
@@ -40,6 +40,14 @@ class EditServerTemplate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('servers-templates')
     form_class = ServerTemplateForm
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(EditServerTemplate, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-templates')
+
     def get_context_data(self, **kwargs):
         context = super(EditServerTemplate, self).get_context_data(**kwargs)
         context['ParametersForm'] = ParametersForm
@@ -54,15 +62,25 @@ class DeleteServerTemplate(LoginRequiredMixin, DeleteView):
         messages.success(self.request, "Template Deleted")
         return reverse_lazy('servers-templates')
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(DeleteServerTemplate, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-templates')
+
 
 class ServerProfileView(LoginRequiredMixin, TemplateView):
     template_name = "server-profiles.html"
+    # required_permission = 'read_server_profile'
 
 
 class NewServerProfileView(LoginRequiredMixin, CreateView):
     template_name = "create-server-profile.html"
     success_url = reverse_lazy('servers-profiles')
     form_class = ServerProfileForm
+    # required_permission = 'create_server_profile'
 
 
 class EditServerProfileView(LoginRequiredMixin, UpdateView):
@@ -71,24 +89,47 @@ class EditServerProfileView(LoginRequiredMixin, UpdateView):
     form_class = ServerProfileForm
     model = ServerProfile
 
+    # required_permission = 'update_server_profile'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(EditServerProfileView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-profiles')
+
 
 class DeleteServerProfile(LoginRequiredMixin, DeleteView):
     model = ServerProfile
     template_name = "delete-profile.html"
 
+    # required_permission = 'delete_server_profile'
+
     def get_success_url(self):
         messages.success(self.request, "Profile Deleted")
         return reverse_lazy('servers-profiles')
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(DeleteServerProfile, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-profiles')
+
 
 class ParametersView(LoginRequiredMixin, TemplateView):
     template_name = "parameters.html"
+    required_permission = 'read_server_parameter'
 
 
 class NewParametersView(LoginRequiredMixin, CreateView):
     template_name = 'create-edit-parameter.html'
     success_url = reverse_lazy('parameters')
     form_class = ParametersForm
+
+    # required_permission = 'create_server_parameter'
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Created")
@@ -106,9 +147,19 @@ class EditParametersView(LoginRequiredMixin, UpdateView):
     form_class = ParametersForm
     model = Parameters
 
+    # required_permission = 'update_server_parameter'
+
     def get_success_url(self):
         messages.success(self.request, "Parameter Edited")
         return reverse_lazy('parameters')
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(EditParametersView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('parameters')
 
     def get_context_data(self, **kwargs):
         context = super(EditParametersView, self).get_context_data(**kwargs)
@@ -119,6 +170,16 @@ class EditParametersView(LoginRequiredMixin, UpdateView):
 class DeleteParametersView(LoginRequiredMixin, DeleteView):
     model = Parameters
     template_name = "delete-parameters.html"
+
+    # required_permission = 'delete_server_parameter'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == request.user or request.user.is_staff:
+            return super(DeleteParametersView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('parameters')
 
     def get_success_url(self):
         messages.success(self.request, "Parameter Deleted")
@@ -194,6 +255,21 @@ def search_for_script_names(script):
     return _items
 
 
+def search_for_libraries_names(script):
+    _items = dict()
+    result = []
+    try:
+        _names = Source.objects.filter(category=5, depends__category=4).values_list('name', flat=True)
+        for name in _names:
+            if name in script:
+                library = Source.objects.get(name=name)
+                result.append(library.id)
+            _items['items'] = result
+    except Exception as error:
+        _items['error'] = error
+    return _items
+
+
 def send_files(filename, file_type, config, client):
     """sent files Via SSH"""
     _data = dict()
@@ -253,14 +329,20 @@ def run_script(filename, params, client, type_script):
     return _data
 
 
-def get_libraries(obj):
+def get_libraries(obj=None, extra=None):
     libraries = []
     current = []
-    for element in obj:
-        _id = element.get('source')
-        if _id not in current:
-            libraries.append(Source.objects.get(pk=_id).name)
-            current.append(_id)
+    if obj:
+        for element in obj:
+            _id = element.get('source')
+            if _id not in current:
+                libraries.append(Source.objects.get(pk=_id).name)
+                current.append(_id)
+    if extra:
+        for element in extra:
+            if element not in current:
+                libraries.append(Source.objects.get(pk=element).name)
+                current.append(element)
     return libraries
 
 
@@ -293,13 +375,6 @@ def generate_resource_files(extra_import):
                     obj = Keyword.objects.get(pk=current_pk)
                     filename = generate_filename(obj.name)
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                    kwd_file.write("*** Keywords ***")
-                    kwd_file.write("\n")
-                    kwd_file.write(obj.name)
-                    kwd_file.write("\n")
-                    if obj.description:
-                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
-                        kwd_file.write("\n")
                     kwd_file.write(k.get('script'))
                     kwd_file.close()
                     result['filename'] = filename
@@ -314,13 +389,6 @@ def generate_resource_files(extra_import):
                     obj = Keyword.objects.get(pk=pk)
                     filename = generate_filename(obj.name)
                     kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
-                    kwd_file.write("*** Keywords ***")
-                    kwd_file.write("\n")
-                    kwd_file.write(obj.name)
-                    kwd_file.write("\n")
-                    if obj.description:
-                        kwd_file.write("\t[Documentation]\t\t{0}".format(obj.description))
-                        kwd_file.write("\n")
                     kwd_file.write(obj.script)
                     kwd_file.close()
                     result['filename'] = filename
@@ -341,6 +409,8 @@ def generate_file(obj, type_script, params, filename, client):
         if type_script is 1:
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_libs = search_for_libraries_names(obj.script)
+            extra_libraries = get_libraries(extra=extra_libs.get('items'))
             resources = generate_resource_files(extra_elements)
 
             """First create the keyword file"""
@@ -372,6 +442,10 @@ def generate_file(obj, type_script, params, filename, client):
                 for lib in libraries:
                     dummy_tc_file.write("Library\t\t{0}\n".format(lib))
                 dummy_tc_file.write("\n")
+            if extra_libraries:
+                for lib in extra_libraries:
+                    dummy_tc_file.write("Library\t\t{0}\n".format(lib))
+                dummy_tc_file.write("\n")
             dummy_tc_file.write("*** Test Cases ***")
             dummy_tc_file.write("\n")
             dummy_tc_file.write('Test {}'.format(obj.name.replace(" ", "")))
@@ -395,6 +469,8 @@ def generate_file(obj, type_script, params, filename, client):
             extra_elements['extra_resources'] = items.get('items')
             resources = generate_resource_files(extra_elements)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_libs = search_for_libraries_names(obj.script)
+            extra_libraries = get_libraries(extra=extra_libs.get('items'))
 
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -409,15 +485,14 @@ def generate_file(obj, type_script, params, filename, client):
                     _data = send_files(resource.get('resource'), 0, config, client)
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
-
-            """ Find for extra resources needed """
-            # if extra_resources:
-            #     for resource in extra_resources:
             """Now add the libraries """
             if libraries:
                 for lib in libraries:
                     tc_file.write("Library\t{0}\n".format(lib))
                 tc_file.write("\n")
+            if extra_libraries:
+                for lib in extra_libraries:
+                    tc_file.write("Library\t\t{0}\n".format(lib))
             tc_file.write(obj.script)
             tc_file.close()
             send_files(tc_file.name, 5, config, client)
@@ -430,6 +505,8 @@ def generate_file(obj, type_script, params, filename, client):
 
             extra_elements = json.loads(obj.extra_imports)
             libraries = get_libraries(extra_elements.get('extra'))
+            extra_libs = search_for_libraries_names(obj.script)
+            extra_libraries = get_libraries(extra=extra_libs.get('items'))
             extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
             ts_file = open("{0}/test_suites/{1}_test_suite.robot".format(settings.MEDIA_ROOT, filename),
@@ -453,6 +530,9 @@ def generate_file(obj, type_script, params, filename, client):
             if libraries:
                 for lib in libraries:
                     ts_file.write("Library\t{0}\n".format(lib))
+            if extra_libraries:
+                for lib in extra_libraries:
+                    ts_file.write("Library\t\t{0}\n".format(lib))
             ts_file.write(obj.script)
             ts_file.close()
             check = send_files(ts_file.name, 7, config, client)

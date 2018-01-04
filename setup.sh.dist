@@ -1,21 +1,18 @@
 #!/usr/bin/bash
 
-#script
-echo 'Welcome back Mr. Anderson'
-echo "Let's create some dirs First"
-mkdir -p media/test_keywords
-echo " . "
-mkdir -p media/zip
-echo " . . "
-mkdir -p media/test_result
-echo " . . . "
-mkdir -p media/test_cases
-echo " . . . . "
-mkdir -p media/test_suites
-echo " . . . . ."
-mkdir -p media/keywords
-echo " . . . . . ."
-mkdir -p media/profiles
-echo " . . . . . . . "
-echo "ok, the dirs have created."
+# | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
+# |    Script for create the directory schema on media     |
+# |                Last update January 2018                |
+# | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
+echo "1st -> create some dirs First"
+mkdir -p media/test_keywords media/zip media/test_result media/test_cases media/test_suites media/keywords media/profiles
+echo "DONE"
+echo ""
+echo "2nd -> installing python dependencies"
+pip install -r requirements.txt
+echo "DONE"
+echo ""
+echo "3rd -> create some variables"
+python run_base_migrations.py
+echo "DONE"
 echo "That's all"

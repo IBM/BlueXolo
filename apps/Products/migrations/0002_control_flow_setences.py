@@ -61,6 +61,18 @@ def populate_flow_sentences(apps, schema_editor):
     variable_command.source.add(source)
     variable_command.save()
 
+    # Global Variable
+    g_variable_command, created = Command.objects.get_or_create(
+        name="Global Variable"
+    )
+    name_g, created = Argument.objects.get_or_create(name="name", description="N/A", needs_value=True, requirement=True)
+    value_g, created = Argument.objects.get_or_create(name="value", description="N/A", needs_value=True,
+                                                      requirement=True)
+    g_variable_command.arguments.add(name_g)
+    g_variable_command.arguments.add(value_g)
+    g_variable_command.source.add(source)
+    g_variable_command.save()
+
     # List
     list_command, created = Command.objects.get_or_create(
         name="List"

@@ -35,6 +35,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
         },
         success: function (data) {
             var testcaseName = data.name;
+            var testcaseDescription = data.description;
             var testcaseArguments = data.arguments;
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -43,6 +44,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
             droppedElements.push({
                 id: testcaseID,
                 name: testcaseName,
+                description: testcaseDescription,
                 category: testcaseCategory,
                 position: droppedElements.length,
                 indentation: indentation,
@@ -69,6 +71,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
         },
         success: function (data) {
             var testcaseName = data.name;
+            var testcaseDescription = data.description;
             var testcaseArguments = data.arguments;
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -77,6 +80,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
             var droppedElement = {
                 id: testcaseID,
                 name: testcaseName,
+                description: testcaseDescription,
                 category: testcaseCategory,
                 position: droppedElements.length,
                 indentation: indentation,
@@ -104,6 +108,7 @@ function addKeywordToJSON(indentation, keywordID) {
         },
         success: function (data) {
             var keywordName = data.name;
+            var keywordDescription = data.description;
             var keywordArguments = data.arguments;
             var valuesAsString = data.values;
             var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -112,6 +117,7 @@ function addKeywordToJSON(indentation, keywordID) {
             droppedElements.push({
                 id: keywordID,
                 name: keywordName,
+                description: keywordDescription,
                 category: keywordCategory,
                 position: droppedElements.length,
                 indentation: indentation,
@@ -139,6 +145,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
         },
         success: function (data) {
             var keywordName = data.name;
+            var keywordDescription = data.description;
             var keywordArguments = data.arguments;
             var valuesAsString = data.values;
             var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -147,6 +154,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
             var droppedElement = {
                 id: keywordID,
                 name: keywordName,
+                description: keywordDescription,
                 category: keywordCategory,
                 position: droppedElements.length,
                 indentation: indentation,
