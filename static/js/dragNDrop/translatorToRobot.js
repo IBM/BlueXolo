@@ -312,7 +312,7 @@ function translateToRobot(callBackFunction) {
             terminal.value += translatedRow;
             
             var keywordUsedID = droppedElements[i].id;
-            var newKeywordUsed = droppedElements[i].keywordJSON;
+            var newKeywordUsed = droppedElements[i];
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
             
             if ((i + 1) >= droppedElements.length) {
@@ -341,7 +341,7 @@ function translateToRobot(callBackFunction) {
             terminal.value += translatedRow;
 
             var testcaseUsedID = droppedElements[i].id;
-            var newTestcaseUsed = droppedElements[i].keywordJSON;
+            var newTestcaseUsed = droppedElements[i];
 
             addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
 
@@ -607,7 +607,12 @@ function getTranslationOfTestcase(testcase){
 }
 
 function addKeywordToUsedArray( keywordID, keyword){
-    var translation = getTranslationOfKeyword(keyword);    
+    var translation = "*** Keywords ***\n";
+    translation += keyword.name;
+    translation += "\t[Documentation]\t";
+    translation += keyword.description + "\n";
+
+    translation += getTranslationOfKeyword(keyword.keywordJSON);
 
     var newElement = {
         id: keywordID,
@@ -627,7 +632,12 @@ function addExtraToUsedArray(sourceID){
 }
 
 function addTestcaseToUsedArray( testcaseID, testcase){
-    var translation = getTranslationOfTestcase(testcase);
+    var translation = "*** Test Cases ***\n";
+    translation += testcase.name;
+    translation += "\t[Documentation]\t";
+    translation += testcase.description + "\n";
+
+    translation += getTranslationOfTestcase(testcase.keywordJSON);
 
     var newElement = {
         id: testcaseID,
