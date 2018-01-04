@@ -553,7 +553,7 @@ function getTranslationOfTestcase(testcase){
         if (testcase[i].category === keywordDroppedCategory) {
 
             var keywordUsedID = testcase[i].id;
-            var newKeywordUsed = testcase[i].keywordJSON;
+            var newKeywordUsed = testcase[i];
             addKeywordToUsedArray( keywordUsedID, newKeywordUsed)
 
             var identationLevel = testcase[i].indentation;
