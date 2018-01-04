@@ -608,7 +608,7 @@ function getTranslationOfTestcase(testcase){
 
 function addKeywordToUsedArray( keywordID, keyword){
     var translation = "*** Keywords ***\n";
-    translation += keyword.name;
+    translation += keyword.name + "\n";
     translation += "\t[Documentation]\t";
     translation += keyword.description + "\n";
 
@@ -633,7 +633,7 @@ function addExtraToUsedArray(sourceID){
 
 function addTestcaseToUsedArray( testcaseID, testcase){
     var translation = "*** Test Cases ***\n";
-    translation += testcase.name;
+    translation += testcase.name + "\n";
     translation += "\t[Documentation]\t";
     translation += testcase.description + "\n";
 
