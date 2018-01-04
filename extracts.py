@@ -414,12 +414,16 @@ class RExtract():
                     except Exception as error:
                         print(error)
                     for arg in keyword['args']:
+                        is_required = True
+                        if "=" in arg:
+                            is_required = False
                         arg_split = arg.split('=')
                         arg_name = arg_split[0]
                         try:
                             keyw_opt, created = Argument.objects.get_or_create(
                                 name=arg_name,
                                 description=rbt_keyw,
+                                requirement=is_required,
                                 needs_value=True
                             )
                             rbt_keyw.arguments.add(keyw_opt)
