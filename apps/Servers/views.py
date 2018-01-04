@@ -244,7 +244,7 @@ def search_for_script_names(script):
     _items = dict()
     result = []
     try:
-        kwd_names = Keyword.objects.values_list('name', flat=True)
+        kwd_names = Keyword.objects.all().values_list('name', flat=True)
         for name in kwd_names:
             if name in script:
                 kwd = Keyword.objects.get(name=name)
