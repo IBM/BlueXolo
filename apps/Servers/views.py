@@ -398,7 +398,7 @@ def generate_resource_files(extra_import):
                     result['name'] = obj.name
                     list_resources.append(result)
         if inner_extras:
-            for pk in inner_extras:
+            for pk in inner_extras.get('items'):
                 if str(pk) not in pks_used:
                     result = dict()
                     pks_used.append(str(pk))
