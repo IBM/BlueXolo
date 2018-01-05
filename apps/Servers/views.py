@@ -561,7 +561,8 @@ def generate_file(obj, type_script, params, filename, client):
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
                                  "w")
             dummy_tc_file.write("*** Settings ***\n")
-            libraries = Source.objects.filter(category=5, depends__category=4)
+            libraries = Source.objects.filter(category=5, depends__category=4).exclude(
+                name__in=['Dialogs', 'Screenshot'])
             for lib in libraries:
                 dummy_tc_file.write("Library\t\t{0}\n".format(lib.name))
             dummy_tc_file.write("\n")
