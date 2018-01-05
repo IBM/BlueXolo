@@ -255,16 +255,19 @@ def search_for_script_names(script):
     return _items
 
 
-def search_for_libraries_names(script):
+def search_for_libraries_names(script, extra=None):
     _items = dict()
     result = []
     try:
-        _names = Source.objects.filter(category=5, depends__category=4).values_list('name', flat=True)
+        for lib in extra:
+            library = Source.objects.get(pk=lib.get('source'))
+            result.append(library.pk)
+        _names = Source.objects.filter(category=5).values_list('name', flat=True)
         for name in _names:
             if name in script:
                 library = Source.objects.get(name=name)
-                result.append(library.id)
-            _items['items'] = result
+                result.append(library.pk)
+        _items['items'] = list(set(result))
     except Exception as error:
         _items['error'] = error
     return _items
@@ -420,12 +423,12 @@ def generate_file(obj, type_script, params, filename, client):
     _data_result = dict()
     try:
         config = params.get('config')
+        libraries = Source.objects.filter(category=5).exclude(
+            name__in=['Dialogs', 'Screenshot']
+        ).values_list('name', flat=True)
         """Generate robot files"""
         if type_script is 1:
             extra_elements = json.loads(obj.extra_imports)
-            libraries = get_libraries(extra_elements.get('extra'))
-            extra_libs = search_for_libraries_names(obj.script)
-            extra_libraries = get_libraries(extra=extra_libs.get('items'))
             resources = generate_resource_files(extra_elements)
 
             """First create the keyword file"""
@@ -453,13 +456,10 @@ def generate_file(obj, type_script, params, filename, client):
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
+            dummy_tc_file.write("\n")
             if libraries:
-                for lib in libraries:
-                    dummy_tc_file.write("Library\t\t{0}\n".format(lib))
-                dummy_tc_file.write("\n")
-            if extra_libraries:
-                for lib in extra_libraries:
-                    dummy_tc_file.write("Library\t\t{0}\n".format(lib))
+                for library in libraries:
+                    dummy_tc_file.write("Library\t\t{0}\n".format(library))
                 dummy_tc_file.write("\n")
             dummy_tc_file.write("*** Test Cases ***")
             dummy_tc_file.write("\n")
@@ -483,9 +483,6 @@ def generate_file(obj, type_script, params, filename, client):
             extra_elements = json.loads(obj.extra_imports)
             extra_elements['extra_resources'] = items.get('items')
             resources = generate_resource_files(extra_elements)
-            libraries = get_libraries(extra_elements.get('extra'))
-            extra_libs = search_for_libraries_names(obj.script)
-            extra_libraries = get_libraries(extra=extra_libs.get('items'))
 
             """ Test Case"""
             tc_file = open("{0}/test_cases/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename), "w")
@@ -501,26 +498,23 @@ def generate_file(obj, type_script, params, filename, client):
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
+            tc_file.write("\n")
             if libraries:
-                for lib in libraries:
-                    tc_file.write("Library\t{0}\n".format(lib))
+                for library in libraries:
+                    tc_file.write("Library\t\t{0}\n".format(library))
                 tc_file.write("\n")
-            if extra_libraries:
-                for lib in extra_libraries:
-                    tc_file.write("Library\t\t{0}\n".format(lib))
             tc_file.write(obj.script)
             tc_file.close()
-            send_files(tc_file.name, 5, config, client)
+            check = send_files(tc_file.name, 5, config, client)
+            if check.get('text'):
+                raise Exception(check.get('text'))
 
         elif type_script is 3:
             """Test Suite """
-
             items = search_for_script_names(obj.script)
             if items.get('error'):
                 raise Exception(items.get('error'))
-
             extra_elements = json.loads(obj.extra_imports)
-            extra_libs = search_for_libraries_names(obj.script)
             extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
 
@@ -542,10 +536,11 @@ def generate_file(obj, type_script, params, filename, client):
                     if _data.get('text'):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
-            libraries = Source.objects.filter(category=5, depends__category=4)
-            libraries = libraries.exclude(name__in=['Dialogs', 'Screenshot'])
-            for lib in libraries:
-                ts_file.write("Library\t\t{0}\n".format(lib.name))
+            ts_file.write("\n")
+            if libraries:
+                for library in libraries:
+                    ts_file.write("Library\t\t{0}\n".format(library))
+                ts_file.write("\n")
             ts_file.write(obj.script)
             ts_file.close()
             check = send_files(ts_file.name, 7, config, client)
@@ -558,11 +553,11 @@ def generate_file(obj, type_script, params, filename, client):
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
                                  "w")
             dummy_tc_file.write("*** Settings ***\n")
-            libraries = Source.objects.filter(category=5, depends__category=4)
-            libraries = libraries.exclude(name__in=['Dialogs', 'Screenshot'])
-            for lib in libraries:
-                dummy_tc_file.write("Library\t\t{0}\n".format(lib.name))
             dummy_tc_file.write("\n")
+            if libraries:
+                for library in libraries:
+                    dummy_tc_file.write("Library\t\t{0}\n".format(library))
+                dummy_tc_file.write("\n")
             dummy_tc_file.write(obj.script)
             dummy_tc_file.close()
             check = send_files(dummy_tc_file.name, 5, config, client)
