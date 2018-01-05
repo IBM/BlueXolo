@@ -759,7 +759,7 @@ function handleIndentation(identationLevel){
 function handleTranslationOf(data, parameters){
     var translatedRow = '';
 
-    var commandRobotCategory = 4;
+    var commandRobotCategory = 5;
   
     var elementType = data.name;
     var elementType = elementType.toLowerCase();
@@ -804,13 +804,10 @@ function translateRobotCommand(commandData){
 
     for(var i=0; i<arguments.length; i++){
 
-        console.log(arguments[i]);
-
-        if(arguments[i].visible === true){
+        if(arguments[i].visible === true && !arguments[i].needs_value){
             scriptLine += "   " + arguments[i].name;
-        }
-        
-        if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
+        }        
+        else if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
             scriptLine += "   " + arguments[i].name + "=" + arguments[i].value + " ";
         }
     
