@@ -521,7 +521,6 @@ def generate_file(obj, type_script, params, filename, client):
 
             extra_elements = json.loads(obj.extra_imports)
             extra_libs = search_for_libraries_names(obj.script)
-            extra_libraries = get_libraries(extra=extra_libs.get('items'))
             extra_elements['extra_resources'] = items.get('items')
             kwd_resources = generate_resource_files(extra_elements)
 
@@ -544,11 +543,9 @@ def generate_file(obj, type_script, params, filename, client):
                         raise Exception(_data.get('text'))
             """Now add the libraries """
             libraries = Source.objects.filter(category=5, depends__category=4)
+            libraries = libraries.exclude(name__in=['Dialogs', 'Screenshot'])
             for lib in libraries:
                 ts_file.write("Library\t\t{0}\n".format(lib.name))
-            if extra_libraries:
-                for lib in extra_libraries:
-                    ts_file.write("Library\t\t{0}\n".format(lib))
             ts_file.write(obj.script)
             ts_file.close()
             check = send_files(ts_file.name, 7, config, client)
