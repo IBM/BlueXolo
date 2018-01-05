@@ -352,7 +352,6 @@ function translateToRobot(callBackFunction) {
 
                 terminal.value += testCaseTranslation;
             }
-            //translateDroppedTestcase(droppedElements[i].keywordJSON);
 
             if ((i + 1) >= droppedElements.length) {
 
@@ -759,6 +758,8 @@ function handleIndentation(identationLevel){
 
 function handleTranslationOf(data, parameters){
     var translatedRow = '';
+
+    var commandRobotCategory = 4;
   
     var elementType = data.name;
     var elementType = elementType.toLowerCase();
@@ -783,13 +784,43 @@ function handleTranslationOf(data, parameters){
     }
     else if(elementType === "list"){
         translatedRow += translateList(parameters);
-    }else{
-        // Command from R-Extract or M-Extract
+    }
+    else if(data.category === commandRobotCategory){
+        // Commands from R-Extract
+        translatedRow += translateRobotCommand(data, parameters);
+    }
+    else{
+        // Commands from M-Extract
         translatedRow += translateExternCommand(data);
     }
 
     translatedRow += "\n";
     return translatedRow;
+}
+
+function translateRobotCommand(commandData){
+    var scriptLine = commandData.name;
+    var arguments = commandData.arguments;
+
+    for(var i=0; i<arguments.length; i++){
+
+        console.log(arguments[i]);
+
+        if(arguments[i].visible === true){
+            scriptLine += "   " + arguments[i].name;
+        }
+        
+        if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
+            scriptLine += "   " + arguments[i].name + "=" + arguments[i].value + " ";
+        }
+    
+    }
+
+    if(commandData.extraValue !== undefined){
+        scriptLine += "    " + commandData.extraValue;
+    }       
+
+    return scriptLine;
 }
 
 function translateExternCommand(commandData){
