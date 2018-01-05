@@ -176,6 +176,8 @@ function drawParameterList(droppedElementIndex, elementID) {
     // Deletes all elements in list to populate it again
     listParent.innerHTML = "";
 
+    var commandRobotCategory = 5;
+
     // Adds to the list the extra value
     if (droppedElement.extraValue !== undefined) {
         var li = document.createElement('li');
@@ -192,6 +194,10 @@ function drawParameterList(droppedElementIndex, elementID) {
             continue;
         }
 
+        if( droppedElement.category === commandRobotCategory && filterDrawRobotCommand(arguments[i]) ){
+            continue;
+        }
+
         var li = document.createElement('li');
         var textToDisplayInList = arguments[i].name;
 
@@ -203,6 +209,15 @@ function drawParameterList(droppedElementIndex, elementID) {
         li.appendChild(textNode);
         listParent.appendChild(li);
 
+    }
+}
+
+function filterDrawRobotCommand(argument){
+    if(argument.needs_value && argument.value !== undefined && argument.value !== ""){
+        return false;
+    }
+    else{
+        return true;
     }
 }
 
