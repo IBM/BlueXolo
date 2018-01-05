@@ -759,7 +759,7 @@ function handleIndentation(identationLevel){
 function handleTranslationOf(data, parameters){
     var translatedRow = '';
 
-    var commandRobotCategory = 4;
+    var commandRobotCategory = 5;
   
     var elementType = data.name;
     var elementType = elementType.toLowerCase();
