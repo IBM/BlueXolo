@@ -1,5 +1,4 @@
 import json
-import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,8 +9,6 @@ from rest_framework import mixins, generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from string import digits, ascii_lowercase
-from random import choice
 
 from apps.Products.models import Command, Source, Argument
 from apps.Servers.models import TemplateServer, ServerProfile, Parameters
@@ -307,161 +304,6 @@ class CollectionApiView(LoginRequiredMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-
-
-class RunOnServerApiView1(LoginRequiredMixin, APIView):
-    """Call "functions for run scripts on servers"""
-
-    def post(self, request):
-        _status = status.HTTP_200_OK
-        _config = request.data
-        _data = {}
-        _id_script = _config.get('type_script')
-        if _id_script == '1':
-            try:
-                kwd = Keyword.objects.get(pk=_config.get('id'))
-                _host = ""
-                _username = ""
-                _passwd = ""
-                _path = ""
-                _profile_name = ""
-                _values = []
-                _values_name = []
-                _name_values = []
-                _perfiles = json.loads(_config.get('profile'))
-                for perfil in _perfiles:
-                    _server_profile = ServerProfile.objects.get(pk=perfil)
-                    if _server_profile.category == 2:
-                        _parametros = json.loads(_server_profile.config)
-                        for p in _parametros:
-                            _parametro = Parameters.objects.get(pk=p.get('id'))
-                            if _parametro.name == 'host':
-                                _host = p.get('value')
-                            if _parametro.name == 'user':
-                                _username = p.get('value')
-                            if _parametro.name == 'passwd':
-                                _passwd = p.get('value')
-                            if _parametro.name == 'path':
-                                _path = p.get('value')
-                    elif _server_profile.category == 1:
-                        _global_variables = json.loads(_server_profile.config)
-                        _profile_name = _server_profile.name
-                        for variable in _global_variables:
-                            _values.append(variable.get('value'))
-                            _param_name = Parameters.objects.get(pk=variable.get('id'))
-                            _arreglo = []
-                            _arreglo.append(_param_name.name)
-                            _name_values.append(_param_name.name)
-                            _arreglo.append(variable.get('value'))
-                            _values_name.append(_arreglo)
-                try:
-                    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
-                    today = time.strftime("%y_%m_%d")
-                    name = kwd.name.replace(" ", "")
-                    name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_keyword_profile.delay(_host, _username, _passwd, kwd.name, kwd.script, _name_values,
-                                                         _path, name_file,
-                                                         _profile_name, _values_name)
-                    task = Task.objects.create(
-                        name="Run Keyword -  {0}".format(kwd.name),
-                        task_id=filename.task_id,
-                        state="run",
-                        task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
-                                                                                name_file)
-                    )
-                    request.user.tasks.add(task)
-                    request.user.save()
-                    _data = {
-                        'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
-                    }
-                except Exception as errorConnection:
-                    _status = 500
-                    _data = {
-                        'text': "{0}".format(errorConnection)
-                    }
-            except Exception as Error:
-                _status = 500
-                _data = {
-                    'text': "{0}".format(Error)
-                }
-            return Response(status=_status, data=_data)
-        elif _id_script == '2':
-            try:
-                testcase = TestCase.objects.get(pk=_config.get('id'))
-                _collection = testcase.collection.first()
-                _keywdors_collection = Keyword.objects.filter(collection=_collection)
-                _scripts = []
-                _keys_scripts = []
-                for _keyword in _keywdors_collection:
-                    _keytmp = _keyword
-                    _keys_name.append(_keytmp.name)
-                    _keys_scripts.append(_keytmp.script)
-                _host = ""
-                _username = ""
-                _passwd = ""
-                _path = ""
-                _profile_name = ""
-                _values = []
-                _values_name = []
-                _name_values = []
-                _perfiles = json.loads(_config.get('profile'))
-                for perfil in _perfiles:
-                    _server_profile = ServerProfile.objects.get(pk=perfil)
-                    if _server_profile.category == 2:
-                        _parametros = json.loads(_server_profile.config)
-                        for p in _parametros:
-                            _parametro = Parameters.objects.get(pk=p.get('id'))
-                            if _parametro.name == 'host':
-                                _host = p.get('value')
-                            if _parametro.name == 'user':
-                                _username = p.get('value')
-                            if _parametro.name == 'passwd':
-                                _passwd = p.get('value')
-                            if _parametro.name == 'path':
-                                _path = p.get('value')
-                    elif _server_profile.category == 1:
-                        _global_variables = json.loads(_server_profile.config)
-                        _profile_name = _server_profile.name
-                        for variable in _global_variables:
-                            _values.append(variable.get('value'))
-                            _param_name = Parameters.objects.get(pk=variable.get('id'))
-                            _arreglo = []
-                            _arreglo.append(_param_name.name)
-                            _name_values.append(_param_name.name)
-                            _arreglo.append(variable.get('value'))
-                            _values_name.append(_arreglo)
-                try:
-                    random_string = ''.join(choice(ascii_lowercase + digits) for i in range(12))
-                    today = time.strftime("%y_%m_%d")
-                    name = testcase.name.replace(" ", "")
-                    name_file = "{0}_{1}_{2}".format(name, random_string, today)
-                    filename = run_testcases.delay(_host, _username, _passwd, testcase.name, testcase.script, _path,
-                                                   _collection.name, _keys_name, _keys_scripts, name_file,
-                                                   _profile_name, _values_name)
-                    # run_testcases(host, user, passwd, filename, script, path, collection_name, keywords, namefile,profilename, variables):
-                    task = Task.objects.create(
-                        name="Run Testcases -  {0}".format(testcase.name),
-                        task_id=filename.task_id,
-                        state="run",
-                        task_result="{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS, settings.MEDIA_URL,
-                                                                                name_file)
-                    )
-                    request.user.tasks.add(task)
-                    request.user.save()
-                    _data = {
-                        'report': "{0}/test_result/{1}_report.html".format(settings.MEDIA_URL, name_file)
-                    }
-                except Exception as errorConnection:
-                    _status = 500
-                    _data = {
-                        'text': "{0}".format(errorConnection)
-                    }
-            except Exception as Error:
-                _status = 500
-                _data = {
-                    'text': "{0}".format(Error)
-                }
-            return Response(status=_status, data=_data)
 
 
 class TasksApiView(LoginRequiredMixin,
