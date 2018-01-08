@@ -44,15 +44,14 @@ function checkIfExtraElementsExist(){
     }  
 }
 
-function addKeywordName(){
-    var keywordNameTextArea = document.getElementById("keyword_name");
-    var testcaseNameTextArea = document.getElementById("testcase_name");
-
-    if(keywordNameTextArea !== null){
+function addKeywordName(){        
+    if(isKeyword()){
+        var keywordNameTextArea = document.getElementById("keyword_name");
         translatedRow = keywordNameTextArea.value;
         return translatedRow;
     }
-    else if(testcaseNameTextArea !== null){
+    else if(isTestcase()){
+        var testcaseNameTextArea = document.getElementById("testcase_name");
         translatedRow = testcaseNameTextArea.value;
         return translatedRow;
     }
@@ -62,18 +61,25 @@ function addKeywordName(){
 }
 
 function addDocumentationSection(){
-    var translatedRow = "\t[Documentation]\t";
-
-    var keywordDescriptionTextArea = document.getElementById("keyword_description");
-    var testcaseDescriptionTextArea = document.getElementById("testcase_description");
+    var translatedRow = "\t[Documentation]\t";   
     
-    if(keywordDescriptionTextArea !== null){
+    if(isKeyword()){
+        var keywordDescriptionTextArea = document.getElementById("keyword_description");
         translatedRow += keywordDescriptionTextArea.value;
         translatedRow += "\n";
         return translatedRow;
     }
-    else if(testcaseDescriptionTextArea !== null){
+    else if(isTestcase()){
+        var testcaseDescriptionTextArea = document.getElementById("testcase_description");
         translatedRow += testcaseDescriptionTextArea.value;
+        translatedRow += "\n";
+
+        var testcasePhasesList = document.getElementById("phases_list");
+        var selectedOption = testcasePhasesList.options.selectedIndex;
+        var selectedValueText = testcasePhasesList.options[selectedOption].text;
+
+        translatedRow += "\t[Tags]\t"; 
+        translatedRow += selectedValueText;
         translatedRow += "\n";
         return translatedRow;
     }
@@ -804,12 +810,15 @@ function translateRobotCommand(commandData){
 
     for(var i=0; i<arguments.length; i++){
 
-        if(arguments[i].visible === true && !arguments[i].needs_value){
+        if(arguments[i].visible && !arguments[i].needs_value){
             scriptLine += "   " + arguments[i].name;
-        }        
-        else if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
+        }
+        else if(arguments[i].visible && arguments[i].needs_value && arguments[i].value !== ""){
             scriptLine += "   " + arguments[i].name + "=" + arguments[i].value + " ";
         }
+        else if(!arguments[i].visible && arguments[i].needs_value && arguments[i].value !== ""){
+            scriptLine += "   " + arguments[i].value + " ";
+        }        
     
     }
 
