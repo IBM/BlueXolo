@@ -13,10 +13,12 @@ class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
 
     def get_initial_queryset(self):
         user = self.request.user
-        qs = Keyword.objects.filter(script_type=1)
-        if not user.is_staff:
-            for product in user.products.all():
-                qs = qs.filter(collection__product=product)
+        qs = Keyword.objects.filter(script_type=1).order_by('created_at')
+        if not user.is_superuser:
+            user_products = user.products.all().values_list('id', flat=True)
+            collections = qs.values_list('collection__product__id', flat=True)
+            result = [user_products for user_products in collections]
+            qs = qs.filter(collection__product__id__in=result)
         return qs
 
     def filter_queryset(self, qs):
@@ -43,10 +45,12 @@ class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
 
     def get_initial_queryset(self):
         user = self.request.user
-        qs = TestCase.objects.all()
-        if not user.is_staff:
-            for product in user.products.all():
-                qs = qs.filter(collection__product=product)
+        qs = TestCase.objects.all().order_by('created_at')
+        if not user.is_superuser:
+            user_products = user.products.all().values_list('id', flat=True)
+            collections = qs.values_list('collection__product__id', flat=True)
+            result = [user_products for user_products in collections]
+            qs = qs.filter(collection__product__id__in=result)
         return qs
 
     def filter_queryset(self, qs):
@@ -73,10 +77,12 @@ class TestsuitesListJson(LoginRequiredMixin, BaseDatatableView):
 
     def get_initial_queryset(self):
         user = self.request.user
-        qs = TestSuite.objects.all()
-        if not user.is_staff:
-            for product in user.products.all():
-                qs = qs.filter(collection__product=product)
+        qs = TestSuite.objects.all().order_by('created_at')
+        if not user.is_superuser:
+            user_products = user.products.all().values_list('id', flat=True)
+            collections = qs.values_list('collection__product__id', flat=True)
+            result = [user_products for user_products in collections]
+            qs = qs.filter(collection__product__id__in=result)
         return qs
 
     def filter_queryset(self, qs):
@@ -87,7 +93,6 @@ class TestsuitesListJson(LoginRequiredMixin, BaseDatatableView):
                 Q(description__icontains=search)
             )
         return qs
-
 
     def render_column(self, row, column):
         if column == 'created_at':
