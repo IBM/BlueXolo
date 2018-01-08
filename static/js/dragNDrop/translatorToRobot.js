@@ -804,12 +804,15 @@ function translateRobotCommand(commandData){
 
     for(var i=0; i<arguments.length; i++){
 
-        if(arguments[i].visible === true && !arguments[i].needs_value){
+        if(arguments[i].visible && !arguments[i].needs_value){
             scriptLine += "   " + arguments[i].name;
-        }        
-        else if(arguments[i].needs_value && arguments[i].value !== undefined && arguments[i].value !== ""){
+        }
+        else if(arguments[i].visible && arguments[i].needs_value && arguments[i].value !== ""){
             scriptLine += "   " + arguments[i].name + "=" + arguments[i].value + " ";
         }
+        else if(!arguments[i].visible && arguments[i].needs_value && arguments[i].value !== ""){
+            scriptLine += "   " + arguments[i].value + " ";
+        }        
     
     }
 
