@@ -137,7 +137,14 @@ class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return Keyword.objects.filter(script_type=2)
+        user = self.request.user
+        qs = Keyword.objects.filter(script_type=2).order_by('created_at')
+        if not user.is_superuser:
+            user_products = user.products.all().values_list('id', flat=True)
+            collections = qs.values_list('collection__product__id', flat=True)
+            result = [user_products for user_products in collections]
+            qs = qs.filter(collection__product__id__in=result)
+        return qs
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
