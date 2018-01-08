@@ -42,9 +42,15 @@
                     "targets": 3,
                     data: function (row) {
                         return "<div class='center'>" +
-                            "<a class='btn' href='/testings/testcases/edit/" + row[3] + "'><i class='material-icons'>edit</i></a>" +
+                            {% if user|can:'update_test_case' %}
+                                "<a class='btn' href='/testings/testcases/edit/" + row[3]
+                                + "'><i class='material-icons'>edit</i></a>" +
+                            {% endif %}
                             '     ' +
-                            "<a class='btn red' href='/testings/testcases/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            {% if user|can:'delete_test_case' %}
+                                "<a class='btn red' href='/testings/testcases/" + row[3]
+                                + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            {% endif %}
                             '     ' +
                             "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/2/run'><i class='material-icons'>play_arrow</i></a>" +
                             "</div>";
