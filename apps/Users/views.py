@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, FormView, DeleteView, DetailView
+from rolepermissions.roles import assign_role, clear_roles
 
 from CTAFramework import settings
 from .forms import UserForm, EditUserForm, RequestAccessForm
@@ -35,6 +36,11 @@ class CreateUserView(LoginRequiredMixin, FormView):
         }
         try:
             user = User.objects.create_user(form.instance.email, form.instance.password, **extra_fields)
+            role = form.data.get('role')
+            if not role:
+                raise Exception('Role is required')
+            clear_roles(user)
+            assign_role(user, role)
             messages.success(self.request, "User {} created".format(user.email))
         except Exception as error:
             messages.error(self.request, "Failed on create. Error {}".format(error))
@@ -51,6 +57,16 @@ class EditUserView(LoginRequiredMixin, UpdateView):
     form_class = EditUserForm
     template_name = "create-edit-user.html"
 
+    def form_valid(self, form):
+        user = self.object
+        role = form.data.get('role')
+        if not role:
+            raise Exception('Role is required')
+        clear_roles(user)
+        if form.data.get('is_active'):
+            assign_role(user, role)
+        return super(EditUserView, self).form_valid(form)
+
     def get_success_url(self):
         """The first time active and without login before send a email for set new password"""
         if self.object.is_active:
@@ -65,7 +81,7 @@ class EditUserView(LoginRequiredMixin, UpdateView):
                 "action_text": "Request my Password"
             }
             email = EmailMessage(
-                subject='Access Autorized',
+                subject='Access Authorized',
                 body=render_to_string("email-template.html", context_dict),
                 to=[self.object.email]
             )
