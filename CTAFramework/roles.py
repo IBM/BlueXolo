@@ -3,6 +3,13 @@ from rolepermissions.roles import AbstractUserRole
 
 class Developer(AbstractUserRole):
     available_permissions = {
+        # Tags
+        'access_server': True,
+        'access_testing': True,
+        'access_sources': True,
+        'access_admin': False,
+        # Templates
+        'read_server_template': False,
         # Profiles
         'create_server_profile': True,
         'read_server_profile': True,
@@ -45,6 +52,11 @@ class Developer(AbstractUserRole):
 
 class Tester(AbstractUserRole):
     available_permissions = {
+        # Tags
+        'access_server': False,
+        'access_testing': True,
+        'access_sources': False,
+        'access_admin': False,
         # Test Case
         'read_test_case': True,
         # Test Suite
@@ -60,6 +72,11 @@ class Tester(AbstractUserRole):
 
 class Auditor(AbstractUserRole):
     available_permissions = {
+        # Tags
+        'access_server': True,
+        'access_testing': True,
+        'access_sources': True,
+        'access_admin': True,
         # Profiles
         'read_server_profile': True,
         # Parameters
@@ -79,6 +96,11 @@ class Auditor(AbstractUserRole):
 
 class Owner(AbstractUserRole):
     available_permissions = {
+        # Tags
+        'access_server': True,
+        'access_testing': True,
+        'access_sources': True,
+        'access_admin': False,
         # Profiles
         'create_server_profile': True,
         'read_server_profile': True,
