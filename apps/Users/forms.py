@@ -68,3 +68,4 @@ class RequestAccessForm(forms.ModelForm):
         """This filter only for sources in the category 3(Products)"""
         super(RequestAccessForm, self).__init__(*args, **kwargs)
         self.fields['products'].queryset = Source.objects.filter(category=3)
+        self.fields['products'].required = True
