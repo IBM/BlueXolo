@@ -6,7 +6,7 @@
         <div class="user-view">
             <div class="logo">
                 <a href="{% url "home" %}">
-                    <img src="{% static "img/complete.svg" %}" class="responsive-img ">
+                    <img src="{% static "img/complete.svg" %}" class="responsive-img">
                 </a>
             </div>
         </div>
@@ -61,27 +61,42 @@
         {% if user|can:'access_sources' %}
             <li><a class="subheader blue-grey-text">Sources</a></li>
         {% endif %}
-    <li>
-        <a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i> Commands</a>
-    </li>
-    <li>
-        <a class="waves-effect" href="{% url "source-list" "robot" %}"><i class="material-icons">navigate_next</i>Robot
-            Framework</a>
-    </li>
-    <li>
-        <a class="waves-effect" href="{% url "source-list" "products" %}"><i class="material-icons">navigate_next</i>Products</a>
-    </li>
+    {% if user|can:'read_commands' %}
+        <li>
+            <a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i> Commands</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_robot' %}
+        <li>
+            <a class="waves-effect" href="{% url "source-list" "robot" %}"><i class="material-icons">navigate_next</i>Robot
+                Framework</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_product' %}
+        <li>
+            <a class="waves-effect" href="{% url "source-list" "products" %}"><i
+                    class="material-icons">navigate_next</i>Products</a>
+        </li>
+    {% endif %}
 
-    <li>
-        <a class="waves-effect" href="{% url "source-list" "libraries" %}"><i class="material-icons">navigate_next</i>Libraries</a>
-    </li>
+    {% if user|can:'read_libraries' %}
+        <li>
+            <a class="waves-effect" href="{% url "source-list" "libraries" %}"><i
+                    class="material-icons">navigate_next</i>Libraries</a>
+        </li>
+    {% endif %}
 
-    <li>
-        <a class="waves-effect" href="{% url "phases" %}"><i class="material-icons">navigate_next</i>Phases</a>
-    </li>
-    {% if user.is_superuser %}
+    {% if user|can:'read_phases' %}
+        <li>
+            <a class="waves-effect" href="{% url "phases" %}"><i class="material-icons">navigate_next</i>Phases</a>
+        </li>
+    {% endif %}
 
+    {% if user|can:'access_admin' %}
         <li><a class="subheader blue-grey-text">Admin</a></li>
+    {% endif %}
+
+    {% if user|can:'read_users' %}
         <li><a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
         <li>
     {% endif %}
