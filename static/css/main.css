@@ -47,3 +47,16 @@
     height: 80% !important;
     max-height: 100% !important;
 }
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+.page-footer{
+    font-size: 0.8rem;
+}

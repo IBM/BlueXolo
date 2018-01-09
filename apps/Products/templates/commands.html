@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Commands{% endblock %}{% block subtitle %}Commands{% endblock %}
+{% load permission_tags %}
 {% block content %}
     <div class="container">
 
@@ -246,14 +247,20 @@
                         var _argument_list = [];
                         _table.find('tbody')
                             .append($('<tr>')
-                                .append('<td><a class=" small blue-text waves-effect" href="/commands/' + data.id + '/edit/">' + data.name + '</a>  </td>')
-                                .append($('<td>')
-                                    .text(data.description)
-                                )
-                                .append($('<td class="sources">')
-                                )
-                                .append($('<td class="args">')
-                                )
+                                {% if user|can:'update_commands' %}
+                                    .append
+                                    ('<td><a class=" small blue-text waves-effect" href="/commands/' + data.id + '/edit/">' + data.name + '</a>  </td>')
+                                    {% else %}
+                                    .append
+                                    ('<td><a class=" small blue-text waves-effect">' + data.name + '</a>  </td>')
+                                {% endif %}
+                                    .append($('<td>')
+                                        .text(data.description)
+                                    )
+                                    .append($('<td class="sources">')
+                                    )
+                                    .append($('<td class="args">')
+                                    )
                             );
                         if (data.source.length > 0) {
                             $.each(data.source, function (k, v) {

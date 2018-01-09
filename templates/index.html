@@ -32,7 +32,7 @@
     </nav>
 </div>
 <!-- main content -->
-<div class="">
+<main class="">
     <div class="section">
         <div class="row">
             <div class="col s12 offset-l4 l4">
@@ -70,12 +70,43 @@
         </div>
 
     </div>
-</div>
-<div class="fixed-action-btn left-button ">
-    <span class="grey-text">
-    Platform Version <code>{{ PLATFORM_VERSION }}</code>
-    </span>
-</div>
+</main>
+{#<div class="fixed-action-btn left-button ">#}
+{#    <span class="grey-text">#}
+{#    Platform Version <code>{{ PLATFORM_VERSION }}</code>#}
+{#    </span>#}
+{#</div>#}
+
+<footer class="page-footer blue-grey darken-1">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <p class="grey-text text-lighten-4">
+                    <img src="{% static "img/xolo.svg" %}" class="responsive-img" alt="xolo" width="80px">
+                    <img src="{% static "img/logo.svg" %}" class="responsive-img" alt="xolo" width="80px">
+                    © 2018 Copyright
+                </p>
+            </div>
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Quick Links</h5>
+                <ul>
+                    <li><a class="grey-text text-lighten-3" href="#!">We are Open Source</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Your history</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Partners</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            <div class="center">
+            Platform Version {{ PLATFORM_VERSION }}
+            </div>
+
+        </div>
+    </div>
+</footer>
+
 <!-- end main content -->
 <!-- Scripts -->
 {% compress js %}
