@@ -190,6 +190,11 @@ class RequestAccessView(FormView):
             return HttpResponseRedirect(reverse_lazy('request-access'))
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_context_data(self, **kwargs):
+        context = super(RequestAccessView, self).get_context_data(**kwargs)
+        context['PLATFORM_VERSION'] = settings.PLATFORM_VERSION
+        return context
+
 
 class ListTasksView(LoginRequiredMixin, TemplateView):
     template_name = "tasks.html"
