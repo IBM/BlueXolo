@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, FormView, DeleteView, DetailView
+from rolepermissions.mixins import HasPermissionsMixin
 from rolepermissions.roles import assign_role, clear_roles
 
 from CTAFramework import settings
@@ -16,15 +17,17 @@ from base64 import b64encode
 from django.contrib.auth.tokens import default_token_generator
 
 
-class UsersView(LoginRequiredMixin, TemplateView):
+class UsersView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     """Just a template view for render the data tables user list """
     template_name = "users.html"
+    required_permission = 'read_users'
 
 
-class CreateUserView(LoginRequiredMixin, FormView):
+class CreateUserView(LoginRequiredMixin, HasPermissionsMixin, FormView):
     model = User
     form_class = UserForm
     template_name = "create-edit-user.html"
+    required_permission = "create_users"
 
     def get_success_url(self):
         return reverse_lazy("users")
@@ -52,10 +55,11 @@ class CreateUserView(LoginRequiredMixin, FormView):
         return context
 
 
-class EditUserView(LoginRequiredMixin, UpdateView):
+class EditUserView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     model = User
     form_class = EditUserForm
     template_name = "create-edit-user.html"
+    required_permission = 'update_users'
 
     def form_valid(self, form):
         user = self.object
@@ -96,9 +100,10 @@ class EditUserView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class DeleteUserView(LoginRequiredMixin, DeleteView):
+class DeleteUserView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = User
     template_name = "delete-user.html"
+    required_permission = 'delete_users'
 
     def get_success_url(self):
         messages.success(self.request, "User deleted")
