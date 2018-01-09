@@ -6,7 +6,7 @@
         <div class="user-view">
             <div class="logo">
                 <a href="{% url "home" %}">
-                    <img src="{% static "img/complete.svg" %}" class="responsive-img">
+                    <img src="{% static "img/logo.svg" %}" >
                 </a>
             </div>
         </div>
@@ -34,7 +34,7 @@
         <li>
             <a class="waves-effect" href="{% url "imported-scripts" %}"><i class="material-icons">navigate_next</i>Imported
                 Scripts</a>
-        <li>
+        </li>
     {% endif %}
     {% if user|can:'read_collection' %}
         <li>
@@ -94,13 +94,13 @@
         </li>
     {% endif %}
 
-    {% if user|can:'access_admin' %}
+    {% if user|can:'read_users' %}
         <li><a class="subheader blue-grey-text">Admin</a></li>
     {% endif %}
 
     {% if user|can:'read_users' %}
         <li>
-            <a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
-        <li>
+            <a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a>
+        </li>
     {% endif %}
 </ul>
