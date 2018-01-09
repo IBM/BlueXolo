@@ -47,6 +47,36 @@ class Developer(AbstractUserRole):
         'delete_collection': True,
         # Scripts
         'run_scripts': True,
+        # Sources - Robot
+        'create_robot': True,
+        'read_robot': True,
+        'update_robot': True,
+        'delete_robot': True,
+        # Sources - Libraries
+        'create_libraries': True,
+        'read_libraries': True,
+        'update_libraries': True,
+        'delete_libraries': True,
+        # Sources - Product
+        'create_product': False,
+        'read_product': False,
+        'update_product': False,
+        'delete_product': False,
+        # Phases
+        'create_phases': False,
+        'read_phases': False,
+        'update_phases': False,
+        'delete_phases': False,
+        # Commands
+        'create_commands': True,
+        'read_commands': True,
+        'update_commands': True,
+        'delete_commands': True,
+        # Users
+        'create_users': False,
+        'read_users': False,
+        'update_users': False,
+        'delete_users': False,
     }
 
 
