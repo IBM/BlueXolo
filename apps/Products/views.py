@@ -3,8 +3,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, FormView
+from rolepermissions.mixins import HasPermissionsMixin
+from rolepermissions.permissions import available_perm_status
 
 from apps.Testings.models import Phase
 from apps.Users.models import Task
@@ -33,14 +36,16 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class ArgumentsView(LoginRequiredMixin, TemplateView):
+class ArgumentsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "arguments.html"
+    required_permission = "read_argument"
 
 
-class NewArgumentView(LoginRequiredMixin, CreateView):
+class NewArgumentView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     model = Argument
     form_class = ArgumentForm
     template_name = "create-edit-argument.html"
+    required_permission = "create_argument"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Created")
@@ -52,10 +57,11 @@ class NewArgumentView(LoginRequiredMixin, CreateView):
         return context
 
 
-class EditArgumentView(LoginRequiredMixin, UpdateView):
+class EditArgumentView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     model = Argument
     form_class = ArgumentForm
     template_name = "create-edit-argument.html"
+    required_permission = "update_argument"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Edited")
@@ -68,9 +74,10 @@ class EditArgumentView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class DeleteArgumentView(LoginRequiredMixin, DeleteView):
+class DeleteArgumentView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = Argument
     template_name = "delete-argument.html"
+    required_permission = "delete_argument"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Deleted")
@@ -105,7 +112,29 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
     model = Source
     template_name = "create-edit-source.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        can_create = False
+        if user.is_superuser:
+            can_create = True
+        else:
+            user_permissions = available_perm_status(user)
+            permissions = [
+                'create_robot',
+                'create_libraries',
+                'create_product'
+            ]
+            for perm in permissions:
+                if perm in user_permissions and not can_create:
+                    can_create = True
+        if can_create:
+            return super(CreateSourceView, self).dispatch(request, *args, **kwargs)
+        else:
+            messages.warning(request, "You don't have permission for this action")
+            return HttpResponseRedirect(self.get_success_url())
+
     def get_form_class(self):
+
         name = self.kwargs.get('slug')
         if name == 'products':
             return SourceProductForm
@@ -193,6 +222,27 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
 class EditSourceView(LoginRequiredMixin, UpdateView):
     model = Source
     template_name = "create-edit-source.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        can_create = False
+        if user.is_superuser:
+            can_create = True
+        else:
+            user_permissions = available_perm_status(user)
+            permissions = [
+                'update_robot',
+                'update_libraries',
+                'update_product'
+            ]
+            for perm in permissions:
+                if perm in user_permissions and not can_create:
+                    can_create = True
+        if can_create:
+            return super(EditSourceView, self).dispatch(request, *args, **kwargs)
+        else:
+            messages.warning(request, "You don't have permission for this action")
+            return HttpResponseRedirect(self.get_success_url())
 
     def get_form_class(self):
         _category = self.object.category
