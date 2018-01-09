@@ -50,17 +50,19 @@
         </li>
     {% endif %}
     {% if user|can:'read_server_template' %}
-        <li><a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
+        <li>
+            <a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
+        </li>
     {% endif %}
     {% if user|can:'read_server_profile' %}
         <li>
             <a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
         </li>
     {% endif %}
-    <li>
-        {% if user|can:'access_sources' %}
-            <li><a class="subheader blue-grey-text">Sources</a></li>
-        {% endif %}
+
+    {% if user|can:'access_sources' %}
+        <li><a class="subheader blue-grey-text">Sources</a></li>
+    {% endif %}
     {% if user|can:'read_commands' %}
         <li>
             <a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i> Commands</a>
@@ -97,9 +99,8 @@
     {% endif %}
 
     {% if user|can:'read_users' %}
-        <li><a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
+        <li>
+            <a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
         <li>
     {% endif %}
-    </li>
-
 </ul>
