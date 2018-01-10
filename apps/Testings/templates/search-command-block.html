@@ -1,32 +1,15 @@
-
-    <div class="center pink-text"><b>Select Elements to Drag</b></div>
-    <div class="card">
-        <div class="card-content">
-            <label for="cfs">
-                Control Flow Sentences
+<div class="card">
+    <div class="card-content">
+        <div class="row">
+            <label for="id_label_single">
+                Command Search
+                <select id="command-search"></select>
             </label>
-            <div id="flowSentenceContainer"></div>
         </div>
+        <div id="commandsContainer"></div>
     </div>
-
-    <div class="card">
-        <div class="card-content">
-            <div class="row">
-                <label for="id_label_single">
-                    Command Search
-                    <select id="command-search"></select>
-                </label>
-            </div>
-            <div id="commandsContainer"></div>
-        </div>
-    </div>
+</div>
 <script>
-    /* Search for Control Flow Sentences Commands */
-    getFlowSentenceCommands({
-        "data": {"category": 1, "page_size": 10, "extra": 0},
-        "id_div_accordion": "controlFlowCommandsPanel"
-    });
-
     function parseReults(results) {
         var _print = "Getting info . . .";
         if (results.source) {
@@ -103,39 +86,4 @@
         _resultElement.setAttribute("ondragstart", "drag(event)");
         _container.appendChild(_resultElement);
     }
-
-
-    function getFlowSentenceCommands(config) {
-        $.ajax({
-            url: "{% url 'api-commands' %}",
-            type: 'GET',
-            data: config.data,
-            success: function (data) {
-                if (data.results) {
-                    populateCommandsPanel(data.results);
-                }
-            },
-            error: function (error) {
-                drawMessage(error.responseJSON.text, 'red');
-                console.log("Error retrieving commands when website is loaded " + error);
-                return false;
-            }
-        });
-    }
-
-
-    function populateCommandsPanel(commands) {
-        commands.forEach(function (commandJSON) {
-            var draggableNode = document.createElement("div");
-
-            draggableNode.className = "drag-drop-item center";
-            draggableNode.id = commandJSON.id + "-drag-drop";
-            draggableNode.draggable = true;
-            draggableNode.setAttribute("ondragstart", "drag(event)");
-            draggableNode.innerHTML = commandJSON.name;
-            var commandsPanelControlFlow = document.getElementById('flowSentenceContainer');
-            commandsPanelControlFlow.appendChild(draggableNode);
-        });
-    }
-
 </script>

@@ -168,7 +168,7 @@
                         Materialize.toast($toastContent, 12000, 'green');
 
                         var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
-                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                            '<a href="/testings/' + data.id + '/1/run" class="btn-flat white-text toast-action">Go</a>'));
                         Materialize.toast($toastContent, 12000, 'blue');
                         new_keyword = data;
                     },
@@ -212,7 +212,8 @@
         {% csrf_token %}
         <div class="row">
             <div class="col s12 l3">
-                {% include "search-block.html" %}
+                {% include "control-flow-block.html" %}
+                {% include "search-command-block.html" %}
             </div>
             <div class="col l6 s12">
                 <ul class="tabs">
