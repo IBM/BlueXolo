@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Parameters{% endblock %}
-{% block subtitle %}Parameters{% endblock %}
+{% block title %}Parameters{% endblock %}{% block subtitle %}Parameters{% endblock %}
+{% load permission_tags %}
 {% block content %}
     <div class="container">
         <table class="datatable">
@@ -12,10 +12,13 @@
             </tr>
             </thead>
         </table>
-        <div class="fixed-action-btn">
-            <a href="{% url "new-parameters" %}"
-               class="btn-floating btn-large waves-effect waves-light blue-grey"><i class="material-icons">add</i></a>
-        </div>
+        {% if user|can:'create_server_parameter' %}
+            <div class="fixed-action-btn">
+                <a href="{% url "new-parameters" %}"
+                   class="btn-floating btn-large waves-effect waves-light blue-grey"><i
+                        class="material-icons">add</i></a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -39,8 +42,15 @@
                     "targets": 2,
                     data: function (row) {
                         return "<div>" +
-                            "<a class='btn' href='/servers/parameters/" + row[2] + "'><i class='material-icons'>edit</i></a>" +
-                            "<a class='btn red' href='/servers/parameters/" + row[2] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            {% if user|can:'update_server_parameter' %}
+                                "<a class='btn' href='/servers/parameters/" + row[2]
+                                + "'><i class='material-icons'>edit</i></a>" +
+                                "   "+
+                            {% endif %}
+                            {% if user|can:'update_server_parameter' %}
+                                "<a class='btn red' href='/servers/parameters/" + row[2]
+                                + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            {% endif %}
                             "</div>";
                     }
                 }];

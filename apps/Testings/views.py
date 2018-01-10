@@ -217,14 +217,11 @@ class EditKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateVie
     model = Keyword
     required_permission = "update_imported_script"
 
-    def form_valid(self, form):
-        messages.success(self.request, "Script updated")
-        return super(EditKeywordImportedView, self).form_valid(form)
-
     def form_invalid(self, form):
         return super(EditKeywordImportedView, self).form_invalid(form)
 
     def get_success_url(self):
+        messages.success(self.request, "Script updated")
         return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
 
 
@@ -258,10 +255,10 @@ def apply_highlight(script):
             print(error)
 
 
-class RunScriptView(LoginRequiredMixin, TemplateView):
+class RunScriptView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "run_script.html"
 
-    # required_permission = "run_scripts"
+    required_permission = "run_scripts"
 
     def get_context_data(self, **kwargs):
         context = super(RunScriptView, self).get_context_data(**kwargs)
