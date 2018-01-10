@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from rolepermissions.checkers import has_role
 
 from apps.Users.models import User, Task
 
@@ -46,7 +47,7 @@ class TasksListJson(LoginRequiredMixin, BaseDatatableView):
 
     def get_initial_queryset(self):
         """get only user tasks"""
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or has_role(self.request.user, 'auditor'):
             return Task.objects.all()
         user_tasks = self.request.user.get_all_tasks()
         tasks_ids = []

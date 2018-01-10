@@ -135,14 +135,15 @@
                         </div>
                     {% endfor %}
                 </div>
-                <div class="center panel-footer">
-                    <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect">View all Tasks</a>
-                </div>
+
                 </div>
             {% else %}
                 <div class="center section">
                     <h5 class="blue-grey-text">Don't have task yet</h5>
                 </div>
             {% endif %}
+        <div class="center panel-footer">
+            <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect">View all Tasks</a>
+        </div>
     </div>
 {% endblock %}
