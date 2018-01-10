@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from random import choice
 
+from rolepermissions.checkers import has_role
 from rolepermissions.mixins import HasPermissionsMixin
 from scp import SCPClient
 from string import ascii_lowercase, digits
@@ -96,13 +97,14 @@ class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView)
     model = ServerProfile
     required_permission = 'update_server_profile'
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     obj = self.get_object()
-    #     if obj.user == request.user or request.user.is_staff:
-    #         return super(EditServerProfileView, self).dispatch(request, *args, **kwargs)
-    #     elif obj.user != request.user:
-    #         messages.warning(request, "You don't have permission for this action")
-    #         return redirect('servers-profiles')
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        can_edit = has_role(request.user, 'owner')
+        if can_edit or obj.user == request.user:
+            return super(EditServerProfileView, self).dispatch(request, *args, **kwargs)
+        elif obj.user != request.user:
+            messages.warning(request, "You don't have permission for this action")
+            return redirect('servers-profiles')
 
 
 class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -116,7 +118,8 @@ class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
-        if obj.user == request.user or request.user.is_staff:
+        can_edit = has_role(request.user, 'owner')
+        if can_edit or obj.user == request.user:
             return super(DeleteServerProfile, self).dispatch(request, *args, **kwargs)
         elif obj.user != request.user:
             messages.warning(request, "You don't have permission for this action")
