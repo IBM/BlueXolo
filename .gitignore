@@ -28,8 +28,6 @@ sftp-config.json
 *.py[cod]
 __pycache__
 
-# Logs
-logs
 *.log
 pip-log.txt
 npm-debug.log*
@@ -94,5 +92,6 @@ run.sh
 .vscode/settings.json
 
 # LOGS
-celery_log.txt
-xolo_log.txt
+logs/*
+
+variables.sh
