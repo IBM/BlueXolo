@@ -7,7 +7,7 @@
 source ./variables.sh
 source $VIRTUAL_ENV_PATH/bin/activate
 printf "$RED First need set variables.sh with real paths and vars.\n"
-printf "$\nBLU ====================================================== \n"
+printf "\n $BLU ====================================================== \n"
 
 read -p "$BLU Is the first execution? (y/N, default=No)? " answer
 case ${answer:0:1} in
