@@ -34,6 +34,7 @@ case ${answer:0:1} in
     ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
     ps -ef | grep 'runserver 0.0.0.0:$PORT' | grep -v grep | awk '{print $2}' | xargs kill    
 
+    mkdir $BASE_DIR/logs
     printf "$GRN \nRunning Celery.\n\n"
     CELERY_LOG=celery_$(date +'%d_%m_%Y')_log.txt
     nohup celery -A CTAFramework worker -l info  --concurrency=$CONCURRENCY > logs/$CELERY_LOG &
