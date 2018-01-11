@@ -1,0 +1,22 @@
+#!/usr/bin/sh
+# | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
+# |                   Variables script                     |
+# |                Last update January 2018                |
+# |                  by Francisco Suárez                   |
+# | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
+
+# Base variables
+export VIRTUAL_ENV_PATH="/var/virtualEnvs/xolo"
+export BASE_DIR=$(pwd)
+export MEDIA_DIR="media/"
+export PORT=8000
+export CONCURRENCY=4
+
+#colors
+export RED=$'\e[1;31m'
+export GRN=$'\e[1;32m'
+export YEL=$'\e[1;33m'
+export BLU=$'\e[1;34m'
+export MAG=$'\e[1;35m'
+export CYN=$'\e[1;36m'
+export END=$'\e[0m'
