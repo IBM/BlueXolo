@@ -109,7 +109,7 @@
                          _globalTemplate = data;
                         var _category_type = document.getElementById('category_template');
                         _category_type.innerHTML = _categories[data.category - 1];
-                        showParams(data.parameters)
+                        showParams(data.parameters)                        
                     }, error: function (err) {
                         console.log(err)
                     }
@@ -175,12 +175,10 @@
                         'value': _chipData
                     })
                 } else {
-                    if (_current.value) {
-                        _params.push({
-                            'id': _current.id,
-                            'value': _current.value
-                        })
-                    }
+                    _params.push({
+                        'id': _current.id,
+                        'value': _current.value
+                    })
                 }
             }
             _values = {
