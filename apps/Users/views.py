@@ -72,25 +72,29 @@ class EditUserView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
         return super(EditUserView, self).form_valid(form)
 
     def get_success_url(self):
-        """The first time active and without login before send a email for set new password"""
-        if self.object.is_active:
-            token_generator = default_token_generator
-            pk_decode = b64encode(str(self.object.pk).encode('ascii'))
-            pk_encode = pk_decode.decode('ascii')
-            context_dict = {
-                "name": "{0}, your access has been authorized".format(self.object.email),
-                "message": "Enter on the follow link to request your password.",
-                "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=", ""),
-                                                         token_generator.make_token(self.object)),
-                "action_text": "Request my Password"
-            }
-            email = EmailMessage(
-                subject='Access Authorized',
-                body=render_to_string("email-template.html", context_dict),
-                to=[self.object.email]
-            )
-            email.content_subtype = "html"
-            email.send()
+        if settings.IBM_CLIENT:
+            """The first time active and without login before send a email for set new password"""
+            if self.object.is_active and not self.object.last_login:
+                try:
+                    token_generator = default_token_generator
+                    pk_decode = b64encode(str(self.object.pk).encode('ascii'))
+                    pk_encode = pk_decode.decode('ascii')
+                    context_dict = {
+                        "name": "{0}, Your access has been authorized".format(self.object.email),
+                        "message": "Enter on the follow link to request your password.",
+                        "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=", ""),
+                                                                 token_generator.make_token(self.object)),
+                        "action_text": "Request my Password"
+                    }
+                    email = EmailMessage(
+                        subject='Access Authorized',
+                        body=render_to_string("email-template.html", context_dict),
+                        to=[self.object.email]
+                    )
+                    email.content_subtype = "html"
+                    email.send()
+                except Exception as error:
+                    messages.error(self.request, "Attention: {0}".format(error))
         messages.success(self.request, "User Updated!")
         return reverse_lazy("users")
 
@@ -120,7 +124,7 @@ class RequestAccessView(FormView):
             user_check = User.objects.get(email=form.instance.email)
             if user_check:
                 if not user_check.is_active:
-                    messages.error(self.request, "Error, User Already exist, you dont be activate yet")
+                    messages.warning(self.request, "Error, User Already exist, you don't be activate yet")
                 else:
                     token_generator = default_token_generator
                     pk_decode = b64encode(str(user_check.pk).encode('ascii'))
