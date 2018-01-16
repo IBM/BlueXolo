@@ -1,4 +1,4 @@
-function selectServerSide(config) {
+function selectServerSide(config, selectIndex) {
     $.ajax({
         url: config.url,
         type: "GET",
@@ -7,7 +7,12 @@ function selectServerSide(config) {
             var _select = document.getElementById(config.container);
             data.forEach(function (value) {
                 var _option = document.createElement('option');
-                _option.setAttribute('value', value.id);
+                _option.setAttribute('value', value.id);                
+
+                if(value.id == selectIndex && selectIndex !== undefined){
+                    _option.setAttribute('selected', true);
+                }
+
                 if (value.version) {
                     _option.innerHTML = value.name + ' - ' + value.version;
                 } else {

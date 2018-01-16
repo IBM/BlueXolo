@@ -53,8 +53,10 @@
                         "container": "phases_list"
                     };
 
-                    selectServerSide(_configPhases);
-                }
+                    var phaseIndex = "{{ object.phase.pk | escapejs }}";
+
+                    selectServerSide(_configPhases, phaseIndex);
+                }                
 
                 getTestcaseToEdit();
             });
