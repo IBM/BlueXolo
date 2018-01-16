@@ -356,8 +356,9 @@ def generate_profile(params, filename):
     var_file = open("{0}/profiles/{1}_profile.py".format(settings.MEDIA_ROOT, filename), "w")
     var_file.write("#!/usr/bin/env python\n\n")
     for arg in arguments:
-        param = Parameters.objects.get(pk=arg.get('id'))
-        variables.append("{0} = {1}\n".format(param.name, arg.get('value')))
+        if arg.get('value'):
+            param = Parameters.objects.get(pk=arg.get('id'))
+            variables.append("{0} = {1}\n".format(param.name, arg.get('value')))
     for var in variables:
         var_file.write(var)
     var_file.close()
