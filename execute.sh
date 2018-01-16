@@ -5,13 +5,19 @@
 # |                  by Francisco Suárez                   |
 # | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
 source ./variables.sh
-source $VIRTUAL_ENV_PATH/bin/activate
+source ${VIRTUAL_ENV_PATH}/bin/activate
 printf "$RED First need set variables.sh with real paths and vars.\n"
 printf "\n $BLU ====================================================== \n"
 
 read -p "$BLU Is the first execution? (y/N, default=No)? " answer
 case ${answer:0:1} in
     y|Y )
+
+    if [ ! -d "$BASE_DIR/media/" ]; then
+        mkdir "$BASE_DIR/media/"
+        mkdir "$BASE_DIR/logs"
+    fi
+
     printf "$GRN \nOk, then let's setup some stuff...\n\n"
     source tools/check_dirs.sh
 
@@ -34,14 +40,13 @@ case ${answer:0:1} in
     ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
     ps -ef | grep 'runserver 0.0.0.0:$PORT' | grep -v grep | awk '{print $2}' | xargs kill    
 
-    mkdir $BASE_DIR/logs
     printf "$GRN \nRunning Celery.\n\n"
     CELERY_LOG=celery_$(date +'%d_%m_%Y')_log.txt
-    nohup celery -A CTAFramework worker -l info  --concurrency=$CONCURRENCY > logs/$CELERY_LOG &
+    nohup celery -A CTAFramework worker -l info  --concurrency=${CONCURRENCY} > logs/${CELERY_LOG} &
     
     printf "$GRN \nRunning Django.\n\n"
     DJANGO_LOG=django_$(date +'%d_%m_%Y')_log.txt
-    nohup python manage.py runserver 0.0.0.0:$PORT > logs/$DJANGO_LOG &
+    nohup python manage.py runserver 0.0.0.0:${PORT} > logs/${DJANGO_LOG} &
     
     printf "$CYN \nDONE, the project is running on port: $PORT.\n\n "
     printf "Don't forget the directory for Logs:$BASE_DIR/logs \n\n"
