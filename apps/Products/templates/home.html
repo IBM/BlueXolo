@@ -5,7 +5,7 @@
     <div class="container">
         <div class="row">
             <div class="center">
-                <h4 class="blue-grey-text">Last Tasks</h4>
+                <h4 class="blue-grey-text light">Latest Tasks</h4>
             </div>
             {% if user_tasks %}
                 <div class="col s12 l6">
@@ -25,13 +25,13 @@
                                     {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
                                 {% elif task.state == "SUCCESS" %}
                                     <h5 class="app-title green-text"><i class="material-icons">done</i>
-                                        {{ task.name }} Completed</h5>
+                                        {{ task.name }}</h5>
                                     <div class="progress">
                                         <div class="determinate green" style="width: 100%"></div>
                                     </div>
-                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="blue-grey-text center">EXECUTION COMPLETE</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                     {% if task.category == 2 %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -47,9 +47,9 @@
                                     <div class="progress">
                                         <div class="determinate red" style="width: 100%"></div>
                                     </div>
-                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="blue-grey-text center">EXECUTION FAILED</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                     {% if task.category == 2 and task.result %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -89,13 +89,13 @@
                                     {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
                                 {% elif task.state == "SUCCESS" %}
                                     <h5 class="app-title green-text"><i class="material-icons">done</i>
-                                        {{ task.name }} Completed</h5>
+                                        {{ task.name }}</h5>
                                     <div class="progress">
                                         <div class="determinate green" style="width: 100%"></div>
                                     </div>
-                                    <p class="blue-grey-text center">{{ task.state }}</p>
+                                    <p class="blue-grey-text center">EXECUTION COMPLETE</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                     {% if task.category == 2 %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -113,7 +113,7 @@
                                     </div>
                                     <p class="blue-grey-text center">{{ task.state }}</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last Update: {{ task.updated_at }}</p>
+                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                     {% if task.category == 2 and task.result %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
@@ -139,11 +139,12 @@
                 </div>
             {% else %}
                 <div class="center section">
-                    <h5 class="blue-grey-text">Don't have task yet</h5>
+                    <h5 class="blue-text light">Don't have task yet</h5>
                 </div>
             {% endif %}
         <div class="center panel-footer">
-            <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect">View all Tasks</a>
+            <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
+            <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
         </div>
     </div>
 {% endblock %}
