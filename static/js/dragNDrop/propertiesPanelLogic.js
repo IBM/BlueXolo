@@ -1,3 +1,21 @@
+/*
+    *This file contains all the functions related with the drawing of
+    the properties panel.
+
+    *The function to be executed drawPropertiesPanel, drawKeywordProperties
+    or drawPropertiesForTestcases is added as a onclick function (showproperties()) 
+    at the same time that elements are drawn in the table (dropCreator.js).
+
+    *showProperties() handles which properties panel's type is required.
+
+    *This is because each element's type needs a diferent way to iterate over
+    DroppedElements's atributes. The button to save needs to call certain
+    function in parameterSaver.js too.
+    
+    *fixScroll() function was added in order to solve a bug were clicking checkboxes
+    scrolls all the page to the bottom.
+*/
+
 function hidePropertiesPanel() {
     var x = document.getElementById('propertiesPannel');
     var buttonToShowPanel = document.getElementById('toggleProperties');

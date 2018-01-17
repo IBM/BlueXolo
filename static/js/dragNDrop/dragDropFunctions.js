@@ -1,3 +1,30 @@
+/*
+    This file contains all functions and methods related with drag an drop
+
+    *This includes all the logic related since the drag of the element
+    until is dropped and added to the variable "DropppedElements".
+
+    *DroppedElements is initialized in each create and edit html as an 
+    empty array.
+
+    *This file contains also the logic to create empty rows between
+    dropped elements.
+
+    *Each time a element is dropped it need to be recognized where
+    if it is being dropped in a empty row or inside an element.
+    This is important because dropped elements needs a indentation.
+
+    *Because of perfomance, drawing and logic is being done by
+    iteration or direct changin into a variable ("DroppedElements").
+    With this in mind, the only moment to see DOM's id is when an element
+    changes from a place to other. And the position in the table says
+    its original place.
+
+    *Manipulation of variable DroppedElement (jsonManipulator.js) and drawing of
+    elements in table (dropCreator.js) are done in differente files
+*/
+
+
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -322,72 +349,5 @@ function drop(ev) {
             var rowNode = originalNode.parentNode;
             rowNode.parentNode.removeChild(rowNode);
         }
-    }
-}
-
-function getNewID(elementID) {
-    var commandName = elementID.split("-")[0];
-    var found = false;
-    var newID;
-
-    counterJSON.forEach(function (commandCounter) {
-        if (commandCounter.name === commandName) {
-            commandCounter.counter++;
-            found = true;
-            newID = commandName + "-" + commandCounter.counter;
-        }
-    });
-
-
-    if (!found) {
-        counterJSON.push({
-            name: commandName,
-            counter: 1
-        });
-
-        var newPosition = counterJSON.length - 1
-        newID = counterJSON[newPosition].name + "-" + 1;
-    }
-
-    return newID;
-}
-
-function resetDropCounters() {
-    while (counterJSON.length > 0) {
-        counterJSON.pop();
-    }
-    elementsInTable = 0;
-}
-
-function getNewClass(targetClass) {
-    if (targetClass === "drop-area") {
-        return "drop-0";
-    }
-    else if (targetClass === "drop-0") {
-        return "drop-1";
-    }
-    else if (targetClass === "drop-1") {
-        return "drop-2";
-    }
-    else if (targetClass === "drop-2") {
-        return "drop-3";
-    }
-    else if (targetClass === "drop-3") {
-        return "drop-4";
-    }
-    else if (targetClass === "drop-4") {
-        return "drop-5";
-    }
-    else if (targetClass === "drop-5") {
-        return "drop-6";
-    }
-    else if (targetClass === "drop-6") {
-        return "drop-7";
-    }
-    else if (targetClass === "drop-7") {
-        drawMessage("This is the maximum deep", "yellow black-text");
-        return false;
-    } else {
-        return "drop-1";
     }
 }
