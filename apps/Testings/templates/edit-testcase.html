@@ -64,9 +64,7 @@
             function getTestcaseToEdit() {
                 var testcaseData = document.getElementById('tc_values').value;
                 {#            var testcaseData = "{{object.values}}";#}
-                //console.log(keywordData.replace(/&quot;/g,'"'));
                 droppedElements = JSON.parse(testcaseData);
-                //console.log(droppedElements);
                 drawElementsFromJSON();
             }
 

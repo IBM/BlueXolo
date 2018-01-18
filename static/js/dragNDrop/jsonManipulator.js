@@ -1,3 +1,21 @@
+/*
+    *This is one of the most important files, it contains all the logic
+    that affect DroppedElements.
+
+    *Commands, Keywords and Test cases have different route and different
+    attributes to be added in the array. That's why it exist a function for each
+    (it also promotes an architecture with modules).
+
+    *There exist a function that specifies a index. This is really helpful to
+    move elements from one position to other or drop elements between elements.
+
+    *This functions are called each time a element is dropped. And the function
+    in charge of "handle drops" is located in dragDropFunctions.js.
+
+    *Each time a element is added it request to the server all information related
+    to a command, keyword or testcase, after this it saves a instance of it.    
+*/
+
 var jsonAPIURL = {
     commands: "/apis/commands/",
     keywords: "/apis/keywords/",
