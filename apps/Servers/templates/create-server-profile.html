@@ -13,7 +13,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="card grey lighten-3">
+                <div class="card grey lighten-3 hide" id="instruction_box">
                     <div class="card-content">
                         <p><b class="red-text">*</b> <b class="blue-grey-text">Write the parameter value like python
                             syntax. </b></p>
@@ -67,11 +67,17 @@
         _select.onchange = getParams;
 
         function getParams() {
+            var box = document.getElementById('instruction_box');
             if (_select.value) {
                 $.ajax({
                     url: "/apis/templates/" + _select.value,
                     type: "GET",
                     success: function (data) {
+                        if (data.category === 1) {
+                            box.classList.remove('hide');
+                        } else {
+                            box.classList.add('hide');
+                        }
                         _globalTemplate = data;
                         var _category_type = document.getElementById('category_template');
                         _category_type.innerHTML = _categories[data.category - 1];
@@ -82,7 +88,6 @@
                     }
                 })
             }
-
         }
 
         function showParams(params) {
