@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^home/$', HomeView.as_view(), name="home"),
     # Arguments CRUD
     url(r'^arguments/$', ArgumentsView.as_view(), name="arguments"),
-    url(r'^arguments/new$', NewArgumentView.as_view(), name="new-argument"),
+    url(r'^arguments/(?P<cmd>\d+)/new$', NewArgumentView.as_view(), name="new-argument"),
     url(r'^arguments/(?P<pk>\d+)/$', EditArgumentView.as_view(), name='edit-argument'),
     url(r'^arguments/(?P<pk>\d+)/delete/$', DeleteArgumentView.as_view(), name='delete-argument'),
     # Sources

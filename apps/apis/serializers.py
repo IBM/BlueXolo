@@ -13,6 +13,24 @@ class ArgumentsSerializer(serializers.ModelSerializer):
         model = Argument
         fields = '__all__'
 
+    def create(self, validated_data):
+        include = self.initial_data.getlist('include[]')
+        exclude = self.initial_data.getlist('exclude[]')
+        argument = Argument.objects.create(
+            command = validated_data['command'],
+            name = validated_data['name'],
+            description = validated_data['description'],
+            requirement = validated_data['requirement'],
+            needs_value = validated_data['needs_value']
+        )
+        argument.save()
+        for i in include:
+            argument.include.add(i)
+            argument.save()
+        for e in exclude:
+            argument.exclude.add(e)
+            argument.save()
+        return argument
 
 class SourceSerialzer(serializers.ModelSerializer):
     class Meta:
@@ -21,15 +39,14 @@ class SourceSerialzer(serializers.ModelSerializer):
 
 
 class CommandsSerializer(serializers.ModelSerializer):
-    arguments = ArgumentsSerializer(many=True)
     source = SourceSerialzer(many=True)
+    arguments = serializers.ReadOnlyField()
 
     class Meta:
         model = Command
         fields = '__all__'
 
     def create(self, validated_data):
-        args = json.loads(self.initial_data['arguments'])
         sources = json.loads(self.initial_data['source'])
         command = Command.objects.create(
             name=validated_data['name'],
@@ -38,14 +55,10 @@ class CommandsSerializer(serializers.ModelSerializer):
         for s in sources:
             command.source.add(s)
             command.save()
-        for arg in args:
-            command.arguments.add(arg)
-            command.save()
         return command
 
     def update(self, instance, validated_data):
         try:
-            args = json.loads(self.initial_data['arguments'])
             srcs = json.loads(self.initial_data['source'])
             instance.name = validated_data.get('name')
             instance.description = validated_data.get('description')
@@ -57,11 +70,6 @@ class CommandsSerializer(serializers.ModelSerializer):
                 instance.source.add(source)
                 instance.save()
 
-            for arg in instance.arguments.all():
-                instance.arguments.remove(arg)
-            for a in args:
-                instance.arguments.add(a)
-                instance.save()
             return instance
         except Exception as error:
             raise RuntimeError('`update()` have error {0}.'.format(error))

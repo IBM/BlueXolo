@@ -22,6 +22,14 @@ from apps.Products.models import Argument, Source, Command
 
 @shared_task()
 def run_extract(config):
+    """
+    run_extract(config)
+
+    Main function that gets configuration to run a given extract:
+        2       -    M-extract
+        3       -    P-Extract
+        3 or 4  -    R-Extract
+    """
     category = int(config.get('category'))
     if category is 2:
         # Extract Manpages
@@ -40,7 +48,39 @@ def run_extract(config):
 
 
 class MExtract:
+    """
+    MExtract    -   Manpages Extract
+
+    Class created to extract information for man pages, designed to get the parameters of commands
+    """
+    # TODO: It is a little bit confusing of what p_config[0] store, it seems like there is a list
+    # of commands in a multiline string _split_list_of_commands, but in _ssh_connect seems like
+    # it is a command that would be sent into a server to get the list of commands in the
+    # multiline string format, so the TODO is verify if this information is correct or if there
+    # is an error in the script.
     def __init__(self, sections_list=None, p_config=None, api_config=None):
+        """
+        __init__(self, sections_list=None, p_config=None, api_config=None)
+
+        Initialization of MExtract:
+            sections_list - list of sections of man pages information
+            p_config      - list of configuration options it should contains the regular expression
+                            in case user wants to extract man pages info with an especific format,
+                            p_config is stored with next format:
+                                [commands, arguments_re]
+                                    where commands is a multiline string of commands as a list
+                                    or a command to get commands in case user wants to get commands
+                                    remotely (e.g., ls /<path_of_bin>/)
+                                    arguments_re is a regular expression
+                            Note: p_config is just used when PExtract but can be used for other
+                                  linux distros that have a different Man pages format.
+            api_config    - Dictionary that have connection data in case user wants to extract
+                            information remotely, the keys are:
+                                "host"
+                                "username"
+                                "password"
+                                "port"
+        """
         self.default_sections_list = [
             'NAME',
             'DESCRIPTION',
@@ -54,6 +94,11 @@ class MExtract:
         self.initial_time = time.time()
 
     def _split_list_of_commands(self):
+        """
+        _split_list_of_commands(self)
+
+        Section that use regular expression to split the list of commands
+        """
         self.sections_re = re.compile('(^[A-Z]+\s*[A-Z]*\s*[A-Z]*\n)', flags=re.M)
         self.sp_arguments_re = re.compile(
             "( {2}-\w+, --\w+[ =]| {2}-\w+[ =]|"
@@ -63,9 +108,11 @@ class MExtract:
             flags=re.M
         )
         if self.p_config is None:
+            # Run this in case not a regular expression provided, get commands using compgen
             compgen = '/bin/bash -c "compgen -c"'
             commands = subprocess.getoutput(compgen)
             self.list_of_commands = commands.splitlines()
+            # Generating reular expression for generic linux distros
             self.arguments_re = re.compile("( {2}-\w+, --\w+[ \n=]| {2}-\w+[ \n=]| {2}--\w+[ \n=]|"
                                            " {2}--\w+-\w+[ \n=]|"
                                            " {2}-\w+, --\w+-\w+[ \n=])(?=[ <]*)",
@@ -73,6 +120,7 @@ class MExtract:
                                            )
             self.source = self._getSource(category=2)
         else:
+            # Run this in case a non common commands wants to be extracted
             commands = self.p_config[0]
             self.list_of_commands = commands.splitlines()
             if self.p_config[1]:
@@ -87,6 +135,13 @@ class MExtract:
             self.source = self._getSource(category=3)
 
     def _ssh_regex(self):
+        """
+        _ssh_regex(self) -> <string_to_get_commands>
+
+        Is used to setup the way that commands will be get remotely
+
+        returns a string for get commands
+        """
         self.sections_re = re.compile('(^[A-Z]+\s*[A-Z]*\s*[A-Z]*\n)', flags=re.M)
         self.sp_arguments_re = re.compile(
             "( {2}-\w+, --\w+[ =]| {2}-\w+[ =]|"
@@ -96,6 +151,7 @@ class MExtract:
             flags=re.M
         )
         if self.p_config is None:
+            # If not config, we suppose to get commands using standard linux way
             commands = '/bin/bash -c "compgen -c"'
             self.arguments_re = re.compile("( {2}-\w+, --\w+[ \n=]| {2}-\w+[ \n=]| {2}--\w+[ \n=]|"
                                            " {2}--\w+-\w+[ \n=]|"
@@ -104,6 +160,7 @@ class MExtract:
                                            )
             self.source = self._getSource(category=2)
         else:
+            # If config, we need to setup a command that returns the list of commands in a multiline string
             commands = self.p_config[0]
             if self.p_config[1]:
                 self.arguments_re = self.p_config[1]
@@ -119,12 +176,23 @@ class MExtract:
         return commands
 
     def run(self):
+        """
+        run(self)
+
+        Launchs _run_with_ssh() or _run_with_default() depending of <api_config> configuration
+        """
         if self.api_config.get('host'):
             self._run_with_ssh()
         else:
             self._run_with_default()
 
+    # TODO: remove duplicity of _run_with_default and _run_with_ssh codes
     def _run_with_default(self):
+        """
+        _run_with_default(self)
+
+        Get commands and arguments for local configuration
+        """
         self._split_list_of_commands()
 
         if not self.list_of_commands:
@@ -140,6 +208,11 @@ class MExtract:
             self._save_into_db()
 
     def _run_with_ssh(self):
+        """
+        _run_with_ssh(self)
+
+        Get commands and arguments remotely
+        """
         self._ssh_connect()
         if not self.ssh_commands_man:
             raise Exception("There where no commands for extraction")
@@ -154,8 +227,10 @@ class MExtract:
 
     def _ssh_connect(self):
         """
-        Establish connection with remote server running a bash shell
-        :return:
+        _ssh_connect(self)
+
+        Establish connection with remote server running a bash shell.
+        Get the commands and respective man pages
         """
         self.ssh_commands_man = dict()
         command_string = self._ssh_regex()
@@ -164,27 +239,33 @@ class MExtract:
         password = self.api_config.get("password")
         port = int(self.api_config.get("port"))
         try:
+            # Ssh connect with a remote server
             ssh_connection = pxssh.pxssh(timeout=50)
             ssh_connection.login(hostname, username, password, port=port)
+            # Send to server the command to get the multiline string of commands
             ssh_connection.sendline(command_string)
             ssh_connection.prompt()
             raw_commands = ssh_connection.before
             commands = raw_commands.decode('utf-8')
+            # Get the list of command into python list
             ssh_list_of_commands = commands.splitlines()
             for command in ssh_list_of_commands:
                 print("Generating manpage for {}".format(command))
                 get_man = 'man -L en {} | cat '.format(command)
+                # Getting the man pages info of a command
                 ssh_connection.sendline(get_man)
                 ssh_connection.prompt()
                 raw_manpage = ssh_connection.before
                 try:
                     man = raw_manpage.decode('utf-8')
-                except:
+                except: # TODO: add an specific exception type
                     continue
                 if "No manual" in man:
                     manpage = None
                 else:
+                    # Getting the manpage after apply the regular expression configured
                     manpage = re.split(self.sections_re, man)
+                # Assigning manpages to a <ssh_commands_man> dictionary using <command> as a key
                 self.ssh_commands_man[command] = manpage
 
         except pxssh.ExceptionPxssh as e:
@@ -196,15 +277,27 @@ class MExtract:
         ssh_connection.logout()
 
     def _get_manpage(self, command):
+        """
+        _get_manpage(self, command) -> [man_pages_regular_expression_splitted] | None
+
+        Get the man pages for a <command> in a local environment
+
+        Returns a python list depending of the regular expression configured
+        """
         try:
             man = subprocess.getoutput("man -L en {0}".format(command))
-        except:
+        except: # TODO: add an specific exception type
             man = subprocess.getoutput("man -L en {0}".format(command.encode('utf-8')))
         if 'No manual' in man:
             return None
         return re.split(self.sections_re, man)
 
     def _parse_sections(self, manpage, command):
+        """
+        _parse_sections(self, manpage, command)
+
+        Parse the sections of the manpage for an specific command
+        """
         print("Working in {0} {1:.5}".format(command, time.time() - self.initial_time))
         self.sections_dict = dict()
         self.arguments_dict = dict()
@@ -213,15 +306,15 @@ class MExtract:
         name_description = " "
 
         for block in manpage:
-            if block.strip() in self.sections_list:
+            bloc_stripped = block.strip()
+            if bloc_stripped in self.sections_list:
                 save_section_flag = True
-                section_name = block.strip()
+                section_name = bloc_stripped
                 continue
             if save_section_flag:
                 if section_name in 'NAME':  ## TODO Needs to change for modularity
                     self.sections_dict[section_name] = command
-                    temp = block.strip()
-                    name_description = re.split(" [-—] ", temp)
+                    name_description = re.split(" [-—] ", bloc_stripped)
                 elif section_name in "SYNOPSIS":  ## TODO Needs to change for modularity
                     try:
                         self.sections_dict[section_name] = name_description[1]
@@ -232,6 +325,11 @@ class MExtract:
                     save_section_flag = False
 
     def _parse_arguments(self, section):
+        """
+        _parse_arguments(self, section)
+
+        Once the section is parsed, it is necessary to parse the arguments of a given section
+        """
         try:
             arguments_list = re.split(self.arguments_re, self.sections_dict[section])
             sp_arguments_list = re.findall(self.sp_arguments_re, self.sections_dict[section])
@@ -256,11 +354,24 @@ class MExtract:
                     save_arg_body = False
                     flag_list = [False, " "]
         except Exception as error:
-            pass
+            pass # TODO: improve the exception handling
             # print(" error in Parse Argument: {}".format(error))
 
     def _getSource(self, category):
+        """
+        _getSource(self, category) -> Source object (check models.py of apps/Products)
 
+        Method that gets the source depending of category:
+            1   -   Flow Sentences
+            2   -   OS
+            3   -   Product
+            4   -   Robot Framework
+            5   -   External Libraries
+
+            Just 2 and 3 are used.
+
+        Returns source object
+        """
         if category is 2:
             if self.api_config.get('host'):
                 name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
@@ -290,38 +401,64 @@ class MExtract:
         return source
 
     def _save_into_db(self):
+        """
+        _save_into_db(self)
+
+        Metod to save the command created and the arguments
+        """
+        # TODO: raise exceptions
         try:
+            # Generating command
             command, created = Command.objects.get_or_create(
-                name=self.sections_dict['NAME'],  ## Needs to change for modularity
-                description=self.sections_dict['SYNOPSIS'],  ## Needs to change for modularity
+                name=self.sections_dict['NAME'],  ## TODO: Needs to change for modularity
+                description=self.sections_dict['SYNOPSIS'],  ## TODO: Needs to change for modularity
             )
+            try:
+                command.source.add(self.source)
+            except Exception as error:
+                pass
+                # print(" error in saving OS: {}".format(error))
+            command.save()
         except Exception as error:
             pass
             # print(" error in Command DB: {}".format(error))
 
         try:
+            # Getting all arguments and assigning to the command
             for key, value in self.arguments_dict.items():
                 args, created = Argument.objects.get_or_create(
+                    command=command,
                     name=key,
                     description=value[1],
                     needs_value=value[0]
                 )
-                command.arguments.add(args)
-                command.save()
+                args.save()
 
         except Exception as error:
             pass
             # print(" error in Argument DB: {}".format(error))
-        try:
-            command.source.add(self.source)
-            command.save()
-        except Exception as error:
-            pass
-            # print(" error in saving OS: {}".format(error))
 
 
 class PExtract(MExtract):
+    """
+    PExtract(MExtract)
+
+    Class created to extract information for man pages, designed to get the parameters of product commands
+    """
     def __init__(self, config, sections_list=None):
+        """
+        __init__(self, config, sections_list=None)
+
+        Initialization of PExtract:
+            config        - Dictionary that have connection data in case user wants to extract
+                            information remotely, the keys are:
+                                "host"
+                                "username"
+                                "password"
+                                "port"
+                            It will be used as <api_config> in MExtract.__init__ method
+            sections_list - list of sections of man pages information
+        """
         arguments_re = None
         if config.get('host'):
             commands = "ls {} -p | grep -v /".format(config.get('path'))
@@ -346,9 +483,23 @@ class PExtract(MExtract):
 
 
 class RExtract():
+    """
+    RExtract
+
+    Class created to extract information from Robot Framework documentations
+    """
     def __init__(self, config):
-        """ R-Extract initialization
-            Opens zip file and get libs names and inner paths for later parsing
+        """ 
+        __init__(self, config)
+
+        Initialization of RExtract:
+            config - Dictionary that have the information of where to get Robot
+                     documentation, the keys can be:
+                         "source"
+                         "category" Can be 4 that means Robot Framework
+                                    or 5 that means External Libraries
+                         "zip" - zipfile path
+                         "url"
         """
         robot_version = Source.objects.get(id=config.get("source"))
         self.r_version = robot_version
@@ -388,14 +539,17 @@ class RExtract():
 
 
     def _lib_parser(self, lib):
-        """ Parses a Robot library from a json formated string
-            format is expected to be like the Robot Framework 3.0 page
+        """
+        _lib_parser(self, lib) -> True | False
+
+        Parses a Robot library from a json formated string
+        format is expected to be like the Robot Framework 3.0 page
         """
         lib_name = lib['name']
         libdoc = False
         for x in lib['lib_page']:
             # libdoc is the JS variable where the docs are stored.
-            #  webpage renders doc tables based on this json
+            # webpage renders doc tables based on this json
             line = x.decode('utf-8')
             if re.search(r'libdoc =', line):
                 libdoc = True
@@ -430,7 +584,10 @@ class RExtract():
         return libdoc
 
     def run_r_extract(self):
-        """ Runs R Extract with loaded libraries
+        """
+        run_r_extract(self) -> True | False
+
+        Runs R Extract with loaded libraries
         """
         for lib in self.libraries:
             print("Running parser for {}".format(lib['name']))

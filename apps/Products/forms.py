@@ -8,12 +8,32 @@ class ArgumentForm(forms.ModelForm):
     class Meta:
         model = Argument
         fields = '__all__'
-
         widgets = {
+            'command' : forms.HiddenInput(),
             'name': forms.TextInput(attrs={'data-length': 30, 'id': 'args_name'}),
             'description': forms.Textarea(attrs={'class': 'materialize-textarea',
-                                                 'data-length': 70, 'id': 'args_description'})
+                                                 'data-length': 70, 'id': 'args_description'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        cmd = None
+        try:
+            cmd = kwargs.pop('cmd')
+        except KeyError:
+            pass
+        super(ArgumentForm, self).__init__(*args, **kwargs)
+        if cmd:
+            self.initial["command"] = cmd.id
+            self.fields['include'].queryset = Argument.objects.filter(command=cmd)
+            self.fields['exclude'].queryset = Argument.objects.filter(command=cmd)
+        try:
+            if self.instance:
+                self.fields['include'].queryset = Argument.objects.filter(command=self.instance.command).exclude(id = self.instance.id)
+                self.fields['exclude'].queryset = Argument.objects.filter(command=self.instance.command).exclude(id = self.instance.id)
+            else:
+                self.initial["command"] = cmd.id
+        except:
+            pass
 
 
 class PhaseForm(forms.ModelForm):

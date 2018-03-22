@@ -5,6 +5,7 @@ from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, FormView
+from django.shortcuts import render
 
 from apps.Testings.models import Phase
 from apps.Users.models import Task
@@ -40,32 +41,57 @@ class ArgumentsView(LoginRequiredMixin, TemplateView):
 class NewArgumentView(LoginRequiredMixin, CreateView):
     model = Argument
     form_class = ArgumentForm
-    template_name = "create-edit-argument.html"
+    template_name = "form-snippet.html"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Created")
         return reverse_lazy('commands')
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
+        cmd = Command.objects.get(id = self.kwargs.get('cmd'))
+        form = self.form_class(cmd = cmd)
         context = super(NewArgumentView, self).get_context_data(**kwargs)
         context['title'] = "New Argument"
+        context['form'] = form
         return context
-
 
 class EditArgumentView(LoginRequiredMixin, UpdateView):
     model = Argument
     form_class = ArgumentForm
-    template_name = "create-edit-argument.html"
+    template_name = "form-snippet.html"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Edited")
         return reverse_lazy('commands')
 
     def get_context_data(self, **kwargs):
+        arg = Argument.objects.get(id = self.kwargs.get('pk'))
         context = super(EditArgumentView, self).get_context_data(**kwargs)
         context['title'] = "Edit Argument"
         context['delete'] = True
         return context
+
+    def post(self, request, pk, *args, **kwargs):
+        result = super(EditArgumentView, self).post(request, *args, **kwargs)
+        instance = Argument.objects.get(pk = pk)
+        include = request.POST.getlist('include[]')
+        exclude = request.POST.getlist('exclude[]')
+        instance.name = request.POST['name']
+        instance.description = request.POST['description']
+        instance.requirement = request.POST['requirement'].title()
+        instance.needs_value = request.POST['needs_value'].title()
+        instance.save()
+        for i in instance.include.all():
+            instance.include.remove(i)
+        for e in instance.exclude.all():
+            instance.exclude.remove(e)
+        for i in include:
+            instance.include.add(i)
+            instance.save()
+        for e in exclude:
+            instance.exclude.add(e)
+            instance.save()
+        return result
 
 
 class DeleteArgumentView(LoginRequiredMixin, DeleteView):

@@ -492,6 +492,7 @@ class ArgumentsApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        messages.success(request, "Argument Added")
         return self.create(request, *args, **kwargs)
 
 

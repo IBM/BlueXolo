@@ -41,6 +41,15 @@
             </div>
         {% endif %}
     {% else %}
-        {{ field }}
+        {% if "id_" in field.auto_id %}
+            {% if parent.name %}
+                <span><label class"active">{{ field.label }}:</label> {{ parent.name }}</span>
+                <input type="hidden" name="{{ field.name }}" id="{{ field.auto_id }}" value="{{ parent.id }}"/>
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% else %}
+            {{ field }}
+        {% endif %}
     {% endif %}
 {% endfor %}
