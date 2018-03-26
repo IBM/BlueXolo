@@ -581,7 +581,6 @@ class RExtract():
                                 requirement=is_required,
                                 needs_value=True
                             )
-                            rbt_keyw.arguments.add(keyw_opt)
                             rbt_keyw.save()
                         except Exception as error:
                             print(error)
