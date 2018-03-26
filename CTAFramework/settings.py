@@ -214,3 +214,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 ROLEPERMISSIONS_MODULE = 'CTAFramework.roles'
 ROLEPERMISSIONS_REDIRECT_TO_LOGIN = True
 
+try:
+    from .localsettings import *
+except:
+    pass
