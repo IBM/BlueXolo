@@ -436,7 +436,7 @@ class MExtract:
 
         except Exception as error:
             pass
-            # print(" error in Argument DB: {}".format(error))
+            print(" error in Argument DB: {}".format(error))
 
 
 class PExtract(MExtract):
@@ -575,6 +575,7 @@ class RExtract():
                         arg_name = arg_split[0]
                         try:
                             keyw_opt, created = Argument.objects.get_or_create(
+                                command = rbt_keyw,
                                 name=arg_name,
                                 description=rbt_keyw,
                                 requirement=is_required,
