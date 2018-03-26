@@ -329,7 +329,7 @@ class DeleteSourceView(LoginRequiredMixin, DeleteView):
             slug = 'libraries'
         commands = Command.objects.filter(source=source.pk)
         for command in commands:
-            arguments = command.arguments.all()
+            arguments = command.get_arguments()
 
             if command.source.count() <= 1:
                 command.delete()
