@@ -85,7 +85,13 @@ class Command(models.Model):
     def arguments(self):
         args = []
         for argument in self.get_arguments():
-            args.append({"id": argument.id, "name": argument.name, "description": argument.description})
+            args.append({
+                "id": argument.id,
+                "name": argument.name,
+                "description": argument.description,
+                "requirement": argument.requirement,
+                "needs_value": argument.needs_value,
+            })
         return args
 
     # TODO: Remove this in future versions of django
