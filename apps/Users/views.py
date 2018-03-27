@@ -73,21 +73,23 @@ class EditUserView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
 
     def get_success_url(self):
         if settings.IBM_CLIENT:
-            """The first time active and without login before send a email for set new password"""
-            if self.object.is_active and not self.object.last_login:
+            """The first time active"""
+            # TODO: Check why this is not working when "if" contains "not self.object.last_login"
+            # Think is that django rolespermissions modify last_login
+            if self.object.is_active:
                 try:
                     token_generator = default_token_generator
                     pk_decode = b64encode(str(self.object.pk).encode('ascii'))
                     pk_encode = pk_decode.decode('ascii')
                     context_dict = {
-                        "name": "{0}, Your access has been authorized".format(self.object.email),
+                        "name": "{0}, Your access has been authorized or changed".format(self.object.email),
                         "message": "Enter on the follow link to request your password.",
                         "action_url": "{0}/reset/{1}/{2}".format(settings.SITE_DNS, pk_encode.replace("=", ""),
                                                                  token_generator.make_token(self.object)),
                         "action_text": "Request my Password"
                     }
                     email = EmailMessage(
-                        subject='Access Authorized',
+                        subject='Access Authorized or changed',
                         body=render_to_string("email-template.html", context_dict),
                         to=[self.object.email]
                     )
