@@ -98,7 +98,7 @@ class SourceEditProductForm(forms.ModelForm):
 
 
 class SourceRobotForm(forms.ModelForm):
-    zip_file = forms.FileField(forms.FileInput())
+    zip_file = forms.FileField()
 
     class Meta:
         model = Source
