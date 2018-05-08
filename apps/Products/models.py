@@ -120,8 +120,8 @@ class Argument(models.Model):
     description = models.TextField(_('description'), blank=True)
     requirement = models.BooleanField(default=False)
     needs_value = models.BooleanField(default=False)
-    include = models.ManyToManyField('self', verbose_name=_("include"), null=True, blank=True, related_name='include', help_text="Choose mandatory parameters if this is set.")
-    exclude = models.ManyToManyField('self', verbose_name=_("exclude"), null=True, blank=True, related_name='exclude', help_text="Choose parameters that should be excluded if this is set.")
+    include = models.ManyToManyField('self', verbose_name=_("include"), blank=True, related_name='include', help_text="Choose mandatory parameters if this is set.")
+    exclude = models.ManyToManyField('self', verbose_name=_("exclude"), blank=True, related_name='exclude', help_text="Choose parameters that should be excluded if this is set.")
 
     class Meta:
         verbose_name = _('argument')

@@ -24,7 +24,7 @@ class CollectionForm(forms.ModelForm):
 
 
 class ImportScriptForm(forms.ModelForm):
-    file_script = forms.FileField(forms.FileInput())
+    file_script = forms.FileField()
 
     class Meta:
         model = Keyword

@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('apps.Products.urls')),
     url(r'^apis/', include('apps.apis.urls')),
-    url(r'^apis/docs/', include('rest_framework_docs.urls')),
+    #url(r'^apis/docs/', include('rest_framework_docs.urls')),
     url(r'^servers/', include('apps.Servers.urls')),
     url(r'^testings/', include('apps.Testings.urls')),
     url(r'^users/', include('apps.Users.urls')),
