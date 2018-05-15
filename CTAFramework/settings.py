@@ -214,6 +214,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 ROLEPERMISSIONS_MODULE = 'CTAFramework.roles'
 ROLEPERMISSIONS_REDIRECT_TO_LOGIN = True
 
+CTA_MAN_COMMAND = 'man -L en'
+
 try:
     from .localsettings import *
 except:
