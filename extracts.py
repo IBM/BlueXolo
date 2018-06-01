@@ -13,6 +13,7 @@ from celery import shared_task
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "CTAFramework.settings")
 from django import setup
+from django.conf import settings
 
 setup()
 
@@ -251,7 +252,7 @@ class MExtract:
             ssh_list_of_commands = commands.splitlines()
             for command in ssh_list_of_commands:
                 print("Generating manpage for {}".format(command))
-                get_man = 'man -L en {} | cat '.format(command)
+                get_man = '{0} {1} | cat '.format(settings.CTA_MAN_COMMAND, command)
                 # Getting the man pages info of a command
                 ssh_connection.sendline(get_man)
                 ssh_connection.prompt()
@@ -285,9 +286,9 @@ class MExtract:
         Returns a python list depending of the regular expression configured
         """
         try:
-            man = subprocess.getoutput("man -L en {0}".format(command))
+            man = subprocess.getoutput("{0} {1}|col -b".format(settings.CTA_MAN_COMMAND, command))
         except: # TODO: add an specific exception type
-            man = subprocess.getoutput("man -L en {0}".format(command.encode('utf-8')))
+            man = subprocess.getoutput("{0} {1}".format(settings.CTA_MAN_COMMAND, command.encode('utf-8')))
         if 'No manual' in man:
             return None
         return re.split(self.sections_re, man)
@@ -312,17 +313,22 @@ class MExtract:
                 section_name = bloc_stripped
                 continue
             if save_section_flag:
+                save_section_flag = False
                 if section_name in 'NAME':  ## TODO Needs to change for modularity
                     self.sections_dict[section_name] = command
                     name_description = re.split(" [-—] ", bloc_stripped)
                 elif section_name in "SYNOPSIS":  ## TODO Needs to change for modularity
                     try:
                         self.sections_dict[section_name] = name_description[1]
+                    except IndexError:
+                        try:
+                            self.sections_dict[section_name] = name_description[0].split('--')[1].strip()
+                        except IndexError:
+                            self.sections_dict[section_name] = 'N/A'
                     except:
                         pass
                 else:
                     self.sections_dict[section_name] = block
-                    save_section_flag = False
 
     def _parse_arguments(self, section):
         """
