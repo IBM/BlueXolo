@@ -137,6 +137,10 @@ class KeywordsSerializer(serializers.ModelSerializer):
         model = Keyword
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(KeywordsSerializer, self).create(validated_data)
+
 
 class ServerProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
