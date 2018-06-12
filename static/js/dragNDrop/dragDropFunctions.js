@@ -208,6 +208,7 @@ function createEmptyRowsBetweenCommands() {
     td.append(textNode);
 
     td.setAttribute('ondrop', 'dropBeforeThisElement(event)');
+    td.setAttribute('onmouseup', 'dropBeforeThisElement(event)');
     dragDropSpace.append(td);
 
     while (nextRow.nextSibling !== null) {
@@ -220,6 +221,7 @@ function createEmptyRowsBetweenCommands() {
         td.append(textNode);
 
         td.setAttribute('ondrop', 'dropBeforeThisElement(event)');
+        td.setAttribute('onmouseup', 'dropBeforeThisElement(event)');
         dragDropSpace.append(td);
 
         dragDropSpace.insertBefore(td, nextRow);

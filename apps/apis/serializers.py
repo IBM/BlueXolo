@@ -91,6 +91,10 @@ class ParametersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parameters
         fields = '__all__'
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(ParametersSerializer, self).create(validated_data)
 
 
 class TemplateServerSerializer(serializers.ModelSerializer):
@@ -107,7 +111,7 @@ class TemplateServerSerializer(serializers.ModelSerializer):
             name=validated_data['name'],
             description=validated_data['description'],
             category=validated_data['category'],
-            user=validated_data['user']
+            user=self.context['request'].user
         )
         for param in params:
             template.parameters.add(param)
@@ -137,6 +141,10 @@ class KeywordsSerializer(serializers.ModelSerializer):
         model = Keyword
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(KeywordsSerializer, self).create(validated_data)
+
 
 class ServerProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
@@ -144,6 +152,10 @@ class ServerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServerProfile
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(ServerProfileSerializer, self).create(validated_data)
 
 
 class CollectionSerializer(serializers.ModelSerializer):
