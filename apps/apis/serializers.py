@@ -165,6 +165,10 @@ class CollectionSerializer(serializers.ModelSerializer):
         model = Collection
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(CollectionSerializer, self).create(validated_data)
+
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -179,6 +183,10 @@ class TestCaseSerializer(serializers.ModelSerializer):
         model = TestCase
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(TestCaseSerializer, self).create(validated_data)
+
 
 class PhaseSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
@@ -187,6 +195,10 @@ class PhaseSerializer(serializers.ModelSerializer):
         model = Phase
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(PhaseSerializer, self).create(validated_data)
+
 
 class TestSuiteSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
@@ -194,3 +206,7 @@ class TestSuiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestSuite
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(TestSuiteSerializer, self).create(validated_data)
