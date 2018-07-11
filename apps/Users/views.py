@@ -146,11 +146,11 @@ class RequestAccessView(FormView):
                     email.content_subtype = "html"
                     email.send()
                     messages.success(self.request, "You are Activate, We will resend you reset password")
-                    return HttpResponseRedirect(self.get_success_url)
-        return HttpResponseRedirect(self.get_success_url)
+                    return HttpResponseRedirect(self.get_success_url())
+        return HttpResponseRedirect(self.get_success_url())
 
     def form_valid(self, form):
-        """Check for exist user on BluePage. If exist, we create a user on system with active=False and
+        """Check for exist user on BluePages. If exist, we create a user on system with active=False and
         retrieve from  BP the extra information"""
         if settings.IBM_CLIENT:
             user_ibm = LDAPBackend.check_user(self, form.instance.email)
