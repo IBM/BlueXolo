@@ -86,12 +86,19 @@ class BasicCommandsSerializer(serializers.ModelSerializer):
 
 
 class ParametersSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Parameters
         fields = '__all__'
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(ParametersSerializer, self).create(validated_data)
 
 
 class TemplateServerSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     parameters = ParametersSerializer(many=True)
 
     class Meta:
@@ -103,7 +110,8 @@ class TemplateServerSerializer(serializers.ModelSerializer):
         template = TemplateServer.objects.create(
             name=validated_data['name'],
             description=validated_data['description'],
-            category=validated_data['category']
+            category=validated_data['category'],
+            user=self.context['request'].user
         )
         for param in params:
             template.parameters.add(param)
@@ -133,17 +141,33 @@ class KeywordsSerializer(serializers.ModelSerializer):
         model = Keyword
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(KeywordsSerializer, self).create(validated_data)
+
 
 class ServerProfileSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = ServerProfile
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(ServerProfileSerializer, self).create(validated_data)
+
 
 class CollectionSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Collection
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(CollectionSerializer, self).create(validated_data)
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -159,11 +183,21 @@ class TestCaseSerializer(serializers.ModelSerializer):
         model = TestCase
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(TestCaseSerializer, self).create(validated_data)
+
 
 class PhaseSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Phase
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(PhaseSerializer, self).create(validated_data)
 
 
 class TestSuiteSerializer(serializers.ModelSerializer):
@@ -172,3 +206,7 @@ class TestSuiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestSuite
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(TestSuiteSerializer, self).create(validated_data)

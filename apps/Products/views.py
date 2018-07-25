@@ -5,7 +5,8 @@ from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, FormView
-from django.shortcuts import render
+from rolepermissions.mixins import HasPermissionsMixin
+from rolepermissions.permissions import available_perm_status
 
 from apps.Testings.models import Phase
 from apps.Users.models import Task
@@ -34,20 +35,22 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class ArgumentsView(LoginRequiredMixin, TemplateView):
+class ArgumentsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "arguments.html"
+    required_permission = "read_argument"
 
 
-class NewArgumentView(LoginRequiredMixin, CreateView):
+class NewArgumentView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     model = Argument
     form_class = ArgumentForm
     template_name = "form-snippet.html"
+    required_permission = "create_argument"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Created")
         return reverse_lazy('commands')
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         cmd = Command.objects.get(id = self.kwargs.get('cmd'))
         form = self.form_class(cmd = cmd)
         context = super(NewArgumentView, self).get_context_data(**kwargs)
@@ -55,17 +58,18 @@ class NewArgumentView(LoginRequiredMixin, CreateView):
         context['form'] = form
         return context
 
-class EditArgumentView(LoginRequiredMixin, UpdateView):
+
+class EditArgumentView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     model = Argument
     form_class = ArgumentForm
     template_name = "form-snippet.html"
+    required_permission = "update_argument"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Edited")
         return reverse_lazy('commands')
 
     def get_context_data(self, **kwargs):
-        arg = Argument.objects.get(id = self.kwargs.get('pk'))
         context = super(EditArgumentView, self).get_context_data(**kwargs)
         context['title'] = "Edit Argument"
         context['delete'] = True
@@ -93,10 +97,10 @@ class EditArgumentView(LoginRequiredMixin, UpdateView):
             instance.save()
         return result
 
-
-class DeleteArgumentView(LoginRequiredMixin, DeleteView):
+class DeleteArgumentView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     model = Argument
     template_name = "delete-argument.html"
+    required_permission = "delete_argument"
 
     def get_success_url(self):
         messages.success(self.request, "Argument Deleted")
@@ -130,6 +134,27 @@ class SourceList(LoginRequiredMixin, TemplateView):
 class CreateSourceView(LoginRequiredMixin, CreateView):
     model = Source
     template_name = "create-edit-source.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        can_create = False
+        if user.is_superuser:
+            can_create = True
+        else:
+            user_permissions = available_perm_status(user)
+            permissions = [
+                'create_robot',
+                'create_libraries',
+                'create_product'
+            ]
+            for perm in permissions:
+                if perm in user_permissions and not can_create:
+                    can_create = True
+        if can_create:
+            return super(CreateSourceView, self).dispatch(request, *args, **kwargs)
+        else:
+            messages.warning(request, "You don't have permission for this action")
+            return HttpResponseRedirect(self.get_success_url())
 
     def get_form_class(self):
         name = self.kwargs.get('slug')
@@ -220,6 +245,27 @@ class EditSourceView(LoginRequiredMixin, UpdateView):
     model = Source
     template_name = "create-edit-source.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        can_create = False
+        if user.is_superuser:
+            can_create = True
+        else:
+            user_permissions = available_perm_status(user)
+            permissions = [
+                'update_robot',
+                'update_libraries',
+                'update_product'
+            ]
+            for perm in permissions:
+                if perm in user_permissions and not can_create:
+                    can_create = True
+        if can_create:
+            return super(EditSourceView, self).dispatch(request, *args, **kwargs)
+        else:
+            messages.warning(request, "You don't have permission for this action")
+            return HttpResponseRedirect(self.get_success_url())
+
     def get_form_class(self):
         _category = self.object.category
         if _category == 3:
@@ -283,7 +329,7 @@ class DeleteSourceView(LoginRequiredMixin, DeleteView):
             slug = 'libraries'
         commands = Command.objects.filter(source=source.pk)
         for command in commands:
-            arguments = command.arguments.all()
+            arguments = command.get_arguments()
 
             if command.source.count() <= 1:
                 command.delete()
@@ -350,6 +396,10 @@ class NewPhaseView(LoginRequiredMixin, CreateView):
     form_class = PhaseForm
     template_name = 'create-edit-phase.html'
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(NewPhaseView, self).form_valid(form)
+
     def get_success_url(self):
         messages.success(self.request, "Phase Created")
         return reverse_lazy('phases')
@@ -359,6 +409,10 @@ class EditPhaseView(LoginRequiredMixin, UpdateView):
     model = Phase
     form_class = PhaseForm
     template_name = 'create-edit-phase.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(EditPhaseView, self).form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Phase Edited")

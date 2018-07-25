@@ -8,13 +8,13 @@
     {% compress css %}
         <link rel="stylesheet" href="{% static 'css/keywords.css' %}">
         <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+        <link rel="stylesheet" href="{% static "css/highlight.css" %}">
     {% endcompress %}
 
     {% compress js %}
         <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/dragNDrop/getInitial.js" %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/interpreter.js' %}"></script>
-        <script type="text/javascript" src="{% static '/js/dragNDrop/parametersGetter.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/parametersSaver.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/propertiesPanelLogic.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/translatorToRobot.js' %}"></script>
@@ -35,7 +35,7 @@
                 var _configCollections = {
                     "url": "{% url "api-collection" %}",
                     "data": {},
-                    "container": "keyword_collection"
+                    "container": "collection"
                 };
                 selectServerSide(_configCollections);
 
@@ -47,13 +47,15 @@
                     var _configPhases = {
                         "url": "{% url "api-phases" %}",
                         "data": {
-                            "collection": document.getElementById("keyword_collection").value
+                            "collection": document.getElementById("collection").value
                         },
                         "container": "phases_list"
                     };
 
-                    selectServerSide(_configPhases);
-                }
+                    var phaseIndex = "{{ object.phase.pk | escapejs }}";
+
+                    selectServerSide(_configPhases, phaseIndex);
+                }                
 
                 getTestcaseToEdit();
             });
@@ -61,9 +63,7 @@
             function getTestcaseToEdit() {
                 var testcaseData = document.getElementById('tc_values').value;
                 {#            var testcaseData = "{{object.values}}";#}
-                //console.log(keywordData.replace(/&quot;/g,'"'));
                 droppedElements = JSON.parse(testcaseData);
-                //console.log(droppedElements);
                 drawElementsFromJSON();
             }
 
@@ -124,11 +124,17 @@
             function writeTestcaseDatabase() {
                 var testcaseName = document.getElementById("testcase_name").value;
                 var testcaseDescription = document.getElementById("testcase_description").value;
-                var testcaseCollection = document.getElementById("keyword_collection").value;
+                var testcaseCollection = document.getElementById("collection").value;
                 var testcaseValues = droppedElements;
                 var testcaseScript = document.getElementById("terminal").value;
                 var testcaseFunctions = $('#testecase_functions').material_chip('data');
                 var testcasePhase = document.getElementById("phases_list").value;
+
+                var usedElements = {
+                    extra: usedExtras,
+                    keywords: usedKeywords,
+                    testcases: usedTestcases
+                }
 
                 var newTestcase = {
                     "name": testcaseName,
@@ -137,15 +143,18 @@
                     "script": testcaseScript,
                     "functions": JSON.stringify(testcaseFunctions),
                     "phase": testcasePhase,
-                    "values": JSON.stringify(testcaseValues)
+                    "values": JSON.stringify(testcaseValues),
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-testcases" testcase.pk %}",
                     type: 'PUT',
                     data: newTestcase,
                     success: function (data) {
-                        drawMessage("TestCase Saved", "green");
-                        $('#modalPreview').modal('close');
+                        drawMessage("TestCase Updated", "green");
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/2/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
                         new_testcase = data;
                     },
                     error: function (err) {
@@ -181,19 +190,28 @@
 
         <div class="col s12">
             <div class="input-field col s6 m4 l2">
-                <select id="keyword_collection" onchange="hasValues()" value="{{ object.collection }}"></select>
-                <label for="keyword_collection">Collection</label>
+                <select id="collection" onchange="hasValues()" value="{{ object.collection }}"></select>
+                <label for="collection">Collection <b class="red-text">*</b></label>
+                <ul>
+                    <li class="red-text"><i id="error_field_collection"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 m4 l2">
                 <select id="phases_list" onchange="hasValues()" value="{{ object.phase }}">
                     <option value="" selected>- - - - -</option>
                 </select>
-                <label for="phases_list">Phase</label>
+                <label for="phases_list">Phase <b class="red-text">*</b></label>
+                 <ul>
+                    <li class="red-text"><i id="error_field_phase"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 m4 l2">
-                <label for="testcase_name">Name</label>
+                <label for="testcase_name">Name <b class="red-text">*</b></label>
                 <input type="text" id="testcase_name" onblur="hasValues()" placeholder="Required"
                        value="{{ object.name }}">
+                 <ul>
+                    <li class="red-text"><i id="error_field_name"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 m4 l3">
                 <label for="testcase_description">Description</label>
@@ -212,7 +230,9 @@
         {% csrf_token %}
         <div class="row">
             <div class="col s12 l3">
-                {% include "search-block.html" %}
+                {% include "control-flow-block.html" %}
+                {% include "search-command-block.html" %}
+                {% include "search-keyword-block.html" %}
             </div>
             <div class="col l6 s12">
                 <ul class="tabs">
@@ -282,10 +302,10 @@
 
     </div>
     <div class="fixed-action-btn">
-        <button onclick="translateToRobot(populatePreview)" id="btn_play"
-                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-                data-tooltip="Preview Script" disabled="true">
-            <i class="material-icons">play_arrow</i></button>
+        <button onclick="saveTestcase()" id="btn_play"
+                class="btn-floating btn-large waves-effect waves-light blue tooltipped" data-position="left"
+                data-tooltip="Save">
+            <i class="material-icons">save</i></button>
     </div>
 
 
@@ -331,17 +351,27 @@
                 _scriptView.innerHTML = _script;
                 $('#modalPreview').modal('open');
             }
-
-            function hasValues() {
-                var _keyName = document.getElementById('testcase_name');
-                var _keyCollection = document.getElementById('keyword_collection');
+   function hasValues() {
+                var _name = document.getElementById('testcase_name');
+                var _keyCollection = document.getElementById('collection');
                 var _phase = document.getElementById('phases_list');
+                var _error_filed_collection = document.getElementById('error_field_collection');
+                var _error_filed_phase = document.getElementById('error_field_phase');
+                var _error_filed_name = document.getElementById('error_field_name');
+                showError(_keyCollection, _error_filed_collection);
+                showError(_phase, _error_filed_phase);
+                showError(_name, _error_filed_name);
+            }
+
+
+            function showError(element, destiny) {
                 var _btn_save = document.getElementById('btn_play');
-                if (!(_keyCollection.value && _keyName.value && _phase.value)) {
+                if (!element.value) {
                     _btn_save.disabled = true;
-                    drawMessage("Collection, Phase and  name are necessary", "yellow black-text");
+                    destiny.innerHTML = "This field is required";
                 } else {
                     _btn_save.disabled = false;
+                    destiny.innerHTML = "";
                 }
             }
 
@@ -364,7 +394,7 @@
                             type_script: 2
                         },
                         success: function (data) {
-                            drawMessage("Testcase has sent to scheduler", 'blue');
+                            drawMessage("Test Case send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
                             drawMessage(err.responseJSON.text, 'red');

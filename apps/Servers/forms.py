@@ -12,11 +12,19 @@ class ServerTemplateForm(forms.ModelForm):
             'description'
         ]
 
+        widgets = {
+            "description": forms.Textarea(attrs={'class': 'materialize-textarea'})
+        }
+
 
 class ParametersForm(forms.ModelForm):
     class Meta:
         model = Parameters
-        fields = '__all__'
+        fields = [
+            'category',
+            'name',
+            'help_text'
+        ]
 
         labels = {
             'category': 'Category Group'
@@ -35,3 +43,7 @@ class ServerProfileForm(forms.ModelForm):
             'description',
             'template'
         ]
+
+        widgets = {
+            "description": forms.Textarea(attrs={'class': 'materialize-textarea'})
+        }

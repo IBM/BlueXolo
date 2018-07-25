@@ -2,11 +2,11 @@
 {% block title %}Request Access{% endblock %}
 {% load staticfiles %}
 {% block content %}
-    <div class="container">
+    <main class="container">
         <div class="section">
             <div class="row">
                 <div class="col s12 offset-l4 l4">
-                    <img src="{% static "img/IBM_logo.svg" %}" alt="logo_ibm" class="login_img">
+                    <img src="{% static "img/logo.svg" %}" alt="logo_ibm" class="login_img">
                 </div>
             </div>
             <div class="row">
@@ -23,7 +23,12 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    {% include "footer-block.html" %}
+    <!-- end Footer -->
+    
 {% endblock %}
 {% block extraJS %}
     <script>

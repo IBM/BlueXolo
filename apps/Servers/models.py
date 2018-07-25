@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from apps.Users.models import User
+
 VARIABLES = 1
 LOCAL = 2
 JENKINS = 3
@@ -16,10 +18,11 @@ class Parameters(models.Model):
         (1, 'String'),
         (2, 'List'),
     )
-    name = models.CharField(_('name'), max_length=100, unique=True)
+    name = models.CharField(_('name'), max_length=100)
     help_text = models.CharField(_('help text'), max_length=255, blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
     value_type = models.IntegerField(_('value type'), choices=VALUES_TYPES_CHOICES, default=1)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = 'parameters'
@@ -36,6 +39,7 @@ class TemplateServer(models.Model):
     description = models.TextField(_('description'), blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
     parameters = models.ManyToManyField(Parameters, blank=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = 'servers_templates'
@@ -49,9 +53,10 @@ class TemplateServer(models.Model):
 class ServerProfile(models.Model):
     name = models.CharField(_('name'), unique=True, max_length=30)
     description = models.TextField(_('description'), blank=True)
-    template = models.ForeignKey(TemplateServer)
+    template = models.ForeignKey(TemplateServer, on_delete=models.DO_NOTHING)
     config = models.TextField(blank=True)
     category = models.IntegerField(_('category'), choices=CATEGORY_CHOICES, default=1)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = 'servers_profiles'

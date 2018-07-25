@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Run Script{% endblock %}{% block subtitle %}Run Script{% endblock %}
+{% block content %}
+    <div class="row">
+        {% csrf_token %}
+        <input type="hidden" id="object" value="{{ obj.id }}">
+        <input type="hidden" id="object_type" value="{{ type_id }}">
+        <div class="col l1 ">
+        </div>
+        <div class="col s12 l5">
+            <div class="section">
+                <h5 class="blue-grey-text">{{ type }} - {{ obj.name }}</h5>
+                <ul>
+                    {% if obj.description %}
+                        <li><b>Description:</b> <i>{{ obj.description }}</i></li>
+                    {% endif %}
+                    <li><b>Created by: </b><i>
+                        {% if obj.user.first_name %}
+                            {{ obj.user.first_name }} {{ obj.user.last_name }}
+                        {% else %}
+                            {{ obj.user.email }}
+                        {% endif %}
+                    </i></li>
+                    <li><b>Created:</b> <i>{{ obj.created_at }}</i></li>
+                    <li><b>Last Update:</b> <i>{{ obj.modified }}</i></li>
+                    {% if type_id is 1 %}
+                        <li><b>Origin: </b><i>{{ obj.get_script_type_display }}</i></li>
+                    {% endif %}
+                    {% if type_id is 2 %}
+                        <li><b>Phase: </b><i>{{ obj.phase }}</i></li>
+                    {% endif %}
+                    <li><b>Collection:</b>
+                        <ul>
+                            {% for col in obj.collection.all %}
+                                <li>-<b>Name: </b><i>{{ col }}</i></li>
+                                {% if col.description %}
+                                    <li>-<b>Description: </b><i>{{ col.description }}</i></li>
+                                {% endif %}
+                                <li>-<b>Product: </b><i>{{ col.product }}</i></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="collapsible" data-collapsible="accordion">
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons blue-text">remove_red_eye</i>Preview
+                            Script
+                        </div>
+                        <div class="collapsible-body">
+                            {{ script | safe }}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col l1 ">
+        </div>
+        <div class="col s12 l4">
+            <div class="section">
+                <div class="input-field col s12">
+                    <select id="connection" onchange="enable_run()">
+                        <option value="" disabled selected>Choose your option</option>
+
+                    </select>
+                    <label>Connection Profile</label>
+                </div>
+
+                <div class="input-field col s12">
+                    <select id="variables" multiple>
+                        <option value="" disabled selected>Choose your option</option>
+                    </select>
+                    <label>Variables Profile</label>
+                </div>
+                <div class="center">
+                    <button id="btn_run" type="button" class="btn waves-effect waves-light" onclick="runScript()" disabled>Run</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#    - - - -  Back button conditions - - - - - #}
+    <div class="fixed-action-btn left-button ">
+        {% if type_id is 1 and obj.script_type is 1 %}
+            <a href="{% url "keywords" %}" id="btn_play"
+               class="btn-floating btn-large waves-effect waves-light grey">
+                <i class="material-icons">arrow_back</i></a>
+        {% elif type_id is 1 and obj.script_type is 2 %}
+            <a href="{% url "imported-scripts" %}" id="btn_play"
+               class="btn-floating btn-large waves-effect waves-light grey">
+                <i class="material-icons">arrow_back</i></a>
+        {% elif type_id is 2 %}
+            <a href="{% url "testcases" %}" id="btn_play"
+               class="btn-floating btn-large waves-effect waves-light grey">
+                <i class="material-icons">arrow_back</i></a>
+        {% elif type_id is 3 %}
+            <a href="{% url "testsuites" %}" id="btn_play"
+               class="btn-floating btn-large waves-effect waves-light grey">
+                <i class="material-icons">arrow_back</i></a>
+        {% endif %}
+    </div>
+{% endblock %}
+{% load static %}
+{% load compress %}
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/highlight.css" %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block extraScripts %}
+    {% compress js %}
+        <script type="text/javascript">
+            var _object_pk = document.getElementById('object').value;
+            var _object_type = document.getElementById('object_type').value;
+
+            var _selectConnection = document.getElementById('connection');
+            var _selectVariables = document.getElementById('variables');
+
+            /*Global variables*/
+            get_profiles(1, _selectVariables);
+            /*Local connection */
+            get_profiles(2, _selectConnection);
+            /*Jenkins connection */
+            get_profiles(3, _selectConnection);
+
+            function get_profiles(_category, _element) {
+                $.ajax({
+                    url: "{% url "api-profiles" %}",
+                    type: "GET",
+                    data: {
+                        category: _category
+                    },
+                    success: function (data) {
+                        data.forEach(function (v, k) {
+                            var _option = document.createElement("option");
+                            _option.text = v.name;
+                            _option.value = v.id;
+                            _element.appendChild(_option);
+                        });
+                        $('select').material_select();
+                    }, error: function (err) {
+                        console.log(err)
+                    }
+                })
+            }
+
+            function setProfiles() {
+                var _profiles = [];
+                if ($('#variables').val()) {
+                    $('#variables').val().forEach(function (v, k) {
+                        _profiles.push(v)
+                    });
+                }
+                _profiles.push(_selectConnection.value);
+                return JSON.stringify(_profiles)
+            }
+
+            function runScript() {
+                $.ajax({
+                    url: "{% url "run-on-server" %}",
+                    type: "POST",
+                    data: {
+                        id: _object_pk,
+                        profile: setProfiles,
+                        type_script: _object_type
+                    },
+                    success: function (data) {
+                        drawMessage("Script send to Queue", 'green');
+                        var $toastContent = $('<span>Click on "GO" button to go Task list </span>').add($(
+                            '<a href="/home/" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
+                    }, error: function (err) {
+                        drawMessage(err.responseJSON.text, 'red');
+                    }
+                });
+            }
+
+            function enable_run(){
+                var _btn_run = document.getElementById('btn_run');
+                _btn_run.disabled = false;
+            }
+        </script>
+    {% endcompress %}
+{% endblock %}

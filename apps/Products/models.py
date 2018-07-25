@@ -85,7 +85,13 @@ class Command(models.Model):
     def arguments(self):
         args = []
         for argument in self.get_arguments():
-            args.append({"id": argument.id, "name": argument.name, "description": argument.description})
+            args.append({
+                "id": argument.id,
+                "name": argument.name,
+                "description": argument.description,
+                "requirement": argument.requirement,
+                "needs_value": argument.needs_value,
+            })
         return args
 
     # TODO: Remove this in future versions of django
@@ -109,13 +115,13 @@ class Argument(models.Model):
         include - ManyToManyField('Argument') - It is used to set all arguments that should be included when this one is included
         exclude - ManyToManyField('Argument') - It is used to set all arguments that should be excluded when this one is included
     """
-    command = models.ForeignKey(Command, on_delete=models.CASCADE)
+    command = models.ForeignKey(Command, on_delete=models.CASCADE, null=True)
     name = models.CharField(_('name'), max_length=255)
     description = models.TextField(_('description'), blank=True)
     requirement = models.BooleanField(default=False)
     needs_value = models.BooleanField(default=False)
-    include = models.ManyToManyField('self', verbose_name=_("include"), null=True, blank=True, related_name='include', help_text="Choose mandatory parameters if this is set.")
-    exclude = models.ManyToManyField('self', verbose_name=_("exclude"), null=True, blank=True, related_name='exclude', help_text="Choose parameters that should be excluded if this is set.")
+    include = models.ManyToManyField('self', verbose_name=_("include"), blank=True, related_name='include', help_text="Choose mandatory parameters if this is set.")
+    exclude = models.ManyToManyField('self', verbose_name=_("exclude"), blank=True, related_name='exclude', help_text="Choose parameters that should be excluded if this is set.")
 
     class Meta:
         verbose_name = _('argument')

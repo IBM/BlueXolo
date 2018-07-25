@@ -5,12 +5,22 @@
     <div class="container">
         {% csrf_token %}
         <div class="row">
-            <div class="col s12 l6 card">
-                <div class="card-content">
-                    <form method="POST">
-                        {% include "form-snippet.html" %}
-                    </form>
-                    <h4 class="card-title" id="category_template"></h4>
+            <div class="col s12 l6 ">
+                <div class="card">
+                    <div class="card-content">
+                        <form method="POST">
+                            {% include "form-snippet.html" %}
+                        </form>
+                    </div>
+                </div>
+                <div class="card grey lighten-3 hide" id="instruction_box">
+                    <div class="card-content">
+                        <p><b class="red-text">*</b> <b class="blue-grey-text">Write the parameter value like python
+                            syntax. </b></p>
+                        <code>Example: "String", 1,
+                            ["array", "string"], [1, 2, 3] or 1.2</code>
+
+                    </div>
                 </div>
             </div>
             <div class="col s12 l1">
@@ -20,6 +30,7 @@
                 <div class="card-content">
                     <div class="row">
                         <div class="col s12 ">
+                            <h4 class="card-title" id="category_template"></h4>
                             <h4 class="card-title">Parameters</h4>
                             <ul id="paramsList"></ul>
                             <code class="grey-text">* Only the parameters with value will be saved</code>
@@ -90,14 +101,20 @@
         }
 
         function getParams() {
+            var box = document.getElementById('instruction_box');
             if (_select.value) {
                 $.ajax({
                     url: "/apis/templates/" + _select.value,
                     type: "GET",
                     success: function (data) {
-                         _globalTemplate = data;
+                        if (data.category === 1) {
+                            box.classList.remove('hide');
+                        } else {
+                            box.classList.add('hide');
+                        }
+                        _globalTemplate = data;
                         var _category_type = document.getElementById('category_template');
-                        _category_type.innerHTML = "Category: " + _categories[data.category - 1];
+                        _category_type.innerHTML = _categories[data.category - 1];
                         showParams(data.parameters)
                     }, error: function (err) {
                         console.log(err)
@@ -115,7 +132,7 @@
             params.forEach(function (v, k) {
                 var _listElement = document.createElement('li');
                 var _txtParam = document.createElement('span');
-                _txtParam.innerHTML = v.name.toUpperCase();
+                _txtParam.innerHTML = v.name;
                 _listElement.appendChild(_txtParam);
                 if (v.help_text) {
                     var _help_icon = document.createElement('i');
@@ -123,7 +140,7 @@
                     _txtParam.setAttribute('data-tooltip', v.help_text);
                     _txtParam.setAttribute('class', 'tooltipped');
                     _help_icon.innerHTML = 'help';
-                    _txtParam.appendChild (document.createTextNode (" "));
+                    _txtParam.appendChild(document.createTextNode(" "));
                     _txtParam.appendChild(_help_icon);
                 }
                 if (v.value_type === 2) {
@@ -138,7 +155,6 @@
                     var _input_value = document.createElement('input');
                     _input_value.setAttribute('type', 'Text');
                     _input_value.setAttribute('class', 'param_val');
-                    _input_value.setAttribute('placeholder', 'put a ' + v.name + ' value');
                     _input_value.setAttribute('id', v.id);
                     _listElement.appendChild(_input_value);
                 }
@@ -165,12 +181,10 @@
                         'value': _chipData
                     })
                 } else {
-                    if (_current.value) {
-                        _params.push({
-                            'id': _current.id,
-                            'value': _current.value
-                        })
-                    }
+                    _params.push({
+                        'id': _current.id,
+                        'value': _current.value
+                    })
                 }
             }
             _values = {

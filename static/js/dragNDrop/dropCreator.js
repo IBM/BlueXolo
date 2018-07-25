@@ -1,3 +1,26 @@
+/*
+    *All functions in this file are related with drawing elements
+    in the table.
+
+    *It's important to know that "drawing" refers to create 
+    DOM elements and then append this documents into the table.
+
+    *Most important variable here is DroppedElements an array that
+    has all logic of dropped elements. This variable is not 
+    initialized here. This variable is initialized in each create or
+    edit html file. This could change in version 3.
+
+    *In order to create a element inside the table the element n
+    in DroppedElements is analyzed. Then a text node is created with
+    the name of the element.
+    Then a button to delete this row (position in the array) is added.
+
+    *Even if its not visible, each element in table has a "parameter
+    list". This is where current values of elements are visible to
+    the user. This table is added each time a element is added in 
+    the table (drawParameterList)
+*/
+
 function createElementInTable(nodeCopy, iDTarget) {
     nodeCopy = createEmptyParameterList(nodeCopy);
 
@@ -176,6 +199,8 @@ function drawParameterList(droppedElementIndex, elementID) {
     // Deletes all elements in list to populate it again
     listParent.innerHTML = "";
 
+    var commandRobotCategory = 5;
+
     // Adds to the list the extra value
     if (droppedElement.extraValue !== undefined) {
         var li = document.createElement('li');
@@ -189,6 +214,10 @@ function drawParameterList(droppedElementIndex, elementID) {
     for (var i = 0; i < arguments.length; i++) {
 
         if (arguments[i].visible === undefined && (arguments[i].value === undefined || arguments[i].value === "")) {
+            continue;
+        }
+
+        if( droppedElement.category === commandRobotCategory && filterDrawRobotCommand(arguments[i]) ){
             continue;
         }
 
@@ -206,6 +235,15 @@ function drawParameterList(droppedElementIndex, elementID) {
     }
 }
 
+function filterDrawRobotCommand(argument){
+    if(argument.needs_value && argument.value !== undefined && argument.value !== ""){
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+
 function createButtonToDeleteRow(rowID) {
     var buttonNode = document.createElement("input");
     buttonNode.setAttribute("type", "submit");
@@ -213,6 +251,9 @@ function createButtonToDeleteRow(rowID) {
     buttonNode.setAttribute("class", "btn-flat red-text");
 
     buttonNode.addEventListener("click", function () {
+        cleanPropertiesPanel();
+        hidePropertiesPanel();
+
         deleteAllChildren(rowID);
         deleteElement(rowID);
     });
@@ -231,4 +272,71 @@ function createButtonToDeleteRow(rowID) {
     }
 
     return buttonNode;
+}
+
+function getNewID(elementID) {
+    var commandName = elementID.split("-")[0];
+    var found = false;
+    var newID;
+
+    counterJSON.forEach(function (commandCounter) {
+        if (commandCounter.name === commandName) {
+            commandCounter.counter++;
+            found = true;
+            newID = commandName + "-" + commandCounter.counter;
+        }
+    });
+
+
+    if (!found) {
+        counterJSON.push({
+            name: commandName,
+            counter: 1
+        });
+
+        var newPosition = counterJSON.length - 1
+        newID = counterJSON[newPosition].name + "-" + 1;
+    }
+
+    return newID;
+}
+
+function resetDropCounters() {
+    while (counterJSON.length > 0) {
+        counterJSON.pop();
+    }
+    elementsInTable = 0;
+}
+
+function getNewClass(targetClass) {
+    if (targetClass === "drop-area") {
+        return "drop-0";
+    }
+    else if (targetClass === "drop-0") {
+        return "drop-1";
+    }
+    else if (targetClass === "drop-1") {
+        return "drop-2";
+    }
+    else if (targetClass === "drop-2") {
+        return "drop-3";
+    }
+    else if (targetClass === "drop-3") {
+        return "drop-4";
+    }
+    else if (targetClass === "drop-4") {
+        return "drop-5";
+    }
+    else if (targetClass === "drop-5") {
+        return "drop-6";
+    }
+    else if (targetClass === "drop-6") {
+        return "drop-7";
+    }
+    else if (targetClass === "drop-7") {
+        drawMessage("This is the maximum deep", "yellow black-text");
+        return false;
+    } else {
+        return "drop-1";
+    }
 }

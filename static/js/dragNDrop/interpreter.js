@@ -1,3 +1,15 @@
+/*
+	*This file used to handle all logic related with the proposed 
+	interpreter for version 3.
+
+	*Even though, this file had some work on it, all the code
+	here will be depecrated in version 3. Since this work was made
+	in first iterations, even before the implementation of 
+	DroppedElements variable.
+
+*/
+
+
 class Interpreter{
 
 	constructor(parametersSaver, dropCreator){

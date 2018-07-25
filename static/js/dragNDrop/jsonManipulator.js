@@ -1,3 +1,21 @@
+/*
+    *This is one of the most important files, it contains all the logic
+    that affect DroppedElements.
+
+    *Commands, Keywords and Test cases have different route and different
+    attributes to be added in the array. That's why it exist a function for each
+    (it also promotes an architecture with modules).
+
+    *There exist a function that specifies a index. This is really helpful to
+    move elements from one position to other or drop elements between elements.
+
+    *This functions are called each time a element is dropped. And the function
+    in charge of "handle drops" is located in dragDropFunctions.js.
+
+    *Each time a element is added it request to the server all information related
+    to a command, keyword or testcase, after this it saves a instance of it.    
+*/
+
 var jsonAPIURL = {
     commands: "/apis/commands/",
     keywords: "/apis/keywords/",
@@ -35,6 +53,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
         },
         success: function (data) {
             var testcaseName = data.name;
+            var testcaseDescription = data.description;
             var testcaseArguments = data.arguments;
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -43,6 +62,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
             droppedElements.push({
                 id: testcaseID,
                 name: testcaseName,
+                description: testcaseDescription,
                 category: testcaseCategory,
                 position: droppedElements.length,
                 indentation: indentation,
@@ -69,6 +89,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
         },
         success: function (data) {
             var testcaseName = data.name;
+            var testcaseDescription = data.description;
             var testcaseArguments = data.arguments;
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -77,6 +98,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
             var droppedElement = {
                 id: testcaseID,
                 name: testcaseName,
+                description: testcaseDescription,
                 category: testcaseCategory,
                 position: droppedElements.length,
                 indentation: indentation,
@@ -104,6 +126,7 @@ function addKeywordToJSON(indentation, keywordID) {
         },
         success: function (data) {
             var keywordName = data.name;
+            var keywordDescription = data.description;
             var keywordArguments = data.arguments;
             var valuesAsString = data.values;
             var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -112,6 +135,7 @@ function addKeywordToJSON(indentation, keywordID) {
             droppedElements.push({
                 id: keywordID,
                 name: keywordName,
+                description: keywordDescription,
                 category: keywordCategory,
                 position: droppedElements.length,
                 indentation: indentation,
@@ -139,6 +163,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
         },
         success: function (data) {
             var keywordName = data.name;
+            var keywordDescription = data.description;
             var keywordArguments = data.arguments;
             var valuesAsString = data.values;
             var keywordValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
@@ -147,6 +172,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
             var droppedElement = {
                 id: keywordID,
                 name: keywordName,
+                description: keywordDescription,
                 category: keywordCategory,
                 position: droppedElements.length,
                 indentation: indentation,

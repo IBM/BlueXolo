@@ -14,7 +14,8 @@ SCRIPT_TYPE_CHOICES = (
 class Collection(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
-    product = models.ForeignKey(Source, related_name="products")
+    product = models.ForeignKey(Source, related_name="products", on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = "collections"
@@ -29,9 +30,10 @@ class Collection(models.Model):
 class Keyword(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     script = models.TextField(_('script'))
     values = models.TextField(_('values'), blank=True)
+    extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
     collection = models.ManyToManyField(Collection, blank=True)
@@ -48,7 +50,8 @@ class Keyword(models.Model):
 
 class Phase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
-    product = models.ForeignKey(Source)
+    product = models.ForeignKey(Source, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = "phases"
@@ -63,11 +66,12 @@ class TestCase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     script = models.TextField(_('script'), blank=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     collection = models.ManyToManyField(Collection)
     functions = models.CharField(_('functions'), blank=True, max_length=100)
-    phase = models.ForeignKey(Phase)
+    phase = models.ForeignKey(Phase, on_delete=models.DO_NOTHING)
     values = models.TextField(_('values'), blank=True)
+    extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
 
@@ -84,9 +88,10 @@ class TestSuite(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     script = models.TextField(_('script'), blank=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     collection = models.ManyToManyField(Collection)
     values = models.TextField(_('values'), blank=True)
+    extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True, editable=False)
     modified = models.DateTimeField(_('modified'), auto_now=True)
 

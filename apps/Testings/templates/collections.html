@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Collections{% endblock %}{% block subtitle %}Collections{% endblock %}
+{% load permission_tags %}
 {% block content %}
     <div class="container">
         <table class="datatable">
@@ -11,10 +12,13 @@
             </tr>
             </thead>
         </table>
-        <div class="fixed-action-btn">
-            <a href="{% url "new-collections" %}"
-               class="btn-floating btn-large waves-effect waves-light blue-grey"><i class="material-icons">add</i></a>
-        </div>
+        {% if user|can:'create_collection' %}
+            <div class="fixed-action-btn">
+                <a href="{% url "new-collections" %}"
+                   class="btn-floating btn-large waves-effect waves-light blue-grey"><i
+                        class="material-icons">add</i></a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% load staticfiles %}
@@ -30,8 +34,15 @@
                 "targets": 2,
                 data: function (row) {
                     return "<div>" +
-                                                "<a class='btn' href='/testings/collections/" + row[2] + "'><i class='material-icons'>edit</i></a>" +
-                        "<a class='btn red' href='/testings/collections/" + row[2] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                        {% if user|can:'update_collection' %}
+                            "<a class='btn' href='/testings/collections/" + row[2]
+                            + "'><i class='material-icons'>edit</i></a>" +
+                            "   " +
+                        {% endif %}
+                        {% if user|can:'delete_collection' %}
+                            "<a class='btn red' href='/testings/collections/" + row[2]
+                            + "/delete/'><i class='material-icons'>delete</i></a>" +
+                        {% endif %}
                         "</div>";
                 }
             }];

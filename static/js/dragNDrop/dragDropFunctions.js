@@ -1,9 +1,39 @@
+/*
+    This file contains all functions and methods related with drag an drop
+
+    *This includes all the logic related since the drag of the element
+    until is dropped and added to the variable "DropppedElements".
+
+    *DroppedElements is initialized in each create and edit html as an 
+    empty array.
+
+    *This file contains also the logic to create empty rows between
+    dropped elements.
+
+    *Each time a element is dropped it need to be recognized where
+    if it is being dropped in a empty row or inside an element.
+    This is important because dropped elements needs a indentation.
+
+    *Because of perfomance, drawing and logic is being done by
+    iteration or direct changin into a variable ("DroppedElements").
+    With this in mind, the only moment to see DOM's id is when an element
+    changes from a place to other. And the position in the table says
+    its original place.
+
+    *Manipulation of variable DroppedElement (jsonManipulator.js) and drawing of
+    elements in table (dropCreator.js) are done in differente files
+*/
+
+
 function allowDrop(ev) {
     ev.preventDefault();
 }
 
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    deleteTemporaryRows();
+    createEmptyRowsBetweenCommands();
+    movingElement = true;
 }
 
 function moveDroppedElement(ev) {
@@ -22,10 +52,85 @@ function moveDroppedElement(ev) {
 
 function startDragDroppedElement(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    deleteTemporaryRows();
     createEmptyRowsBetweenCommands();
 }
 
 function dropBeforeThisElement(ev) {
+    var data = ev.dataTransfer.getData("text");
+
+    var dragAndDropPanel = "drag-drop";
+    var keywordsPanel = "keyword-drag-drop";
+    var testcasePanel = "testcase-drag-drop";
+
+    var positionOfFirstDash = data.indexOf("-");
+
+    var belongsToPanel = data.slice(positionOfFirstDash + 1);
+
+    if(belongsToPanel === dragAndDropPanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addElementToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }
+    else if(belongsToPanel === keywordsPanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addKeywordToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }
+    else if(belongsToPanel === testcasePanel){    
+        
+        movingElement = true;
+
+        var insertBeforeThisEmptyRow = ev.target.parentNode;
+        var positionToAddElement = insertBeforeThisEmptyRow.id;
+        positionToAddElement = positionToAddElement.split("-")[2];
+        positionToAddElement--;
+
+        var elementID = data.split("-")[0];
+        var indentation = 1;
+
+        if(positionToAddElement === -1){
+            positionToAddElement = droppedElements.length;
+        }
+
+        addTestcaseToJSONInIndex(indentation, elementID, positionToAddElement);
+        drawElementsFromJSON();
+
+        return true;
+    }    
+
     // Because is moving, the drop event is going to delete the original element after drop it
     movingElement = true;
     var insertBeforeThisEmptyRow = ev.target.parentNode;
@@ -88,6 +193,11 @@ function moveElements(movedFromID, movedToID) {
 function createEmptyRowsBetweenCommands() {
     var dragDropSpace = document.getElementById('dragDropSpace');
     var nextRow = dragDropSpace.firstChild;
+
+    if(nextRow === null){
+        return;
+    }
+
     var tempEmptyRows = 0;
 
     var td = document.createElement("tr");
@@ -98,6 +208,7 @@ function createEmptyRowsBetweenCommands() {
     td.append(textNode);
 
     td.setAttribute('ondrop', 'dropBeforeThisElement(event)');
+    td.setAttribute('onmouseup', 'dropBeforeThisElement(event)');
     dragDropSpace.append(td);
 
     while (nextRow.nextSibling !== null) {
@@ -110,6 +221,7 @@ function createEmptyRowsBetweenCommands() {
         td.append(textNode);
 
         td.setAttribute('ondrop', 'dropBeforeThisElement(event)');
+        td.setAttribute('onmouseup', 'dropBeforeThisElement(event)');
         dragDropSpace.append(td);
 
         dragDropSpace.insertBefore(td, nextRow);
@@ -162,8 +274,7 @@ function drop(ev) {
     ev.preventDefault();
     deleteTemporaryRows();
 
-    if (movingElement) {
-        movingElement = false;
+    if(ev.target.parentNode.parentNode === null){
         return;
     }
 
@@ -240,72 +351,5 @@ function drop(ev) {
             var rowNode = originalNode.parentNode;
             rowNode.parentNode.removeChild(rowNode);
         }
-    }
-}
-
-function getNewID(elementID) {
-    var commandName = elementID.split("-")[0];
-    var found = false;
-    var newID;
-
-    counterJSON.forEach(function (commandCounter) {
-        if (commandCounter.name === commandName) {
-            commandCounter.counter++;
-            found = true;
-            newID = commandName + "-" + commandCounter.counter;
-        }
-    });
-
-
-    if (!found) {
-        counterJSON.push({
-            name: commandName,
-            counter: 1
-        });
-
-        var newPosition = counterJSON.length - 1
-        newID = counterJSON[newPosition].name + "-" + 1;
-    }
-
-    return newID;
-}
-
-function resetDropCounters() {
-    while (counterJSON.length > 0) {
-        counterJSON.pop();
-    }
-    elementsInTable = 0;
-}
-
-function getNewClass(targetClass) {
-    if (targetClass === "drop-area") {
-        return "drop-0";
-    }
-    else if (targetClass === "drop-0") {
-        return "drop-1";
-    }
-    else if (targetClass === "drop-1") {
-        return "drop-2";
-    }
-    else if (targetClass === "drop-2") {
-        return "drop-3";
-    }
-    else if (targetClass === "drop-3") {
-        return "drop-4";
-    }
-    else if (targetClass === "drop-4") {
-        return "drop-5";
-    }
-    else if (targetClass === "drop-5") {
-        return "drop-6";
-    }
-    else if (targetClass === "drop-6") {
-        return "drop-7";
-    }
-    else if (targetClass === "drop-7") {
-        drawMessage("This is the maximum deep", "yellow black-text");
-        return false;
-    } else {
-        return "drop-1";
     }
 }

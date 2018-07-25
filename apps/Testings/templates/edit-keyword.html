@@ -9,6 +9,7 @@
     {% compress css %}
         <link rel="stylesheet" href="{% static 'css/keywords.css' %}">
         <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+        <link rel="stylesheet" href="{% static "css/highlight.css" %}">
     {% endcompress %}
 
 
@@ -16,7 +17,6 @@
         <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/dragNDrop/getInitial.js" %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/interpreter.js' %}"></script>
-        <script type="text/javascript" src="{% static '/js/dragNDrop/parametersGetter.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/parametersSaver.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/propertiesPanelLogic.js' %}"></script>
         <script type="text/javascript" src="{% static '/js/dragNDrop/translatorToRobot.js' %}"></script>
@@ -34,12 +34,12 @@
 
             $(document).ready(function () {
 
-                var _colleciontSelect = document.getElementById('keyword_collection');
+                var _colleciontSelect = document.getElementById('collection');
 
                 var _config = {
                     "url": "{% url "api-collection" %}",
                     "data": {},
-                    "container": "keyword_collection"
+                    "container": "collection"
                 };
                 selectServerSide(_config);
 
@@ -162,23 +162,33 @@
                 var keywordName = document.getElementById("keyword_name").value;
                 var keywordDescription = document.getElementById("keyword_description").value;
                 var keywordValues = droppedElements;
-                var keywordCollection = document.getElementById('keyword_collection').value;
+                var keywordCollection = document.getElementById('collection').value;
                 var keywordScript = document.getElementById("terminal").value;
+
+                var usedElements = {
+                    extra: usedExtras,
+                    keywords: usedKeywords,
+                    testcases: usedTestcases
+                }                 
 
                 var newKeyword = {
                     "name": keywordName,
                     "description": keywordDescription,
                     "script": keywordScript,
                     "values": JSON.stringify(keywordValues),
-                    "collection": keywordCollection
+                    "collection": keywordCollection,
+                    "extra_imports": JSON.stringify(usedElements)
                 };
                 $.ajax({
                     url: "{% url "api-keywords" object.pk %}",
                     type: 'PUT',
                     data: newKeyword,
                     success: function (data) {
-
                         drawMessage("Keyword Updated", 'green');
+                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                        Materialize.toast($toastContent, 12000, 'blue');
+
                         $('#modalPreview').modal('close');
                         new_keyword = data;
                     },
@@ -203,13 +213,19 @@
         <div class="col s12">
 
             <div class="input-field col s6 l4">
-                <select id="keyword_collection" onchange="hasValues()"></select>
-                <label for="keyword_collection">Keyword Collection</label>
+                <select id="collection" onchange="hasValues()"></select>
+                <label for="collection">Collection <b class="red-text">*</b></label>
+                <ul>
+                    <li class="red-text"><i id="error_field_collection"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 l4">
-                <label for="keyword_name">Keyword Name</label>
+                <label for="keyword_name">Name <b class="red-text">*</b></label>
                 <input type="text" id="keyword_name" onblur="hasValues()" value="{{ object.name }}"
                        placeholder="required">
+                <ul>
+                    <li class="red-text"><i id="error_field_name"></i></li>
+                </ul>
             </div>
             <div class="input-field col s6 l4">
                 <label for="keyword_description">Keyword Description</label>
@@ -224,7 +240,8 @@
         {% csrf_token %}
         <div class="row">
             <div class="col s12 l3">
-                {% include "search-block.html" %}
+                {% include "control-flow-block.html" %}
+                {% include "search-command-block.html" %}
             </div>
             <div class="col l6 s12">
                 <ul class="tabs">
@@ -302,12 +319,13 @@
         {#  - - - -  - - - END MODAL RUNNING - - - - - - - - - - -#}
 
     </div>
-    <div class="fixed-action-btn">
-        <button onclick="translateToRobot(populatePreview)" id="btn_play"
-                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-                data-tooltip="Preview Script">
-            <i class="material-icons">play_arrow</i></button>
+   <div class="fixed-action-btn">
+        <button onclick="saveKeyword()" id="btn_play"
+                class="btn-floating btn-large waves-effect waves-light blue tooltipped" data-position="left"
+                data-tooltip="Save">
+            <i class="material-icons">save</i></button>
     </div>
+
 
 
     <div class="fixed-action-btn left-button ">
@@ -355,15 +373,25 @@
 
             function hasValues() {
                 var _keyName = document.getElementById('keyword_name');
-                var _keyCollection = document.getElementById('keyword_collection');
+                var _keyCollection = document.getElementById('collection');
+                var _error_filed_name = document.getElementById('error_field_name');
+                var _error_filed_collection = document.getElementById('error_field_collection');
+
+                showError(_keyCollection, _error_filed_collection);
+                showError(_keyName, _error_filed_name);
+            }
+
+            function showError(element, destiny) {
                 var _btn_save = document.getElementById('btn_play');
-                if (!(_keyCollection.value && _keyName.value)) {
+                if (!element.value) {
                     _btn_save.disabled = true;
-                    drawMessage("Collection and Keyword name are necessary", "yellow black-text");
+                    destiny.innerHTML = "This field is required";
                 } else {
                     _btn_save.disabled = false;
+                    destiny.innerHTML = "";
                 }
             }
+
 
             document.getElementById('selectProfiles').onchange = function () {
                 if ($('#selectProfiles').val()) {
@@ -381,13 +409,13 @@
                         data: {
                             id: new_keyword.id,
                             profile: _profiles,
-                            type_script : 1
+                            type_script: 1
                         },
                         success: function (data) {
-                            drawMessage("Keyword has sent to scheduler", 'blue');
+                            drawMessage("Keyword send to Queue", 'blue');
                             $('#modalPreview').modal('close');
                         }, error: function (err) {
-                            console.log('error on run script: ' + err)
+                            drawMessage(err.responseJSON.text, 'red');
                         }
                     });
                 }, 3000);

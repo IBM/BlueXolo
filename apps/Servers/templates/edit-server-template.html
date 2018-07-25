@@ -39,9 +39,8 @@
                     <table>
                         <tr>
                             <th>Parameter</th>
-                            <th>Help</th>
-                            <th>Type</th>
-                            <th></th>
+                            <th>Help Text</th>
+                            <th>Option</th>
                         </tr>
                         <tbody id="params_table"></tbody>
                     </table>
@@ -92,7 +91,6 @@
         $('.modal').modal();
         var global_params = [];
         var _objCont;
-        var _types = ['String', 'List'];
         var _table_containenr = document.getElementById('tableContainer');
         var _select_input = $('#parameter-search');
         var _btn_create = document.getElementById('btn_create');
@@ -103,13 +101,12 @@
                 "id": "{{ param.id }}",
                 "name": "{{ param.name | escapejs}}",
                 "help_text": "{{ param.help_text | escapejs }}",
-                "category": "{{ param.category }}",
-                "value_type": "{{ param.value_type}}"
+                "category": "{{ param.category }}"
             });
         {% endfor %}
 
         global_params.forEach(function (v) {
-            drawParamter(v)
+            drawParameter(v)
         });
         /* - - - -  End On Start  - - - - */
 
@@ -155,22 +152,20 @@
                 "id": data.id,
                 "name": data.name,
                 "help_text": data.help_text,
-                "category": data.category,
-                "value_type": data.value_type
+                "category": data.category
             });
             if (!_objCont) {
                 _objCont = 0;
             }
-            drawParamter(data);
+            drawParameter(data);
         }
 
-        function drawParamter(data) {
+        function drawParameter(data) {
             _table_containenr.classList.remove("hide");
 
             var _tr_params = document.createElement('tr');
             var _td_param = document.createElement('td');
             var _td_help = document.createElement('td');
-            var _td_type = document.createElement('td');
             var _td_option = document.createElement('td');
             var _delete_icon = document.createElement('i');
 
@@ -182,12 +177,10 @@
 
             _td_param.appendChild(document.createTextNode(data.name));
             _td_help.appendChild(document.createTextNode(data.help_text));
-            _td_type.appendChild(document.createTextNode(_types[data.value_type - 1]));
             _td_option.appendChild(_delete_icon);
 
             _tr_params.appendChild(_td_param);
             _tr_params.appendChild(_td_help);
-            _tr_params.appendChild(_td_type);
             _tr_params.appendChild(_td_option);
 
             document.getElementById('params_table').appendChild(_tr_params);
@@ -227,8 +220,7 @@
                 data: {
                     name: document.getElementById('param_name').value,
                     help_text: document.getElementById('id_help_text').value,
-                    category: document.getElementById('category_group').value,
-                    value_type: document.getElementById('id_value_type').value,
+                    category: document.getElementById('category_group').value
                 }, success: function (data) {
                     drawMessage("Parameter '" + data.name + "' Created", 'green');
                     document.getElementById('form_parameter').reset();

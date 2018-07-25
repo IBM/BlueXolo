@@ -1,0 +1,17 @@
+name,help_text,category,value_type
+LAUNCHER_NODE ,IP or dns name of the launcher,1,1
+LAUNCHER_PASSWORD ,Password of the Robot launcher,1,1
+LAUNCHER_USER,User of the robot launcher,1,1
+GPFS_MOUNT_POINTS,,1,1
+OBJ_GPFS_MOUNTPOINT,,1,1
+HOSTNAME,,1,1
+USER,User to execute GPFS commands in cluster,1,1
+PASSWORD,Password of the user above,1,1
+GPFS_COMMANDS_PATH,path of gpfs commands,1,1
+CLUSTER_NODES,EXTERNAL/PUBLIC IPs of all nodes,1,1
+NSD_NODES,EXTERNAL/PUBLIC IPs of all the NSD server nodes,1,1
+PROTOCOL_SERVER_NODE,EXTERNAL/PUBLIC Ips of all the protocol nodes,1,1
+INTERNAL_CLUSTER_NODES,"Internal IPs of all nodes in the cluster, this could be Infiniband, SMC, etc. These are the IPs that are shown when doing a mmlscluster",1,1
+INTERNAL_NSD_NODES,"Internal IPs of nsd nodes in the cluster, this could be Infiniband, SMC, etc. These are the IPs that are shown when doing a mmlscluster",1,1
+INTERNAL_PROTOCOL_SERVER_NODES,"Internal IPs of protocol nodes in the cluster, this could be Infiniband, SMC, etc. These are theIPs that are shown when doing a mmlscluster",1,1
+CES_IP_ADDRESS_LIST,,1,1

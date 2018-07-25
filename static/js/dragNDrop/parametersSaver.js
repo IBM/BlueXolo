@@ -1,3 +1,24 @@
+/*
+    *Properties panel is generated dinamically, and some displayed values
+    are from a second level deepthness (values inside a keyword or testcase)
+    rather than "the usually level one depthness" as a normal command.
+
+    *Some functions over here iterate over the DroppedElements variable to know
+    which position in the array, and the parameter.
+
+	*There is no need to write directly in the DOM, or certain nodes. 
+	This is because changing DroppedElements and then drawing this variable
+	creates the effect of changing the table directly.
+
+	*There is needed a propper way to save values by the element's type.
+	This is because some commands need a default value or check for more than one
+	parameter.
+
+	*The function that would be executed when values are saved is handled
+	by the propertiesPanelLogic.js itself.
+*/
+
+
 function getInputs(droppedElementIndex) {
     var droppedElement = droppedElements[droppedElementIndex];
 	var propertiesPannel = document.getElementById("propertiesPannel").getElementsByTagName("form");
@@ -264,8 +285,15 @@ function saveKeywordFromInput(droppedElementIndex, elementID){
     var indexStart = 0;
     var indexEnd = 0;
 
+    var keywordsCategory = 6;
+
     for(var i=0; i<commands.length; i++){
         arguments = commands[i].arguments;
+
+        if(commands[i].category === keywordsCategory){
+        	continue;
+        }
+
 		argumentsDisplayed = getIndexesOfArgumentsDisplayed(arguments);
 		indexEnd = indexStart + argumentsDisplayed.length;
 

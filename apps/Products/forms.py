@@ -39,7 +39,10 @@ class ArgumentForm(forms.ModelForm):
 class PhaseForm(forms.ModelForm):
     class Meta:
         model = Phase
-        fields = '__all__'
+        fields = {
+            'name',
+            'product'
+        }
 
     def __init__(self, *args, **kwargs):
         """This filter only for sources in the category 4(Robot)"""
@@ -95,7 +98,7 @@ class SourceEditProductForm(forms.ModelForm):
 
 
 class SourceRobotForm(forms.ModelForm):
-    zip_file = forms.FileField(forms.FileInput())
+    zip_file = forms.FileField()
 
     class Meta:
         model = Source

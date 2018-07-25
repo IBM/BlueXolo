@@ -21,7 +21,7 @@
     <nav class="white">
         <div class="nav-wrapper">
             <a href="{% url "index" %}" class="brand-logo">
-                <img src="{% static "img/IBM_logo.svg" %}" class="logo_img" alt="ibm_logo">
+                <img src="{% static "img/logo.svg" %}" class="logo_img" alt="ibm_logo">
             </a>
             <ul class="right ">
                 <li><a class="blue-grey-text " href="{% url "login" %}">
@@ -32,7 +32,7 @@
     </nav>
 </div>
 <!-- main content -->
-<div class="">
+<main class="">
     <div class="section">
         <div class="row">
             <div class="col s12 offset-l4 l4">
@@ -70,13 +70,11 @@
         </div>
 
     </div>
-</div>
-<div class="fixed-action-btn left-button ">
-    <span class="grey-text">
-    Platform Version <code>{{ PLATFORM_VERSION }}</code>
-    </span>
-</div>
+</main>
 <!-- end main content -->
+<!-- Footer -->
+{% include "footer-block.html" %}
+<!-- end Footer -->
 <!-- Scripts -->
 {% compress js %}
     <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>

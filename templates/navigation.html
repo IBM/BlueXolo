@@ -1,73 +1,109 @@
 {% load staticfiles %}
+{% load permission_tags %}
+
 <ul id="slide-out" class="side-nav ">
     <li>
         <div class="user-view">
             <div class="logo">
                 <a href="{% url "home" %}">
-                    <img src="{% static "img/IBM_logo.svg" %}" class="responsive-img ">
+                    <img src="{% static "img/logo.svg" %}" >
                 </a>
             </div>
         </div>
     </li>
-    <li><a class="subheader blue-grey-text">Testing</a></li>
-{#    <li><a class="waves-effect" href="{% url "search-run-script" %}"><i#}
-{#            class="material-icons">navigate_next</i>Run Scripts</a></li>#}
-{#    <li>#}
-    <li><a class="waves-effect" href="{% url "keywords" %}"><i class="material-icons">navigate_next</i>Keywords</a></li>
-    <li><a class="waves-effect" href="{% url "testcases" %}"><i class="material-icons">navigate_next</i> Test Cases</a>
-    </li>
-    <li><a class="waves-effect" href="{% url "testsuites" %}"><i class="material-icons">navigate_next</i> Test
-        Suites</a></li>
-    <li><a class="waves-effect" href="{% url "collections" %}"><i
-            class="material-icons">navigate_next</i>Collections</a></li>
-    <li>
-    <li><a class="waves-effect" href="{% url "imported-scripts" %}"><i
-            class="material-icons">navigate_next</i>Imported Scripts</a></li>
-    <li>
-
-
-    </li>
-    <li><a class="subheader blue-grey-text">Servers</a></li>
-    <li><a class="waves-effect" href="{% url "parameters" %}"><i class="material-icons">navigate_next</i>Parameters</a>
-    <li><a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
-    <li><a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
-    </li>
-    <li>
-
-    <li><a class="subheader blue-grey-text">Sources</a></li>
-    <li>
-        <a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i> Commands</a>
-    </li>
-    <li>
-        <a class="waves-effect" href="{% url "source-list" "robot" %}"><i class="material-icons">navigate_next</i>Robot
-            Framework</a>
-    </li>
-    <li>
-        <a class="waves-effect" href="{% url "source-list" "products" %}"><i class="material-icons">navigate_next</i>Products</a>
-    </li>
-
-    <li>
-        <a class="waves-effect" href="{% url "source-list" "libraries" %}"><i class="material-icons">navigate_next</i>Libraries</a>
-    </li>
-
-    <li>
-        <a class="waves-effect" href="{% url "phases" %}"><i class="material-icons">navigate_next</i>Phases</a>
-    </li>
-
-
-    {#    <li><a class="waves-effect" href="{% url "os" %}"><i class="material-icons">navigate_next</i>Operations Systems</a>#}
-    {#    </li>#}
-
-    {#    <li><a class="waves-effect" href="{% url "arguments" %}"><i class="material-icons">navigate_next</i>Arguments</a>#}
-    {#    </li>#}
-    {#    <li><a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i>Commands</a></li>#}
-
-    {% if user.is_staff %}
-
-        <li><a class="subheader blue-grey-text">Admin</a></li>
-        <li><a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a></li>
-        <li>
+    {% if user|can:'access_testing' %}
+        <li><a class="subheader blue-grey-text">Testing</a></li>
     {% endif %}
-    </li>
+    {% if user|can:'read_keyword' %}
+        <li>
+            <a class="waves-effect" href="{% url "keywords" %}"><i class="material-icons">navigate_next</i>Keywords</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_test_case' %}
+        <li>
+            <a class="waves-effect" href="{% url "testcases" %}"><i class="material-icons">navigate_next</i> Test Cases</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_test_suite' %}
+        <li>
+            <a class="waves-effect" href="{% url "testsuites" %}"><i class="material-icons">navigate_next</i> Test
+                Suites</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_imported_script' %}
+        <li>
+            <a class="waves-effect" href="{% url "imported-scripts" %}"><i class="material-icons">navigate_next</i>Imported
+                Scripts</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_collection' %}
+        <li>
+            <a class="waves-effect" href="{% url "collections" %}"><i class="material-icons">navigate_next</i>Collections</a>
+        </li>
+    {% endif %}
+    {% if user|can:'access_server' %}
+        <li><a class="subheader blue-grey-text">Servers</a></li>
+    {% endif %}
+    {% if user|can:'read_server_parameter' %}
+        <li>
+            <a class="waves-effect" href="{% url "parameters" %}"><i class="material-icons">navigate_next</i>Parameters</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_server_template' %}
+        <li>
+            <a class="waves-effect" href="{% url "servers-templates" %}"><i class="material-icons">navigate_next</i>Templates</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_server_profile' %}
+        <li>
+            <a class="waves-effect" href="{% url "servers-profiles" %}"><i class="material-icons">navigate_next</i>Profiles</a>
+        </li>
+    {% endif %}
 
+    {% if user|can:'access_sources' %}
+        <li><a class="subheader blue-grey-text">Sources</a></li>
+    {% endif %}
+    {% if user|can:'read_commands' %}
+        <li>
+            <a class="waves-effect" href="{% url "commands" %}"><i class="material-icons">navigate_next</i> Commands</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_robot' %}
+        <li>
+            <a class="waves-effect" href="{% url "source-list" "robot" %}"><i class="material-icons">navigate_next</i>Robot
+                Framework</a>
+        </li>
+    {% endif %}
+    {% if user|can:'read_product' %}
+        <li>
+            <a class="waves-effect" href="{% url "source-list" "products" %}"><i
+                    class="material-icons">navigate_next</i>Products</a>
+        </li>
+    {% endif %}
+
+    {% if user|can:'read_libraries' %}
+        <li>
+            <a class="waves-effect" href="{% url "source-list" "libraries" %}"><i
+                    class="material-icons">navigate_next</i>Libraries</a>
+        </li>
+    {% endif %}
+
+    {% if user|can:'read_phases' %}
+        <li>
+            <a class="waves-effect" href="{% url "phases" %}"><i class="material-icons">navigate_next</i>Phases</a>
+        </li>
+    {% endif %}
+
+    {% if user|can:'read_users' %}
+        <li><a class="subheader blue-grey-text">Admin</a></li>
+    {% endif %}
+
+    {% if user|can:'read_users' %}
+        <li>
+            <a class="waves-effect" href="{% url "users" %}"><i class="material-icons">navigate_next</i>Users</a>
+        </li>
+    {% endif %}
+<li><a class="blue-grey-text">Blue Xolo Framework</a></li>
+        <li><a class="blue-grey-text">© 2018 Copyright</a></li>
+        <li><a class="blue-grey-text"> </a></li>
 </ul>
