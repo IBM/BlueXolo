@@ -113,13 +113,29 @@ yum install postgresql-server postgresql-contrib
 #Initialize postresql database
 postgresql-setup initdb
 ```
+
+Start and enable postgresql
+
+```
+systemctl start postgresql
+systemctl enable postgresql
+```
+
+
+Set a password to postgress user
+```
+sudo -i -u postgres
+psql
+alter user postgres with encrypted password 'My_password';
+```
+
 We will need to edit one postgressql config file to allow us to authenticate using passwords
 
 ```
 vi /var/lib/pgsql/data/pg_hba.conf
 ```
 
-And modify the lines starting with local/host to add md5 at the end of those lines
+And modify the lines starting with local/host to change ident to  md5 at the end of those lines
 
 ```
 # "local" is for Unix domain socket connections only
@@ -130,17 +146,27 @@ host    all             all             127.0.0.1/32            md5
 host    all             all             ::1/128                 md5
 ```
 
-Start and enable postgresql
+Restart postgress to pick up the changes
 
 ```
+systemctl stop postgresql
 systemctl start postgresql
-systemctl enable postgresql
 ```
 
-Create a database for bluexolo
+
+Create a user and database for bluexolo
 
 ```
-su -i postgresql
+# as root
+adduser my_user
+
+#change to postgress user to create bluexolo database
+su -i -u postgresql
+psql
+
+CREATE DATABASE yourdbname;
+CREATE USER youruser WITH ENCRYPTED PASSWORD 'yourpass';
+GRANT ALL PRIVILEGES ON DATABASE yourdbname TO youruser;
 
 ```
 
