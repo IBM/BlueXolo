@@ -524,7 +524,7 @@ def generate_file(obj, type_script, params, filename, client):
                            "w")
             ts_file.write("*** Settings ***\n")
             if obj.description:
-                ts_file.write("Documentation\t{0}".format(obj.description))
+                ts_file.write("    Documentation    {0}".format(obj.description))
                 ts_file.write("\n")
             """ Adding some resources"""
             if kwd_resources:
