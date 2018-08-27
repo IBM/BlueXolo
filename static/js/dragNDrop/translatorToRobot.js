@@ -13,6 +13,8 @@ var testcaseSectionEnded  = false;
 
 var addedOwnDescription   = false;
 
+var separator = "    ";
+
 function resetUsedArraysVariables(){
     usedExtras = [];
     usedKeywords = [];
@@ -61,7 +63,7 @@ function addKeywordName(){
 }
 
 function addDocumentationSection(){
-    var translatedRow = "\t[Documentation]\t";   
+    var translatedRow = "    [Documentation]    ";   
     
     if(isKeyword()){
         var keywordDescriptionTextArea = document.getElementById("keyword_description");
@@ -78,7 +80,7 @@ function addDocumentationSection(){
         var selectedOption = testcasePhasesList.options.selectedIndex;
         var selectedValueText = testcasePhasesList.options[selectedOption].text;
 
-        translatedRow += "\t[Tags]\t"; 
+        translatedRow += separator + "[Tags]" + separator; 
         translatedRow += selectedValueText;
         translatedRow += "\n";
         return translatedRow;
@@ -186,7 +188,7 @@ function handleKeywordSection(keywordName, customKeyword){
     // At this moment it will not add the section if the current object is not a keyword
     if(!isKeyword()){
         //translatedRow += "*** Keywords ***\n";
-        translatedRow = "\t"+keywordName+"\n";
+        translatedRow = separator+keywordName+"\n";
         keywordSection = true;
         return translatedRow;
     }
@@ -197,7 +199,7 @@ function handleKeywordSection(keywordName, customKeyword){
     }
     
     if(customKeyword){
-        translatedRow += "\t"+keywordName+"\n";
+        translatedRow += separator+keywordName+"\n";
     }
     else{
         translatedRow += keywordName+"\n";    
@@ -425,7 +427,7 @@ function translateToRobot(callBackFunction) {
 
                 keywordDescription += addDocumentationSection();                
                 terminal.value += keywordDescription;
-                terminal.value += "\t";
+                terminal.value += separator;
             }
             
             if(isTestcase()){
@@ -435,7 +437,7 @@ function translateToRobot(callBackFunction) {
 
                 keywordDescription += addDocumentationSection();
                 terminal.value += keywordDescription;
-                terminal.value += "\t";
+                terminal.value += separator;
             }
 
             addedOwnDescription = true;
@@ -481,7 +483,7 @@ function addOwnDescription(){
 
         keywordDescription += addDocumentationSection();                
         terminal.value += keywordDescription;
-        terminal.value += "\t";
+        terminal.value += separator;
     }
 
     if(isTestcase()){
@@ -491,7 +493,7 @@ function addOwnDescription(){
 
         keywordDescription += addDocumentationSection();
         terminal.value += keywordDescription;
-        terminal.value += "\t";
+        terminal.value += separator;
     }
 }
 
@@ -614,7 +616,7 @@ function getTranslationOfTestcase(testcase){
 function addKeywordToUsedArray( keywordID, keyword){
     var translation = "*** Keywords ***\n";
     translation += keyword.name + "\n";
-    translation += "\t[Documentation]\t";
+    translation += "    [Documentation]    ";
     translation += keyword.description + "\n";
 
     translation += getTranslationOfKeyword(keyword.keywordJSON);
@@ -639,7 +641,7 @@ function addExtraToUsedArray(sourceID){
 function addTestcaseToUsedArray( testcaseID, testcase){
     var translation = "*** Test Cases ***\n";
     translation += testcase.name + "\n";
-    translation += "\t[Documentation]\t";
+    translation += "    [Documentation]    ";
     translation += testcase.description + "\n";
 
     translation += getTranslationOfTestcase(testcase.keywordJSON);
@@ -757,7 +759,8 @@ function handleIndentation(identationLevel){
 
     var identation = '';
     for(var i=0; i<identationLevel-1; i++){
-        identation += '\t';
+        //identation += '\t';
+        identation += separator;
     }
     return identation;
 }
