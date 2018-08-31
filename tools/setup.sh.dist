@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+#script
+echo 'Welcome back'
+echo "Let's create some dirs First"
+mkdir -p media/test_keywords
+echo " . "
+mkdir -p media/zip
+echo " . . "
+mkdir -p media/test_result
+echo " . . . "
+mkdir -p media/testcases
+echo " . . ."
+mkdir -p media/keywords
+echo " . . ."
+mkdir -p media/profiles
+echo " . . ."
+echo "Directories have been created"
+echo "That's all"
