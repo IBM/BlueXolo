@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 #script
-echo 'Welcome back Mr. Anderson'
+echo 'Welcome back'
 echo "Let's create some dirs First"
 mkdir -p media/test_keywords
 echo " . "
@@ -15,5 +15,5 @@ mkdir -p media/keywords
 echo " . . ."
 mkdir -p media/profiles
 echo " . . ."
-echo "ok, the dirs have created."
+echo "Directories have been created"
 echo "That's all"

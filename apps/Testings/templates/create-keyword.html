@@ -194,14 +194,14 @@
             </div>
             <div class="input-field col s6 l4">
                 <label for="keyword_name">Name <b class="red-text">*</b></label>
-                <input type="text" id="keyword_name" onblur="hasValues()" placeholder="Required">
+                <input type="text" id="keyword_name" onblur="hasValues()" placeholder="Required" onchange="hasValues()">
                 <ul>
                     <li class="red-text"><i id="error_field_name"></i></li>
                 </ul>
             </div>
             <div class="input-field col s6 l4">
                 <label for="keyword_description">Keyword Description</label>
-                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()">
+                <input type="text" id="keyword_description" placeholder="Optional" onblur="hasValues()" onchange="hasValues()">
             </div>
         </div>
     </div>
@@ -347,6 +347,7 @@
 
                 showError(_keyCollection, _error_filed_collection);
                 showError(_keyName, _error_filed_name);
+                translateToRobot();
             }
 
             function showError(element, destiny) {

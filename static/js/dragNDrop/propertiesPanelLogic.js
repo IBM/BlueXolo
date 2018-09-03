@@ -298,6 +298,7 @@ function drawPropertiesForTestcases(droppedElementIndex, elementID) {
 
     function addClickEvent() {
         saveTestcaseFromInput(droppedElementIndex, elementID);
+        hasValues();
     }
 
     var propPanelContainer = document.getElementById("propertiesPanelContainer");
@@ -425,6 +426,7 @@ function drawPropertiesForKeywords(droppedElementIndex, elementID) {
 
     function addClickEvent() {
         saveKeywordFromInput(droppedElementIndex, elementID);
+        hasValues();
     }
 
     var propPanelContainer = document.getElementById("propertiesPanelContainer");
@@ -546,6 +548,7 @@ function drawPropertiesPanel(droppedElementIndex, elementID) {
 
     function addClickEvent() {
         saveFromInput(droppedElementIndex, elementID);
+        hasValues();
     }
 
     var propPanelContainer = document.getElementById("propertiesPanelContainer");
@@ -693,6 +696,7 @@ function drawPropertiesPanelWithTags(droppedElementIndex, elementID) {
 
     function addClickEvent() {
         saveTagFromInput(droppedElementIndex, elementID);
+        hasValues();
     }
 
     var propPanelContainer = document.getElementById("propertiesPanelContainer");

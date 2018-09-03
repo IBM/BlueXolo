@@ -1,11 +1,10 @@
 #!/usr/bin/bash
 
 #script
-echo 'Welcome back Mr. Anderson'
-echo "Ruuuun! :-D "
+echo "Stop and restart Celery"
 ps -ef | grep 'celery' | grep -v grep | awk '{print $2}' | xargs kill
 nohup celery -A CTAFramework worker -l info &
-echo "Then run python"
+echo "Stop and restart runserver"
 ps -ef | grep 'runserver 0.0.0.0:8000' | grep -v grep | awk '{print $2}' | xargs kill
 ./manage.py compress &
 nohup ./manage.py runserver 0.0.0.0:8000 &

@@ -15,7 +15,7 @@ class Collection(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     product = models.ForeignKey(Source, related_name="products", on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "collections"
@@ -30,7 +30,7 @@ class Collection(models.Model):
 class Keyword(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     script = models.TextField(_('script'))
     values = models.TextField(_('values'), blank=True)
     extra_imports = models.TextField(_('extra imports '), blank=True)
@@ -51,7 +51,7 @@ class Keyword(models.Model):
 class Phase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     product = models.ForeignKey(Source, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "phases"
@@ -66,7 +66,7 @@ class TestCase(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     script = models.TextField(_('script'), blank=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     collection = models.ManyToManyField(Collection)
     functions = models.CharField(_('functions'), blank=True, max_length=100)
     phase = models.ForeignKey(Phase, on_delete=models.DO_NOTHING)
@@ -88,7 +88,7 @@ class TestSuite(models.Model):
     name = models.CharField(_('name'), max_length=100, unique=True)
     description = models.TextField(_('description'), blank=True, null=True)
     script = models.TextField(_('script'), blank=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     collection = models.ManyToManyField(Collection)
     values = models.TextField(_('values'), blank=True)
     extra_imports = models.TextField(_('extra imports '), blank=True)

@@ -12,7 +12,7 @@ media/
 static/CACHE
 
 *.zip
-
+venv/
 
 # workspace files are user-specific
 *.sublime-workspace
@@ -28,8 +28,6 @@ sftp-config.json
 *.py[cod]
 __pycache__
 
-# Logs
-logs
 *.log
 pip-log.txt
 npm-debug.log*
@@ -89,3 +87,20 @@ secrets.json
 nohup.out
 setup.sh
 run.sh
+# Visual studio Code configs
+.vscode/launch.json
+.vscode/settings.json
+
+# LOGS
+logs/*
+
+variables.sh
+
+# Localsettings
+localsettings.py
+
+# Migrations
+0*.py
+
+# Local Databases
+db.sqlite3
