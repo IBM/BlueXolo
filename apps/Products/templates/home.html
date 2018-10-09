@@ -32,7 +32,20 @@
                                     <p class="blue-grey-text center">EXECUTION COMPLETE</p>
                                     <p class="grey-text">Started: {{ task.created_at }}</p>
                                     <p class="grey-text">Last check: {{ task.updated_at }}</p>
-                                    {% if task.category == 2 %}
+                                    {% if task.category == 1 and task.task_info %}
+                                    <ul class="collapsible" data-collapsible="accordion">
+                                        <li>
+                                            <div class="collapsible-header">
+                                                <i class="material-icons">details</i>Task Detail
+                                            </div>
+                                            <div class="collapsible-body">
+                                                <ul style="font-family:monospace, monospace;font-size:.8em;height: 300px;overflow: scroll">
+                                                    {{ task.task_info|unordered_list }}
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    {% elif task.category == 2 %}
                                         <div class="center ">
                                             <a target="_blank" href="{{ task.task_result }}"
                                                class="btn-flat green-text waves-effect">View Result</a>

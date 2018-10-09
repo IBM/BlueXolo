@@ -41,6 +41,7 @@ def run_extract(config):
         # Extract Product Commands
         p = PExtract(config)
         p.run()
+        return json.dumps(p.results)
 
     elif category in (4, 5):
         # Extract Robot
@@ -93,6 +94,7 @@ class MExtract:
         self.p_config = p_config
         self.api_config = api_config
         self.initial_time = time.time()
+        self.results = []
 
     def _split_list_of_commands(self):
         """
@@ -205,8 +207,8 @@ class MExtract:
                 continue
             self._parse_sections(manpage, command)
             for section in ('OPTIONS', 'DESCRIPTION'):
-                self._parse_arguments(section)  # TODO. Needs to change for modularity
-            self._save_into_db()
+                self._parse_arguments(section, command)  # TODO. Needs to change for modularity
+            self._save_into_db(command)
 
     def _run_with_ssh(self):
         """
@@ -223,8 +225,8 @@ class MExtract:
                 continue
             self._parse_sections(manpage, command)
             for section in ('OPTIONS', 'DESCRIPTION'):
-                self._parse_arguments(section)  # TODO. Needs to change for modularity
-            self._save_into_db()
+                self._parse_arguments(section, command)  # TODO. Needs to change for modularity
+            self._save_into_db(command)
 
     def _ssh_connect(self):
         """
@@ -330,9 +332,9 @@ class MExtract:
                 else:
                     self.sections_dict[section_name] = block
 
-    def _parse_arguments(self, section):
+    def _parse_arguments(self, section, command):
         """
-        _parse_arguments(self, section)
+        _parse_arguments(self, section, command)
 
         Once the section is parsed, it is necessary to parse the arguments of a given section
         """
@@ -360,6 +362,7 @@ class MExtract:
                     save_arg_body = False
                     flag_list = [False, " "]
         except Exception as error:
+            self.results.append("{0} {1} arguments parsing error".format(command, section))
             pass # TODO: improve the exception handling
             # print(" error in Parse Argument: {}".format(error))
 
@@ -406,9 +409,9 @@ class MExtract:
             source = None
         return source
 
-    def _save_into_db(self):
+    def _save_into_db(self, command_name):
         """
-        _save_into_db(self)
+        _save_into_db(self, command_name)
 
         Metod to save the command created and the arguments
         """
@@ -426,6 +429,7 @@ class MExtract:
                 # print(" error in saving OS: {}".format(error))
             command.save()
         except Exception as error:
+            self.results.append("{0} not saved".format(command_name))
             pass
             # print(" error in Command DB: {}".format(error))
 
