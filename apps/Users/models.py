@@ -1,3 +1,4 @@
+import json
 from celery.result import AsyncResult
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -8,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.Products.models import Source
 from .managers import UserManager
-
 
 class Task(models.Model):
     CATEGORIES = (
@@ -87,7 +87,6 @@ class User(AbstractBaseUser, PermissionsMixin):
                     task.task_info = res.result or ''
                 if task.category is 2:
                     try:
-
                         if res.result.get('error'):
                             task.state = 'FAILURE'
                             task.task_info = res.result.get('error')
@@ -99,5 +98,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                         task.state = 'FAILURE'
                         task.task_info = "Celery or Message broker stopped"
                 task.save()
+            
+            if task.category is 1:
+                try:
+                    task.task_info = json.loads(task.task_info)
+                except ValueError:
+                    pass
             user_tasks.append(task)
         return user_tasks
