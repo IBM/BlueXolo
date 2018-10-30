@@ -62,4 +62,4 @@ If you experience any issues with BlueXolo on a particular Operative System, ple
 
 ## Licence
 
-## List of Contributors
+## [List of Contributors](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/CONTRIBUTORS_LIST)
