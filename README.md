@@ -41,3 +41,17 @@ BlueXolo is a WEB framework that allows the generation of test scripts in a visu
 - BlueXolo has the capability save, open and edit all the generated scripts.
 - BlueXolo has the capability to import the Operative System, Robot Framework, and External libraries commands and their documentation.
 - BlueXolo has the capability to be integrated with Jenkins to follow a continues integration model.
+
+## Getting Started
+
+BlueXolo runs under Linus/OS X/Windows, The following is required to start using BlueXolo:
+
+- Python 3.6
+- virtualenv
+- Install epel repo
+- Rabbit-mq
+- Postgresql
+
+> [Full Installation guide](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/INSTALL.md).
+
+If you experience any issues with BlueXolo on a particular Operative System, please [open a ticket](https://github.ibm.com/blue-xolo/blue-xolo-framework/issues/new/choose) in the issue tracker.
