@@ -55,3 +55,11 @@ BlueXolo runs under Linus/OS X/Windows, The following is required to start using
 > [Full Installation guide](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/INSTALL.md).
 
 If you experience any issues with BlueXolo on a particular Operative System, please [open a ticket](https://github.ibm.com/blue-xolo/blue-xolo-framework/issues/new/choose) in the issue tracker.
+
+## Usage
+
+## How To Contirbute
+
+## Licence
+
+## List of Contributors
