@@ -1,42 +1,35 @@
 # How To Contribute
 
-BlueXolo has a repository on GitHub: https://github.ibm.com/blue-xolo/blue-xolo-framework
+## Terminology Table
 
-Terminology Table
-
-Instance
-Branch
-Description, Instructions, Notes
-Stable
-Production
-Accepts merges from Working and Hotfixes
-Working
-Master
-Accepts merges from Features/Issues and Hotfixes
-Features/Issues
-topic-*
-Always branch off HEAD of Working
-Hotfix
-hotfix-*
-Always branch off Stable
+| Instance | Branch | Description, Instructions, Notes |
+| :---:         |     :---:      |          :---: |
+| Stable   | Production     | Accepts merges from Working and Hotfixes    |
+| Working     | Master       | Accepts merges from Features/Issues and Hotfixes      |
+| Features/Issues   | topic-*     | Always branch off HEAD of Working    |
+| Hotfix     | hotfix-*       | Always branch off Stable      |
 
 ## Main Branches
 The main repository holds 2 branches: 
 - Production
 - Master.
 
-The main branch should be considered origin/master and will be the main branch where the source code of HEAD always reflects a state with the latest delivered development changes for the next release. As a developer, you will you be branching and merging from Master.
+The main branch should be considered **origin/master** and will be the main branch where the source code of HEAD always reflects a state with the latest delivered development changes for the next release. As a developer, you will be branching and merging from **Master**.
 
-Consider Production to always represent the latest code deployed to production. During day to day development, the Production branch will not be interacted with.
+Consider Production to always represent the latest code deployed to **production**. During day to day development, the **Production** branch will not be interacted with.
 
-When the source code in the Master branch is stable and has been deployed, all of the changes will be merged into Production and tagged with a release number. How this is done in detail will be discussed later.
+When the source code in the **Master** branch is stable and has been deployed, all of the changes will be merged into **Production** and tagged with a release number. How this is done in detail will be discussed later.
 
-Deployment Schedule:
+## Deployment Schedule:
 
-Thursday
-If Master is stable all the changes will be merge into Production. 
-Otherwise the development team must investigate and open/close any issue addressing issues to the Master Branch. 
-After all the changes from Master were merged its time to deploy all the pull requests that were accepted into the Master branch.
+| Instance | Branch |
+| :---:         |     :---:      |
+| Thursday   | If Master is stable all the changes will be merge into Production. Otherwise the development team must investigate and open/close any issue addressing issues to the Master Branch. After all the changes from Master were merged its time to deploy all the pull requests that were accepted into the Master branch.     |
+| Working     | Master       |
+| Features/Issues   | topic-*     |
+| Hotfix     | hotfix-*       |
+
+
 Monday to Wednesday
 During this time frame the senior developer is going to decide if a pull request is accepted or not.
 This process can take longer than 3 days.
