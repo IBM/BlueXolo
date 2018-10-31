@@ -22,19 +22,48 @@ When the source code in the **Master** branch is stable and has been deployed, a
 
 ## Deployment Schedule:
 
-| Instance | Branch |
-| :---:         |     :---:      |
-| Thursday   | If Master is stable all the changes will be merge into Production. Otherwise the development team must investigate and open/close any issue addressing issues to the Master Branch. After all the changes from Master were merged its time to deploy all the pull requests that were accepted into the Master branch.     |
-| Working     | Master       |
-| Features/Issues   | topic-*     |
-| Hotfix     | hotfix-*       |
+<table>
+  <tbody>
+    <tr>
+      <th align="center">Day</th>
+      <th align="center">Action</th>
+    </tr>
+    <tr>
+      <td align="center">Thursday</td>
+      <td>
+        <ul>
+          <li>If Master is stable all the changes will be merge into Production.</li>
+          <li>Otherwise the development team must investigate and open/close any issue addressing issues to the Master Branch.</li>
+          <li>After all the changes from Master were merged its time to deploy all the pull requests that were accepted into the Master branch.</li
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">Monday to Wednesday</td>
+      <td>
+        <ul>
+          <li>During this time frame the senior developer is going to decide if a pull request is accepted or not.</li>
+          <li>This process can take longer than 3 days.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">At any time</td>
+      <td>
+        <ul>
+          <li>Commits can be made at any time.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
-Monday to Wednesday
-During this time frame the senior developer is going to decide if a pull request is accepted or not.
-This process can take longer than 3 days.
-At any time
-Commits can be made at any time.
+
+
+
+
+
 
 Supporting Branches
 Supporting branches are used to aid parallel development between team members, ease tracking of features, and to assist in quickly fixing live production problems. Unlike the main branches, these branches always have a limited life time, since they will be removed eventually.
