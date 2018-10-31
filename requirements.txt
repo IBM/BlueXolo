@@ -1,4 +1,4 @@
-celery==4.1.0
+celery==4.1.1
 distro==1.0.4
 Django==1.11.4
 django-compressor==2.2
