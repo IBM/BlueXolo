@@ -58,40 +58,39 @@ When the source code in the **Master** branch is stable and has been deployed, a
   </tbody>
 </table>
 
+## Supporting Branches
 
-
-Normal Text
-
-<p align="center">
-  <b>Some Links:</b><br>
-  <a href="#">Link 1</a> |
-  <a href="#">Link 2</a> |
-  <a href="#">Link 3</a>
-  <br><br>
-  <img src="http://s.4cdn.org/image/title/105.gif">
+<p align="justify">
+Supporting branches are used to aid parallel development between team members, ease tracking of features, and to assist in quickly fixing live production problems. Unlike the main branches, these branches always have a limited life time, since they will be removed eventually.
 </p>
 
-Normal text
-
-
-Supporting Branches
-Supporting branches are used to aid parallel development between team members, ease tracking of features, and to assist in quickly fixing live production problems. Unlike the main branches, these branches always have a limited life time, since they will be removed eventually.
 The different types of branches we may use are:
-Feature branches
-Bug branches
-Hotfix branches
-Each of these branches have a specific purpose and are bound to strict rules as to which branches may be their originating branch and which branches must be their merge targets. Each branch and its usage is explained below.
+- Feature branches
+- Bug branches
+- Hotfix branches
 
-Feature Branches
+<p align="justify">
+Each of these branches have a specific purpose and are bound to strict rules as to which branches may be their originating branch and which branches must be their merge targets. Each branch and its usage is explained below.
+</p>
+
+### Feature Branches
+
+<p align="justify">
 Feature branches are used when developing a new feature or enhancement which has the potential of a development lifespan longer than a single deployment. When starting development, the deployment in which this feature will be released may not be known. No matter when the feature branch will be finished, it will always be merged back into the master branch.
+
 During the lifespan of the feature development, the lead should watch the master branch (network tool or branch tool in GitHub) to see if there have been commits since the feature was branched. Any and all changes to master should be merged into the feature before merging back to master; this can be done at various times during the project or at the end, but time to handle merge conflicts should be accounted for.
 represents the Basecamp project to which Project Management will be tracked.
-Must branch from: master
-Must merge back into: master
-Branch naming convention: feature-<tbd number>
+</p>
 
-Working with a feature branch
+- Must branch from: master
+- Must merge back into: master
+- Branch naming convention: feature-<tbd number>
+
+### Working with a feature branch
+
+<p align="justify">
 If the branch does not exist yet (check with the Lead), create the branch locally and then push to GitHub. A feature branch should always be 'publicly' available. That is, development should never exist in just one developer's local branch.
+</p>
 
 $ git checkout -b feature-id master
 // creates a local branch for the new feature
