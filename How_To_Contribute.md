@@ -87,8 +87,9 @@ Feature branches are used when developing a new feature or enhancement which has
 
 <p align="justify">
 During the lifespan of the feature development, the lead should watch the master branch (network tool or branch tool in GitHub) to see if there have been commits since the feature was branched. Any and all changes to master should be merged into the feature before merging back to master; this can be done at various times during the project or at the end, but time to handle merge conflicts should be accounted for.
-represents the Basecamp project to which Project Management will be tracked.
 </p>
+
+Represents the Basecamp project to which Project Management will be tracked.
 
 - Must branch from: master
 - Must merge back into: master
@@ -101,8 +102,8 @@ If the branch does not exist yet (check with the Lead), create the branch locall
 </p>
 
 ```
-$ git checkout -b feature-id master    // creates a local branch for the new feature
-$ git push origin feature-id    // makes the new feature remotely available
+$ git checkout -b feature-id master                   // creates a local branch for the new feature
+$ git push origin feature-id                          // makes the new feature remotely available
 ```
 
 <p align="justify">
@@ -110,7 +111,7 @@ Periodically, changes made to master (if any) should be merged back into your fe
 </p>
 
 ```
-$ git merge master.   // merges changes from master into feature branch
+$ git merge master                                   // merges changes from master into feature branch
 ```
 
 <p align="justify">
@@ -118,10 +119,10 @@ When development on the feature is complete, the lead (or engineer in charge) sh
 </p>
 
 ```
-$ git checkout master   // change to the master branch
-$ git merge --no-ff feature-id   // makes sure to create a commit object during merge
-$ git push origin master   // push merge changes
-$ git push origin :feature-id    // deletes the remote branch
+$ git checkout master                               // change to the master branch
+$ git merge --no-ff feature-id                      // makes sure to create a commit object during merge
+$ git push origin master                            // push merge changes
+$ git push origin :feature-id                       // deletes the remote branch
 ```
 
 ### Bug Branches
@@ -132,8 +133,9 @@ Bug branches differ from feature branches only semantically. Bug branches will b
 
 <p align="justify">
 Although likelihood will be less, during the lifespan of the bug development, the lead should watch the master branch (network tool or branch tool in GitHub) to see if there have been commits since the bug was branched. Any and all changes to master should be merged into the bug before merging back to master; this can be done at various times during the project or at the end, but time to handle merge conflicts should be accounted for.
-represents the Basecamp project to which Project Management will be tracked.
 </P>
+
+Represents the Basecamp project to which Project Management will be tracked.
 
 - Must branch from: master
 - Must merge back into: master
@@ -146,14 +148,14 @@ If the branch does not exist yet (check with the Lead), create the branch locall
 </P>
 
 ```
-$ git checkout -b bug-id master    // creates a local branch for the new bug
-$ git push origin bug-id    // makes the new bug remotely available
+$ git checkout -b bug-id master                     // creates a local branch for the new bug
+$ git push origin bug-id                            // makes the new bug remotely available
 ```
 
 Periodically, changes made to master (if any) should be merged back into your bug branch.
 
 ```
-$ git merge master    // merges changes from master into bug branch
+$ git merge master                                  // merges changes from master into bug branch
 ```
 
 <p align="justify">
@@ -161,19 +163,24 @@ When development on the bug is complete, [the Lead] should merge changes into ma
 </P>
 
 ```
-$ git checkout master    // change to the master branch
-$ git merge --no-ff bug-id   // makes sure to create a commit object during merge
-$ git push origin master    // push merge changes
-$ git push origin :bug-id    // deletes the remote branch
+$ git checkout master                              // change to the master branch
+$ git merge --no-ff bug-id                         // makes sure to create a commit object during merge
+$ git push origin master                           // push merge changes
+$ git push origin :bug-id                          // deletes the remote branch
 ```
 
 ### Hotfix Branches
 
 <p align="justify">
 A hotfix branch comes from the need to act immediately upon an undesired state of a live production version. Additionally, because of the urgency, a hotfix is not required to be be pushed during a scheduled deployment. Due to these requirements, a hotfix branch is always branched from a tagged stable branch. This is done for two reasons:
-Development on the master branch can continue while the hotfix is being addressed.
-A tagged stable branch still represents what is in production. At the point in time where a hotfix is needed, there could have been multiple commits to master which would then no longer represent production. represents the Basecamp project to which Project Management will be tracked.
 </P>
+
+- Development on the master branch can continue while the hotfix is being addressed.
+- A tagged stable branch still represents what is in production. At the point in time where a hotfix is needed, there could have been multiple commits to master which would then no longer represent production. 
+
+
+Represents the Basecamp project to which Project Management will be tracked.
+
 - Must branch from: tagged stable
 - Must merge back into: master and stable
 - Branch naming convention: hotfix-<tbd number>
@@ -185,27 +192,26 @@ If the branch does not exist yet (check with the Lead), create the branch locall
 </P>
 
 ```
-$ git checkout -b hotfix-id stable    // creates a local branch for the new hotfix
-$ git push origin hotfix-id   // makes the new hotfix remotely available
+$ git checkout -b hotfix-id stable                 // creates a local branch for the new hotfix
+$ git push origin hotfix-id                        // makes the new hotfix remotely available
 ```
 
 When development on the hotfix is complete, [the Lead] should merge changes into stable and then update the tag.
 
 ```
-$ git checkout stable    // change to the stable branch
-$ git merge --no-ff hotfix-id    // forces creation of commit object during merge
-$ git tag -a <tag>    // tags the fix
-$ git push origin stable --tags    // push tag changes
-$ git checkout stable
+$ git checkout stable                             // change to the stable branch
+$ git merge --no-ff hotfix-id                     // forces creation of commit object during merge
+$ git tag -a <tag>                                // tags the fix
+$ git push origin stable --tags                   // push tag changes
 ```
 
 Merge changes into master so not to lose the hotfix and then delete the remote hotfix branch.
 
 ```
-$ git checkout master   // change to the master branch
-$ git merge --no-ff hotfix-id   // forces creation of commit object during merge
-$ git push origin master    // push merge changes
-$ git push origin :hotfix-id   // deletes the remote branch
+$ git checkout master                             // change to the master branch
+$ git merge --no-ff hotfix-id                     // forces creation of commit object during merge
+$ git push origin master                          // push merge changes
+$ git push origin :hotfix-id                      // deletes the remote branch
 ```
 
 
