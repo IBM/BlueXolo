@@ -201,7 +201,7 @@ $ git checkout stable
 
 Merge changes into master so not to lose the hotfix and then delete the remote hotfix branch.
 
-´´´
+```
 $ git checkout master   // change to the master branch
 $ git merge --no-ff hotfix-id   // forces creation of commit object during merge
 $ git push origin master    // push merge changes
