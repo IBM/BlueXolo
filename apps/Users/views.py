@@ -198,7 +198,6 @@ class RequestAccessView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(RequestAccessView, self).get_context_data(**kwargs)
-        context['PLATFORM_VERSION'] = settings.PLATFORM_VERSION
         return context
 
 
