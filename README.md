@@ -16,7 +16,9 @@ BlueXolo runs under Linus/OS X/Windows, The following is required to start using
 - Rabbit-mq
 - Postgresql
 
-> [Full Installation guide](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/INSTALL.md).
+## Installation Guide
+
+Please read [Full Installation guide](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/INSTALL.md) to get started.
 
 If you experience any issues with BlueXolo on a particular Operative System, please [open a ticket](https://github.ibm.com/blue-xolo/blue-xolo-framework/issues/new/choose) in the issue tracker.
 
