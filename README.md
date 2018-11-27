@@ -28,4 +28,6 @@ Please read [How_To_Contribute.md](https://github.ibm.com/blue-xolo/blue-xolo-fr
 
 ## Licence
 
-## [List of Contributors](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/CONTRIBUTORS_LIST)
+## List of Contributors
+
+Please read the [List of Contributors](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/CONTRIBUTORS_LIST) to know the all the people that makes this projects possible.
