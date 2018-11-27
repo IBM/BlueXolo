@@ -4,8 +4,6 @@
 
 BlueXolo is a WEB framework that allows the generation of test scripts in a visual way using a “drag and drop” interface which allows the generation of complex test cases spending a minimum amount of time. 
 
-### Its main characteristics are the following
-
 > [Its main characteristics are the following](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/Main_Characteristics.md).
 
 ## Getting Started
