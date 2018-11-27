@@ -24,6 +24,8 @@ If you experience any issues with BlueXolo on a particular Operative System, ple
 
 ## How To Contirbute
 
+Please read How_To_Contribute.md for details on our code of conduct, and the process for submitting pull requests to us.
+
 ## Licence
 
 ## [List of Contributors](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/CONTRIBUTORS_LIST)
