@@ -20,13 +20,15 @@ BlueXolo runs under Linus/OS X/Windows, The following is required to start using
 
 Please read [Full Installation guide](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/INSTALL.md) to get started.
 
-If you experience any issues with BlueXolo on a particular Operative System, please [open a ticket](https://github.ibm.com/blue-xolo/blue-xolo-framework/issues/new/choose) in the issue tracker.
-
 ## Usage
 
 ## How To Contirbute
 
 Please read [How_To_Contribute.md](https://github.ibm.com/blue-xolo/blue-xolo-framework/blob/master/How_To_Contribute.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Hwo to report Issues / Enhancements
+
+If you experience any issues with BlueXolo on any Operative System, or you have a suggestion or Enhancement please [open a ticket](https://github.ibm.com/blue-xolo/blue-xolo-framework/issues/new/choose) in the issue tracker.
 
 ## Licence
 
