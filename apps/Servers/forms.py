@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 
 from .models import ServerProfile, TemplateServer, Parameters
 
@@ -27,7 +28,7 @@ class ParametersForm(forms.ModelForm):
         ]
 
         labels = {
-            'category': 'Category Group'
+            'category': mark_safe('Category Group <i style="float: right;" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Global Variables -> Variables that can be used under variables Profile  Local Network connection -> Variables that can be used under Connection profile">help_outline</i>')
         }
         widgets = {
             'name': forms.TextInput(attrs={'id': 'param_name'}),
