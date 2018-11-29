@@ -2,6 +2,16 @@
 {% block title %}{{ title }}{% endblock %}
 {% block subtitle %}{{ title }}{% endblock %}
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <h5>Description</h5>
+            <p>
+                A collection is standard library that provides a set of keywords.
+            </p>
+        </div>
+    </div>
+</div>
     {% include "base-new-form.html" with url="/testings/collections/" %}
      <div class="fixed-action-btn left-button ">
         <a href="{% url "collections" %}" id="btn_play"
