@@ -22,11 +22,11 @@ Please read [Full Installation guide](https://github.com/IBM/BlueXolo/blob/maste
 
 ## Usage
 
-## How To Contirbute
+## How To Contribute
 
 Please read [How_To_Contribute.md](https://github.com/IBM/BlueXolo/blob/master/How_To_Contribute.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Hwo to report Issues / Enhancements
+## How to report Issues / Enhancements
 
 If you experience any issues with BlueXolo on any Operative System, or you have a suggestion or Enhancement please [open a ticket](https://github.com/IBM/BlueXolo/issues/new/choose) in the issue tracker.
 
