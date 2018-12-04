@@ -1,0 +1,4 @@
+ semanage  port  -a -t http_port_t -p tcp 2032
+ semanage  port  -a -t http_port_t -p tcp 2035
+ semanage  port  -a -t http_port_t -p tcp 448
+ semanage  port  -a -t http_port_t -p tcp 447
