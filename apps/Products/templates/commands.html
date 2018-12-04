@@ -3,7 +3,12 @@
 {% load permission_tags %}
 {% block content %}
     <div class="container">
-
+        <div class="col s12">
+            <h5>Description</h5>
+            <p>
+                Massive import of system commands.  To perform the extraction of commands using the M-Extract, it is necessary to click on the button in the lower right corner, with the text “Extract from Operation System” (M-extract)
+            </p>
+        </div>
         <div class="section">
             <div class="row">
                 <div class="col s12 l4">
@@ -31,7 +36,9 @@
                         </p>
                         <p>
                             <input type="checkbox" id="exactSearch"/>
-                            <label for="exactSearch">Make a exact search</label>
+                            <label for="exactSearch">
+                                <b>Exact search<i style="margin-left: 70px" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Check to make an exact search of a command">help_outline</i></b>
+                            </label>
                         </p>
                     </form>
                 </div>
@@ -98,32 +105,31 @@
                 <div class="row">
                     <div class="input-field col s12 l6">
                         <input id="host" type="text" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
-                               placeholder="like 123.123.123.123" onblur="checkValues()">
+                               placeholder="like 123.123.123.123" onblur="checkValues()" class="tooltipped" data-position="bottom" data-tooltip="System from which the information will be extracted. It must be a computer with an operating system based on UNIX.">
                         <label for="host">Host</label>
                     </div>
                     <div class="input-field col s12 l6">
-                        <input id="port" type="number">
+                        <input id="port" type="number" class="tooltipped" data-position="bottom" data-tooltip="System Connection port from which the information will be extracted">
                         <label for="port">Port</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12 l6">
-                        <input id="username" type="text" required onblur="checkValues()">
+                        <input id="username" type="text" required onblur="checkValues()" class="tooltipped" data-position="bottom" data-tooltip="User that can access to the remote computer">
                         <label for="username">User</label>
                     </div>
                     <div class="input-field col s12 l6">
-                        <input id="password" type="password" required onblur="checkValues()">
+                        <input id="password" type="password" required onblur="checkValues()" class="tooltipped" data-position="bottom" data-tooltip="Password of the user that can access to the remote computer">
                         <label for="password">Password</label>
                     </div>
                 </div>
                 <div class="row">
                     <p class="center">
                         <input type="checkbox" id="local"/>
-                        <label for="local">Get commands from local server</label>
+                        <label for="local">Get commands from local server <b><i style="margin-left: 10px" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="In case you require commands from the local operating system">help_outline</i></b></label>
                     </p>
                 </div>
             </form>
-
 
         </div>
         <div class="modal-footer">

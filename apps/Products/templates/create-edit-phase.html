@@ -2,8 +2,15 @@
 {% block title %}{% if object %}Edit{% else %}New{% endif %} Phase{% endblock %}
 {% block subtitle %}{% if object %}Edit{% else %}New{% endif %} Phase{% endblock %}
 {% block content %}
+    <div class="container">
+        <div class="col s12">
+            <h5>Description</h5>
+            <p>
+                To add a Phase it is necessary to click on the Phases tab in the main menu and click on the Add Phase button. Once in the New Phase screen, it is necessary to select the Product and Name of the newPhase, click on CREATE
+            </p>
+        </div>
+    </div>
     {% include "base-new-form.html" with url="/phases/" %}
-
     {% if delete %}
         <div class="fixed-action-btn right-button ">
             <a href="{% url "delete-phase" object.pk %}" id="btn_play"
