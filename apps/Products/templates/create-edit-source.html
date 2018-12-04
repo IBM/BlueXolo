@@ -6,9 +6,17 @@
         <div class="col s12">
             <h5>Description</h5>
             <p>
+            {% if slug == 'robot' %}
                 The Robot Framework commands used by the platform must beloaded into the database in order to be used by users.There are many versions of the Robot Framework and different versions of the same can be used, it is possible to massively load more than 1 version of commands. To start with the execution of this module, it is necessary to be in the main window after having logged in and select the "Robot Framework option”. <br> 
                 This option leads to a window that contains the list of versions of Robot Framework available on the platform, as well as the option to add another version of the Robot Framework or to add several versions at the same time. <br> 
-                Clicking on the add button to the lower right corner will open a new window, in which the path of the .zip that is downloaded from the official Robot Framework documentation is requested. The documentation can be found in ( <a href="http://robotframework.org/robotframework/" target="_blank">Robot Framework</a> ).
+                Clicking on the add button to the lower right corner will open a new window, in which the path of the .zip that is downloaded from the official Robot Framework documentation is requested. The documentation can be found in (<a href="http://robotframework.org/robotframework/" target="_blank">Robot Framework</a>).
+            {% endif %}
+            {% if slug == 'products' %}
+                In this option you can add product commands, to do so, you need to click in the Phases tab on the main menu and click in the Add product commands button
+            {% endif %}
+            {% if slug == 'libraries' %}
+                This option leads to a window that contains the list of versions of Robot Framework loaded on the platform, as well as the corresponding options to individually add a version of the Robot Framework or execute the process of adding several at the same time: The documentation can be found in (<a href="http://robotframework.org/robotframework/" target="_blank">Robot Framework</a>).
+            {% endif %}
             </p>
         </div>
     </div>
