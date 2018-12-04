@@ -2,7 +2,7 @@ from django import forms
 
 from apps.Testings.models import Phase
 from .models import Argument, Source, Command
-
+from django.utils.safestring import mark_safe
 
 class ArgumentForm(forms.ModelForm):
     class Meta:
@@ -152,6 +152,12 @@ class CommandForm(forms.ModelForm):
             'source',
             'description',
         ]
+
+        labels = {
+            "name"        : mark_safe('<b>Command <i style="float: right" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Provide the command that will be used in the product">help_outline</i></b>'),
+            "source"      : mark_safe('<b>Source <i style="float: right" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Select the product associated with the new command">help_outline</i></b>'),
+            "description" : mark_safe('<b>Description <i style="float: right" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Provide a brief description about the command">help_outline</i></b>'),
+        }
 
         widgets = {
             'name': forms.TextInput(attrs={'data-length': 30}),

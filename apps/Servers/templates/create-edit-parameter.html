@@ -2,6 +2,24 @@
 {% block title %}{{ title }}{% endblock %}
 {% block subtitle %}{{ title }}{% endblock %}
 {% block content %}
+    <div class="container">
+        <div class="col s12">
+                <p>
+                        View to create parameters. These items are use to create templates and they can hold a value under profiles.
+                        The parameters created here can only be used under the selected category group
+                </p>
+                <p>
+                    <small>
+                        <b>Category Groups:</b>
+                        <ul style="">
+                            <li>* Global Variables         ->   Variables that can be used under variables Profile</li>
+                            <li>* Local Network connection -> Variables that can be used under Connection profile</li>
+                            <li>* Jenkins connection       -> Variables that can be used under Jenkins profile</li>
+                        </ul>
+                    </small>
+                </p>
+        </div>
+    </div>
     {% include "base-new-form.html" with url="/parameters/" %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "parameters" %}" id="btn_play"
