@@ -3,6 +3,23 @@
 {% block subtitle %}Create Server Template{% endblock %}
 {% block content %}
     <div class="container">
+        <div class="col s12">
+            <p>
+                Templates are created as a base for profiles. You can add as many parameters as needed but you can only add parameters belonging to the selected category.
+                <br>
+                Values to parameters are only defined on the profile view.
+            </p>
+            <p>
+                <small>
+                    <b>Category Groups:</b>
+                    <ul style="">
+                        <li>* Global Variables         ->   Variables that can be used under variables Profile</li>
+                        <li>* Local Network connection -> Variables that can be used under Connection profile</li>
+                        <li>* Jenkins connection       -> Variables that can be used under Jenkins profile</li>
+                    </ul>
+                </small>
+            </p>
+        </div>
         <div class="row">
             <div class="col s12 ">
                 <form novalidate>
@@ -14,7 +31,7 @@
 
         <div class="row card">
             <div class="col s12 card-content">
-                <h4 class="card-title">Parameters</h4>
+                <h4 class="card-title">Parameters <i style="padding-left: 150px" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Use the input field to search parameters">help_outline</i></h4>
                 <div class="col s12 l4">
                     <div class="input-field">
                         <select id="parameter-search">
@@ -27,10 +44,9 @@
                         <br>
                     </div>
                     <div class="center">
-
                         <!-- Modal Trigger -->
-                        <a href="#modalParameter" class="btn-flat teal-text waves-effect btn modal-trigger">Add
-                            Parameter
+                        <a href="#modalParameter" class="btn-flat teal-text waves-effect btn modal-trigger tooltipped" data-position="bottom" data-tooltip="Open view to create parameters belonging to the selected category">
+                            Add Parameter
                         </a>
                     </div>
                 </div>

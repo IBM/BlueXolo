@@ -362,7 +362,7 @@ class MExtract:
                     save_arg_body = False
                     flag_list = [False, " "]
         except Exception as error:
-            self.results.append("{0} {1} arguments parsing error".format(command, section))
+            # self.results.append("{0} {1} arguments parsing error".format(command, section))
             pass # TODO: improve the exception handling
             # print(" error in Parse Argument: {}".format(error))
 
