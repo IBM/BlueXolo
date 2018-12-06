@@ -53,6 +53,6 @@
   - Generar un proceso automatico de configuracion del Dockerfile para configurar usuarios.
 
 ### Dudas y preguntas.
-Fernando Quintero <quintero@mx1.ibm.com>
+Fernando Quintero <fquinteroa@gmail.com>
 
 
