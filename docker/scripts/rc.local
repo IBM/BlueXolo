@@ -1,0 +1,23 @@
+#!/bin/bash
+##################################################
+## (C) COPYRIGHT IBM Corp. 2018
+##################################################
+#  Description:  rc.local
+#
+#       Author:  Fernando Quintero (fqa), quintero@mx1.ibm.com
+#      VERSION:  1.0
+#      Created:  08/25/18 20:43
+#     Revision:  ---
+##################################################
+#
+
+if [ -d /opt/BlueXolo-src ]; then
+  export BLUEXOLO_DIR=/opt/BlueXolo-src
+else
+  export BLUEXOLO_DIR=/opt/BlueXolo
+fi
+
+/usr/local/bin/init-pg.sh
+/usr/local/bin/setup-bluexolo.sh
+/usr/local/bin/run-as.sh -u bluexolo -c "/usr/local/bin/run-server.sh"
+touch /var/lock/subsys/local
