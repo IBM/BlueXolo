@@ -4,8 +4,8 @@
 
 | Instance | Branch | Description, Instructions, Notes |
 | :---:         |     :---:      |          :---: |
-| Stable   | Production     | Accepts merges from Working and Hotfixes    |
-| Working     | Master       | Accepts merges from Features/Issues and Hotfixes      |
+| Stable   | Master     | Accepts merges from Working and Hotfixes    |
+| Working     | Stage       | Accepts merges from Features/Issues and Hotfixes      |
 | Features/Issues   | topic-*     | Always branch off HEAD of Working    |
 | Hotfix     | hotfix-*       | Always branch off Stable      |
 
