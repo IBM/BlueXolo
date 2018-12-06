@@ -28,7 +28,7 @@ Please read [How_To_Contribute.md](https://github.com/IBM/BlueXolo/blob/master/H
 
 ## How to report Issues / Enhancements
 
-If you experience any issues with BlueXolo on any Operative System, or you have a suggestion or Enhancement please [open a ticket](https://github.com/IBM/BlueXolo/issues/new/choose) in the issue tracker.
+If you experience any issues with BlueXolo on any Operating System, or you have a suggestion or Enhancement please [open a ticket](https://github.com/IBM/BlueXolo/issues/new/choose) in the issue tracker.
 
 ## Licence
 
