@@ -32,6 +32,8 @@ If you experience any issues with BlueXolo on any Operative System, or you have 
 
 ## Licence
 
+[Apache 2.0] (https://https://github.com/IBM/BlueXolo/blob/master/LICENSE)
+
 ## List of Contributors
 
 Please read the [List of Contributors](https://github.com/IBM/BlueXolo/blob/master/CONTRIBUTORS_LIST) to know the all the people that makes this projects possible.
