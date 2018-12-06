@@ -54,6 +54,6 @@
   - Generate an process to configure users in Dockerfile 
 
 ### Doubts and questions
-Fernando Quintero <quintero@mx1.ibm.com>
+Fernando Quintero <fquinteroa@gmail.com>
 
 
