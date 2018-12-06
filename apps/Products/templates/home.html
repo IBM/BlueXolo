@@ -2,162 +2,220 @@
 {% block title %}Home{% endblock %}
 {% block subtitle %}Home{% endblock %}
 {% block content %}
-    <div class="container">
+
         <div class="row">
-            <div class="center">
-                <h4 class="blue-grey-text light">Latest Tasks</h4>
+            <div class="col s1">
+                <!--Left Content-->
             </div>
-            {% if user_tasks %}
-                <div class="col s12 l6">
-                    {% for task in user_tasks %}
-                        <div class="card">
-                            <div class="card-content">
-                                {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
-                                {% if task.state == "PENDING" or task.state == "RUNNING" %}
-                                    <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
-                                        Running {{ task.name }} </h5>
-                                    <div class="progress">
-                                        <div class="indeterminate blue"></div>
-                                    </div>
-                                    <p class="blue-grey-text center">{{ task.state }}</p>
-                                    <p class="grey-text">Started: {{ task.created_at }}</p>
-
-                                    {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
-                                {% elif task.state == "SUCCESS" %}
-                                    <h5 class="app-title green-text"><i class="material-icons">done</i>
-                                        {{ task.name }}</h5>
-                                    <div class="progress">
-                                        <div class="determinate green" style="width: 100%"></div>
-                                    </div>
-                                    <p class="blue-grey-text center">EXECUTION COMPLETE</p>
-                                    <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
-                                    {% if task.category == 1 and task.task_info %}
-                                    <ul class="collapsible" data-collapsible="accordion">
-                                        <li>
-                                            <div class="collapsible-header">
-                                                <i class="material-icons">details</i>Task Detail
-                                            </div>
-                                            <div class="collapsible-body">
-                                                <ul style="font-family:monospace, monospace;font-size:.8em;height: 300px;overflow: scroll">
-                                                    {{ task.task_info|unordered_list }}
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    {% elif task.category == 2 %}
-                                        <div class="center ">
-                                            <a target="_blank" href="{{ task.task_result }}"
-                                               class="btn-flat green-text waves-effect">View Result</a>
-                                        </div>
-                                    {% endif %}
-
-
-                                    {#  - - - - - - - - - - FAILED - - - - - - - - - - #}
-                                {% elif task.state == "FAILURE" %}
-                                    <h5 class="app-title red-text"><i class="material-icons">error</i>
-                                        {{ task.name }} Completed</h5>
-                                    <div class="progress">
-                                        <div class="determinate red" style="width: 100%"></div>
-                                    </div>
-                                    <p class="blue-grey-text center">EXECUTION FAILED</p>
-                                    <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
-                                    {% if task.category == 2 and task.result %}
-                                        <div class="center ">
-                                            <a target="_blank" href="{{ task.task_result }}"
-                                               class="btn-flat red-text waves-effect">View Result</a>
-                                        </div>
-                                    {% else %}
-                                        <ul class="collapsible" data-collapsible="accordion">
-                                            <li>
-                                                <div class="collapsible-header"><i
-                                                        class="material-icons">details</i>Error Detail
-                                                </div>
-                                                <div class="collapsible-body"><span>{{ task.task_info }}</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
+            <div class="col s8">
+                    <div class="center">
+                            <h4 class="blue-grey-text light">Latest Tasks</h4>
                         </div>
-                    {% endfor %}
-                </div>
-
-                <div class="col s12 l6">
-                    {% for task in user_tasks2 %}
-                        <div class="card">
-                            <div class="card-content">
-                                {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
-                                {% if task.state == "PENDING" or task.state == "run" %}
-                                    <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
-                                        Running {{ task.name }} </h5>
-                                    <div class="progress">
-                                        <div class="indeterminate blue"></div>
-                                    </div>
-                                    <p class="blue-grey-text center">{{ task.state }}</p>
-                                    <p class="grey-text">Started: {{ task.created_at }}</p>
-
-                                    {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
-                                {% elif task.state == "SUCCESS" %}
-                                    <h5 class="app-title green-text"><i class="material-icons">done</i>
-                                        {{ task.name }}</h5>
-                                    <div class="progress">
-                                        <div class="determinate green" style="width: 100%"></div>
-                                    </div>
-                                    <p class="blue-grey-text center">EXECUTION COMPLETE</p>
-                                    <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
-                                    {% if task.category == 2 %}
-                                        <div class="center ">
-                                            <a target="_blank" href="{{ task.task_result }}"
-                                               class="btn-flat green-text waves-effect">View Result</a>
+                        <div class="center panel-footer">
+                            <button class="waves-effect waves-light btn"   style="margin-right : 5px;" onclick="window.location.reload()">
+                                Refresh
+                            </button>
+                            <a class="waves-effect waves-light btn" href="{% url "tasks" %}">
+                                All Tasks
+                            </a>
+                            
+                            <!--
+                                <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
+                                <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
+                            -->
+                    </div>
+                        {% if user_tasks %}
+                
+                        {% for task in user_tasks %}
+                        <!-- Br for each task -->
+                        <br>
+                            <div class="card">
+                                <div class="card-content">
+                                    {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
+                                    {% if task.state == "PENDING" or task.state == "RUNNING" %}
+                                        <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
+                                            Running {{ task.name }} </h5>
+                                        <div class="progress">
+                                            <div class="indeterminate blue"></div>
                                         </div>
-                                    {% endif %}
-
-
-                                    {#  - - - - - - - - - - FAILED - - - - - - - - - - #}
-                                {% elif task.state == "FAILURE" %}
-                                    <h5 class="app-title red-text"><i class="material-icons">error</i>
-                                        {{ task.name }} Completed</h5>
-                                    <div class="progress">
-                                        <div class="determinate red" style="width: 100%"></div>
-                                    </div>
-                                    <p class="blue-grey-text center">{{ task.state }}</p>
-                                    <p class="grey-text">Started: {{ task.created_at }}</p>
-                                    <p class="grey-text">Last check: {{ task.updated_at }}</p>
-                                    {% if task.category == 2 and task.result %}
-                                        <div class="center ">
-                                            <a target="_blank" href="{{ task.task_result }}"
-                                               class="btn-flat red-text waves-effect">View Result</a>
+                                        <p class="blue-grey-text center">{{ task.state }}</p>
+                                        <p class="grey-text">Started: {{ task.created_at }}</p>
+    
+                                        {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
+                                    {% elif task.state == "SUCCESS" %}
+                                        <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                            {{ task.name }}</h5>
+                                        <div class="progress">
+                                            <div class="determinate green" style="width: 100%"></div>
                                         </div>
-                                    {% else %}
-                                        <ul class="collapsible" data-collapsible="accordion">
-                                            <li>
-                                                <div class="collapsible-header"><i
-                                                        class="material-icons">details</i>Error Detail
-                                                </div>
-                                                <div class="collapsible-body"><span>{{ task.task_info }}</span>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                        <p class="blue-grey-text center">EXECUTION COMPLETE</p>
+                                        <p class="grey-text">Started: {{ task.created_at }}</p>
+                                        <p class="grey-text">Last check: {{ task.updated_at }}</p>
+                                        {% if task.category == 2 %}
+                                            <div class="center ">
+                                                <a target="_blank" href="{{ task.task_result }}"
+                                                   class="btn-flat green-text waves-effect">View Result</a>
+                                            </div>
+                                        {% endif %}
+    
+    
+                                        {#  - - - - - - - - - - FAILED - - - - - - - - - - #}
+                                    {% elif task.state == "FAILURE" %}
+                                        <h5 class="app-title red-text"><i class="material-icons">error</i>
+                                            {{ task.name }} Completed</h5>
+                                        <div class="progress">
+                                            <div class="determinate red" style="width: 100%"></div>
+                                        </div>
+                                        <p class="blue-grey-text center">EXECUTION FAILED</p>
+                                        <p class="grey-text">Started: {{ task.created_at }}</p>
+                                        <p class="grey-text">Last check: {{ task.updated_at }}</p>
+                                        {% if task.category == 2 and task.result %}
+                                            <div class="center ">
+                                                <a target="_blank" href="{{ task.task_result }}"
+                                                   class="btn-flat red-text waves-effect">View Result</a>
+                                            </div>
+                                        {% else %}
+                                            <ul class="collapsible" data-collapsible="accordion">
+                                                <li>
+                                                    <div class="collapsible-header"><i
+                                                            class="material-icons">details</i>Error Detail
+                                                    </div>
+                                                    <div class="collapsible-body"><span>{{ task.task_info }}</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
+                                </div>
                             </div>
+                        {% endfor %}
+                    
+    
+                    
+                        {% for task in user_tasks2 %}
+                        <!-- Br for each task -->
+                        <br>
+                            <div class="card">
+                                <div class="card-content">
+                                    {#  - - - - - - - - - - PENDING - - - - - - - - - - #}
+                                    {% if task.state == "PENDING" or task.state == "run" %}
+                                        <h5 class="app-title blue-text"><i class="material-icons">directions_run</i>
+                                            Running {{ task.name }} </h5>
+                                        <div class="progress">
+                                            <div class="indeterminate blue"></div>
+                                        </div>
+                                        <p class="blue-grey-text center">{{ task.state }}</p>
+                                        <p class="grey-text">Started: {{ task.created_at }}</p>
+    
+                                        {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
+                                    {% elif task.state == "SUCCESS" %}
+                                        <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                            {{ task.name }}</h5>
+                                        <div class="progress">
+                                            <div class="determinate green" style="width: 100%"></div>
+                                        </div>
+                                        <p class="blue-grey-text center">EXECUTION COMPLETE</p>
+                                        <p class="grey-text">Started: {{ task.created_at }}</p>
+                                        <p class="grey-text">Last check: {{ task.updated_at }}</p>
+                                        {% if task.category == 2 %}
+                                            <div class="center ">
+                                                <a target="_blank" href="{{ task.task_result }}"
+                                                   class="btn-flat green-text waves-effect">View Result</a>
+                                            </div>
+                                        {% endif %}
+    
+    
+                                        {#  - - - - - - - - - - FAILED - - - - - - - - - - #}
+                                    {% elif task.state == "FAILURE" %}
+                                        <h5 class="app-title red-text"><i class="material-icons">error</i>
+                                            {{ task.name }} Completed</h5>
+                                        <div class="progress">
+                                            <div class="determinate red" style="width: 100%"></div>
+                                        </div>
+                                        <p class="blue-grey-text center">{{ task.state }}</p>
+                                        <p class="grey-text">Started: {{ task.created_at }}</p>
+                                        <p class="grey-text">Last check: {{ task.updated_at }}</p>
+                                        {% if task.category == 2 and task.result %}
+                                            <div class="center ">
+                                                <a target="_blank" href="{{ task.task_result }}"
+                                                   class="btn-flat red-text waves-effect">View Result</a>
+                                            </div>
+                                        {% else %}
+                                            <ul class="collapsible" data-collapsible="accordion">
+                                                <li>
+                                                    <div class="collapsible-header"><i
+                                                            class="material-icons">details</i>Error Detail
+                                                    </div>
+                                                    <div class="collapsible-body"><span>{{ task.task_info }}</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+    
+                        <!-- Bottom Buttons-->
+                        <br>
+                        <div class="center panel-footer">
+                                <a class="waves-effect waves-light btn"   style="margin-right : 5px;" onclick="window.location.reload()">
+                                    Refresh
+                                </a>
+                                <a class="waves-effect waves-light btn" href="{% url "tasks" %}">
+                                    All Tasks
+                                </a>
+                                <!--
+                                    <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
+                                    <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
+                                -->
                         </div>
-                    {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="center section">
+                        <h5 class="blue-text light">Don't have task yet</h5>
+                    </div>
+                {% endif %}
+                <div class="col s1">
+                    <!--
+                        Space between tasks and the help panel
+                    -->
                 </div>
-
+                
+                <!--Help Content-->
+                <!--
+                <div class="col s2">
+                        <div>
+                            <div class="center">
+                                <div class=" waves-effect waves-light btn">
+                                    Help Test:
+                                </div>
+                            </div>
+                            
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
+                            
+                            <div class="center">
+                                <div class=" waves-effect waves-light btn">
+                                    Help Test:
+                                </div>
+                            </div>
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
+                            
+                            <div class="center">
+                                <div class=" waves-effect waves-light btn">
+                                    Help Test:
+                                </div>
+                            </div>
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
+                            
+                            <div class="center">
+                                <div class=" waves-effect waves-light btn">
+                                    Help Test:
+                                </div>
+                            </div>
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
+                        </div>
                 </div>
-            {% else %}
-                <div class="center section">
-                    <h5 class="blue-text light">Don't have task yet</h5>
-                </div>
-            {% endif %}
-        <div class="center panel-footer">
-            <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
-            <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
-        </div>
-    </div>
+                -->
+            </div>     
 {% endblock %}
