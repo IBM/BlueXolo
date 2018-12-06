@@ -51,7 +51,7 @@
     
 ### Todo 
 
-  - Generate an process to configure users in Dockerfile 
+  - Generate a process to configure users in Dockerfile 
 
 ### Doubts and questions
 Fernando Quintero <fquinteroa@gmail.com>
