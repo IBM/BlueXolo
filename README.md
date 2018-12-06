@@ -32,7 +32,7 @@ If you experience any issues with BlueXolo on any Operative System, or you have 
 
 ## Licence
 
-[Apache 2.0] (https://github.com/IBM/BlueXolo/blob/master/LICENSE)
+[Apache 2.0](https://github.com/IBM/BlueXolo/blob/master/LICENSE)
 
 ## List of Contributors
 
