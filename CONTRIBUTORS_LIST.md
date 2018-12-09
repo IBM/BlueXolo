@@ -40,10 +40,9 @@ adolrey@mx1.ibm.com
 
 | Name | Role | Responsabilities |
 | :---: | :---: | :---: |
-| Stable   | Master     | Accepts merges from Working and Hotfixes    |
-| Working     | Stage       | Accepts merges from Features/Issues and Hotfixes      |
-| Features/Issues   | topic-*     | Always branch off HEAD of Working    |
-| Hotfix     | hotfix-*       | Always branch off Stable      |
+| [<img src="https://avatars3.githubusercontent.com/u/39574410?s=400&v=4" width="100px;"/><br /><sub><b>Abdel Aguilar</b></sub>](https://github.com/abdelmaster)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=abdelmaster) [📖]() [👀](#review-abdelmaster "Reviewed Pull Requests") [✅]()   | [<img src="https://avatars2.githubusercontent.com/u/45430016?s=400&v=4" width="100px;"/><br /><sub><b>Jaime Alejandro</b></sub>](https://github.com/jarryfull)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=jarryfull) [📖]() [👀](#review-jarryfull "Reviewed Pull Requests") [✅]()     | Accepts merges from Working and Hotfixes    |
+
+
 |ariday@mx1.ibm.com |
 |danizar@mx1.ibm.com |
 |victorhd@mx1.ibm.com |
