@@ -14,6 +14,7 @@ The Following list contains people who have:
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
 
+| [<img src="https://avatars3.githubusercontent.com/u/39574410?s=400&v=4" width="100px;"/><br /><sub><b>Abdel Aguilar</b></sub>](https://github.com/abdelmaster)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=abdelmaster) [📖]() [👀](#review-abdelmaster "Reviewed Pull Requests") [✅]()   | [<img src="https://avatars2.githubusercontent.com/u/45430016?s=400&v=4" width="100px;"/><br /><sub><b>Jaime Alejandro</b></sub>](https://github.com/jarryfull)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=jarryfull) [📖]() [👀](#review-jarryfull "Reviewed Pull Requests") [✅]()     | Accepts merges from Working and Hotfixes    |
 | :---: | :---: | :---: |
 | [<img src="https://avatars3.githubusercontent.com/u/39574410?s=400&v=4" width="100px;"/><br /><sub><b>Abdel Aguilar</b></sub>](https://github.com/abdelmaster)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=abdelmaster) [📖]() [👀](#review-abdelmaster "Reviewed Pull Requests") [✅]()   | [<img src="https://avatars2.githubusercontent.com/u/45430016?s=400&v=4" width="100px;"/><br /><sub><b>Jaime Alejandro</b></sub>](https://github.com/jarryfull)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=jarryfull) [📖]() [👀](#review-jarryfull "Reviewed Pull Requests") [✅]()     | Accepts merges from Working and Hotfixes    |
 
