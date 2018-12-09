@@ -69,4 +69,4 @@ mamv@mx1.ibm.com
 javierbb@mx1.ibm.com
 
 
-Thanks to [(Emoji-Key)] (https://github.com/kentcdodds/all-contributors#emoji-key)
+Thanks to [(Emoji-Key)](https://github.com/kentcdodds/all-contributors#emoji-key)
