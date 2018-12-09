@@ -29,6 +29,29 @@ diegoto@mx1.ibm.com
 jaimeale@mx1.ibm.com
 adolrey@mx1.ibm.com
 
+| Name | Role | Responsabilities |
+| :---: | :---: | :---: |
+| Stable   | Master     | Accepts merges from Working and Hotfixes    |
+| Working     | Stage       | Accepts merges from Features/Issues and Hotfixes      |
+| Features/Issues   | topic-*     | Always branch off HEAD of Working    |
+| Hotfix     | hotfix-*       | Always branch off Stable      |
+|ariday@mx1.ibm.com |
+|danizar@mx1.ibm.com |
+|victorhd@mx1.ibm.com |
+|ulisesb@mx1.ibm.com |
+|oscarpr@mx1.ibm.com |
+|cachuaju@mx1.ibm.com |
+|erickfsg@mx1.ibm.com |
+|neriluis@mx1.ibm.com |
+|duardod@mx1.ibm.com |
+|edguti@mx1.ibm.com |
+|iamorel@mx1.ibm.com |
+|ismael@mx1.ibm.com |
+|quinteroa@mx1.ibm.com |
+|diegoto@mx1.ibm.com |
+|jaimeale@mx1.ibm.com |
+|adolrey@mx1.ibm.com |
+
 No-code Contribution:
 
 navarro@mx1.ibm.com
