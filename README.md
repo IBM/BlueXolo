@@ -36,4 +36,15 @@ If you experience any issues with BlueXolo on any Operating System, or you have 
 
 ## List of Contributors
 
+BlueXolo was originally created in 2016 at IBM by the Systems division in Guadalajara, Jalisco, Mexico.
+With a great contribution of Tecnologico de Monterrey.
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+
+| [<img src="https://avatars3.githubusercontent.com/u/39574410?s=400&v=4" width="100px;"/><br /><sub><b>Abdel Aguilar</b></sub>](https://github.com/abdelmaster)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=abdelmaster) [📖]() [👀](#review-abdelmaster "Reviewed Pull Requests") [✅]() | [<img src="https://avatars2.githubusercontent.com/u/45430016?s=400&v=4" width="100px;"/><br /><sub><b>Jaime Alejandro</b></sub>](https://github.com/jarryfull)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=jarryfull) [📖]() [👀](#review-jarryfull "Reviewed Pull Requests") [✅]()     | [<img src="https://avatars2.githubusercontent.com/u/12001776?s=400&v=4" width="100px;"/><br /><sub><b>Fernando Quintero</b></sub>](https://github.com/fquinteroa)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=fquinteroa) [📖]() [👀](#review-fquinteroa "Reviewed Pull Requests") [✅]() | [<img src="https://avatars1.githubusercontent.com/u/22551455?s=400&v=4" width="100px;"/><br /><sub><b>Oscar Pacheco</b></sub>](https://github.com/scar86)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=scar86) [📖]() [👀](#review-scar86 "Reviewed Pull Requests") [✅]() | [<img src="https://avatars1.githubusercontent.com/u/952272?s=400&v=4" width="100px;"/><br /><sub><b>Ulises Buendia</b></sub>](https://github.com/ulibn)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=ulibn) [📖]() [👀](#review-ulibn "Reviewed Pull Requests") [✅]() | [<img src="https://avatars2.githubusercontent.com/u/36703047?s=400&v=4" width="100px;"/><br /><sub><b>Arianne Navarro</b></sub>](https://github.com/arinavarro)<br />[💻](https://github.com/IBM/BlueXolo/commits?author=arinavarro) [📖]() [👀](#review-arinavarro "Reviewed Pull Requests") [✅]() |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 Please read the [List of Contributors](https://github.com/IBM/BlueXolo/blob/master/CONTRIBUTORS_LIST.md) to know the all the people that makes this projects possible.
