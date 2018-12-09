@@ -1,17 +1,17 @@
-[![chat][chat-badge]][chat]
-[![Build Status][build-badge]][build]
-[![version][version-badge]][package]
+<!-- [![chat][chat-badge]][chat] -->
+<!-- [![Build Status][build-badge]][build] -->
+<!-- [![version][version-badge]][package] -->
 [![MIT License][license-badge]][LICENSE]
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors)
+<!-- [![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors) -->
 [![PRs Welcome][prs-badge]][prs]
-[![Implementations][implementations-badge]][implementations]
-[![Donate][donate-badge]][donate]
+<!-- [![Implementations][implementations-badge]][implementations] -->
+<!-- [![Donate][donate-badge]][donate] -->
 [![Code of Conduct][coc-badge]][coc]
 
 [![Watch on GitHub][github-watch-badge]][github-watch]
 [![Star on GitHub][github-star-badge]][github-star]
-[![Tweet][twitter-badge]][twitter]
+<!-- [![Tweet][twitter-badge]][twitter] -->
 
 BlueXolo was originally created in 2016 at IBM by the Systems division in Guadalajara, Jalisco, Mexico.
 With a great contribution of Tecnologico de Monterrey.
