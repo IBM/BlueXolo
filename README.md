@@ -36,4 +36,4 @@ If you experience any issues with BlueXolo on any Operating System, or you have 
 
 ## List of Contributors
 
-Please read the [List of Contributors](https://github.com/IBM/BlueXolo/blob/master/CONTRIBUTORS_LIST) to know the all the people that makes this projects possible.
+Please read the [List of Contributors](https://github.com/IBM/BlueXolo/blob/master/CONTRIBUTORS_LIST.md) to know the all the people that makes this projects possible.
