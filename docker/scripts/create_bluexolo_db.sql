@@ -1,0 +1,4 @@
+CREATE DATABASE bluexolo;
+CREATE USER bluexolo WITH ENCRYPTED PASSWORD 'bluexolo';
+GRANT ALL PRIVILEGES ON DATABASE bluexolo TO bluexolo;
+
