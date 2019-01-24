@@ -1,6 +1,6 @@
-## Install instructions for RHEL/Centos 7.5
+# Install instructions for RHEL/Centos 7.5
 
-# Install Pre-req:
+## Install Pre-req:
 
 
 * Python 3.6
@@ -10,7 +10,8 @@
 * Postgresql
 * bluexolo specific requierements
 
-#Install Python 3.6
+## Install Python 3.6
+
 RHEL/Centos doesn't have python3, we will compile it from source
 
 ```
@@ -37,14 +38,14 @@ python3.6
 #You can exit python with CTRL-D
 ```
 
-#Install virtualenv
+## Install virtualenv
 Having a virtualenv for our project allow us to mess with the overall python installation/packages
 
 ```
 pip3.6 install virtualenv
 ```
 
-# Install epel repo
+## Install epel repo
 
 Epel repo allow us to install rabbitmq erlang dependencies
 
@@ -56,7 +57,7 @@ ls *.rpm
 yum install epel-release-latest-7.noarch.rpm
 ```
 
-#Install Rabbit-MQ
+## Install Rabbit-MQ
 Rabbit MQ is what is called a broker, it allow us to run async task
 
 ```
@@ -104,7 +105,7 @@ rabbitmqctl set_permissions -p bluehost bluexolo ".*" ".*" ".*"
 
 ```
 
-#Install Postgresql
+## Install Postgresql
 Postgress sql is a relational database, it is the default db to use with bluexolo
 
 ```
@@ -135,7 +136,7 @@ We will need to edit one postgressql config file to allow us to authenticate usi
 vi /var/lib/pgsql/data/pg_hba.conf
 ```
 
-And modify the lines starting with local/host to change ident to  md5 at the end of those lines
+And modify the lines starting with local/host to change ident to md5 at the end of those lines
 
 ```
 # "local" is for Unix domain socket connections only
@@ -171,7 +172,7 @@ GRANT ALL PRIVILEGES ON DATABASE yourdbname TO youruser;
 ```
 
 
-# Set up bluexolo and install specifig pre-req
+## Set up bluexolo and install specifig pre-req
 
 
 Download or clone the latest release of bluexolo
@@ -196,7 +197,7 @@ cd blue-xolo-framework/
 pip install -r requirements.txt
 ```
 
-# Set up bluexolo and run it
+## Set up bluexolo and run it
 ```
 cp secrets.json.dist secrets.json
 
@@ -225,7 +226,7 @@ nohup celery -A CTAFramework worker -l info &
 ```
 
 Run bluexolo
-This command will run bluexolo on port 8000, you can use your browser to connect to it
+This command will run bluexolo on port `8000`, you can use your browser to connect to it
 
 ```
 python manage.py runserver 0.0.0.0:8000
