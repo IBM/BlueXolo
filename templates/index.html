@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="{% static "css/main.css" %}">
     {% endcompress %}
     <!-- End Styles -->
+    <!-- End Styles -->
 </head>
 <body>
 <div class="navbar-fixed">
@@ -32,8 +33,296 @@
     </nav>
 </div>
 <!-- main content -->
-
 <main class="">
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs center">
+            <li class="tab"><a href="#login"> Login </a></li>
+            <li class="tab"><a href="#products"> Products </a></li>
+            <li class="tab"><a href="#oscommands"> OS Commands </a></li>
+            <li class="tab"><a href="#roboversion"> Robot Version </a></li>
+            <li class="tab"><a href="#libraries"> Extract Libraries </a></li>
+            <li class="tab"><a href="#phases"> Create Phase </a></li>
+            <li class="tab"><a href="#template"> Create Template </a></li>
+            </ul>
+        </div>
+
+        <div id="login" class="col s12 center-align">
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Login Request Access
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Description ...
+                    </p>
+                </div>
+                
+                <img src="{% static "img/login-1.png" %}" alt="product">
+            </div>
+        </div>
+
+        <div id="products" class="col s12 center-align">
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Display Menu
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have login go to the left corner at the top of the page and click on the menu button to display the available menus.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/product-1.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Getting the Product Commands
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                            Once you have displayed the menu look for the sources section and click on the ”Products” section.    
+                    </p>
+                </div>
+                
+                <img src="{% static "img/product-2.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                    New Product
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have accessed go to the right section at bottom of the page and look for the button with the character “+” and click on it to create a new product.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/product-3.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                    Fill The Blanks
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        The regular expression help us to identify if the product commands follows the man page rules.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/product-4.png" %}" alt="product">
+            </div>
+
+        </div>
+
+        <div id="oscommands" class="col s12 center-align"> 
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                OS Commands
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have displayed the menu look for the sources section and click on the ”Commands” section.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/oscommands-1.png" %}" alt="product">
+            </div>
+            
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Extract the OS Commands
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have accessed go to the right section at bottom of the page and look for the button with the character “+” and click on it to display the available options, then click the green button to Extract the Command form your Operative System.    
+                    </p>
+                </div>
+                
+                <img src="{% static "img/oscommands-2.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Fill the blanks
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        In order to get the commands of your Operative System fill the following fields. 
+                        <br>
+                        Once you’ve filled the blanks with your system information go to the right corner at the bottom and click on the “RUN EXTRACT” button.     
+                    </p>
+                </div>
+                
+                <img src="{% static "img/oscommands-3.png" %}" alt="product">
+            </div>
+        </div>
+
+        <div id="roboversion" class="col s12 center-align"> 
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Robot Version
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have displayed the menu look for the sources section and click on the ”Robot Framework” section.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/robotversion-1.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Specify the Version
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Insert the Robot Framework Version and click on the “CREATE” button.    
+                    </p>
+                </div>
+                
+                <img src="{% static "img/robotversion-2.png" %}" alt="product">
+            </div>
+        </div>
+
+
+        <div id="libraries" class="col s12 center-align"> 
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Extract Libraries
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have displayed the menu look for the sources section and click on the ”Libraries” section.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/libraries-1.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Add new Library
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have accessed go to the right section at bottom of the page and look for the button with the character “+” and click on it to create a new Library.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/libraries-2.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Fill the blanks
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        URL example: 
+                        <a href="http://robotframework.org/robotframework/latest/libraries/BuiltIn.html" target="_blank"> Robot Library </a>
+                        <br><br>
+                        In order to get a library fill the following fields. 
+                        <br>
+                        (You can also extract the commands from the local server)
+                    </p>
+                </div>
+                
+                <img src="{% static "img/libraries-3.png" %}" alt="product">
+            </div>
+        </div>
+    
+        <div id="phases" class="col s12 center-align">
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Create Phase
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have displayed the menu look for the sources section and click on the ”Phases” section.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/phases-1.png" %}" alt="product">
+            </div>
+            
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Add new Phase
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have accessed go to the right section at bottom of the page and look for the button with the character “+” and click on it to create a new Phase.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/phases-2.png" %}" alt="product">
+            </div>
+            
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Creating a new Phase
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        In order to create a new “Phase” assign a name after that select the product we just create previously.
+                        <br>
+                        Once you’ve filled the blanks click on the “CREATE” button.                            
+                    </p>
+                </div>
+                
+                <img src="{% static "img/phases-3.png" %}" alt="product">
+            </div>
+        </div>
+
+        <div id="template" class="col s12 center-align">
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Create Template
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have displayed the menu look for the servers section and click on the ”Templates” section.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/template-1.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Add a new Template
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        Once you have accessed go to the right section at bottom of the page and look for the button with the character “+” and click on it to create a new Template.
+                    </p>
+                </div>
+                
+                <img src="{% static "img/template-2.png" %}" alt="product">
+            </div>
+
+            <div style="color: white; width: 100%; font-size: 25px; padding: 10px;" class="blue-grey center-align">
+                Creating a new Template
+            </div>
+            <div align="center">
+                <div style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <p>
+                        In order to create a new “Template” we need to define what kind of Variable we are going to use according to the task we want to execute to select a “Category Group”
+                    </p>
+                </div>
+                
+                <img src="{% static "img/template-3.png" %}" alt="product">
+            </div>
+
+        </div>
+
+    </div>
+    <!--
     <div class="section">
         <div class="row">
             <div class="col s12 offset-l4 l4">
@@ -45,7 +334,8 @@
             </div>
         </div>
     </div>
-
+    
+    
     <div class="section">
         <div id="results"></div>
         <div id="results_container" class="row hide">
@@ -70,11 +360,12 @@
             </div>
         </div>
     </div>
+    -->
 </main>
 
 <!-- end main content -->
 <!-- Footer -->
-{% include "footer-block.html" %}
+<!-- {% include "footer-block.html" %} -->
 <!-- end Footer -->
 <!-- Scripts -->
 {% compress js %}
