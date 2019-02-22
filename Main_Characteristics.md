@@ -4,7 +4,7 @@
 - BlueXolo is compatible with UNIX OS Linux/AIX.
 - BlueXolo allows the creation of Keywords and Test Scripts Elements by a drag and drop interface in which you are able to:
 	- Connect multiple Keywords and Test Scripts 
-	- Change their properties such as the variables to be used and the values to be used for for its execution.
+	- Change their properties such as the variables to be used and the values to be used for its execution.
 - BlueXolo has 5 kinds of draggable elements:
 	- Robot Framework Libraries.
 	- External Libraries.
