@@ -17,6 +17,11 @@ else
   export BLUEXOLO_DIR=/opt/BlueXolo
 fi
 
+if [ -ne /var/lib/pgsql/data ]; then
+    mkdir -p /var/lib/pgsql/data
+    chown -R postgres: /var/lib/pgsql
+fi
+
 /usr/local/bin/init-pg.sh
 /usr/local/bin/setup-bluexolo.sh
 /usr/local/bin/run-as.sh -u bluexolo -c "/usr/local/bin/run-server.sh"
