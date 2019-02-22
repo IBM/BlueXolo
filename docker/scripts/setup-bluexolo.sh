@@ -12,15 +12,6 @@
 #
 
 if [ -e /FIRST_SETUP ]; then
-    systemctl restart postgresql
-    if [ -ne /var/lib/pgsql/BLUEXOLO ]; then
-      su -l postgres -c  "psql < /update_pg_pwd.sql"
-      sed -i -e '{s/ident/md5/g}' /var/lib/pgsql/data/pg_hba.conf
-      sed -i -e '{s/peer/md5/g}' /var/lib/pgsql/data/pg_hba.conf
-      systemctl restart postgresql
-      su -l postgres -c "PGPASSWORD=bluexolo psql < /create_bluexolo_db.sql"
-      touch /var/lib/pgsql/BLUEXOLO
-    fi
     useradd -m bluexolo
     echo "bluexolo" | passwd --stdin bluexolo
     chown -R bluexolo:bluexolo /opt/BlueXolo

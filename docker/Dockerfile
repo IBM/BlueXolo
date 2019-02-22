@@ -4,7 +4,7 @@
 #--------------------------------------------------------
 FROM centos
 MAINTAINER F. Quintero <quintero@mx1.ibm.com>
-ENV REFRESHED_AT=2018-12-04_15:30
+ENV REFRESHED_AT=2019-02-22_10:33
 ENV container docker
 
 # --------------------------------
