@@ -13,7 +13,7 @@
 <!-- [![Tweet][twitter-badge]][twitter] -->
 
 BlueXolo was originally created in 2016 at IBM by the Systems division in Guadalajara, Jalisco, Mexico.
-With a great contribution of Tecnologico de Monterrey.
+With a great contribution of Tecnológico de Monterrey.
 
 Here is the list of CONTRIBUTORS who make this project possible:
 The Following list contains people who have: 
