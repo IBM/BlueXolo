@@ -8,3 +8,4 @@ ENV REFRESHED_AT=$today"$'\n' Dockerfile
 docker rm $(docker ps -qa)
 docker rmi bluexolo
 docker build -t bluexolo .
+docker tag bluexolo:latest bluexolo/bluexolo:latest
