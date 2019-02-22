@@ -8,7 +8,7 @@ BlueXolo is a WEB framework that allows the generation of test scripts in a visu
 
 ## Getting Started
 
-BlueXolo runs under Linux/OS X/Windows, The following is required to start using BlueXolo:
+BlueXolo runs under Linux/OS X/Windows. The following is required to start using BlueXolo:
 
 - Python 3.6
 - virtualenv
@@ -37,7 +37,7 @@ If you experience any issues with BlueXolo on any Operating System, or you have 
 ## List of Contributors
 
 BlueXolo was originally created in 2016 at IBM by the Systems division in Guadalajara, Jalisco, Mexico.
-With a great contribution of Tecnologico de Monterrey.
+With a great contribution of Tecnológico de Monterrey.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
