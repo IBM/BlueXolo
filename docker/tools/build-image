@@ -1,5 +1,14 @@
 #!/bin/bash
 
+cd ..
+zip docker/sources/bluexolo_src.zip\
+ -x '/docker/*' \
+ -x '/tools/*' \
+ -x '/.git/*' \
+ -x '/.github/*' \
+ -x '/.gitignore'  \
+ -r .
+ cd -
 today=$(date +%Y-%m-%d_%H:%M)
 # ensuring that this sed script will work on
 # any sed version. (includes macosx)

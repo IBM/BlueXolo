@@ -3,8 +3,8 @@
 # CentOS Version.
 #--------------------------------------------------------
 FROM centos
-MAINTAINER F. Quintero <quintero@mx1.ibm.com>
-ENV REFRESHED_AT=2019-02-22_14:40
+MAINTAINER F. Quintero <fquinteroa@gmail.com>
+ENV REFRESHED_AT=2019-02-26_11:30
 ENV container docker
 
 # --------------------------------
@@ -62,6 +62,7 @@ RUN \
   wget \
   gcc \
   make  \
+  unzip  \
   openssl-devel \
   bzip2-devel  \
   postgresql  \
@@ -119,14 +120,14 @@ RUN \
 RUN \
   pip3.6 install virtualenv
 
-COPY sources/bluexolo_src.tgz /tmp
+COPY sources/bluexolo_src.zip /tmp
 
 RUN \
-  cd /opt &&\
-  tar -xvzf /tmp/bluexolo_src.tgz  
+  mkdir -p /opt/BlueXolo &&\
+  cd /opt/BlueXolo &&\
+  unzip /tmp/bluexolo_src.zip  
 RUN \
-  cd /opt &&\
-  cd BlueXolo &&\
+  cd /opt/BlueXolo &&\
   pip3.6 install -r requirements.txt &&\
   pip3.6 install kombu==4.1.0
 
