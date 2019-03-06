@@ -4,7 +4,7 @@
 #--------------------------------------------------------
 FROM centos
 MAINTAINER F. Quintero <fquinteroa@gmail.com>
-ENV REFRESHED_AT=2019-02-26_11:30
+ENV REFRESHED_AT=2019-02-28_20:31
 ENV container docker
 
 # --------------------------------
@@ -57,11 +57,13 @@ chmod 0755 /etc/rc.d/rc.local
 RUN \
   yum makecache && \
   yum -y install epel-release \
+  man \
   initscripts \
   openssl \
   wget \
   gcc \
   make  \
+  firewalld  \
   unzip  \
   openssl-devel \
   bzip2-devel  \
@@ -108,7 +110,8 @@ RUN \
 
 RUN \
   systemctl enable rabbitmq-server  ;\
-  systemctl enable postgresql 
+  systemctl enable postgresql; \
+  systemctl enable firewalld 
 
 # ---------------------------------------------
 # Install bluexolo sources and install pre-reqs
@@ -128,8 +131,7 @@ RUN \
   unzip /tmp/bluexolo_src.zip  
 RUN \
   cd /opt/BlueXolo &&\
-  pip3.6 install -r requirements.txt &&\
-  pip3.6 install kombu==4.1.0
+  pip3.6 install -r requirements.txt 
 
 # Set password for root 'bluexolo'
 RUN \

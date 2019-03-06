@@ -16,6 +16,7 @@ if [ -e /FIRST_SETUP ]; then
     echo "bluexolo" | passwd --stdin bluexolo
     chown -R bluexolo:bluexolo /opt/BlueXolo
     rabbitmqctl add_user bluexolo
+    rabbitmqctl add_user bluexolo Bluexolo
     rabbitmqctl add_vhost bluehost
     rabbitmqctl set_user_tags bluexolo bluetag
     rabbitmqctl set_permissions -p bluehost bluexolo ".*" ".*" ".*"
@@ -23,5 +24,18 @@ if [ -e /FIRST_SETUP ]; then
     python3 manage.py migrate
     python3 manage.py makemigrations
     python3 manage.py migrate
+#Open some tcp ports needed
+    firewall-cmd --zone=public --permanent --add-port=80/tcp
+    firewall-cmd --zone=public --permanent --add-port=8000/tcp
+    firewall-cmd --zone=public --permanent --add-port=443/tcp
+    firewall-cmd --zone=public --permanent --add-port=4369/tcp
+    firewall-cmd --zone=public --permanent --add-port=25672/tcp
+    firewall-cmd --zone=public --permanent --add-port=5671-5672/tcp
+    firewall-cmd --zone=public --permanent --add-port=15672/tcp
+    firewall-cmd --zone=public --permanent --add-port=61613-61614/tcp
+    firewall-cmd --zone=public --permanent --add-port=1883/tcp
+    firewall-cmd --zone=public --permanent --add-port=8883/tcp
+    systemctl restart firewalld    
+
     rm -f /FIRST_SETUP
 fi
