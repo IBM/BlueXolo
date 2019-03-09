@@ -15,7 +15,7 @@ today=$(date +%Y-%m-%d_%H:%M)
 sed -i '' "/REFRESHED_AT/c\\
 ENV REFRESHED_AT=$today"$'\n' Dockerfile
 docker rm $(docker ps -qa)
-docker rmi bluexolo
-docker rmi bluexolo/bluexolo
+#docker rmi bluexolo
+#docker rmi bluexolo/bluexolo
 docker build -t bluexolo .
 docker tag bluexolo:latest bluexolo/bluexolo:latest

@@ -4,7 +4,7 @@
 #--------------------------------------------------------
 FROM centos
 MAINTAINER F. Quintero <fquinteroa@gmail.com>
-ENV REFRESHED_AT=2019-02-28_20:31
+ENV REFRESHED_AT=2019-03-08_15:09
 ENV container docker
 
 # --------------------------------
@@ -150,6 +150,13 @@ rm -rf /var/cache/yum
 # ---------------------------
 RUN /install-robot.sh
 
+# --------------------------
+# Tweak logind.conf to avoid 
+# terminals
+# -------------------------
+RUN echo 'NAutoVTs=0' >> /etc/systemd/logind.conf
+RUN echo 'ReserveVT=0' >> /etc/systemd/logind.conf
+RUN rm -f /lib/systemd/system/console-getty.service
 # --------------------------
 # Set ports to be accesible
 # --------------------------
