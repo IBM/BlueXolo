@@ -104,3 +104,5 @@ localsettings.py
 
 # Local Databases
 db.sqlite3
+DONE
+secrets.json
