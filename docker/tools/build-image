@@ -1,10 +1,21 @@
 #!/bin/bash
 
+cd ..
+zip docker/sources/bluexolo_src.zip\
+ -x '/docker/*' \
+ -x '/tools/*' \
+ -x '/.git/*' \
+ -x '/.github/*' \
+ -x '/.gitignore'  \
+ -r .
+ cd -
 today=$(date +%Y-%m-%d_%H:%M)
 # ensuring that this sed script will work on
 # any sed version. (includes macosx)
 sed -i '' "/REFRESHED_AT/c\\
 ENV REFRESHED_AT=$today"$'\n' Dockerfile
 docker rm $(docker ps -qa)
-docker rmi bluexolo
+#docker rmi bluexolo
+#docker rmi bluexolo/bluexolo
 docker build -t bluexolo .
+docker tag bluexolo:latest bluexolo/bluexolo:latest

@@ -3,8 +3,8 @@
 # CentOS Version.
 #--------------------------------------------------------
 FROM centos
-MAINTAINER F. Quintero <quintero@mx1.ibm.com>
-ENV REFRESHED_AT=2019-02-22_10:33
+MAINTAINER F. Quintero <fquinteroa@gmail.com>
+ENV REFRESHED_AT=2019-03-08_15:09
 ENV container docker
 
 # --------------------------------
@@ -57,11 +57,14 @@ chmod 0755 /etc/rc.d/rc.local
 RUN \
   yum makecache && \
   yum -y install epel-release \
+  man \
   initscripts \
   openssl \
   wget \
   gcc \
   make  \
+  firewalld  \
+  unzip  \
   openssl-devel \
   bzip2-devel  \
   postgresql  \
@@ -107,7 +110,8 @@ RUN \
 
 RUN \
   systemctl enable rabbitmq-server  ;\
-  systemctl enable postgresql 
+  systemctl enable postgresql; \
+  systemctl enable firewalld 
 
 # ---------------------------------------------
 # Install bluexolo sources and install pre-reqs
@@ -119,16 +123,15 @@ RUN \
 RUN \
   pip3.6 install virtualenv
 
-COPY sources/bluexolo_src.tgz /tmp
+COPY sources/bluexolo_src.zip /tmp
 
 RUN \
-  cd /opt &&\
-  tar -xvzf /tmp/bluexolo_src.tgz  
+  mkdir -p /opt/BlueXolo &&\
+  cd /opt/BlueXolo &&\
+  unzip /tmp/bluexolo_src.zip  
 RUN \
-  cd /opt &&\
-  cd BlueXolo &&\
-  pip3.6 install -r requirements.txt &&\
-  pip3.6 install kombu==4.1.0
+  cd /opt/BlueXolo &&\
+  pip3.6 install -r requirements.txt 
 
 # Set password for root 'bluexolo'
 RUN \
@@ -147,6 +150,13 @@ rm -rf /var/cache/yum
 # ---------------------------
 RUN /install-robot.sh
 
+# --------------------------
+# Tweak logind.conf to avoid 
+# terminals
+# -------------------------
+RUN echo 'NAutoVTs=0' >> /etc/systemd/logind.conf
+RUN echo 'ReserveVT=0' >> /etc/systemd/logind.conf
+RUN rm -f /lib/systemd/system/console-getty.service
 # --------------------------
 # Set ports to be accesible
 # --------------------------
