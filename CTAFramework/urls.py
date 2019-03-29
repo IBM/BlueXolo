@@ -2,7 +2,8 @@ from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import logout, login, PasswordResetView, PasswordResetConfirmView, \
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, \
     PasswordResetDoneView, PasswordResetCompleteView
 
 from apps.Users.views import RequestAccessView
@@ -16,8 +17,8 @@ urlpatterns = [
     url(r'^testings/', include('apps.Testings.urls')),
     url(r'^users/', include('apps.Users.urls')),
     url(r'^request-access/', RequestAccessView.as_view(), name='request-access'),
-    url(r'^login/$', login, name='login'),
-    url(r'^logout/$', logout, name='logout'),
+    url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
+    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^password_reset/$', PasswordResetView.as_view(), name="reset-password"),
     url(r'^password_reset/done/$',
         PasswordResetDoneView.as_view(), name='password_reset_done'),

@@ -141,7 +141,6 @@ function getInputsExtraInput(droppedElementIndex) {
 		    inputValues.push(inputValue);
 		}
 	}
-	console.log(inputValues);
 	return inputValues;
 }
 

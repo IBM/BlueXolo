@@ -58,7 +58,7 @@ CORE_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
-    'rest_framework_docs',
+#    'rest_framework_docs',
     'django_filters',
     'compressor',
     'rolepermissions'
