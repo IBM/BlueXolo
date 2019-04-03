@@ -76,7 +76,7 @@ RUN rm -rf  /tmp/*
 # ---------------------------
 # Install robot and libraries
 # ---------------------------
-RUN /install-robot.sh
+#RUN /install-robot.sh
 
 # --------------------------
 # Tweak logind.conf to avoid 

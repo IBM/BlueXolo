@@ -15,6 +15,7 @@ PORT=8000
 CONCURRENCY=4
 CELERY_LOG=celery_$(date +'%d_%m_%Y')_log.txt
 DJANGO_LOG=django_$(date +'%d_%m_%Y')_log.txt
+POSTGRESQL_DIR=/var/lib/postgresql/10/main
 
 if [ -e /opt/BlueXolo-src/README.md ]; then
   export BLUEXOLO_DIR=/opt/BlueXolo-src
@@ -28,20 +29,22 @@ if [ ! -d "$BLUEXOLO_DIR/media/" ]; then
   mkdir "$BLUEXOLO_DIR/logs"
 fi
 
-if [ ! -e /var/lib/postgresql/10/main ]; then
-  chown -R postgres: /var/lib/postgresql
+if [ ! -e $POSTGRESQL_DIR ]; then
+  mkdir -p $POSTGRESQL_DIR
+  chown -R postgres: $POSTGRESQL_DIR
 fi
 
-if [ ! -e /var/lib/postgres/BLUEXOLO ]; then
-  su -l postgres -c "HOME=/ /usr/lib/postgresql/10/bin/initdb -D /var/lib/postgres"
+if [ ! -e $POSTGRESQL_DIR/BLUEXOLO ]; then
+  su -l postgres -c "HOME=/ /usr/lib/postgresql/10/bin/initdb -D $POSTGRESQL_DIR"
   systemctl restart postgresql
   echo "Setting up BlueXolo Data"
   su -l postgres -c  "psql < /update_pg_pwd.sql"
-  sed -i -e '{s/ident/md5/g}' /var/lib/postgresql/10/main/pg_hba.conf
-  sed -i -e '{s/peer/md5/g}' /var/lib/postgresql/10/main/pg_hba.conf
+  sed -i -e '{s/ident/md5/g}' $POSTGRESQL_DIR/main/pg_hba.conf
+  sed -i -e '{s/peer/md5/g}' $POSTGRESQL_DIR/pg_hba.conf
+  sed -i -e '{s/trust/md5/g}' $POSTGRESQL_DIR/pg_hba.conf
   systemctl restart postgresql
   su -l postgres -c "PGPASSWORD=bluexolo psql < /create_bluexolo_db.sql"
-  touch /var/lib/postgresql/BLUEXOLO
+  touch $POSTGRESQL_DIR/BLUEXOLO
 fi
 useradd -m bluexolo
 echo "bluexolo" | passwd --stdin bluexolo
