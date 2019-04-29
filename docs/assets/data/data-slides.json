@@ -1,27 +1,8 @@
 {
     "sliderArray":[
-        {"img": "./assets/images/slides-talend-land/Image_1.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_2.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_3.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_4.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_5.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_6.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_7.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_8.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_9.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_10.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_11.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_12.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_13.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_14.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_15.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_16.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_17.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_18.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_19.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_20.png", "alt": "", "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_21.png", "alt": "",  "text": ""},
-        {"img": "./assets/images/slides-talend-land/Image_22.png", "alt": "", "text": ""}
+        {"img": "./assets/images/slides-overview/image1.png", "alt": "",  "text": ""},
+        {"img": "./assets/images/slides-overview/image2.png", "alt": "", "text": ""},
+        {"img": "./assets/images/slides-overview/image3.png", "alt": "",  "text": ""},
+        {"img": "./assets/images/slides-overview/image4.png", "alt": "", "text": ""}
     ]
-  }
-  
+}
