@@ -1,2 +1,0 @@
-chcon -Rt svirt_sandbox_file_t /tmp/env
-chcon -Rt svirt_sandbox_file_t /afs/rtp/public/stgsecurity

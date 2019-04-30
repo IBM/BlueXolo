@@ -1,6 +1,0 @@
-#!/bin/bash
-
-docker rm $(docker ps -qa)
-failed=$(docker images|grep none|awk '{print $3}')
-docker rmi $failed
-docker rmi bluexolo
