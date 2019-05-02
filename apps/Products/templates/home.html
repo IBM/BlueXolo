@@ -4,8 +4,31 @@
 {% block content %}
 
         <div class="row">
-            <div class="col s1">
+            <div class="col s2">
                 <!--Left Content-->
+
+                <!-- Start the pop-up (Modal) -->
+                <script>
+                 $(document).ready(function(){
+                  $('.modal').modal();
+                })
+                </script>
+                
+
+                <!-- Modal Trigger -->
+                <div class="center-align" style="border-color: #607d8b; border-style: solid; padding: 5px;">
+                    <div>
+                        <b>First Set Up</b>
+                    </div>
+                    <div>
+                        <a class="waves-effect waves-light btn modal-trigger" href="#firstSetUp">Execute</a>
+                    </div>
+                </div>
+                
+                <!-- Modal Structure -->
+                <div id="firstSetUp" class="modal">
+                	<iframe style="width: 100%; height: 100%;" src="/sources/products/new?content_only=1"></iframe>
+                </div>
             </div>
             <div class="col s8">
                     <div class="center">
@@ -18,11 +41,6 @@
                             <a class="waves-effect waves-light btn" href="{% url "tasks" %}">
                                 All Tasks
                             </a>
-                            
-                            <!--
-                                <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
-                                <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
-                            -->
                     </div>
                         {% if user_tasks %}
                 
@@ -165,10 +183,6 @@
                                 <a class="waves-effect waves-light btn" href="{% url "tasks" %}">
                                     All Tasks
                                 </a>
-                                <!--
-                                    <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
-                                    <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
-                                -->
                         </div>
                     </div>
                 {% else %}
@@ -181,41 +195,5 @@
                         Space between tasks and the help panel
                     -->
                 </div>
-                
-                <!--Help Content-->
-                <!--
-                <div class="col s2">
-                        <div>
-                            <div class="center">
-                                <div class=" waves-effect waves-light btn">
-                                    Help Test:
-                                </div>
-                            </div>
-                            
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
-                            
-                            <div class="center">
-                                <div class=" waves-effect waves-light btn">
-                                    Help Test:
-                                </div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
-                            
-                            <div class="center">
-                                <div class=" waves-effect waves-light btn">
-                                    Help Test:
-                                </div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
-                            
-                            <div class="center">
-                                <div class=" waves-effect waves-light btn">
-                                    Help Test:
-                                </div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
-                        </div>
-                </div>
-                -->
             </div>     
 {% endblock %}
