@@ -13,6 +13,7 @@
 
         <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
         <link rel="stylesheet" href="{% static "css/main.css" %}">
+        <link rel="stylesheet" href="{% static "css/mstepper.min.css" %}">
     {% endcompress %}
     <!-- End Styles -->
     <!-- End Styles -->
@@ -35,7 +36,7 @@
 <!-- main content -->
 <main class="">
     <div class="row">
-        {% include "first-steps.html" %}
+      {% include "first-steps.html" %}
     </div>
     <!--
     <div class="section">
@@ -85,8 +86,10 @@
 <!-- Scripts -->
 {% compress js %}
     <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
-    <script src="{% static "js/materialize.min.js" %}"></script>
     <script src="{% static "js/select2.full.min.js" %}"></script>
+    <script src="{% static "js/materialize.min.js" %}"></script>
+    <script src="{% static "js/mstepper.min.js" %}"></script>
+    
 
     <script type="text/javascript">
         $('document').ready(function () {

@@ -2,11 +2,12 @@ from django.conf.urls import url
 
 from .views import HomeView, IndexView, ArgumentsView, NewArgumentView, EditArgumentView, DeleteArgumentView, \
     SourceList, CreateSourceView, DeleteSourceView, EditSourceView, CommandsView, EditCommandView, NewCommandView, \
-    DeleteCommandView, PhasesView, NewPhaseView, EditPhaseView, DeletePhaseView
+    DeleteCommandView, PhasesView, NewPhaseView, EditPhaseView, DeletePhaseView, SuccessfulView, StepperView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name="index"),
     url(r'^home/$', HomeView.as_view(), name="home"),
+    url(r'^stepper/$', StepperView.as_view(), name="stepper"),
     # Arguments CRUD
     url(r'^arguments/$', ArgumentsView.as_view(), name="arguments"),
     url(r'^arguments/(?P<cmd>\d+)/new$', NewArgumentView.as_view(), name="new-argument"),
@@ -27,4 +28,9 @@ urlpatterns = [
     url(r'^phases/new/$', NewPhaseView.as_view(), name='new-phase'),
     url(r'^phases/(?P<pk>\d+)/edit/$', EditPhaseView.as_view(), name='edit-phase'),
     url(r'^phases/(?P<pk>\d+)/delete/$', DeletePhaseView.as_view(), name='delete-phase'),
+    # Stepper
+    url(r'^successful/(?P<task>[-\w]+)/$', SuccessfulView.as_view(), name='successful'),
+    url(r'^sources/(?P<slug>[-\w]+)/(?P<stepper>[-\w]+)/new/$', CreateSourceView.as_view(), name='new-source-stepper'),
+    url(r'^commands/(?P<stepper>[-\w]+)/$', CommandsView.as_view(), name='commands-stepper'),
+    url(r'^phases/(?P<stepper>[-\w]+)/new/$', NewPhaseView.as_view(), name='new-phase-stepper'),
 ]

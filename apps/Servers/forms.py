@@ -35,7 +35,7 @@ class ParametersForm(forms.ModelForm):
         labels = {
             'category'  : mark_safe('Category Group <i style="float: right;" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Look the description for more information">help_outline</i>'),
             'name'      : mark_safe('Name <i style="float: right;" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Name to identify the parameter">help_outline</i>'),
-            'help_text' : mark_safe('Name <i style="float: right;" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Text that helps to identify the purpose of the parameter">help_outline</i>'),
+            'help_text' : mark_safe('Description <i style="float: right;" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Text that helps to identify the purpose of the parameter">help_outline</i>'),
         }
         widgets = {
             'name': forms.TextInput(attrs={'id': 'param_name'}),

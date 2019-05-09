@@ -32,4 +32,9 @@ urlpatterns = [
     url(r'^import/(?P<pk>\d+)/delete/$', DeleteImportedScriptView.as_view(), name="delete-import-script"),
     # Run scripts
     url(r'^(?P<pk>\d+)/(?P<type_script>\d+)/run$', RunScriptView.as_view(), name="run-script"),
+    # Stepper
+    url(r'^collections/(?P<stepper>[-\w]+)/new/$', NewCollectionsView.as_view(), name="new-collections-stepper"),
+    url(r'^keywords/(?P<stepper>[-\w]+)/new/$', NewKeywordView.as_view(), name="new-keywords-stepper"),
+    url(r'^testcases/(?P<stepper>[-\w]+)/new/$', NewTestCaseView.as_view(), name="new-testcase-stepper"),
+    url(r'^testsuites/(?P<stepper>[-\w]+)/new/$', NewTestSuiteView.as_view(), name="new-testsuites-stepper"),
 ]

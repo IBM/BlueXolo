@@ -3,12 +3,52 @@
 {% block subtitle %}Home{% endblock %}
 {% block content %}
 
+        <!-- Modal Structure -->
+        <!--<div id="modal1" class="modal">
+            <div class="modal-content">
+                <h4>Sources</h4>
+                <p>Configure your environment</p>
+                {% include "stepper-modal.html" %}
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+            </div>
+        </div>
+
+<div class="row">
+<div class="col s12">
+        <div class="center">
+            <h4 class="blue-grey-text light">Configure your environment</h4>
+            <nav style="background-color: #26a69a">
+                <div class="nav-wrapper">
+                <div class="col s12">
+                    <a href="#modal1" class="breadcrumb modal-trigger">First</a>
+                    <a href="#modal2" class="breadcrumb modal-trigger">Second</a>
+                    <a href="#modal3" class="breadcrumb modal-trigger">Third</a>
+                    <a href="#modal4" class="breadcrumb modal-trigger">Fourth</a>
+                </div>
+                </div>
+            </nav>
+        </div>
+        </div>
+        </div>-->
+
+
+
         <div class="row">
             <div class="col s1">
                 <!--Left Content-->
             </div>
             <div class="col s8">
                     <div class="center">
+                        <!-- Modal Trigger 
+                       <div>
+                       <h4 class="blue-grey-text light">Configure your environment</h4>
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal1">1 Sources</a>              
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal2">2 Servers</a>
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal3">3 Testing</a>
+                        <a class="waves-effect waves-light btn modal-trigger" href="#modal4">4 Run</a>
+                       </div>-->
                             <h4 class="blue-grey-text light">Latest Tasks</h4>
                         </div>
                         <div class="center panel-footer">
@@ -218,4 +258,24 @@
                 </div>
                 -->
             </div>     
+{% endblock %}
+
+{% load staticfiles %}
+{% load compress %}
+
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block extraScripts %}
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.modal').modal();
+            });
+        </script>
+    {% endcompress %}
 {% endblock %}

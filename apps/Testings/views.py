@@ -21,6 +21,11 @@ class NewKeywordView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "create-keyword.html"
     required_permission = "create_keyword"
 
+    def get_context_data(self, **kwargs):
+        context = super(NewKeywordView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class EditKeywordView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     model = Keyword
@@ -54,6 +59,11 @@ class TestCaseView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
 class NewTestCaseView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "create-testcase.html"
     required_permission = "create_test_case"
+
+    def get_context_data(self, **kwargs):
+        context = super(NewTestCaseView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class EditTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
@@ -89,6 +99,11 @@ class TestSuiteView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
 class NewTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "create-testsuites.html"
     required_permission = "create_test_suite"
+
+    def get_context_data(self, **kwargs):
+        context = super(NewTestSuiteView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class EditTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
@@ -131,13 +146,24 @@ class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         form.instance.user = self.request.user
         return super(NewCollectionsView, self).form_valid(form)
 
+    #def get_success_url(self):
+    #    messages.success(self.request, "Collection Created")
+    #    return reverse_lazy('collections')
+
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
         messages.success(self.request, "Collection Created")
-        return reverse_lazy('collections')
+        if stepper != 'stepper':
+            return reverse_lazy('collections')
+        else:
+            return reverse_lazy('successful', kwargs={'task': 'Collections'})
+            #return reverse_lazy('new-source-stepper', kwargs={'slug': self.kwargs.get('slug'), 'stepper': 'stepper'})
+
 
     def get_context_data(self, **kwargs):
         context = super(NewCollectionsView, self).get_context_data(**kwargs)
         context['title'] = "New Collection"
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 

@@ -36,6 +36,7 @@ class NewServerTemplate(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(NewServerTemplate, self).get_context_data(**kwargs)
         context['ParametersForm'] = ParametersForm
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -89,6 +90,11 @@ class NewServerProfileView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     form_class = ServerProfileForm
     required_permission = 'create_server_profile'
 
+    def get_context_data(self, **kwargs):
+        context = super(NewServerProfileView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     template_name = "edit-server-profile.html"
@@ -141,13 +147,23 @@ class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         form.instance.user = self.request.user
         return super(NewParametersView, self).form_valid(form)
 
+    #def get_success_url(self):
+    #    messages.success(self.request, "Parameter Created")
+    #    return reverse_lazy('parameters')
+
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
         messages.success(self.request, "Parameter Created")
-        return reverse_lazy('parameters')
+        if stepper != 'stepper':
+            return reverse_lazy('parameters')
+        else:
+            return reverse_lazy('successful', kwargs={'task': 'Parameters'})
+            #return reverse_lazy('new-source-stepper', kwargs={'slug': self.kwargs.get('slug'), 'stepper': 'stepper'})
 
     def get_context_data(self, **kwargs):
         context = super(NewParametersView, self).get_context_data(**kwargs)
         context['title'] = 'Create Parameter'
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
