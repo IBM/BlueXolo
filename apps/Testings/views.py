@@ -148,6 +148,10 @@ class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         self.pk = source.pk
         return super(NewCollectionsView, self).form_valid(form)
 
+    #def get_success_url(self):
+    #    messages.success(self.request, "Collection Created")
+    #    return reverse_lazy('collections')
+
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk

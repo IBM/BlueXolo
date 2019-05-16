@@ -431,6 +431,10 @@ class NewPhaseView(LoginRequiredMixin, CreateView):
         self.pk = source.pk
         return super(NewPhaseView, self).form_valid(form)
 
+    #def get_success_url(self):
+    #    messages.success(self.request, "Phase Created")
+    #    return reverse_lazy('phases')
+    
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk

@@ -155,6 +155,10 @@ class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         self.pk = source.pk
         return super(NewParametersView, self).form_valid(form)
 
+    #def get_success_url(self):
+    #    messages.success(self.request, "Parameter Created")
+    #    return reverse_lazy('parameters')
+
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
