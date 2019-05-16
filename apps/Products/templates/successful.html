@@ -1,10 +1,10 @@
 {% block content %}
-<div class="row">
+<div id="text" class="row">
     <div class="col s1">
     </div>
-    <div class="col s8">
-        <div id="hi" class="center">
-            <h4 class="blue-grey-text light">Congratulations!.</h4>
+    <div class="col s10">
+        <div class="center"><br/><br/>
+            <h4 class="blue-grey-text light">Congratulations!</h4>
             <p>
                 You have completed this step.
                 Please continue in the next step.
@@ -34,6 +34,17 @@
         <script type="text/javascript" src="{% static "js/main.js" %}"></script>
         <script type="text/javascript">
 
+        $(document).ready(function(){
+            var stepElement = '{{step}}';
+            if(stepElement == 'products' || stepElement == 'robot' || stepElement == 'libraries' || stepElement == 'phases'){
+                $(window.parent.document).find("#stepper1").height(300);
+            } else if(stepElement == 'templates' || stepElement == 'profiles' || stepElement == 'parameters') {
+                $(window.parent.document).find("#stepper2").height(300);
+            } else if(stepElement == 'collections') {
+                $(window.parent.document).find("#stepper3").height(300);
+            }
+        });
+
         var step = '{{step}}';
         var pk = '{{pk}}';
         var stepObject = {};
@@ -43,19 +54,29 @@
         stepObject['pk'] = pk;
         
         if( (step != null && pk != null) && (step != 'None' && pk != 'None') && (step != "" && pk != "") ) {
-            stepsArray = $(window.parent.document).find("#stepsArray").val();
+            //stepsArray = $(window.parent.document).find("#stepsArray").val();
+            stepsArray = localStorage.getItem("stepsArray");
             if(stepsArray != "" && stepsArray != null) {
                 stepsArray = JSON.parse(stepsArray);
-                stepsArray.push(stepObject);
-                $(window.parent.document).find("#stepsArray").val(JSON.stringify(stepsArray));
+
+                var result = stepsArray.find(obj => {
+                    return obj.step == step
+                });
+                
+                if(result == undefined) {
+                    stepsArray.push(stepObject);
+                    //$(window.parent.document).find("#stepsArray").val(JSON.stringify(stepsArray));
+                    localStorage.setItem("stepsArray", JSON.stringify(stepsArray));
+                }
+                
             } else {
                 var stepsArrayClear = [];
                 stepsArrayClear.push(stepObject);
-                $(window.parent.document).find("#stepsArray").val(JSON.stringify(stepsArrayClear));
+                //$(window.parent.document).find("#stepsArray").val(JSON.stringify(stepsArrayClear));
+                localStorage.setItem("stepsArray", JSON.stringify(stepsArrayClear));
             }
         }
         
- 
         </script>
     {% endcompress %}
 {% endblock %}
