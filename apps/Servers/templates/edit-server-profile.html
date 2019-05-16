@@ -47,13 +47,14 @@
             </div>
         </div>
     </div>
-
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "servers-profiles" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Profile List">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block extraScripts %}
@@ -171,6 +172,7 @@
             var _params = [];
             var _cont;
             var _inputs = document.getElementsByClassName('param_val');
+            var stepper = '{{stepper}}';
 
             for (_cont = 0; _cont < _inputs.length; _cont++) {
                 var _current = _inputs[_cont];
@@ -200,7 +202,13 @@
                 type: "PUT",
                 data: _values,
                 success: function (data) {
-                    window.location.replace("{% url "servers-profiles" %}");
+                    var id = data.id;
+                    if(stepper != 'stepper'){
+                        window.location.replace("{% url "servers-profiles" %}");
+                    } else {
+                        window.location.href = generate_url(id);
+                    }
+
                 }, error: function (err) {
                     console.log(err)
                     if (err.responseJSON.name) {
@@ -210,6 +218,10 @@
                     }
                 }
             });
+        }
+
+        function generate_url(id) {
+            return "{% url 'successful' step='profiles' pk=0 %}".replace("0", id);
         }
     </script>
 {% endblock %}

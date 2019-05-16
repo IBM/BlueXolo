@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="fixed-action-btn">
-            <a class="btn-floating btn-large blue-grey">
+            <a id="menu" class="btn-floating btn-large blue-grey">
                 <i class="large material-icons">add</i>
             </a>
             <ul>
@@ -92,6 +92,13 @@
                     </button>
                 </li>
             </ul>
+        </div>
+        <!-- Tap Target Structure -->
+        <div class="tap-target teal lighten-3" data-activates="menu" style="color: #fff">
+            <div class="tap-target-content">
+            <h5>Click Here</h5>
+            <p>After Click on Extract from Operation System button</p>
+            </div>
         </div>
     </div>
 
@@ -155,6 +162,15 @@
     {% compress js %}
         <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
         <script type="text/javascript">
+
+            $(document).ready(function(){
+                var stepper = "{{ stepper }}";
+                if (stepper == 'stepper') {
+                    $('.tap-target').tapTarget('open');
+                    
+                    //$('.fixed-action-btn').css({'padding-bottom':'2.5rem'});
+                }
+            });
 
             function modal_extract() {
                 $('#modalExtract').modal('open');

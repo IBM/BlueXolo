@@ -1,0 +1,232 @@
+<div class="col-md-12 mt-5">
+<ul class="stepper horizontal" id="horizontal">
+  <li class="step active">
+      <div data-step-label="Product" class="step-title waves-effect waves-dark">Step 1</div>
+      <div class="step-content">
+          <div class="row">
+              <div class="">
+                <br/><h4>Getting the Products Commands</h4><br/>
+                  <iframe id="encoder_iframe" height="auto" width="100%" src="{% url 'new-source' slug='products' %}">
+                  </iframe>
+              </div>
+          </div>
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+          </div>
+      </div>
+  </li>
+  <li class="step">
+      <div data-step-label="Commands" class="step-title waves-effect waves-dark">Step 2</div>
+      <div class="step-content">
+          <div class="row">
+              <div class="">
+                      <div>
+                          <div>
+                              <br/><h4>Extract the OS Commands</h4>
+                              <form>
+                                  {% csrf_token %}
+                                  <div class="row">
+                                      <div class="input-field col s12 l6">
+                                          <input id="host" type="text" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+                                                placeholder="like 123.123.123.123" onblur="checkValues()" class="tooltipped" data-position="bottom" data-tooltip="System from which the information will be extracted. It must be a computer with an operating system based on UNIX.">
+                                          <label for="host">Host</label>
+                                      </div>
+                                      <div class="input-field col s12 l6">
+                                          <input id="port" type="number" class="tooltipped" data-position="bottom" data-tooltip="System Connection port from which the information will be extracted">
+                                          <label for="port">Port</label>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="input-field col s12 l6">
+                                          <input id="username" type="text" onblur="checkValues()" class="tooltipped" data-position="bottom" data-tooltip="User that can access to the remote computer">
+                                          <label for="username">User</label>
+                                      </div>
+                                      <div class="input-field col s12 l6">
+                                          <input id="password" type="password" onblur="checkValues()" class="tooltipped" data-position="bottom" data-tooltip="Password of the user that can access to the remote computer">
+                                          <label for="password">Password</label>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <p class="center">
+                                          <input type="checkbox" id="local"/>
+                                          <label for="local">Get commands from local server <b><i style="margin-left: 10px" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="In case you require commands from the local operating system">help_outline</i></b></label>
+                                      </p>
+                                  </div>
+                              </form>
+
+                          </div>
+                          <div>
+                              <button type="button" class="modal-action  waves-effect waves-green btn green" id="btn_run_extract"
+                                      disabled="true" onclick="run_extract()">Run
+                                  Extract
+                              </button>
+                          </div>
+                      </div>
+                
+
+
+
+
+              </div>
+          </div>
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>
+      </div>
+  </li>
+    <li class="step">
+      <div data-step-label="Robot" class="step-title waves-effect waves-dark">Step 3</div>
+      <div class="step-content">
+          <div class="row">
+              <div class="input-field col s12">
+                <br/><h4>Specifying our Robot Framework Version</h4><br/>
+                  <iframe id="encoder_iframe" height="auto" width="100%" src="{% url 'new-source' slug='robot' %}">
+                  </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>
+      </div>
+  </li>
+      <li class="step">
+      <div data-step-label="Libraries" class="step-title waves-effect waves-dark">Step 4</div>
+      <div class="step-content">
+          <div class="row">
+              <div class="input-field col s12">
+                <br/><h4>Extracting the libraries needed from Robot</h4><br/>
+                  <iframe id="encoder_iframe" height="auto" width="100%" src="{% url 'new-source' slug='libraries' %}">
+                  </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>
+      </div>
+  </li>
+  <li class="step">
+      <div data-step-label="Phase" class="step-title waves-effect waves-dark">Step 5</div>
+      <div class="step-content">
+          <div class="row">
+            <div class="input-field col s12">
+              <br/><h4>Creating a Phase for a new Project</h4><br/>
+                <iframe id="encoder_iframe" height="auto" width="100%" src="{% url 'new-phase' %}">
+                </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn" onclick="closeModal">Finish</button>
+          </div>
+      </div>
+  </li>
+</ul>
+
+</div>
+
+
+
+
+
+{% load staticfiles %}
+{% load compress %}
+
+{% block extraStyles %}
+        
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/main.css" %}">
+        <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+        <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/mstepper.min.css" %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block extraScripts %}
+            
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/materialize.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/mstepper.min.js" %}"></script>
+        <script type="text/javascript">
+
+ 
+
+        var stepperDiv = document.querySelector('.stepper');
+        var stepper = new MStepper(stepperDiv);
+
+
+
+        function closeModal() {
+            
+        }
+
+        $('#local').change(function () {
+                if ($("#local:checked").val()) {
+                    $('#host').val(null);
+                    $('#host').attr('disabled', true);
+                    $('#port').attr('disabled', true);
+                    $('#username').attr('disabled', true);
+                    $('#password').attr('disabled', true);
+                } else {
+                    $('#host').attr('disabled', false);
+                    $('#port').attr('disabled', false);
+                    $('#username').attr('disabled', false);
+                    $('#password').attr('disabled', false);
+                }
+                checkValues();
+            });
+
+            function checkValues() {
+                if ($('#host').val() && $('#username').val() && $('#password').val() || $("#local:checked").val()) {
+                    $('#btn_run_extract').attr('disabled', false);
+                } else {
+                    $('#btn_run_extract').attr('disabled', true);
+                }
+            }
+
+            function run_extract() {
+                var _data = {
+                    'category': 2,
+                    'host': document.getElementById('host').value,
+                    'port': document.getElementById('port').value || 22,
+                    'username': document.getElementById('username').value,
+                    'password': document.getElementById('password').value
+                };
+                $.ajax({
+                    url: '{% url "run_extract" %}',
+                    type: 'POST',
+                    data: _data,
+                    success: function (data) {
+                        $('#modalExtract').modal('close');
+                        {#                    alert("Extract Finished");#}
+                        document.location.reload();
+                    }, error: function (err) {
+                        console.log(err)
+                    }
+                });
+            }
+
+
+
+        </script>
+    {% endcompress %}
+{% endblock %}

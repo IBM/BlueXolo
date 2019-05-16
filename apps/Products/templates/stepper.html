@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+{% block title %}First Steps{% endblock %}{% block subtitle %}First Steps{% endblock %}
+{% block content %}
+<input id="stepsArray" type="hidden">
+<div id="loader_stepper" class="loader"></div>
+<div id="div_loader" style="display:none;" class="animate-bottom">
+<div class="row">
+<div class="col s12">
+        <div class="center">
+            <h4 class="blue-grey-text light">Configure your environment</h4>
+            <nav style="background-color: #26a69a">
+                <div class="nav-wrapper">
+                <div class="col s12">
+                    <a id="link1" onclick="selectChapter('1')" class="breadcrumb modal-trigger link">Sources</a>
+                    <a id="link2" onclick="selectChapter('2')" class="breadcrumb modal-trigger link">Servers</a>
+                    <a id="link3" onclick="selectChapter('3')" class="breadcrumb modal-trigger link">Testing</a>
+                    <a id="link4" onclick="selectChapter('4')" class="breadcrumb modal-trigger link">Run</a>
+                </div>
+                </div>
+            </nav>
+        </div>
+        </div>
+        </div>
+
+
+<div id="chapter1" class="col-md-12 mt-5 chapter">
+<ul class="stepper horizontal" id="stepper1" style="height:1450px;">
+  <li class="step active">
+      <div data-step-label="Product" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_product', true, '1', 'products', 'sources')">Step 1</div>
+      <div class="step-content" style="overflow:hidden"> 
+          <div class="row">
+              <div>
+                <br/><h4>Getting the Products Commands</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-source' slug='robot' %}">
+                  </iframe>-->
+                  <iframe onload="showContent('loader_stepper', 'div_loader')" id="iframe_product" frameborder="0" height="1300px" width="100%" src="{% url 'new-source-stepper' slug='products' stepper='stepper'  %}?content_only=1">
+                  </iframe>
+                
+              </div>
+          </div><!--
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+          </div>-->
+      </div>
+  </li>
+  <li class="step">
+      <div data-step-label="Commands" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_commands', false, '1', 'commands', 'null')">Step 2</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="">
+                <h4>Extract the OS Commands</h4>
+                <!--<p>Click on the '+' button and click on the Extract from Operation System button</p>-->
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'commands' %}">
+                  </iframe>-->
+                  <iframe id="iframe_commands" frameborder="0" height="600px" width="100%" src="{% url 'commands-stepper' stepper='stepper'  %}?content_only=1">
+                  </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+    <li class="step">
+      <div data-step-label="Robot" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_robot', true, '1', 'robot', 'sources')">Step 3</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="input-field col s12">
+                <br/><h4>Specifying our Robot Framework Version</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-source' slug='robot' %}">
+                  </iframe>-->
+                  <iframe id="iframe_robot" frameborder="0" height="650px" width="100%" src="{% url 'new-source-stepper' slug='robot' stepper='stepper'  %}?content_only=1">
+                  </iframe>
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+      <li class="step">
+      <div data-step-label="Libraries" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_libraries', true, '1', 'libraries', 'sources')">Step 4</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="input-field col s12">
+                <br/><h4>Extracting the libraries needed from Robot</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-source' slug='libraries' %}">
+                  </iframe>-->
+                  <iframe id="iframe_libraries" frameborder="0" height="800px" width="100%" src="{% url 'new-source-stepper' slug='libraries' stepper='stepper'  %}?content_only=1">
+                  </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+  <li class="step">
+      <div data-step-label="Phase" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_phase', true, '1', 'phases', 'phases')">Step 5</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+            <div class="input-field col s12">
+              <br/><h4>Creating a Phase for a new Project</h4>
+                <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-phase' %}">
+                </iframe>-->
+                <iframe id="iframe_phase" frameborder="0" height="550px" width="100%" src="{% url 'new-phase-stepper' stepper='stepper'  %}?content_only=1">
+                </iframe>
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn" onclick="closeModal">Finish</button>
+          </div>-->
+      </div>
+  </li>
+</ul>
+
+</div>
+
+<div id="chapter2" class="col-md-12 mt-5 chapter">
+<ul class="stepper horizontal" id="stepper2" style="height:950px;">
+  <li class="step active">
+      <div data-step-label="Templates" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_template', true, '2', 'templates', 'servers/templates')">Step 1</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="">
+              <div class="">
+                <br/><h4>Creating a Template for a new Project</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1350px" width="100%" src="{% url 'new-server-template' %}">
+                  </iframe>-->
+                <iframe id="iframe_template" frameborder="0" height="800px" width="100%" src="{% url 'new-server-template-stepper' stepper='stepper'  %}?content_only=1">
+                </iframe>
+
+
+
+
+              </div>
+          </div><!--
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+          </div>-->
+      </div>
+  </li>
+  <li class="step">
+      <div data-step-label="Profiles" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_profile', true, '2', 'profiles', 'servers/profiles')">Step 2</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="">
+                <br/><h4>Creating a Profile for a new Project</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-server-profile' %}">
+                  </iframe>-->
+                <iframe id="iframe_profile" frameborder="0" height="750px" width="100%" src="{% url 'new-server-profile-stepper' stepper='stepper'  %}?content_only=1">
+                </iframe>
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+    <li class="step">
+      <div data-step-label="Parameters" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_parameter', true, '2', 'parameters', 'servers/parameters')">Step 3</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="input-field col s12">
+                <br/><h4>Creating Parameters for a new Project</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-parameters' %}">
+                  </iframe>-->
+                <iframe id="iframe_parameter" frameborder="0" height="700px" width="100%" src="{% url 'new-parameters-stepper' stepper='stepper'  %}?content_only=1">
+                </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+</ul>
+</div>
+
+<div id="chapter3" class="col-md-12 mt-5 chapter">
+<ul class="stepper horizontal" id="stepper3" style="height:750px">
+  <li class="step active">
+      <div data-step-label="Collection" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_collection', true, '3', 'collections', 'testings/collections')">Step 1</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="">
+              <div class="">
+                <br/><h4>Create a new Collection</h4><br/>
+                  <!--<iframe id="encoder_iframe" height="1350px" width="100%" src="{% url 'new-collections' %}">
+                  </iframe>-->
+                    <iframe id="iframe_collection" frameborder="0" height="600px" width="100%" src="{% url 'new-collections-stepper' stepper='stepper'  %}?content_only=1">
+                    </iframe>
+
+
+
+
+              </div>
+          </div><!--
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+          </div>-->
+      </div>
+  </li>
+  <li class="step">
+      <div data-step-label="Keywords" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_keyword', true, '3', 'keywords')">Step 2</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="">
+                <h4>Create a new Keyword</h4>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-keywords' %}">
+                  </iframe>-->
+                    <iframe id="iframe_keyword" frameborder="0" height="950px" width="100%" src="{% url 'new-keywords-stepper' stepper='stepper'  %}?content_only=1">
+                    </iframe>
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+    <li class="step">
+      <div data-step-label="Test Cases" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_testcases', true, '3', 'testcases')">Step 3</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="input-field col s12">
+                <h4 style="margin-top:-.5rem;">Create a new Test Cases</h4>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-testcase' %}">
+                  </iframe>-->
+                    <iframe id="iframe_testcases" frameborder="0" height="950px" width="100%" src="{% url 'new-testcase-stepper' stepper='stepper'  %}?content_only=1">
+                    </iframe>
+                
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+      <li class="step">
+      <div data-step-label="Test Suites" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_testsuite', true, '3', 'testsuites')">Step 4</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="row">
+              <div class="input-field col s12">
+                <h4 style="margin-top:-.5rem;">Create a new Test Suite</h4>
+                  <!--<iframe id="encoder_iframe" height="1300px" width="100%" src="{% url 'new-testsuites' %}">
+                  </iframe>-->
+                    <iframe id="iframe_testsuite" frameborder="0" height="950px" width="100%" src="{% url 'new-testsuites-stepper' stepper='stepper'  %}?content_only=1">
+                    </iframe>
+                  
+                
+
+
+
+
+              </div>
+          </div>
+          <!--<div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
+          </div>-->
+      </div>
+  </li>
+</ul>
+</div>
+
+<div id="chapter4" class="col-md-12 mt-5 chapter">
+<ul class="stepper horizontal" id="stepper4" style="height:1600px">
+  <li class="step active">
+      <div data-step-label="Home Page" class="step-title waves-effect waves-dark" onclick="refreshIframe('iframe_home')">Step 1</div>
+      <div class="step-content" style="overflow:hidden;">
+          <div class="">
+              <div class="">
+                <h4>Here you'll find the results</h4>
+                  <iframe id="iframe_home" scrolling="no" frameborder="0" height="1450px" width="100%" src="{% url 'home' %}?content_only=1">
+                  </iframe>
+              </div>
+          </div><!--
+          <div class="step-actions">
+              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
+          </div>-->
+      </div>
+  </li>
+</ul>
+</div>
+</div>
+{% endblock %}
+
+
+
+
+{% load staticfiles %}
+{% load compress %}
+
+{% block extraStyles %}
+        
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/main.css" %}">
+        <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+        <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/mstepper.min.css" %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block extraScripts %}
+            
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/materialize.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/mstepper.min.js" %}"></script>
+        <script type="text/javascript">
+
+        var xLink = document.getElementById('link1');
+        xLink.style.color = "#546e7a";
+
+        var elements = document.getElementsByClassName('chapter');
+        for (var i = 1; i < elements.length; i++) {
+            elements[i].style.display = 'none';
+        }
+
+        for (var j = 1; j < 5; j++) {
+            var stepperDiv = document.querySelector('#stepper'+j);
+            var stepper = new MStepper(stepperDiv);
+        }           
+
+        function selectChapter(chapterId) {
+
+            var elements = document.getElementsByClassName('chapter');
+
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = 'none';
+            }
+
+            var elements = document.getElementsByClassName('link');
+
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.color = '#fff';
+            }
+
+            var xChapter = document.getElementById('chapter'+chapterId);
+            xChapter.style.display = "block";
+
+            var xLink = document.getElementById('link'+chapterId);
+            xLink.style.color = "#546e7a";
+
+            /*if(chapterId==='4'){
+                refreshIframe('iframe_home');
+            }*/
+
+            switch(chapterId) {
+                case '1':
+                    changeIframe('iframe_product', true, '1', 'products', 'sources');
+                    break;
+                case '2':
+                    changeIframe('iframe_template', true, '2', 'templates', 'servers/templates');
+                    break;
+                case '3':
+                    changeIframe('iframe_collection', true, '3', 'collections', 'testings/collections');
+                    break;
+                case '4':
+                    refreshIframe('iframe_home');
+                    break;
+            }
+
+            
+        }
+
+        function refreshIframe(iframe) {
+            var iframe = document.getElementById(iframe);
+            iframe.src = iframe.src;
+        }
+
+        function changeIframe(iframe, refresh, idStepper, step, location) {
+
+            var iframe = document.getElementById(iframe);
+            /*if(refresh) {
+                iframe.src = iframe.src;
+            }*/
+
+            var stepper = document.getElementById('stepper' + idStepper);
+            var heightIframe = iframe.clientHeight;
+
+            var numberPx = heightIframe + 150; 
+
+            stepper.style.height = numberPx + 'px';
+
+
+            //
+            if(refresh) {
+                var stepsArray = $("#stepsArray").val();
+                if(stepsArray != "" && stepsArray != null) {
+                    stepsArray = JSON.parse(stepsArray);
+                    var result = stepsArray.find(obj => {
+                        return obj.step == step
+                    })
+                    
+                    if(result != undefined) {
+                        var pk = result.pk;
+                        iframe.src = generate_url(location, pk);
+                    } else {
+                        iframe.src = iframe.src;
+                    }
+                    
+                }
+            }
+        }
+
+        function showContent(loader_element, div_element) {
+            document.getElementById(loader_element).style.display = "none";
+            document.getElementById(div_element).style.display = "block";       
+        }
+
+        function generate_url(location, pk) {
+            var stringUrl = "{% url 'edit-source-stepper' pk='0' stepper='stepper' %}?content_only=1".replace("sources", location).replace("0", pk);
+            return stringUrl;
+        }
+
+        </script>
+    {% endcompress %}
+{% endblock %}

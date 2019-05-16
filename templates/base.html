@@ -11,14 +11,17 @@
         <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
         <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
         <link rel="stylesheet" href="{% static "css/main.css" %}">
+        <link rel="stylesheet" href="{% static "css/mstepper.min.css" %}">
         {% block extraStyles %}{% endblock extraStyles %}
     {% endcompress %}
     <!-- End Styles -->
     <!-- Scripts -->
     {% compress js %}
         <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <script src="{% static "js/select2.full.min.js" %}"></script>
         <script src="{% static "js/materialize.min.js" %}"></script>
         <script src="{% static "js/main.js" %}"></script>
+        <script src="{% static "js/mstepper.min.js" %}"></script>
     {% endcompress %}
 
 </head>

@@ -36,6 +36,7 @@ class NewServerTemplate(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(NewServerTemplate, self).get_context_data(**kwargs)
         context['ParametersForm'] = ParametersForm
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -57,6 +58,7 @@ class EditServerTemplate(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(EditServerTemplate, self).get_context_data(**kwargs)
         context['ParametersForm'] = ParametersForm
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -89,6 +91,11 @@ class NewServerProfileView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     form_class = ServerProfileForm
     required_permission = 'create_server_profile'
 
+    def get_context_data(self, **kwargs):
+        context = super(NewServerProfileView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     template_name = "edit-server-profile.html"
@@ -105,6 +112,11 @@ class EditServerProfileView(LoginRequiredMixin, HasPermissionsMixin, UpdateView)
         elif obj.user != request.user:
             messages.warning(request, "You don't have permission for this action")
             return redirect('servers-profiles')
+    
+    def get_context_data(self, **kwargs):
+        context = super(EditServerProfileView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class DeleteServerProfile(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -139,15 +151,23 @@ class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        source = form.save()
+        self.pk = source.pk
         return super(NewParametersView, self).form_valid(form)
 
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
         messages.success(self.request, "Parameter Created")
-        return reverse_lazy('parameters')
+        if stepper != 'stepper':
+            return reverse_lazy('parameters')
+        else:
+            return reverse_lazy('successful', kwargs={'step': 'parameters', 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
         context = super(NewParametersView, self).get_context_data(**kwargs)
         context['title'] = 'Create Parameter'
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -158,13 +178,25 @@ class EditParametersView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     model = Parameters
     required_permission = 'update_server_parameter'
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        source = form.save()
+        self.pk = source.pk
+        return super(EditParametersView, self).form_valid(form)
+
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
         messages.success(self.request, "Parameter Edited")
-        return reverse_lazy('parameters')
+        if stepper != 'stepper':
+            return reverse_lazy('parameters')
+        else:
+            return reverse_lazy('successful', kwargs={'step': 'parameters', 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
         context = super(EditParametersView, self).get_context_data(**kwargs)
         context['title'] = 'Edit Parameter'
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 

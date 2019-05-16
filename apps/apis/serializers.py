@@ -99,7 +99,8 @@ class ParametersSerializer(serializers.ModelSerializer):
 
 class TemplateServerSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
-    parameters = ParametersSerializer(many=True)
+    parameters = ParametersSerializer(read_only=True, many=True)
+
 
     class Meta:
         model = TemplateServer

@@ -305,13 +305,14 @@
             <i class="material-icons">save</i></button>
     </div>
 
-
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "testcases" %}" id="btn_back"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Test Cases List">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 
 {% endblock %}
 {% block extraScripts %}
