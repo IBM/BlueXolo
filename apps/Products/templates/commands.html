@@ -82,9 +82,11 @@
                 <i class="large material-icons">add</i>
             </a>
             <ul>
+                {% if stepper != 'stepper' %}
                 <li><a class="btn-floating blue tooltipped" data-position="left" data-delay="50"
                        data-tooltip="Manual" href="{% url "new-command" %}">
                     <i class="material-icons">create</i></a></li>
+                {% endif %}
                 <li>
                     <button class="btn-floating green tooltipped" data-position="left" data-delay="50"
                             data-tooltip="Extract from Operation System (M-Extract)" onclick="modal_extract()">
