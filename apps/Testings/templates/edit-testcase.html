@@ -129,6 +129,7 @@
                 var testcaseScript = document.getElementById("terminal").value;
                 var testcaseFunctions = $('#testecase_functions').material_chip('data');
                 var testcasePhase = document.getElementById("phases_list").value;
+                var stepper = '{{stepper}}';
 
                 var usedElements = {
                     extra: usedExtras,
@@ -151,11 +152,17 @@
                     type: 'PUT',
                     data: newTestcase,
                     success: function (data) {
-                        drawMessage("TestCase Updated", "green");
-                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
-                            '<a href="/testings/'+data.id+'/2/run" class="btn-flat white-text toast-action">Go</a>'));
-                        Materialize.toast($toastContent, 12000, 'blue');
-                        new_testcase = data;
+                        var id = data.id;
+                        if(stepper != 'stepper'){
+                            drawMessage("TestCase Updated", "green");
+                            var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                                '<a href="/testings/'+data.id+'/2/run" class="btn-flat white-text toast-action">Go</a>'));
+                            Materialize.toast($toastContent, 12000, 'blue');
+                            new_testcase = data;
+                        } else {
+                            window.location.href = generate_url(id);
+                            new_testcase = data;
+                        }
                     },
                     error: function (err) {
                         console.log(err);
@@ -178,6 +185,10 @@
                 {##}
                 {#            document.body.removeChild(lightsOff);#}
                 {#            floatingDiv.style.visibility = 'hidden';#}
+            }
+
+            function generate_url(id) {
+                return "{% url 'successful' step='testcases' pk=0 %}".replace("0", id);
             }
         </script>
 
@@ -308,13 +319,14 @@
             <i class="material-icons">save</i></button>
     </div>
 
-
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "testcases" %}" id="btn_back"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Test Cases List">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 
 {% endblock %}
 {% block extraScripts %}

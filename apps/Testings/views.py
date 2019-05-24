@@ -32,6 +32,11 @@ class EditKeywordView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     template_name = "edit-keyword.html"
     required_permission = "update_keyword"
 
+    def get_context_data(self, **kwargs):
+        context = super(EditKeywordView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class DeleteKeywordView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-keyword.html"
@@ -70,6 +75,11 @@ class EditTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     model = TestCase
     template_name = "edit-testcase.html"
     required_permission = "update_test_case"
+
+    def get_context_data(self, **kwargs):
+        context = super(EditTestCaseView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -111,6 +121,11 @@ class EditTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     template_name = "edit-testsuites.html"
     required_permission = "update_test_suite"
 
+    def get_context_data(self, **kwargs):
+        context = super(EditTestSuiteView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testsuite.html"
@@ -147,10 +162,6 @@ class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
         source = form.save()
         self.pk = source.pk
         return super(NewCollectionsView, self).form_valid(form)
-
-    #def get_success_url(self):
-    #    messages.success(self.request, "Collection Created")
-    #    return reverse_lazy('collections')
 
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
@@ -311,4 +322,5 @@ class RunScriptView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
             context['type'] = scripts[type_script - 1]
             context['type_id'] = type_script
             context['script'] = apply_highlight(obj.script)
+            context['stepper'] = self.kwargs.get('stepper')
         return context

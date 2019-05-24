@@ -143,6 +143,7 @@
                 var testSuiteValues = droppedElements;
                 var testSuiteCollection = document.getElementById('collection').value;
                 var testSuiteScript = document.getElementById("terminal").value;
+                var stepper = '{{stepper}}';
 
                 var usedElements = {
                     extra: usedExtras,
@@ -163,14 +164,20 @@
                     type: 'POST',
                     data: newTestSuite,
                     success: function (data) {
-                        var $toastContent = $('<span>Test Case Created, Click button to edit </span>').add($(
-                            '<a href="/testings/testsuites/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
-                        Materialize.toast($toastContent, 12000, 'green');
+                        var id = data.id;
+                        if(stepper != 'stepper'){
+                            var $toastContent = $('<span>Test Case Created, Click button to edit </span>').add($(
+                                '<a href="/testings/testsuites/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
+                            Materialize.toast($toastContent, 12000, 'green');
 
-                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
-                            '<a href="/testings/'+data.id+'/3/run" class="btn-flat white-text toast-action">Go</a>'));
-                        Materialize.toast($toastContent, 12000, 'blue');
-                        new_testSuite = data;
+                            var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                                '<a href="/testings/'+data.id+'/3/run" class="btn-flat white-text toast-action">Go</a>'));
+                            Materialize.toast($toastContent, 12000, 'blue');
+                            new_testSuite = data;
+                        } else {
+                            window.location.href = generate_url(id);
+                            new_testcase = data;
+                        }
                     },
                     error: function (error) {
                         console.log(error)
@@ -191,6 +198,10 @@
                 {##}
                 {#            document.body.removeChild(lightsOff);#}
                 {#            floatingDiv.style.visibility = 'hidden';#}
+            }
+
+            function generate_url(id) {
+                return "{% url 'successful' step='testsuites' pk=0 %}".replace("0", id);
             }
         </script>
     {% endcompress %}

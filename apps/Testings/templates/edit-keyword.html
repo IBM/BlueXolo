@@ -164,7 +164,8 @@
                 var keywordValues = droppedElements;
                 var keywordCollection = document.getElementById('collection').value;
                 var keywordScript = document.getElementById("terminal").value;
-
+                var stepper = '{{stepper}}';
+                
                 var usedElements = {
                     extra: usedExtras,
                     keywords: usedKeywords,
@@ -184,13 +185,19 @@
                     type: 'PUT',
                     data: newKeyword,
                     success: function (data) {
-                        drawMessage("Keyword Updated", 'green');
-                        var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
-                            '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
-                        Materialize.toast($toastContent, 12000, 'blue');
+                        var id = data.id;
+                        if(stepper != 'stepper'){
+                            drawMessage("Keyword Updated", 'green');
+                            var $toastContent = $('<span>Click on "GO" button to Run </span>').add($(
+                                '<a href="/testings/'+data.id+'/1/run" class="btn-flat white-text toast-action">Go</a>'));
+                            Materialize.toast($toastContent, 12000, 'blue');
 
-                        $('#modalPreview').modal('close');
-                        new_keyword = data;
+                            $('#modalPreview').modal('close');
+                            new_keyword = data;
+                        } else {
+                            window.location.href = generate_url(id);
+                            new_testcase = data;
+                        }
                     },
                     error: function (error) {
                         console.log(error)
@@ -201,6 +208,10 @@
             function saveKeyword() {
                 var functionToExecuteAfter = writeKeywordDatabase;
                 translateToRobot(functionToExecuteAfter);
+            }
+
+            function generate_url(id) {
+                return "{% url 'successful' step='keywords' pk=0 %}".replace("0", id);
             }
 
 
@@ -327,13 +338,14 @@
     </div>
 
 
-
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "keywords" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Keyword List">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 
 {% endblock %}
 {% block extraScripts %}

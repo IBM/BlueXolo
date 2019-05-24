@@ -36,11 +36,12 @@
 
         $(document).ready(function(){
             var stepElement = '{{step}}';
+            $(window.parent.document).find("#button-"+stepElement).css('display','block');
             if(stepElement == 'products' || stepElement == 'robot' || stepElement == 'libraries' || stepElement == 'phases'){
                 $(window.parent.document).find("#stepper1").height(300);
             } else if(stepElement == 'templates' || stepElement == 'profiles' || stepElement == 'parameters') {
                 $(window.parent.document).find("#stepper2").height(300);
-            } else if(stepElement == 'collections') {
+            } else if(stepElement == 'collections' || stepElement == 'keywords' || stepElement == 'testcases' || stepElement == 'testsuites') {
                 $(window.parent.document).find("#stepper3").height(300);
             }
         });
@@ -76,7 +77,6 @@
                 localStorage.setItem("stepsArray", JSON.stringify(stepsArrayClear));
             }
         }
-        
         </script>
     {% endcompress %}
 {% endblock %}

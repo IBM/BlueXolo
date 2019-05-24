@@ -36,9 +36,10 @@ urlpatterns = [
     url(r'^collections/(?P<stepper>[-\w]+)/new/$', NewCollectionsView.as_view(), name="new-collections-stepper"),
     url(r'^collections/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditCollectionsView.as_view(), name='edit-collections'),
     url(r'^keywords/(?P<stepper>[-\w]+)/new/$', NewKeywordView.as_view(), name="new-keywords-stepper"),
-    url(r'^keywords/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditKeywordView.as_view(), name="edit-keywords"),
+    url(r'^keywords/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditKeywordView.as_view(), name="edit-keywords-stepper"),
     url(r'^testcases/(?P<stepper>[-\w]+)/new/$', NewTestCaseView.as_view(), name="new-testcase-stepper"),
-    url(r'^testcases/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditTestCaseView.as_view(), name="edit-testcase"),
+    url(r'^testcases/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditTestCaseView.as_view(), name='edit-testcase-stepper'),
     url(r'^testsuites/(?P<stepper>[-\w]+)/new/$', NewTestSuiteView.as_view(), name="new-testsuites-stepper"),
-    url(r'^testsuites/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditTestSuiteView.as_view(), name="edit-testsuites"),
+    url(r'^testsuites/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditTestSuiteView.as_view(), name="edit-testsuites-stepper"),
+    url(r'^(?P<pk>\d+)/(?P<type_script>\d+)/(?P<stepper>[-\w]+)/run$', RunScriptView.as_view(), name="run-script-stepper"),
 ]
