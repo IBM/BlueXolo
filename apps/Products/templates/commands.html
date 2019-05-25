@@ -318,6 +318,7 @@
                     'username': document.getElementById('username').value,
                     'password': document.getElementById('password').value
                 };
+                var stepper = '{{stepper}}';
                 $.ajax({
                     url: '{% url "run_extract" %}',
                     type: 'POST',
@@ -325,11 +326,23 @@
                     success: function (data) {
                         $('#modalExtract').modal('close');
                         {#                    alert("Extract Finished");#}
-                        document.location.reload();
+
+
+                        var id = 0;
+                        if(stepper != 'stepper'){
+                            document.location.reload();
+                        } else {
+                            window.location.href = generate_url(id);
+                        }
+                        
                     }, error: function (err) {
                         console.log(err)
                     }
                 });
+            }
+
+            function generate_url(id) {
+                return "{% url 'successful' step='commands' pk=0 %}".replace("0", id);
             }
         </script>
     {% endcompress %}

@@ -120,3 +120,8 @@
     from{ bottom:-100px; opacity:0 } 
     to{ bottom:0; opacity:1 }
   }
+
+  .disabled {
+    pointer-events:none; 
+    opacity:0.6;
+  }

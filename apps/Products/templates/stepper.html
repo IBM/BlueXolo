@@ -9,15 +9,15 @@
         <div class="center">
             <div>
                 <h4 class="blue-grey-text light" style="display: inline-block; width: 85%; padding-left: 10%">Configure your environment</h4>
-                <button class="waves-effect waves-dark btn" style="display: inline-block; width: 10%" onclick="deleteDataStepper()">Delete</button>
+                <button class="waves-effect waves-dark btn" style="display: inline-block; width: 10%" onclick="deleteDataStepper()">Restart</button>
             </div>
             <nav style="background-color: #26a69a">
                 <div class="nav-wrapper">
                 <div class="col s12">
                     <a id="link1" onclick="selectChapter('1')" class="breadcrumb modal-trigger link">Sources</a>
-                    <a id="link2" onclick="selectChapter('2')" class="breadcrumb modal-trigger link">Servers</a>
-                    <a id="link3" onclick="selectChapter('3')" class="breadcrumb modal-trigger link">Testing</a>
-                    <a id="link4" onclick="selectChapter('4')" class="breadcrumb modal-trigger link">Run</a>
+                    <a id="link2" onclick="selectChapter('2')" class="breadcrumb modal-trigger link disabled">Servers</a>
+                    <a id="link3" onclick="selectChapter('3')" class="breadcrumb modal-trigger link disabled">Testing</a>
+                    <a id="link4" onclick="selectChapter('4')" class="breadcrumb modal-trigger link disabled">Run</a>
                 </div>
                 </div>
             </nav>
@@ -39,12 +39,12 @@
               </div>
           </div>
           <div id="button-products" class="step-actions" style="display:none; margin-left: 43.5%;">
-              <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_commands', false, '1', 'commands', 'null')">NEXT STEP</button>
+              <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_commands', true, '1', 'commands', 'null')">NEXT STEP</button>
           </div>
       </div>
   </li>
-  <li id="li-commands" class="step">
-      <div data-step-label="Commands" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_commands', false, '1', 'commands', 'null')">Step 2</div>
+  <li id="li-commands" class="step disabled" >
+      <div data-step-label="Commands" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_commands', true, '1', 'commands', 'null')">Step 2</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
               <div class="">
@@ -53,14 +53,13 @@
                   </iframe>
               </div>
           </div>
-          
-          <!--<div class="step-actions">
-              <button class="waves-effect waves-dark btn next-step">CONTINUE</button>
-              <button class="waves-effect waves-dark btn-flat previous-step">BACK</button>
-          </div>-->
+          <div id="button-commands" class="step-actions" style="display:none; margin-left: 35%;">
+              <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_product', true, '1', 'products', 'sources')">PREVIOUS STEP</button>
+              <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_robot', true, '1', 'robot', 'sources')">NEXT STEP</button>   
+          </div>
       </div>
   </li>
-    <li id="li-robot" class="step">
+    <li id="li-robot" class="step disabled">
       <div data-step-label="Robot" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_robot', true, '1', 'robot', 'sources')">Step 3</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -71,12 +70,12 @@
               </div>
           </div>
           <div id="button-robot" class="step-actions" style="display:none; margin-left: 35%;">
-              <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_commands', false, '1', 'commands', 'null')">PREVIOUS STEP</button>
+              <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_commands', true, '1', 'commands', 'null')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_libraries', true, '1', 'libraries', 'sources')">NEXT STEP</button>   
           </div>
       </div>
   </li>
-      <li id="li-libraries" class="step">
+      <li id="li-libraries" class="step disabled">
       <div data-step-label="Libraries" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_libraries', true, '1', 'libraries', 'sources')">Step 4</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -92,7 +91,7 @@
           </div>
       </div>
   </li>
-  <li id="li-phases" class="step">
+  <li id="li-phases" class="step disabled">
       <div data-step-label="Phase" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_phase', true, '1', 'phases', 'phases')">Step 5</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -113,7 +112,7 @@
 
 <div id="chapter2" class="col-md-12 mt-5 chapter">
 <ul class="stepper horizontal" id="stepper2" style="height:950px;">
-  <li id="li-templates" class="step active">
+  <li id="li-templates" class="step active disabled">
       <div data-step-label="Templates" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_template', true, '2', 'templates', 'servers/templates')">Step 1</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="">
@@ -129,7 +128,7 @@
           </div>
       </div>
   </li>
-  <li id="li-profiles" class="step">
+  <li id="li-profiles" class="step disabled">
       <div data-step-label="Profiles" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_profile', true, '2', 'profiles', 'servers/profiles')">Step 2</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -145,7 +144,7 @@
           </div>
       </div>
   </li>
-    <li id="li-parameters" class="step">
+    <li id="li-parameters" class="step disabled">
       <div data-step-label="Parameters" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_parameter', true, '2', 'parameters', 'servers/parameters')">Step 3</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -166,7 +165,7 @@
 
 <div id="chapter3" class="col-md-12 mt-5 chapter">
 <ul class="stepper horizontal" id="stepper3" style="height:750px">
-  <li id="li-collections" class="step active">
+  <li id="li-collections" class="step active disabled">
       <div data-step-label="Collection" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_collection', true, '3', 'collections', 'testings/collections')">Step 1</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="">
@@ -182,7 +181,7 @@
           </div>
       </div>
   </li>
-  <li id="li-keywords" class="step">
+  <li id="li-keywords" class="step disabled">
       <div data-step-label="Keywords" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_keyword', true, '3', 'keywords', 'testings/keywords')">Step 2</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -198,7 +197,7 @@
           </div>
       </div>
   </li>
-    <li id="li-testcases" class="step">
+    <li id="li-testcases" class="step disabled">
       <div data-step-label="Test Cases" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_testcases', true, '3', 'testcases', 'testings/testcases')">Step 3</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -214,7 +213,7 @@
           </div>
       </div>
   </li>
-    <li id="li-testsuites" class="step">
+    <li id="li-testsuites" class="step disabled">
       <div data-step-label="Test Suites" class="step-title waves-effect waves-dark" onclick="changeIframe('iframe_testsuite', true, '3', 'testsuites', 'testings/testsuites')">Step 4</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="row">
@@ -235,7 +234,7 @@
 
 <div id="chapter4" class="col-md-12 mt-5 chapter">
 <ul class="stepper horizontal" id="stepper4" style="height:1600px">
-  <li id="li-home" class="step active">
+  <li id="li-home" class="step active disabled">
       <div data-step-label="Home Page" class="step-title waves-effect waves-dark" onclick="refreshIframe('iframe_home')">Step 1</div>
       <div class="step-content" style="overflow:hidden;">
           <div class="">
@@ -298,7 +297,23 @@
                 var stepper = new MStepper(stepperDiv);
             }           
 
+            var stepsNoDisabled = localStorage.getItem("stepsNoDisabled");
 
+            if(stepsNoDisabled != "" && stepsNoDisabled != null){
+                stepsNoDisabled = JSON.parse(stepsNoDisabled);
+
+                stepsNoDisabled.forEach(function(step){
+                    $("#li-"+step).removeClass('disabled');
+
+                    if(step == 'templates'){
+                        $("#link2").removeClass('disabled');
+                    } else if (step == 'collections') {
+                        $("#link3").removeClass('disabled');
+                    } else if (step == 'home') {
+                        $("#link4").removeClass('disabled');
+                    }
+                });
+            } 
         });
 
         function selectChapter(chapterId) {
@@ -390,12 +405,16 @@
                     });
                     
                     if(result != undefined) {
-                        if(step == 'products'){
-                            iframe.clientHeight = '600px';
-                            stepper.style.height = '750px';
+                        if(step == 'commands'){
+                            iframe.src = "{% url 'commands-stepper' stepper='stepper'  %}?content_only=1";
+                        } else {
+                            if(step == 'products'){
+                                iframe.clientHeight = '600px';
+                                stepper.style.height = '750px';
+                            }
+                            var pk = result.pk;
+                            iframe.src = generate_url(location, pk);
                         }
-                        var pk = result.pk;
-                        iframe.src = generate_url(location, pk);
                     } else {
                         iframe.src = iframe.src;
                     }
@@ -431,8 +450,12 @@
                     });
                     
                     if(result != undefined) {
-                        var pk = result.pk;
-                        iframe.src = generate_url(location, pk);
+                        if(step == 'commands'){
+                            iframe.src = "{% url 'commands-stepper' stepper='stepper'  %}?content_only=1";
+                        } else {
+                            var pk = result.pk;
+                            iframe.src = generate_url(location, pk);
+                        }
                     } else {
                         //iframe.src = iframe.src;
                     }
@@ -487,6 +510,7 @@
         function deleteDataStepper() {
             localStorage.removeItem("lastStep");
             localStorage.removeItem("stepsArray");
+            localStorage.removeItem("stepsNoDisabled");
             location.reload();
         }
         </script>

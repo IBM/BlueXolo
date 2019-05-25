@@ -34,10 +34,12 @@
         <script type="text/javascript" src="{% static "js/main.js" %}"></script>
         <script type="text/javascript">
 
+        const steps = ['products', 'commands', 'robot', 'libraries', 'phases', 'templates', 'profiles', 'parameters', 'collections', 'keywords', 'testcases', 'testsuites', 'home'];
+
         $(document).ready(function(){
             var stepElement = '{{step}}';
             $(window.parent.document).find("#button-"+stepElement).css('display','block');
-            if(stepElement == 'products' || stepElement == 'robot' || stepElement == 'libraries' || stepElement == 'phases'){
+            if(stepElement == 'products' || stepElement == 'commands' || stepElement == 'robot' || stepElement == 'libraries' || stepElement == 'phases'){
                 $(window.parent.document).find("#stepper1").height(300);
             } else if(stepElement == 'templates' || stepElement == 'profiles' || stepElement == 'parameters') {
                 $(window.parent.document).find("#stepper2").height(300);
@@ -77,6 +79,42 @@
                 localStorage.setItem("stepsArray", JSON.stringify(stepsArrayClear));
             }
         }
+
+                    
+        var stepsNoDisabled = localStorage.getItem("stepsNoDisabled");
+
+        if(stepsNoDisabled != "" && stepsNoDisabled != null){
+
+            stepsNoDisabled = JSON.parse(stepsNoDisabled);
+            
+            var indexStep = steps.indexOf(step);
+            var stepNoDisabled = steps[indexStep+1];
+            var resultIndexStep = stepsNoDisabled.indexOf(stepNoDisabled) > -1;
+
+            if(!resultIndexStep){
+                stepsNoDisabled.push(stepNoDisabled);
+                $(window.parent.document).find("#li-"+stepNoDisabled).removeClass('disabled');
+                localStorage.setItem("stepsNoDisabled", JSON.stringify(stepsNoDisabled));
+
+                if(step == 'phases'){
+                    $(window.parent.document).find("#link2").removeClass('disabled');
+                } else if (step == 'parameters') {
+                    $(window.parent.document).find("#link3").removeClass('disabled');
+                } else if (step == 'testsuites') {
+                    $(window.parent.document).find("#link4").removeClass('disabled');
+                }
+            }
+
+        } else {           
+            var stepsNoDisabledClear = [];
+            var indexStep = steps.indexOf(step);
+            var stepNoDisabled = steps[indexStep+1];
+            stepsNoDisabledClear.push(stepNoDisabled);
+            $(window.parent.document).find("#li-"+stepNoDisabled).removeClass('disabled');
+            localStorage.setItem("stepsNoDisabled", JSON.stringify(stepsNoDisabledClear));
+        }
+
+                    
         </script>
     {% endcompress %}
 {% endblock %}
