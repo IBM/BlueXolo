@@ -117,6 +117,7 @@
                 var testcaseScript = document.getElementById("terminal").value;
                 var testcaseFunctions = $('#testecase_functions').material_chip('data');
                 var testcasePhase = document.getElementById("phases_list").value;
+                var stepper = '{{stepper}}';
 
                 var usedElements = {
                     extra: usedExtras,
@@ -139,6 +140,8 @@
                     type: 'POST',
                     data: newTestcase,
                     success: function (data) {
+                    var id = data.id;
+                    if(stepper != 'stepper'){
                         var $toastContent = $('<span>Test Case Created, Click button to edit </span>').add($(
                             '<a href="/testings/testcases/edit/' + data.id + '" class="btn-flat black-text toast-action">Go</a>'));
                         Materialize.toast($toastContent, 12000, 'green');
@@ -146,6 +149,11 @@
                             '<a href="/testings/' + data.id + '/2/run" class="btn-flat white-text toast-action">Go</a>'));
                         Materialize.toast($toastContent, 12000, 'blue');
                         new_testcase = data;
+                    } else {
+                        window.location.href = generate_url(id);
+                        new_testcase = data;
+                    }
+
                     },
                     error: function (err) {
                         console.log(err);
@@ -168,6 +176,10 @@
                 {##}
                 {#            document.body.removeChild(lightsOff);#}
                 {#            floatingDiv.style.visibility = 'hidden';#}
+            }
+
+            function generate_url(id) {
+                return "{% url 'successful' step='testcases' pk=0 %}".replace("0", id);
             }
         </script>
 
@@ -305,13 +317,14 @@
             <i class="material-icons">save</i></button>
     </div>
 
-
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "testcases" %}" id="btn_back"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Test Cases List">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 
 {% endblock %}
 {% block extraScripts %}

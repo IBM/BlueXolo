@@ -2,14 +2,17 @@
 ##################################################
 ## (C) COPYRIGHT IBM Corp. 2018
 ##################################################
-#  Description:  Uninstall Bluexolo Image from Docker
+#  Description:  
 #
 #       Author:  Fernando Quintero (fqa), quintero@mx1.ibm.com
 #      VERSION:  1.0
-#      Created:  09/19/18 09:07
+#      Created:  04/02/2019 20:11
 #     Revision:  ---
 ##################################################
 #
 
-docker kill  $(docker ps -q)
-docker rmi $(docker images bluexolo -q)
+#set -o nounset  # Treat unset variables as an error
+
+docker exec -ti bluexolo /bin/bash
+
+

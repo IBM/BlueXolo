@@ -19,4 +19,11 @@ urlpatterns = [
     url(r'^parameters/new$', NewParametersView.as_view(), name='new-parameters'),
     url(r'^parameters/(?P<pk>\d+)/$', EditParametersView.as_view(), name='edit-parameters'),
     url(r'^parameters/(?P<pk>\d+)/delete/$', DeleteParametersView.as_view(), name='delete-parameters'),
+    # Stepper
+    url(r'^templates/(?P<stepper>[-\w]+)/new/$', NewServerTemplate.as_view(), name='new-server-template-stepper'),
+    url(r'^templates/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditServerTemplate.as_view(), name='edit-server-template-stepper'),
+    url(r'^profiles/(?P<stepper>[-\w]+)/new/$', NewServerProfileView.as_view(), name='new-server-profile-stepper'),
+    url(r'^profiles/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditServerProfileView.as_view(), name='edit-server-profile-stepper'),
+    url(r'^parameters/(?P<stepper>[-\w]+)/new$', NewParametersView.as_view(), name='new-parameters-stepper'),
+    url(r'^parameters/(?P<pk>\d+)/(?P<stepper>[-\w]+)/edit/$', EditParametersView.as_view(), name='edit-parameters-stepper'),
 ]

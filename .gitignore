@@ -103,6 +103,6 @@ localsettings.py
 0*.py
 
 # Local Databases
-db.sqlite3
+db.sqlite*
 DONE
 secrets.json

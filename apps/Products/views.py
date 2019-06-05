@@ -33,6 +33,14 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['user_tasks2'] = self.request.user.get_all_tasks()[3:]
         return context
 
+class StepperView(LoginRequiredMixin, TemplateView):
+    template_name = "stepper.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super(StepperView, self).get_context_data(**kwargs)
+        return context
+
+
 
 class ArgumentsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "arguments.html"
@@ -173,6 +181,7 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
                 messages.warning(self.request, 'Already exist a Product with this name and version')
                 return self.render_to_response(self.get_context_data(form=form))
             source = form.save()
+            self.pk = source.pk
             messages.success(self.request, 'Product {0} created'.format(source.name))
             host = form.data.get('host')
             if not host:
@@ -192,6 +201,7 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
             form.instance.name = 'Robot Framework'
             form.instance.category = 4
             source = form.save()
+            self.pk = source.pk
             file = form.files.get('zip_file')
             if file:
                 fs = FileSystemStorage(location='{0}/zip/'.format(settings.MEDIA_ROOT))
@@ -206,6 +216,7 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
         if name == 'libraries':
             form.instance.category = 5
             source = form.save()
+            self.pk = source.pk
             messages.success(self.request, 'Library Source created')
             _config = {
                 'category': 5,
@@ -230,13 +241,19 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
             return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        return reverse_lazy('source-list', kwargs={'slug': self.kwargs.get('slug')})
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
+        if stepper != 'stepper':
+            return reverse_lazy('source-list', kwargs={'slug': self.kwargs.get('slug')})
+        else:
+            return reverse_lazy('successful', kwargs={'step': self.kwargs.get('slug'), 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
         context = super(CreateSourceView, self).get_context_data()
         context['slug'] = self.kwargs.get('slug')
         context['title'] = 'New'
         context['extra'] = 'After press "Create" the system extract the commands for'
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -276,6 +293,8 @@ class EditSourceView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         name = self.kwargs.get('slug')
+        source = form.save()
+        self.pk = source.pk
         if name == 'products':
             form.instance.category = 3
         if name == 'robot':
@@ -293,7 +312,12 @@ class EditSourceView(LoginRequiredMixin, UpdateView):
             slug = 'robot'
         if _category == 5:
             slug = 'libraries'
-        return reverse_lazy('source-list', kwargs={'slug': slug})
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
+        if stepper != 'stepper':
+            return reverse_lazy('source-list', kwargs={'slug': slug})
+        else:
+            return reverse_lazy('successful', kwargs={'step': slug, 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
         context = super(EditSourceView, self).get_context_data()
@@ -306,6 +330,7 @@ class EditSourceView(LoginRequiredMixin, UpdateView):
             slug = 'libraries'
         context['slug'] = slug
         context['title'] = 'Edit'
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -350,6 +375,11 @@ class DeleteSourceView(LoginRequiredMixin, DeleteView):
 
 class CommandsView(LoginRequiredMixin, TemplateView):
     template_name = "commands.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(CommandsView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class NewCommandView(LoginRequiredMixin, FormView):
@@ -397,12 +427,27 @@ class NewPhaseView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        source = form.save()
+        self.pk = source.pk
         return super(NewPhaseView, self).form_valid(form)
 
+    #def get_success_url(self):
+    #    messages.success(self.request, "Phase Created")
+    #    return reverse_lazy('phases')
+    
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
         messages.success(self.request, "Phase Created")
-        return reverse_lazy('phases')
+        if stepper != 'stepper':
+            return reverse_lazy('phases')
+        else:
+            return reverse_lazy('successful', kwargs={'step': 'phases', 'pk': source_pk})
 
+    def get_context_data(self, **kwargs):
+        context = super(NewPhaseView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 class EditPhaseView(LoginRequiredMixin, UpdateView):
     model = Phase
@@ -411,12 +456,23 @@ class EditPhaseView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        source = form.save()
+        self.pk = source.pk
         return super(EditPhaseView, self).form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Phase Edited")
-        return reverse_lazy('phases')
-
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
+        if stepper != 'stepper':
+            return reverse_lazy('phases')
+        else:
+            return reverse_lazy('successful', kwargs={'step': 'phases', 'pk': source_pk})
+    
+    def get_context_data(self, **kwargs):
+        context = super(EditPhaseView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 class DeletePhaseView(LoginRequiredMixin, DeleteView):
     model = Phase
@@ -425,3 +481,13 @@ class DeletePhaseView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Phase deleted")
         return reverse_lazy('phases')
+
+
+class SuccessfulView(LoginRequiredMixin, TemplateView):
+    template_name = "successful.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(SuccessfulView, self).get_context_data(**kwargs)
+        context['step'] = self.kwargs.get('step')
+        context['pk'] = self.kwargs.get('pk')
+        return context

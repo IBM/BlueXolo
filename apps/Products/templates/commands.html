@@ -78,13 +78,15 @@
             </div>
         </div>
         <div class="fixed-action-btn">
-            <a class="btn-floating btn-large blue-grey">
+            <a id="menu" class="btn-floating btn-large blue-grey">
                 <i class="large material-icons">add</i>
             </a>
             <ul>
+                {% if stepper != 'stepper' %}
                 <li><a class="btn-floating blue tooltipped" data-position="left" data-delay="50"
                        data-tooltip="Manual" href="{% url "new-command" %}">
                     <i class="material-icons">create</i></a></li>
+                {% endif %}
                 <li>
                     <button class="btn-floating green tooltipped" data-position="left" data-delay="50"
                             data-tooltip="Extract from Operation System (M-Extract)" onclick="modal_extract()">
@@ -92,6 +94,13 @@
                     </button>
                 </li>
             </ul>
+        </div>
+        <!-- Tap Target Structure -->
+        <div class="tap-target teal lighten-3" data-activates="menu" style="color: #fff">
+            <div class="tap-target-content">
+            <h5>Click Here</h5>
+            <p>After Click on Extract from Operation System button</p>
+            </div>
         </div>
     </div>
 
@@ -155,6 +164,13 @@
     {% compress js %}
         <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
         <script type="text/javascript">
+
+            $(document).ready(function(){
+                var stepper = "{{ stepper }}";
+                if (stepper == 'stepper') {
+                    $('.tap-target').tapTarget('open');
+                }
+            });
 
             function modal_extract() {
                 $('#modalExtract').modal('open');
@@ -302,6 +318,7 @@
                     'username': document.getElementById('username').value,
                     'password': document.getElementById('password').value
                 };
+                var stepper = '{{stepper}}';
                 $.ajax({
                     url: '{% url "run_extract" %}',
                     type: 'POST',
@@ -309,11 +326,23 @@
                     success: function (data) {
                         $('#modalExtract').modal('close');
                         {#                    alert("Extract Finished");#}
-                        document.location.reload();
+
+
+                        var id = 0;
+                        if(stepper != 'stepper'){
+                            document.location.reload();
+                        } else {
+                            window.location.href = generate_url(id);
+                        }
+                        
                     }, error: function (err) {
                         console.log(err)
                     }
                 });
+            }
+
+            function generate_url(id) {
+                return "{% url 'successful' step='commands' pk=0 %}".replace("0", id);
             }
         </script>
     {% endcompress %}

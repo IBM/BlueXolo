@@ -5,6 +5,8 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, \
     PasswordResetDoneView, PasswordResetCompleteView
+from django.urls import path
+from django.views.generic.base import TemplateView
 
 from apps.Users.views import RequestAccessView
 
@@ -25,8 +27,8 @@ urlpatterns = [
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     url(r'^reset/done/$',
-        PasswordResetCompleteView.as_view(), name='password_reset_complete')
-
+        PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('help/', TemplateView.as_view(template_name='index.html'))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

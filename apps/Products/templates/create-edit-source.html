@@ -29,9 +29,11 @@
         </div>
     {% endif %}
     {% include "base-new-form.html" %}
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "source-list" slug %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 {% endblock %}

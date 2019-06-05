@@ -68,13 +68,14 @@
             </button>
         </div>
     </div>
-
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         <a href="{% url "servers-templates" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey tooltipped" data-position="right"
            data-tooltip="Back to Templates List">
             <i class="material-icons">arrow_back</i></a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% load staticfiles %}
@@ -94,6 +95,7 @@
         var _table_containenr = document.getElementById('tableContainer');
         var _select_input = $('#parameter-search');
         var _btn_create = document.getElementById('btn_create');
+        var stepper = '{{stepper}}';
 
         /* - - - -  On Start  - - - - */
         {% for param in object.parameters.all %}
@@ -252,7 +254,12 @@
                         "params": JSON.stringify(_params)
                     }, success: function (data) {
                         if (data.id) {
-                            window.location.href = '{% url "servers-templates" %}';
+                            var id = data.id;
+                            if(stepper != 'stepper'){
+                                window.location.href = '{% url "servers-templates" %}';
+                            } else {
+                                window.location.href = generate_url(id);
+                            }
                         }
                     }, error: function (err) {
                         if (err.responseJSON.name) {
@@ -265,6 +272,10 @@
             } else {
                 _btn_create.disabled = true;
             }
+        }
+
+        function generate_url(id) {
+            return "{% url 'successful' step='templates' pk=0 %}".replace("0", id);
         }
     </script>
 {% endblock %}

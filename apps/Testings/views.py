@@ -21,11 +21,21 @@ class NewKeywordView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "create-keyword.html"
     required_permission = "create_keyword"
 
+    def get_context_data(self, **kwargs):
+        context = super(NewKeywordView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class EditKeywordView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     model = Keyword
     template_name = "edit-keyword.html"
     required_permission = "update_keyword"
+
+    def get_context_data(self, **kwargs):
+        context = super(EditKeywordView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class DeleteKeywordView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -55,11 +65,21 @@ class NewTestCaseView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "create-testcase.html"
     required_permission = "create_test_case"
 
+    def get_context_data(self, **kwargs):
+        context = super(NewTestCaseView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class EditTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     model = TestCase
     template_name = "edit-testcase.html"
     required_permission = "update_test_case"
+
+    def get_context_data(self, **kwargs):
+        context = super(EditTestCaseView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -90,11 +110,21 @@ class NewTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "create-testsuites.html"
     required_permission = "create_test_suite"
 
+    def get_context_data(self, **kwargs):
+        context = super(NewTestSuiteView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
+
 
 class EditTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
     model = TestSuite
     template_name = "edit-testsuites.html"
     required_permission = "update_test_suite"
+
+    def get_context_data(self, **kwargs):
+        context = super(EditTestSuiteView, self).get_context_data(**kwargs)
+        context['stepper'] = self.kwargs.get('stepper')
+        return context
 
 
 class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -129,15 +159,23 @@ class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        source = form.save()
+        self.pk = source.pk
         return super(NewCollectionsView, self).form_valid(form)
 
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
         messages.success(self.request, "Collection Created")
-        return reverse_lazy('collections')
+        if stepper != 'stepper':
+            return reverse_lazy('collections')
+        else:
+            return reverse_lazy('successful', kwargs={'step': 'collections', 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
         context = super(NewCollectionsView, self).get_context_data(**kwargs)
         context['title'] = "New Collection"
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -149,15 +187,24 @@ class EditCollectionsView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        source = form.save()
+        self.pk = source.pk
         return super(EditCollectionsView, self).form_valid(form)
 
     def get_success_url(self):
+        stepper = self.kwargs.get('stepper')
+        source_pk = self.pk
         messages.success(self.request, "Collection Edited")
-        return reverse_lazy('collections')
+        if stepper != 'stepper':
+            return reverse_lazy('collections')
+        else:
+            return reverse_lazy('successful', kwargs={'step': 'collections', 'pk': source_pk})
+
 
     def get_context_data(self, **kwargs):
         context = super(EditCollectionsView, self).get_context_data(**kwargs)
         context['title'] = "Edit Collections"
+        context['stepper'] = self.kwargs.get('stepper')
         return context
 
 
@@ -275,4 +322,5 @@ class RunScriptView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
             context['type'] = scripts[type_script - 1]
             context['type_id'] = type_script
             context['script'] = apply_highlight(obj.script)
+            context['stepper'] = self.kwargs.get('stepper')
         return context

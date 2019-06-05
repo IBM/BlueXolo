@@ -79,6 +79,7 @@
     </div>
 
     {#    - - - -  Back button conditions - - - - - #}
+    {% if stepper != 'stepper' %}
     <div class="fixed-action-btn left-button ">
         {% if type_id is 1 and obj.script_type is 1 %}
             <a href="{% url "keywords" %}" id="btn_play"
@@ -98,6 +99,7 @@
                 <i class="material-icons">arrow_back</i></a>
         {% endif %}
     </div>
+    {% endif %}
 {% endblock %}
 {% load static %}
 {% load compress %}

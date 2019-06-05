@@ -1,0 +1,120 @@
+{% block content %}
+<div id="text" class="row">
+    <div class="col s1">
+    </div>
+    <div class="col s10">
+        <div class="center"><br/><br/>
+            <h4 class="blue-grey-text light">Congratulations!</h4>
+            <p>
+                You have completed this step.
+                Please continue in the next step.
+            </p> 
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% load staticfiles %}
+{% load compress %}
+
+{% block extraStyles %}
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
+        <link rel="stylesheet" href="{% static "fonts/iconfont/material-icons.css" %}">
+        <link rel="stylesheet" href="{% static "css/main.css" %}">
+        <link rel="stylesheet" href="{% static "css/select2-materialize.css" %}">
+    {% endcompress %}
+{% endblock %}
+
+{% block extraScripts %}
+    {% compress js %}
+        <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/select2.full.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/materialize.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/main.js" %}"></script>
+        <script type="text/javascript">
+
+        const steps = ['products', 'commands', 'robot', 'libraries', 'phases', 'templates', 'profiles', 'parameters', 'collections', 'keywords', 'testcases', 'testsuites', 'home'];
+
+        $(document).ready(function(){
+            var stepElement = '{{step}}';
+            $(window.parent.document).find("#button-"+stepElement).css('display','block');
+            if(stepElement == 'products' || stepElement == 'commands' || stepElement == 'robot' || stepElement == 'libraries' || stepElement == 'phases'){
+                $(window.parent.document).find("#stepper1").height(300);
+            } else if(stepElement == 'templates' || stepElement == 'profiles' || stepElement == 'parameters') {
+                $(window.parent.document).find("#stepper2").height(300);
+            } else if(stepElement == 'collections' || stepElement == 'keywords' || stepElement == 'testcases' || stepElement == 'testsuites') {
+                $(window.parent.document).find("#stepper3").height(300);
+            }
+        });
+
+        var step = '{{step}}';
+        var pk = '{{pk}}';
+        var stepObject = {};
+        var stepsArray = [];
+
+        stepObject['step'] = step;
+        stepObject['pk'] = pk;
+        
+        if( (step != null && pk != null) && (step != 'None' && pk != 'None') && (step != "" && pk != "") ) {
+            //stepsArray = $(window.parent.document).find("#stepsArray").val();
+            stepsArray = localStorage.getItem("stepsArray");
+            if(stepsArray != "" && stepsArray != null) {
+                stepsArray = JSON.parse(stepsArray);
+
+                var result = stepsArray.find(obj => {
+                    return obj.step == step
+                });
+                
+                if(result == undefined) {
+                    stepsArray.push(stepObject);
+                    //$(window.parent.document).find("#stepsArray").val(JSON.stringify(stepsArray));
+                    localStorage.setItem("stepsArray", JSON.stringify(stepsArray));
+                }
+                
+            } else {
+                var stepsArrayClear = [];
+                stepsArrayClear.push(stepObject);
+                //$(window.parent.document).find("#stepsArray").val(JSON.stringify(stepsArrayClear));
+                localStorage.setItem("stepsArray", JSON.stringify(stepsArrayClear));
+            }
+        }
+
+                    
+        var stepsNoDisabled = localStorage.getItem("stepsNoDisabled");
+
+        if(stepsNoDisabled != "" && stepsNoDisabled != null){
+
+            stepsNoDisabled = JSON.parse(stepsNoDisabled);
+            
+            var indexStep = steps.indexOf(step);
+            var stepNoDisabled = steps[indexStep+1];
+            var resultIndexStep = stepsNoDisabled.indexOf(stepNoDisabled) > -1;
+
+            if(!resultIndexStep){
+                stepsNoDisabled.push(stepNoDisabled);
+                $(window.parent.document).find("#li-"+stepNoDisabled).removeClass('disabled');
+                localStorage.setItem("stepsNoDisabled", JSON.stringify(stepsNoDisabled));
+
+                if(step == 'phases'){
+                    $(window.parent.document).find("#link2").removeClass('disabled');
+                } else if (step == 'parameters') {
+                    $(window.parent.document).find("#link3").removeClass('disabled');
+                } else if (step == 'testsuites') {
+                    $(window.parent.document).find("#link4").removeClass('disabled');
+                }
+            }
+
+        } else {           
+            var stepsNoDisabledClear = [];
+            var indexStep = steps.indexOf(step);
+            var stepNoDisabled = steps[indexStep+1];
+            stepsNoDisabledClear.push(stepNoDisabled);
+            $(window.parent.document).find("#li-"+stepNoDisabled).removeClass('disabled');
+            localStorage.setItem("stepsNoDisabled", JSON.stringify(stepsNoDisabledClear));
+        }
+
+                    
+        </script>
+    {% endcompress %}
+{% endblock %}
