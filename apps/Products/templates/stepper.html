@@ -53,7 +53,7 @@
                   </iframe>
               </div>
           </div>
-          <div id="button-commands" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-commands" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_product', true, '1', 'products', 'sources')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_robot', true, '1', 'robot', 'sources')">NEXT STEP</button>   
           </div>
@@ -69,7 +69,7 @@
                   </iframe>
               </div>
           </div>
-          <div id="button-robot" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-robot" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_commands', true, '1', 'commands', 'null')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_libraries', true, '1', 'libraries', 'sources')">NEXT STEP</button>   
           </div>
@@ -85,7 +85,7 @@
                   </iframe>
               </div>
           </div>
-          <div id="button-libraries" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-libraries" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_robot', true, '1', 'robot', 'sources')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_phase', true, '1', 'phases', 'phases')">NEXT STEP</button>   
           </div>
@@ -101,7 +101,7 @@
                 </iframe>
               </div>
           </div>
-          <div id="button-phases" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-phases" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_libraries', true, '1', 'libraries', 'sources')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn" onclick="return selectChapter('2')">NEXT STEP</button>
           </div>
@@ -122,7 +122,7 @@
                 </iframe>
               </div>
           </div>
-          <div id="button-templates" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-templates" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="return selectChapter('1')">PREVIOUS SECTION</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_profile', true, '2', 'profiles', 'servers/profiles')">NEXT STEP</button>
           </div>
@@ -134,11 +134,11 @@
           <div class="row">
               <div class="">
                 <br/><h4>Creating a Profile for a new Project</h4><br/>
-                <iframe id="iframe_profile" frameborder="0" height="750px" width="100%" src="{% url 'new-server-profile-stepper' stepper='stepper'  %}?content_only=1">
+                <iframe id="iframe_profile" frameborder="0" height="1400px" width="100%" src="{% url 'new-server-profile-stepper' stepper='stepper'  %}?content_only=1">
                 </iframe>
               </div>
           </div>
-          <div id="button-profiles" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-profiles" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_template', true, '2', 'templates', 'servers/templates')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_parameter', true, '2', 'parameters', 'servers/parameters')">NEXT STEP</button>   
           </div>
@@ -154,7 +154,7 @@
                 </iframe>
               </div>
           </div>
-          <div id="button-parameters" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-parameters" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_profile', true, '2', 'profiles', 'servers/profiles')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn" onclick="return selectChapter('3')">NEXT STEP</button>
           </div>
@@ -171,11 +171,11 @@
           <div class="">
               <div class="">
                 <br/><h4>Create a new Collection</h4><br/>
-                    <iframe id="iframe_collection" frameborder="0" height="600px" width="100%" src="{% url 'new-collections-stepper' stepper='stepper'  %}?content_only=1">
+                    <iframe id="iframe_collection" frameborder="0" height="1400px" width="100%" src="{% url 'new-collections-stepper' stepper='stepper'  %}?content_only=1">
                     </iframe>
               </div>
           </div>
-          <div id="button-collections" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-collections" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="return selectChapter('2')">PREVIOUS SECTION</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_keyword', true, '3', 'keywords', 'testings/keywords')">NEXT STEP</button>
           </div>
@@ -191,7 +191,7 @@
                     </iframe>
               </div>
           </div>
-          <div id="button-keywords" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-keywords" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_collection', true, '3', 'collections', 'testings/collections')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_testcases', true, '3', 'testcases', 'testings/testcases')">NEXT STEP</button>   
           </div>
@@ -207,7 +207,7 @@
                     </iframe>
               </div>
           </div>
-          <div id="button-testcases" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-testcases" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_keyword', true, '3', 'keywords', 'testings/keywords')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn next-step" onclick="changeIframe('iframe_testsuite', true, '3', 'testsuites', 'testings/testsuites')">NEXT STEP</button>   
           </div>
@@ -223,7 +223,7 @@
                     </iframe>
               </div>
           </div>
-          <div id="button-testsuites" class="step-actions" style="display:none; margin-left: 35%;">
+          <div id="button-testsuites" class="step-actions" style="display:none; text-align:center;">
               <button class="waves-effect waves-dark btn-flat previous-step" onclick="changeIframe('iframe_testcases', true, '3', 'testcases', 'testings/testcases')">PREVIOUS STEP</button>
               <button class="waves-effect waves-dark btn" onclick="return selectChapter('4')">NEXT STEP</button>
           </div>
