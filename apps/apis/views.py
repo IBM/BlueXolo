@@ -87,7 +87,9 @@ class ServerTemplateApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        messages.success(self.request, "Template Created")
+        stepper = request.data.get('stepper')
+        if stepper != 'stepper':
+            messages.success(self.request, "Template Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -103,7 +105,9 @@ class ServerTemplateDetailApiView(LoginRequiredMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        messages.success(self.request, "Template Updated")
+        stepper = request.data.get('stepper')
+        if stepper != 'stepper':
+            messages.success(self.request, "Template Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -122,7 +126,9 @@ class ServerProfileApiView(LoginRequiredMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        messages.success(self.request, "Profile Created")
+        stepper = request.data.get('stepper')
+        if stepper != 'stepper':
+            messages.success(self.request, "Profile Created")
         return self.create(request, *args, **kwargs)
 
 
@@ -139,7 +145,9 @@ class ServerProfileDetailApiView(LoginRequiredMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        messages.success(self.request, "Profile Updated")
+        stepper = request.data.get('stepper')
+        if stepper != 'stepper':
+            messages.success(self.request, "Profile Updated")
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -242,9 +250,10 @@ class CommandsDetailApiView(mixins.RetrieveModelMixin,
 class RunExtract(LoginRequiredMixin, APIView):
     """Call Extract Class for get commands form different sources"""
 
-    def post(self, request):
+    def post(self, request):        
         _status = status.HTTP_200_OK
         _config = request.data
+        stepper = request.data.get('stepper')
         data = {}
         try:
             file = request.FILES.get('zip')
@@ -266,7 +275,8 @@ class RunExtract(LoginRequiredMixin, APIView):
             )
             request.user.tasks.add(task)
             request.user.save()
-            messages.success(request, "Running the extract in background")
+            if stepper != 'stepper':
+                messages.success(request, "Running the extract in background")
             data = {"text": "success"}
         except Exception as error:
             data = None

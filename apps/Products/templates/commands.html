@@ -311,14 +311,16 @@
             }
 
             function run_extract() {
+                var stepper = '{{stepper}}';
                 var _data = {
                     'category': 2,
                     'host': document.getElementById('host').value,
                     'port': document.getElementById('port').value || 22,
                     'username': document.getElementById('username').value,
-                    'password': document.getElementById('password').value
+                    'password': document.getElementById('password').value,
+                    'stepper': stepper
                 };
-                var stepper = '{{stepper}}';
+                
                 $.ajax({
                     url: '{% url "run_extract" %}',
                     type: 'POST',

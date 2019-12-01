@@ -251,7 +251,8 @@
                         "name": document.getElementById('id_name').value,
                         "description": document.getElementById('id_description').value,
                         "category": document.getElementById('id_category').value,
-                        "params": JSON.stringify(_params)
+                        "params": JSON.stringify(_params),
+                        "stepper": stepper
                     }, success: function (data) {
                         if (data.id) {
                             var id = data.id;

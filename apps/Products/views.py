@@ -174,6 +174,7 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form, **kwargs):
         name = self.kwargs.get('slug')
+        stepper = self.kwargs.get('stepper')
         _config = {}
         if name == 'products':
             form.instance.category = 3
@@ -182,7 +183,8 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
                 return self.render_to_response(self.get_context_data(form=form))
             source = form.save()
             self.pk = source.pk
-            messages.success(self.request, 'Product {0} created'.format(source.name))
+            if stepper != 'stepper':
+                messages.success(self.request, 'Product {0} created'.format(source.name))
             host = form.data.get('host')
             if not host:
                 return HttpResponseRedirect(self.get_success_url())
@@ -212,12 +214,14 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
                     'source': source.pk,
                     "zip": uploaded_file_url
                 }
-                messages.success(self.request, 'Robot Framework Source created')
+                if stepper != 'stepper':
+                    messages.success(self.request, 'Robot Framework Source created')
         if name == 'libraries':
             form.instance.category = 5
             source = form.save()
             self.pk = source.pk
-            messages.success(self.request, 'Library Source created')
+            if stepper != 'stepper':
+                messages.success(self.request, 'Library Source created')
             _config = {
                 'category': 5,
                 'source': source.pk,
@@ -232,7 +236,8 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
                 task_id=extract.task_id,
                 state=extract.state
             )
-            messages.info(self.request, 'Running extract in background')
+            if stepper != 'stepper':
+                messages.info(self.request, 'Running extract in background')
             self.request.user.tasks.add(task)
             self.request.user.save()
             return HttpResponseRedirect(self.get_success_url())
@@ -438,7 +443,8 @@ class NewPhaseView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
-        messages.success(self.request, "Phase Created")
+        if stepper != 'stepper':
+            messages.success(self.request, "Phase Created")
         if stepper != 'stepper':
             return reverse_lazy('phases')
         else:
@@ -461,9 +467,10 @@ class EditPhaseView(LoginRequiredMixin, UpdateView):
         return super(EditPhaseView, self).form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, "Phase Edited")
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
+        if stepper != 'stepper':
+            messages.success(self.request, "Phase Edited")
         if stepper != 'stepper':
             return reverse_lazy('phases')
         else:
