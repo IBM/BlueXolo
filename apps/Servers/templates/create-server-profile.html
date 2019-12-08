@@ -165,7 +165,8 @@
                 "description": _desc.value,
                 "template": _select.value,
                 "category": _globalTemplate.category,
-                "config": JSON.stringify(_params)
+                "config": JSON.stringify(_params),
+                "stepper": stepper
             };
             $.ajax({
                 url: "{% url "api-profiles" %}",

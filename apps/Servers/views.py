@@ -162,7 +162,8 @@ class NewParametersView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
-        messages.success(self.request, "Parameter Created")
+        if stepper != 'stepper':
+            messages.success(self.request, "Parameter Created")
         if stepper != 'stepper':
             return reverse_lazy('parameters')
         else:
@@ -191,7 +192,8 @@ class EditParametersView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
-        messages.success(self.request, "Parameter Edited")
+        if stepper != 'stepper':
+            messages.success(self.request, "Parameter Edited")
         if stepper != 'stepper':
             return reverse_lazy('parameters')
         else:

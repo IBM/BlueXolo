@@ -166,7 +166,8 @@ class NewCollectionsView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
-        messages.success(self.request, "Collection Created")
+        if stepper != 'stepper':
+            messages.success(self.request, "Collection Created")
         if stepper != 'stepper':
             return reverse_lazy('collections')
         else:
@@ -194,7 +195,8 @@ class EditCollectionsView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
         source_pk = self.pk
-        messages.success(self.request, "Collection Edited")
+        if stepper != 'stepper':
+            messages.success(self.request, "Collection Edited")
         if stepper != 'stepper':
             return reverse_lazy('collections')
         else:
