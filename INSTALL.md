@@ -229,4 +229,6 @@ This command will run bluexolo on port 8000, you can use your browser to connect
 
 ```
 python manage.py runserver 0.0.0.0:8000
+
+//a
 ```
