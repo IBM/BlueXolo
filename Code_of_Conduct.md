@@ -1,5 +1,5 @@
 # Contributor Covenant Code of Conduct
-This is just a test.
+This is just a test.  :)
 ## Our Pledge
 
 In the interest of fostering an open and welcoming environment, we as
