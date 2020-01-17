@@ -104,13 +104,13 @@ rabbitmqctl set_permissions -p bluehost bluexolo ".*" ".*" ".*"
 
 ```
 
-#Install Postgresql
-Postgress sql is a relational database, it is the default db to use with bluexolo
+#Install PostgreSQL
+PostgreSQL is a relational database, it is the default db to use with bluexolo
 
 ```
 #install posgtress
 yum install postgresql-server postgresql-contrib
-#Initialize postresql database
+#Initialize PostgreSQL database
 postgresql-setup initdb
 ```
 
