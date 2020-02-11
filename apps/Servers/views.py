@@ -338,7 +338,7 @@ def run_script(filename, params, client, type_script):
     _data = dict()
     try:
         exec_command = "../TestScripts/{0}_test_case.robot".format(filename)
-        if type_script is 3:
+        if type_script == 3:
             exec_command = "../TestSuites/{0}_test_suite.robot".format(filename)
         config = params.get('config')
         arguments = params.get('global_variables')
@@ -467,7 +467,7 @@ def generate_file(obj, type_script, params, filename, client):
             name__in=['Dialogs', 'Screenshot']
         ).values_list('name', flat=True)
         """Generate robot files"""
-        if type_script is 1:
+        if type_script == 1:
             extra_elements = json.loads(obj.extra_imports)
             resources = generate_resource_files(extra_elements)
 
@@ -515,7 +515,7 @@ def generate_file(obj, type_script, params, filename, client):
 
             send_files(dummy_tc_file.name, 5, config, client)
 
-        elif type_script is 2:
+        elif type_script == 2:
             items = search_for_script_names(obj.script)
             if items.get('error'):
                 raise Exception(items.get('error'))
@@ -549,7 +549,7 @@ def generate_file(obj, type_script, params, filename, client):
             if check.get('text'):
                 raise Exception(check.get('text'))
 
-        elif type_script is 3:
+        elif type_script == 3:
             """Test Suite """
             items = search_for_script_names(obj.script)
             if items.get('error'):
@@ -587,7 +587,7 @@ def generate_file(obj, type_script, params, filename, client):
             if check.get('text'):
                 raise Exception(check.get('text'))
 
-        elif type_script is 4:
+        elif type_script == 4:
             """ Imported Keywords """
             """ Dummy Test Case file"""
             dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
@@ -654,21 +654,21 @@ def run_on_server(_data):
         configs = params.get('config')
         filename = _data.get('filename')
         client = get_connection(configs)
-        if type_script is 1:
+        if type_script == 1:
             """is keywords"""
             obj = Keyword.objects.get(id=_data.get('obj_id'))
-            if obj.script_type is 2:
+            if obj.script_type == 2:
                 type_script = 4
-        elif type_script is 2:
+        elif type_script == 2:
             """is Test Case"""
             obj = TestCase.objects.get(id=_data.get('obj_id'))
-        elif type_script is 3:
+        elif type_script == 3:
             """is Test Case"""
             obj = TestSuite.objects.get(id=_data.get('obj_id'))
         _data = generate_file(obj, type_script, params, filename, client)
         if _data.get('error'):
             raise Exception(_data['error'])
-        if profile_category is 2:
+        if profile_category == 2:
             """Run pybot only if the user choose -> Local Network connection"""
             result = run_script(filename, params, client, type_script)
             if result.get('error'):

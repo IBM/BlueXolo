@@ -32,12 +32,12 @@ def run_extract(config):
         3 or 4  -    R-Extract
     """
     category = int(config.get('category'))
-    if category is 2:
+    if category == 2:
         # Extract Manpages
         m = MExtract(api_config=config)
         m.run()
 
-    elif category is 3:
+    elif category == 3:
         # Extract Product Commands
         p = PExtract(config)
         p.run()
