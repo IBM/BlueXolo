@@ -1,0 +1,33 @@
+header {
+    background-image: url('../../assets/images/background.jpg');
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    background-position: center;
+    text-align: center;
+    color: #546e7a;
+    min-height: 500px;
+}
+
+header .header-content {
+    position: relative;
+    text-align: center;
+    padding: 150px 100px 50px;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+  
+@media (min-width: 768px) {  
+    img {
+        width: 30%;
+        height: auto;
+    }
+
+    header {
+        min-height: 700px;
+    }
+}

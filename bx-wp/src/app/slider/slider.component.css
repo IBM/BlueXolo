@@ -1,0 +1,103 @@
+img {
+    width: 100%;
+    min-height: 700px;
+  }
+  
+  .container {
+    height: 100%;
+    overflow: hidden;
+    min-height: 700px;
+  }
+  
+  .img-container {
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    height: auto !important;
+    will-change: opacity;
+    transition: opacity .3s;
+    cursor: pointer;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    background-position: center;
+  }
+  
+  .slide-button:hover, .slide-button-select {
+    width: 64px !important;
+    /*background-color: rgba(255,255,255,1) !important;*/
+    background-color: #546e7a !important;
+    transition: background-color .4s, width 4s cubic-bezier(0.190, 1.000, 0.220, 1.000) !important;
+  }
+  
+  
+  .slide-button {
+    width: 30px;
+    height: 4px;
+    /*background-color: rgba(255,255,255,.5);*/
+    background-color: rgba(17, 16, 16, 0.5);
+    cursor: pointer;
+    position: absolute;
+  
+  }
+  
+  .slider {
+    position: absolute;
+    top: 50%;
+    right: 80px;
+    opacity: 1;
+    min-width: 30px;
+  
+  }
+  
+  .slide-button-parent-container {
+    position: relative;
+    margin: 22px 0;
+    min-height: 4px;
+  }
+  
+  .select-box {
+    min-height: 10px;
+  }
+
+  .text-container {
+    height: 20vh;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .page-text {
+    min-height: 0px;
+    width: 50%;
+    height: 100%;
+    opacity: 0;
+    font-weight: 300;
+    font-size: 90px;
+    color: white;
+  }
+  
+  .selected {
+    opacity: 1;
+    transition: 1s;
+  }  
+
+@media(max-width: 768px) {
+
+    .page-text {
+        font-weight: 100;
+        font-size: 50px;
+        color: white;
+        text-align: left;
+    }
+
+    img {
+      min-height: 600px;
+    }
+    
+    .container {
+      min-height: 600px;
+    }
+}

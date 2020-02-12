@@ -1,0 +1,28 @@
+ <div class="content" id="information"> 
+ 
+  <div class="title">      
+    <h2>About Us</h2>
+    <p>
+        BlueXolo is a WEB framework that allows the generation of test scripts in a visual way using a “drag and drop” 
+        interface which allows the generation of complex test cases spending a minimum amount of time.
+    </p>
+  </div> 
+ 
+
+  <div class="items-list">
+  <div *ngFor="let item of items">
+    <div class="icon-card">  
+      <i class="{{item.icon}}"></i>
+    </div>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title><a class="link" target="_blank" href="{{item.link}}">{{item.name}}</a></mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+
+</div>

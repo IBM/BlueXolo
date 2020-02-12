@@ -1,0 +1,167 @@
+  .container {
+    width: 100%;
+    height: 90vh;
+  }
+  
+  .sidenav-content {
+    display: flex;
+    height: 100%;
+    align-items: baseline;
+    justify-content: initial;
+    overflow-x: hidden;
+  }
+
+  .container::-webkit-scrollbar-thumb {
+    background: #546e7a;
+    border-radius: 4px;
+}
+
+  .sidenav-content > button {
+    margin: 2rem;
+  }
+
+  .documentationItems {
+    margin: 2rem;
+  }
+  
+  .sidenav {
+    padding: 20px;
+    background-color: white;
+    color: black;
+    border-right: solid #546e7a 2px;
+    min-width: 20rem;
+  }
+
+  mat-nav-list a {
+      color: black;
+  }
+
+  .tree-invisible {
+    display: none;
+  }
+  
+  .tree ul,
+  .tree li {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
+  }
+
+
+  /* Toolbar */
+  mat-toolbar {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0; 
+    z-index: 1000;
+    background-color: #546e7a;
+}
+
+  .spacer {
+      flex: 1 1 auto;
+  }
+
+  .link {
+      text-decoration: none;
+      color: #546e7a;
+  }
+
+  .icon-list {
+      margin-left: 1rem;
+  }
+
+  .fa-github {
+      color: white;
+      padding-bottom: .8rem;
+      text-decoration: none;
+  }
+
+  .fa-google {
+      color: white;
+      padding-bottom: .8rem;
+      text-decoration: none;
+  }
+
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 2rem;
+  }
+
+  mat-toolbar-row > button {
+      background-color: #546e7a;
+      color: white;
+  }
+
+  .direction {
+      width: 65vw;
+  }
+
+  .beforeIcon {
+      font-size: 5rem;
+  }
+
+  .nextIcon {
+      font-size: 5rem;
+  }
+
+  .nextButton {
+      float: right;
+  }
+
+  .nextButton:active {
+    outline: none;
+  }
+
+  .contentItem {
+      padding: 2rem;
+  }
+
+  .video-responsive {
+    position: relative;
+    padding-bottom: 56.25%; /* 16/9 ratio */
+    padding-top: 30px; /* IE6 workaround*/
+    height: 0;
+    overflow: hidden;
+  }
+
+  .video-responsive iframe,
+  .video-responsive object,
+  .video-responsive embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .closeButtonNavBar {
+    margin-bottom: 1rem; 
+  }
+
+  .indexMenu {
+    font-weight: lighter;
+    font-style: italic;
+    color: #546e7a;
+  }
+
+  hr {
+    background-color: #546e7a;
+  }
+  
+  p,
+  h1 {
+    margin-bottom: 2rem;
+  }
+
+  .videoDiv {
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    mat-drawer {
+      display: none;
+    }
+
+
+  }

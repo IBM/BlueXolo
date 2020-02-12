@@ -1,0 +1,35 @@
+<div *ngIf="!spa">
+  <mat-toolbar>
+    <mat-toolbar-row>
+  
+      <button mat-button (click)="goHome()">{{title}}</button>
+      <button class="button-items" mat-button (click)="goInformation()">About Us</button>
+      <button class="button-items" mat-button (click)="goFooter()">Contact</button>
+      <button mat-button (click)="goDocumentation()">Documentation</button>
+  
+      <span class="spacer"></span>
+      <div>
+        <span>
+          <a class="link" target="_blank" href="https://github.com/IBM/BlueXolo" class="fa fa-github fa-lg" matTooltip="GitHub"></a>
+        </span>
+      </div>
+  
+      <div class="icon-list">
+        <span>
+          <a class="link" target="_blank" href="https://groups.google.com/d/forum/bluexolo" class="fa fa-google" matTooltip="Google Groups"></a>
+        </span>  
+      </div>
+  
+    </mat-toolbar-row>
+  </mat-toolbar>
+  
+  
+    <app-home></app-home>
+    <app-line></app-line>
+    <app-information></app-information>
+    <app-footer></app-footer>
+  </div>
+  <div *ngIf="spa">
+    <router-outlet></router-outlet>
+  </div>
+  

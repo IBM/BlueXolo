@@ -1,0 +1,8 @@
+{
+    "sliderArray":[
+        {"img": "./assets/images/slides-overview/image1.png", "alt": "",  "text": ""},
+        {"img": "./assets/images/slides-overview/image2.png", "alt": "", "text": ""},
+        {"img": "./assets/images/slides-overview/image3.png", "alt": "",  "text": ""},
+        {"img": "./assets/images/slides-overview/image4.png", "alt": "", "text": ""}
+    ]
+}
