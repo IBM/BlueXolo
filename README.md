@@ -34,6 +34,20 @@ If you experience any issues with BlueXolo on any Operating System, or you have 
 
 [Apache 2.0](https://github.com/IBM/BlueXolo/blob/master/LICENSE)
 
+## YouTube Videos
+
+[Local case study](https://www.youtube.com/watch?v=prtLbBrFsIo)
+[Run BlueXolo for Development purposes in MacOSX](https://www.youtube.com/watch?v=U9uG7ZFs-Us&t=118s)
+[Libraries](https://www.youtube.com/watch?v=ocdulq2vTL4&t=19s)
+[Mextract](https://www.youtube.com/watch?v=ReZXMvrFQOw)
+
+## Contact Links
+
+[BlueXolo Google Group (edited)](https://groups.google.com/forum/#!forum/bluexolo)
+[BlueXolo Web Page](https://ibm.github.io/BlueXolo/)
+[BlueXolo ZenHub](https://app.zenhub.com/workspaces/bluexolo-5c09910d4b5806bc2bfb46c4/board)
+[BlueXolo GitHub](https://github.com/IBM/BlueXolo)
+
 ## List of Contributors
 
 BlueXolo was originally created in 2016 at IBM by the Systems division in Guadalajara, Jalisco, Mexico.
