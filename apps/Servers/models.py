@@ -28,7 +28,7 @@ class Parameters(models.Model):
         db_table = 'parameters'
         verbose_name = _('parameter')
         verbose_name_plural = _('parameters')
-        ordering = ['name']
+        #ordering = ['name']
 
     def __str__(self):
         return '{0}'.format(self.name)
