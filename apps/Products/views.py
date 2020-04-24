@@ -220,13 +220,19 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
             form.instance.category = 5
             source = form.save()
             self.pk = source.pk
-            if stepper != 'stepper':
-                messages.success(self.request, 'Library Source created')
-            _config = {
-                'category': 5,
-                'source': source.pk,
-                'url': form.data.get('url')
-            }
+            file = form.files.get('zip_file')
+            if file:
+                fs = FileSystemStorage(location = '{0}/zip/'.format(settings.MEDIA_ROOT))
+                filename = fs.save(file.name, file)
+                uploaded_file_url = fs.url('zip/{}'.format(filename))
+                _config = {
+                    'category': 5,
+                    'source': source.pk,
+                    'url': form.data.get('url'),
+                    'zip': uploaded_file_url
+                }
+                if stepper != 'stepper':
+                    messages.success(self.request, 'Library Source created')
         try:
             extract = run_extract.delay(_config)
             task = Task.objects.create(

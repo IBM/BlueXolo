@@ -111,13 +111,14 @@ class SourceRobotForm(forms.ModelForm):
 
 class SourceLibraryForm(forms.ModelForm):
     url = forms.CharField(label='Documentation URL')
-
+    zip_file = forms.FileField(label='File')
     class Meta:
         model = Source
         fields = [
             'name',
             'version',
             'url',
+            'zip_file',
             'depends',
         ]
         labels = {"name": "Library Name", "depends": "Robot Version Requirement"}
