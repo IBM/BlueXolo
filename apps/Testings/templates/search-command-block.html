@@ -16,14 +16,48 @@
             if (results.source[0].category == 2) {
                 _print = results.name
             } else {
-                if (results.source.length > 1) {
-                    _print = 'Multiples Sources - ' + results.name
+                if (results.source.length > 1) {   
+
+                    _print = results.source[0].name + ' - ' + results.name
+                    
                 } else {
                     _print = results.source[0].name + ' - ' + results.name
                 }
             }
         }
         return _print
+    }
+    function createNewComandsArray(data){
+        var commmandsArray = data;
+
+        var newCommandsArray = [];
+
+        commmandsArray.forEach(e => {
+            
+            if(e.source.length > 1){
+                
+                var sources = e.source;
+                
+                for(let i = 0; i <sources.length; i++){
+                    if(i > 0){
+                        let commandObject =JSON.parse(JSON.stringify(e));
+                        let temp = commandObject.source[0];
+                        commandObject.source[0] = commandObject.source[i];
+                        commandObject.source[i] = temp;
+                        commandObject.id = commandObject.id + '-' + i;
+                        newCommandsArray.push(commandObject);
+                    }
+                    else{
+                        newCommandsArray.push(e);
+                    }
+                }
+            }
+            else{
+                newCommandsArray.push(e);
+            }
+        });
+
+        return newCommandsArray;
     }
 
     $('#command-search').select2({
@@ -39,8 +73,9 @@
                 };
             },
             processResults: function (data) {
+                var dataResults = createNewComandsArray(data.results);
                 return {
-                    results: data.results
+                    results:  dataResults
                 };
             }
         },
@@ -54,12 +89,15 @@
 
 
     $('#command-search').on("select2:select", function (e) {
+        var sourceName = e.params.data.source[0].name;
+        var _container = document.getElementById('command-search');
+        var commandID = this.value.split("-")[0];
         $.ajax({
-            url: '/apis/commands/' + this.value + '/',
+            url: '/apis/commands/' + commandID + '/',
             type: 'GET',
             data: {extra: 1},
             success: function (data) {
-                drawResult(data)
+                drawResult(data, sourceName)
             }, error: function (err) {
                 drawMessage(error.responseJSON.text, 'red');
                 console.log('error' + err)
@@ -67,15 +105,27 @@
         });
     });
 
-    function drawResult(data) {
+    function findSourceId(data, sourceName){
+
+        let sourceArray = data.source;
+
+        let sourceObject = sourceArray.find(e => e.name == sourceName);
+        let sourceIndex = sourceArray.findIndex(e => e == sourceObject);
+
+        return sourceIndex;
+    }
+
+    function drawResult(data, sourceName) {
+        let sourceIndex = findSourceId(data, sourceName);
+
         var _container = document.getElementById('commandsContainer');
         _container.innerHTML = "";
         var _resultElement = document.createElement('div');
         _resultElement.className = 'drag-drop-item center';
-        _resultElement.id = data.id + "-drag-drop";
+        _resultElement.id = data.id + "_" + sourceIndex + "-drag-drop";
         _resultElement.draggable = true;
         if (data.source.length > 1) {
-            _resultElement.innerHTML = "Multiple Sources - " + data.name;
+            _resultElement.innerHTML = sourceName + " - " + data.name;
         } else {
             if (data.source[0].category == 2) {
                 _resultElement.innerHTML = data.name;

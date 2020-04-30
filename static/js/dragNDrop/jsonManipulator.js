@@ -191,7 +191,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
     });
 }
 
-function addElementToJSON(indentation, commandID) {
+function addElementToJSON(indentation, commandID, sourceID) {
 
     $.ajax({
         url: "/apis/commands/",
@@ -204,7 +204,7 @@ function addElementToJSON(indentation, commandID) {
             var commandName = data.results[0].name;
             var commandArguments = data.results[0].arguments;
             var commandCategory = data.results[0].source[0].category;
-            var commandSource = data.results[0].source[0];
+            var commandSource = data.results[0].source[sourceID];
 
             droppedElements.push({
                 id: commandID,
@@ -226,7 +226,7 @@ function addElementToJSON(indentation, commandID) {
     });
 }
 
-function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition) {
+function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition, sourceID) {
 
     $.ajax({
         url: "/apis/commands/",
@@ -239,7 +239,7 @@ function addElementToJSONInIndex(indentation, commandID, addElementInThisPositio
             var commandName = data.results[0].name;
             var commandArguments = data.results[0].arguments;
             var commandCategory = data.results[0].source[0].category;
-            var commandSource = data.results[0].source[0];
+            var commandSource = data.results[0].source[sourceID];
 
             var droppedElement = {
                 id: commandID,
