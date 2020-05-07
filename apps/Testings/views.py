@@ -314,11 +314,11 @@ class RunScriptView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
         type_script = int(kwargs.get('type_script'))
         scripts = ['Keyword', 'Test Case', 'Test Suite']
         if type_script:
-            if type_script is 1:
+            if type_script == 1:
                 obj = Keyword.objects.get(pk=kwargs.get('pk'))
-            if type_script is 2:
+            if type_script == 2:
                 obj = TestCase.objects.get(pk=kwargs.get('pk'))
-            if type_script is 3:
+            if type_script == 3:
                 obj = TestSuite.objects.get(pk=kwargs.get('pk'))
             context['obj'] = obj
             context['type'] = scripts[type_script - 1]

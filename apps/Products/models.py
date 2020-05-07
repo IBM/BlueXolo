@@ -80,7 +80,7 @@ class Command(models.Model):
 
         Returns the number of arguments associated to "self"
         """
-        return count(self.get_arguments())
+        return len(self.get_arguments())
 
     def arguments(self):
         args = []

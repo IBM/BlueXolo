@@ -82,10 +82,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         for task in self.tasks.all().order_by('-created_at')[:6]:
             res = AsyncResult(task.task_id)
             if res.ready() and res.state != task.state:
-                if task.category is 1:
+                if task.category == 1:
                     task.state = res.state
                     task.task_info = res.result or ''
-                if task.category is 2:
+                if task.category == 2:
                     try:
                         if res.result.get('error'):
                             task.state = 'FAILURE'
@@ -99,7 +99,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                         task.task_info = "Celery or Message broker stopped"
                 task.save()
             
-            if task.category is 1:
+            if task.category == 1:
                 try:
                     task.task_info = json.loads(task.task_info)
                 except ValueError:
