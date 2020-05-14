@@ -110,17 +110,27 @@ class SourceRobotForm(forms.ModelForm):
 
 
 class SourceLibraryForm(forms.ModelForm):
-    url = forms.CharField(label='Documentation URL')
-
+    url = forms.CharField(label='Documentation URL or file', required=False)
+    html_file = forms.FileField(label='HTML File', required=False)
     class Meta:
         model = Source
         fields = [
             'name',
             'version',
             'url',
+            'html_file',
             'depends',
         ]
         labels = {"name": "Library Name", "depends": "Robot Version Requirement"}
+
+    def clean(self):
+        cleaned_data = super().clean()
+        url = cleaned_data.get('url').strip()
+        html_file = cleaned_data.get('html_file')
+
+        if html_file is None and (url is None or url == ''):
+            msg = "Please enter either the library's URL or HTML file."
+            self.add_error('url', msg)
 
     def __init__(self, *args, **kwargs):
         """This filter only for sources in the category 4(Robot)"""
