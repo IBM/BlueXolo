@@ -240,10 +240,13 @@ class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, CreateView
     required_permission = "create_imported_script"
 
     def form_valid(self, form):
-        file = form.files.get('file_script')
+        file = form.files.get('file_script', 'r')
         if file:
             try:
                 file_content = file.read()
+                file_content = str(file_content)[2:-1]
+                file_content = file_content.replace("\\n", "\n")
+                file_content = file_content.replace("\\t", "\t")
                 form.instance.script = file_content
                 form.instance.user = self.request.user
                 form.instance.script_type = 2
