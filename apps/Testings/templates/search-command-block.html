@@ -17,8 +17,7 @@
                 _print = results.name
             } else {
                 if (results.source.length > 1) {   
-
-                    _print = results.source[0].name + ' - ' + results.name
+                    _print = results.source[0].name + ' - ' + results.name + ' (' + results.source[0].version + ')';
                     
                 } else {
                     _print = results.source[0].name + ' - ' + results.name
