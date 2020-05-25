@@ -32,12 +32,12 @@ def run_extract(config):
         3 or 4  -    R-Extract
     """
     category = int(config.get('category'))
-    if category is 2:
+    if category == 2:
         # Extract Manpages
         m = MExtract(api_config=config)
         m.run()
 
-    elif category is 3:
+    elif category == 3:
         # Extract Product Commands
         p = PExtract(config)
         p.run()
@@ -381,7 +381,7 @@ class MExtract:
 
         Returns source object
         """
-        if category is 2:
+        if category == 2:
             if self.api_config.get('host'):
                 name = "{0} - {1}".format(distro.linux_distribution()[0], distro.linux_distribution()[1])
                 version = self.api_config.get('host')
@@ -399,7 +399,7 @@ class MExtract:
             except Exception as error:
                 source = "None"
                 print(" error in get OS: {}".format(error))
-        elif category is 3:
+        elif category == 3:
             try:
                 source = Source.objects.get(id=self.api_config.get("source"))
             except Exception as error:
@@ -517,7 +517,7 @@ class RExtract():
         self.extra_libraries = list()
         self.source_dict = dict()
         _category = int(config.get('category'))
-        if _category is 4:
+        if _category == 4:
             self.zip = zipfile.ZipFile(config.get("zip"))
             for path in self.zip.namelist():
                 if re.search(r'/libraries/', path):
@@ -535,7 +535,7 @@ class RExtract():
                     instance.depends.add(self.r_version)
                     instance.save()
                     self.source_dict[name] = instance
-        elif _category is 5:
+        elif _category == 5:
             self.lib_url = config.get("url").strip()
             try:
                 req = urllib.request.Request(self.lib_url)
