@@ -7,7 +7,7 @@ nohup docker run --privileged \
  -h bluexolo \
 -e container=docker \
 -v /sys/fs/cgroup:/sys/fs/cgroup \
--v /home/raaul19/BlueXolo:/opt/BlueXolo-src \
+-v /opt/sources//BlueXolo:/opt/BlueXolo-src \
 -v /opt/bluexolo-data:/var/lib/postgresql \
 --name bluexolo \
 bluexolo/bluexolo  &
