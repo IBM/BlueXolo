@@ -208,7 +208,7 @@ class CommandsApiView(mixins.ListModelMixin,
             queryset = queryset.filter(id=id_command)
         if source:
             queryset = queryset.filter(source__id=source)
-        return queryset
+        return queryset 
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
