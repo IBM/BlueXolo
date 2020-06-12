@@ -7,8 +7,8 @@ from .models import Keyword, Collection, TestCase, Phase, TestSuite
 
 class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
     model = Keyword
-    columns = ['name', 'description', 'created_at', 'pk']
-    order_columns = ['name', 'description', 'created_at', 'pk']
+    columns = ['name', 'type','description', 'created_at', 'pk']
+    order_columns = ['name', 'type','description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
