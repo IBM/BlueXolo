@@ -244,6 +244,9 @@ class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, CreateView
         if file:
             try:
                 file_content = file.read()
+                file_content = str(file_content)[2:-1]
+                file_content = file_content.replace("\\n", "\n")
+                file_content = file_content.replace("\\t", "\t")
                 form.instance.script = file_content
                 form.instance.user = self.request.user
                 form.instance.script_type = 2

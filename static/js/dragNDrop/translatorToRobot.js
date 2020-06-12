@@ -260,10 +260,12 @@ function createTerminalWithColors(scriptText){
             'script': scriptText,
         }, success: function (data) {
 
-            var colorfulTerminal = document.getElementById("colorfulTerminal");            
-            if(colorfulTerminal !== undefined && colorfulTerminal !== null){
-                colorfulTerminal.parentNode.removeChild(colorfulTerminal);
-            }
+            ["colorfulTerminal", "downloadLink"].forEach(function(elementId) {
+                var elementId = document.getElementById(elementId);
+                if (elementId !== undefined && elementId !== null){
+                    elementId.parentNode.removeChild(elementId);
+                }
+            });
 
             var terminal = document.getElementById("terminal");
             var newTerminal = document.createElement("div");
@@ -273,6 +275,22 @@ function createTerminalWithColors(scriptText){
             terminal.parentNode.append(newTerminal);
 
             terminal.style.display = 'none';
+
+            var fileName = "bluexolo_content";
+            ["keyword", "testcase", "testsuit"].forEach(function(i) {
+                var element = document.getElementById(i + "_name");
+                if (element !== undefined && element !== null && element.value.trim() != "") {
+                    fileName = element.value;
+                }
+            });
+
+            var downloadLink = document.createElement("a");
+            downloadLink.id = "downloadLink";
+            downloadLink.download = fileName + ".robot";
+            downloadLink.href = "data:text/plain;charset=utf-8," + encodeURI(scriptText);
+            downloadLink.innerHTML = "Download robot code";
+
+            terminal.parentNode.append(downloadLink);
         }, error: function (err) {
             drawMessage(err.text, 'red');
         }
