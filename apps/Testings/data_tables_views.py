@@ -7,13 +7,13 @@ from .models import Keyword, Collection, TestCase, Phase, TestSuite
 
 class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
     model = Keyword
-    columns = ['name', 'description', 'created_at', 'pk']
-    order_columns = ['name', 'description', 'created_at', 'pk']
+    columns = ['name', 'script_type','description', 'created_at', 'pk']
+    order_columns = ['name', 'script_type','description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
         user = self.request.user
-        qs = Keyword.objects.filter(script_type=1).order_by('created_at')
+        qs = Keyword.objects.order_by('created_at')
         if not user.is_superuser:
             user_products = user.products.all().values_list('id', flat=True)
             collections = qs.values_list('collection__product__id', flat=True)
