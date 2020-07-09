@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1560893373278,
+  "timestamp": 1594264639748,
   "index": "https://ibm.github.io/BlueXolo/index.html",
   "assetGroups": [
     {
@@ -10,14 +10,14 @@
       "urls": [
         "https://ibm.github.io/BlueXolo/favicon.ico",
         "https://ibm.github.io/BlueXolo/index.html",
-        "https://ibm.github.io/BlueXolo/main-es2015.6101869e662f312e06e6.js",
-        "https://ibm.github.io/BlueXolo/main-es5.21af5a1226b88bc3305a.js",
-        "https://ibm.github.io/BlueXolo/polyfills-es2015.e954256595c973372414.js",
-        "https://ibm.github.io/BlueXolo/polyfills-es5.2e5f0eafe40ded881b53.js",
-        "https://ibm.github.io/BlueXolo/runtime-es2015.858f8dd898b75fe86926.js",
-        "https://ibm.github.io/BlueXolo/runtime-es5.741402d1d47331ce975c.js",
-        "https://ibm.github.io/BlueXolo/scripts.e84e36a0841a046b4d25.js",
-        "https://ibm.github.io/BlueXolo/styles.767e3e120c798028af46.css"
+        "https://ibm.github.io/BlueXolo/main-es2015.70e3eb617f6cc5aefcf7.js",
+        "https://ibm.github.io/BlueXolo/main-es5.70e3eb617f6cc5aefcf7.js",
+        "https://ibm.github.io/BlueXolo/manifest.webmanifest",
+        "https://ibm.github.io/BlueXolo/polyfills-es2015.2987770fde9daa1d8a2e.js",
+        "https://ibm.github.io/BlueXolo/polyfills-es5.ef4b1e1fc703b3ff76e3.js",
+        "https://ibm.github.io/BlueXolo/runtime-es2015.edb2fcf2778e7bf1d426.js",
+        "https://ibm.github.io/BlueXolo/runtime-es5.edb2fcf2778e7bf1d426.js",
+        "https://ibm.github.io/BlueXolo/styles.5c753efc2d0389903d56.css"
       ],
       "patterns": []
     },
@@ -52,6 +52,8 @@
         "https://ibm.github.io/BlueXolo/assets/images/documentation/contribute/github_fork/github_fork-8.png",
         "https://ibm.github.io/BlueXolo/assets/images/documentation/contribute/github_fork/github_fork-9.png",
         "https://ibm.github.io/BlueXolo/assets/images/documentation/contribute/github_repository/github_repository-1.png",
+        "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/bluexolo-docker/docker-ubuntu-0.png",
+        "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/bluexolo-docker/docker-ubuntu-1.png",
         "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/download/download-0.png",
         "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/download/download-1.png",
         "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/install/install-0.png",
@@ -123,6 +125,7 @@
         "https://ibm.github.io/BlueXolo/assets/images/slides/image4.png",
         "https://ibm.github.io/BlueXolo/assets/images/slides/image5.png",
         "https://ibm.github.io/BlueXolo/assets/images/slides/image6.png",
+        "https://ibm.github.io/BlueXolo/assets/images/zenhub-icon.svg",
         "https://ibm.github.io/BlueXolo/background.4c5b7d304ddb21435837.jpg",
         "https://ibm.github.io/BlueXolo/favicon.png"
       ],
@@ -157,6 +160,8 @@
     "https://ibm.github.io/BlueXolo/assets/images/documentation/contribute/github_fork/github_fork-8.png": "13e25efb70db7afb64583a7952824f2fd25a2526",
     "https://ibm.github.io/BlueXolo/assets/images/documentation/contribute/github_fork/github_fork-9.png": "344c4d5ffca5dea1a5703e3d7b3569a93dca1096",
     "https://ibm.github.io/BlueXolo/assets/images/documentation/contribute/github_repository/github_repository-1.png": "10dc91f8861e99b1f272f3128482715626f6b4fe",
+    "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/bluexolo-docker/docker-ubuntu-0.png": "a543da4a69883cad0b074ea40cb2739ead61d429",
+    "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/bluexolo-docker/docker-ubuntu-1.png": "4a263843c32fd10ef43e27b3793275cbdecbd84a",
     "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/download/download-0.png": "05008e41c64715025c1795800a2e21293b687edc",
     "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/download/download-1.png": "791ea40db20b00003be57bd340aeed58f1dfd09f",
     "https://ibm.github.io/BlueXolo/assets/images/documentation/first-steps/install/install-0.png": "6d203d5d4b9edb7cca6b59898e09517bf608a647",
@@ -228,18 +233,19 @@
     "https://ibm.github.io/BlueXolo/assets/images/slides/image4.png": "c3bd159d2e7a297afbc8e56f8daadc05bb5ddff9",
     "https://ibm.github.io/BlueXolo/assets/images/slides/image5.png": "f5cfd3b10ff005f9d7023f5f882644a878c8caf0",
     "https://ibm.github.io/BlueXolo/assets/images/slides/image6.png": "a5ffcb9389ed11e965c7705fb8a47efcfb7cdeef",
+    "https://ibm.github.io/BlueXolo/assets/images/zenhub-icon.svg": "52b140bc16a55114359f2d38d711b920b33da352",
     "https://ibm.github.io/BlueXolo/background.4c5b7d304ddb21435837.jpg": "f93c4feede6aaa8e7051f4ed9f6e647579cc48a0",
-    "https://ibm.github.io/BlueXolo/favicon.ico": "344c81a7088a1a9d2a4150d691b5a6aff0c24a77",
+    "https://ibm.github.io/BlueXolo/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
     "https://ibm.github.io/BlueXolo/favicon.png": "81b3394b16830718cca6cf8e72ec804e6f36cc68",
-    "https://ibm.github.io/BlueXolo/index.html": "f2089ec2515fdc9a9e8ab02ef575398052bd76e4",
-    "https://ibm.github.io/BlueXolo/main-es2015.6101869e662f312e06e6.js": "b2856a88ca73eb0724dd13e4dfddaa732cc2f978",
-    "https://ibm.github.io/BlueXolo/main-es5.21af5a1226b88bc3305a.js": "0eaa4f862fbebe9b4efd34bac5404a1fea9f2d28",
-    "https://ibm.github.io/BlueXolo/polyfills-es2015.e954256595c973372414.js": "ae2d1da695b0816436f21ff43f857a42b11a4e17",
-    "https://ibm.github.io/BlueXolo/polyfills-es5.2e5f0eafe40ded881b53.js": "589b38f3973ebdf4aa99760757da7b3a939dbb54",
-    "https://ibm.github.io/BlueXolo/runtime-es2015.858f8dd898b75fe86926.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
-    "https://ibm.github.io/BlueXolo/runtime-es5.741402d1d47331ce975c.js": "b62956c2192bfe5516d6374e753773901ed50ec5",
-    "https://ibm.github.io/BlueXolo/scripts.e84e36a0841a046b4d25.js": "8076fda56bf9c10afaf18ad5331cf28c3f2e844a",
-    "https://ibm.github.io/BlueXolo/styles.767e3e120c798028af46.css": "013dea7b9456f19af7dfb06269bca89156517ca5"
+    "https://ibm.github.io/BlueXolo/index.html": "144d44d16b0eb2b8b83e66feeaa1f450620c821d",
+    "https://ibm.github.io/BlueXolo/main-es2015.70e3eb617f6cc5aefcf7.js": "c33ec0a62cffd21ef5a932b06044ea2e6f3107d5",
+    "https://ibm.github.io/BlueXolo/main-es5.70e3eb617f6cc5aefcf7.js": "ea316b15b6abeccbf81bcfe8fb8a3eef2fec0d2c",
+    "https://ibm.github.io/BlueXolo/manifest.webmanifest": "a771fcc4904632844a80ae4f4c79494ff75e1977",
+    "https://ibm.github.io/BlueXolo/polyfills-es2015.2987770fde9daa1d8a2e.js": "cf5cbfa9134716054fb479ab21362146cdf1f2ff",
+    "https://ibm.github.io/BlueXolo/polyfills-es5.ef4b1e1fc703b3ff76e3.js": "6bff0c03e05bb347d213ad1b3674045eb892d189",
+    "https://ibm.github.io/BlueXolo/runtime-es2015.edb2fcf2778e7bf1d426.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
+    "https://ibm.github.io/BlueXolo/runtime-es5.edb2fcf2778e7bf1d426.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
+    "https://ibm.github.io/BlueXolo/styles.5c753efc2d0389903d56.css": "b5c01755a33d3343aac7147526b480dbde4032e2"
   },
   "navigationUrls": [
     {
