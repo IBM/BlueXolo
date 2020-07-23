@@ -2,14 +2,14 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView
+from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView, FormView
 from pygments import highlight
 from pygments.formatters.html import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
 from rolepermissions.mixins import HasPermissionsMixin
 
-from apps.Testings.models import Keyword, Collection, TestCase, TestSuite
-from apps.Testings.forms import CollectionForm, ImportScriptForm, EditImportScriptForm
+from apps.Testings.models import Keyword, Collection, TestCase, TestSuite, Phase
+from apps.Testings.forms import (CollectionForm, EditImportScriptForm, NewImportScriptForm)
 
 
 class KeyWordsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
@@ -233,11 +233,11 @@ class KeywordsImportedView(LoginRequiredMixin, HasPermissionsMixin, TemplateView
     required_permission = "read_imported_script"
 
 
-class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, CreateView):
+class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
     template_name = "import-script.html"
-    form_class = ImportScriptForm
-    model = Keyword
+    form_class = NewImportScriptForm
     required_permission = "create_imported_script"
+    pk = None
 
     def form_valid(self, form):
         file = form.files.get('file_script')
@@ -247,20 +247,34 @@ class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, CreateView
                 file_content = str(file_content)[2:-1]
                 file_content = file_content.replace("\\n", "\n")
                 file_content = file_content.replace("\\t", "\t")
-                form.instance.script = file_content
-                form.instance.user = self.request.user
-                form.instance.script_type = 2
-                form.save()
+                if form.cleaned_data['script_type'] == 'kw':
+                    model = Keyword()
+                elif form.cleaned_data['script_type'] == 'tc':
+                    model = TestCase()
+                elif form.cleaned_data['script_type'] == 'ts':
+                    model = TestSuite()
+                print(form.cleaned_data)
+                model.name=form.cleaned_data['name']
+                model.description=form.cleaned_data['description']
+                model.script=file_content
+                model.user = self.request.user
+                model.script_type=2
+                if form.cleaned_data['script_type'] == 'tc' or form.cleaned_data['script_type'] == 'ts':
+                    model.phase=form.cleaned_data['phase']
+                model.save()
+                model.collection.add(form.cleaned_data['collection'])
+                self.pk = model.pk
             except Exception as error:
+                # TODO: handle "unique constraint in name field" error
                 print(error)
-        messages.success(self.request, "Script imported")
-        return super(NewKeywordImportedView, self).form_valid(form)
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         return super(NewKeywordImportedView, self).form_invalid(form)
 
     def get_success_url(self):
-        return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
+        messages.success(self.request, "Script imported")
+        return reverse_lazy('edit-import-script', kwargs={'pk': self.pk})
 
 
 class EditKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):

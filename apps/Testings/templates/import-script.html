@@ -13,7 +13,7 @@
                         
                         {% compress js %}
                         <script type="text/javascript" src="{% static "js/dragNDrop/getInitial.js" %}"></script>
-                        <script>                       
+                        <script>
                             $(document).ready(function () {
                                 $('.chips').material_chip();
                         
@@ -68,26 +68,6 @@
 
                         {% endcompress %}
 
-                        <div class="select-dropdown">
-                            <label for="script_types">Script type<b class="red-text"> *</b></label>
-                            <select id="script_types" onchange="showAdditionalOptions()">
-                                <option value="keyword">Keyword</option>
-                                <option value="testcase">Test Case</option>
-                                <option value="testsuite">Test Suite</option>
-                            </select>
-                            <ul>
-                                <li class="red-text"><i id="error_field_collection"></i></li>
-                            </ul>
-                        </div>
-                        <div id="additional-options" style="display: none;">      
-                            <div class="select-dropdown">
-                                <label for="phases_list">Phase <b class="red-text"> *</b><i style="float: right;" class="tiny material-icons tooltipped" data-position="bottom" data-tooltip="Help us to identify and categorize the purpose of the test cases and have a better control of them">help_outline</i></b></label>
-                                <select id="phases_list" onchange="hasValues()"></select>
-                                <ul>
-                                    <li class="red-text"><i id="error_field_phase"></i></li>
-                                </ul>
-                            </div>
-                        </div>  
                         <div class="center">
                             <input type="submit" value="Import" class="btn">
                         </div>
