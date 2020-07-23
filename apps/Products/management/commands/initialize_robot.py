@@ -50,8 +50,7 @@ class Command(BaseCommand):
         comment_command, created = Command.objects.get_or_create(
             name="comment"
         )
-        comment, created = Argument.objects.get_or_create(command=comment_command, name="comment", description="N/A", needs_value=True,
-                                                          requirement=True)
+        comment, created = Argument.objects.get_or_create(command=comment_command, name="comment", description="N/A", needs_value=True, requirement=True)
         comment.save()
         comment_command.source.add(source)
         comment_command.save()
@@ -72,8 +71,7 @@ class Command(BaseCommand):
             name="Global Variable"
         )
         name_g, created = Argument.objects.get_or_create(command=g_variable_command, name="name", description="N/A", needs_value=True, requirement=True)
-        value_g, created = Argument.objects.get_or_create(command=g_variable_command, name="value", description="N/A", needs_value=True,
-                                                          requirement=True)
+        value_g, created = Argument.objects.get_or_create(command=g_variable_command, name="value", description="N/A", needs_value=True, requirement=True)
         name_g.save()
         value_g.save()
         g_variable_command.source.add(source)
@@ -94,8 +92,7 @@ class Command(BaseCommand):
         command_command, created = Command.objects.get_or_create(
             name="command"
         )
-        command_name, created = Argument.objects.get_or_create(command=command_command, name="name", description="N/A", needs_value=True,
-                                                               requirement=True)
+        command_name, created = Argument.objects.get_or_create(command=command_command, name="name", description="N/A", needs_value=True, requirement=True)
         command_name.save()
         command_command.source.add(source)
         command_command.save()
