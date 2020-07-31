@@ -135,11 +135,36 @@ This also affecting the Libraries view
 
 #### **Solution**
 
-A temporally solution to solve the issue has been implemented, the reason why the page got stuck is that celery and rabbittmq service was down inside docker image. Even if docker container if would be restarted, that means that every time when the container start, theses both services doesn't start correctly.
+The docker image needs internet for some task (otherwise this issue occur) solution is not make change in the code, and only describes steps to solve it:
 
-Temporally solution is access to the running container and kill all process related with rabbit, then restart both services.
+1. Login to docker image that is running bluexolo code
+   ```
+   docker exec -it bluexolo bash
+   ```
+   
+2. Search the process that is keeping alive django webserver, use the command ps -aux. The process should be running the command:
+   ```
+   python3 manage.py runserver <host>:<port>
+   ```
+   Example:
+   ```
+   python3 manage.py runserver 0.0.0.0:8000
+   ```
 
-By now the page is responding as expected, i will start to check the docker image file to solve issue from root couse
+3. Once the process is canceld, rabbitmq should be restarted to do this run the command
+   ```
+   rabbitmqctl stop
+   rabbitmq-server start -detached
+   rabbitmq-server start -detached
+   ```
+
+4. Finally start again django webserver using the command
+   ```
+   nohup python3 manage.py runserver <host>:<port> >> logs/django_<dd>_<mm>_<yyyy>_log.txt &
+   Example:
+   nohup python3 manage.py runserver 0.0.0.0:8000 >> logs/django_25_11_2020_log.txt &
+   ```
+5. Now django web server should be up and running, the website should be available to be used
 
 
 ## **As a user is not posible to run keywords or any robot testing item**
