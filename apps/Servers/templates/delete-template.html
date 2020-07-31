@@ -24,10 +24,25 @@
                                     </ul>
                                 </li>
                             {% endif %}
+                            {% if object.serverprofile_set.exists %}
+                            <li><b>Profiles:</b>
+                                <ul>
+                                    {% for profile in object.serverprofile_set.all %}
+                                    <li>{{ profile.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            {% endif %}
                         </ul>
                         <div class="center">
-                            <a href="{% url "servers-templates" %}" class="btn blue-grey">Back</a>
-                            <input type="submit" value="Confirm" class="btn red"/>
+                            {% if object.serverprofile_set.exists %}
+                            <div>
+                                You can't delete this template because one or more profiles are linked to it
+                            </div>
+                            {% else %}
+                                <input type="submit" value="Confirm" class="btn red"/>
+                            {% endif %}
+                            <a href="{% url "servers-templates" %}" class="btn blue-grey"> Back</a>
                         </div>
                     </form>
                 </div>
