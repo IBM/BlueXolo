@@ -36,7 +36,7 @@ class NewImportScriptForm(forms.Form):
     phase = forms.ModelChoiceField(queryset=Phase.objects.all())
     name = forms.CharField(max_length=100)
     description = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'materialize-textarea'}))
+        widget=forms.Textarea(attrs={'class': 'materialize-textarea'}), required=False)
     file_script = forms.FileField()
 
 
