@@ -3,7 +3,7 @@ from django.conf.urls import url
 from apps.Products.data_tables_views import ArgumentsListJson, OSCommandsListJson, SourcesListJson
 from apps.Servers.data_tables_views import ServerTemplatesListJson, ServerProfilesListJson, ParametersListJson
 from apps.Testings.data_tables_views import KeywordsListJson, CollectionsListJson, TestcasesListJson, PhasesListJson, \
-    TestsuitesListJson, KeywordsImportedListJson
+    TestsuitesListJson, KeywordsImportedListJson, TestCasesImportedListJson, TestSuitesImportedListJson
 from apps.Users.data_tables_views import TasksListJson
 from .views import KeywordAPIView, ServerTemplateApiView, \
     ServerTemplateDetailApiView, ServerProfileApiView, ServerProfileDetailApiView, KeywordDetailApiView, \
@@ -48,7 +48,9 @@ urlpatterns = [
     url(r'^phases/list/$', PhasesListJson.as_view(), name="api-phases-list"),
     url(r'^parameters/list/$', ParametersListJson.as_view(), name="api-parameters-list"),
     url(r'^tasks/list/$', TasksListJson.as_view(), name="api-tasks-list"),
-    url(r'^imported/list/$', KeywordsImportedListJson.as_view(), name="api-imported-list"),
+    url(r'^imported/list/keywords/$', KeywordsImportedListJson.as_view(), name="api-imported-keywords"),
+    url(r'^imported/list/testcases/$', TestCasesImportedListJson.as_view(), name="api-imported-testcases"),
+    url(r'^imported/list/testsuites/$', TestSuitesImportedListJson.as_view(), name="api-imported-testsuites"),
     # Extract
     url(r'^run_extract/$', RunExtract.as_view(), name="run_extract"),
     # apply pygment

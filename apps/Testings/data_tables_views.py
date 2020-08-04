@@ -154,3 +154,53 @@ class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
             return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
         else:
             return super(KeywordsImportedListJson, self).render_column(row, column)
+
+class TestCasesImportedListJson(LoginRequiredMixin, BaseDatatableView):
+    model = TestCase
+    columns = ['name', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'description', 'created_at', 'pk']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        qs = TestCase.objects.filter(script_type=2).order_by('created_at')
+        return qs
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return qs
+
+    def render_column(self, row, column):
+        if column == 'created_at':
+            return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
+        else:
+            return super(TestCasesImportedListJson, self).render_column(row, column)
+            
+class TestSuitesImportedListJson(LoginRequiredMixin, BaseDatatableView):
+    model = TestSuite
+    columns = ['name', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'description', 'created_at', 'pk']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        qs = TestSuite.objects.filter(script_type=2).order_by('created_at')
+        return qs
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return qs
+
+    def render_column(self, row, column):
+        if column == 'created_at':
+            return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
+        else:
+            return super(TestSuitesImportedListJson, self).render_column(row, column)
