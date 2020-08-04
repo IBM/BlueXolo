@@ -5,9 +5,9 @@ from apps.Products.models import Source
 
 SCRIPT_TYPE_CHOICES = (
     (None, 'Choose a script type'),
-    ('kw', 'Keyword'),
-    ('tc', 'Test case'),
-    ('ts', 'Test suite'),
+    ('keyword', 'Keyword'),
+    ('testcase', 'Test case'),
+    ('testsuite', 'Test suite'),
 )
 
 
@@ -46,8 +46,7 @@ class EditImportScriptForm(forms.ModelForm):
         fields = [
             'name',
             'description',
-            'script',
-
+            'script'
         ]
         widgets = {
             'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),

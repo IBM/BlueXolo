@@ -130,14 +130,21 @@ class PhasesListJson(LoginRequiredMixin, BaseDatatableView):
         return qs
 
 
-class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
-    model = Keyword
+class ImportedListJson(LoginRequiredMixin, BaseDatatableView):
     columns = ['name', 'description', 'created_at', 'pk']
     order_columns = ['name', 'description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
-        qs = Keyword.objects.filter(script_type=2).order_by('created_at')
+        type_script = self.kwargs['type_script']
+                
+        if type_script == 'keyword':
+            model = Keyword
+        elif type_script == 'testcase':
+            model = TestCase
+        elif type_script == 'testsuite':
+            model = TestSuite
+        qs = model.objects.filter(script_type=2).order_by('created_at')
         return qs
 
     def filter_queryset(self, qs):
@@ -153,7 +160,7 @@ class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
         if column == 'created_at':
             return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
         else:
-            return super(KeywordsImportedListJson, self).render_column(row, column)
+            return super(ImportedListJson, self).render_column(row, column)
 
 class TestCasesImportedListJson(LoginRequiredMixin, BaseDatatableView):
     model = TestCase

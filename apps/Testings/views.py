@@ -228,12 +228,12 @@ class DeleteCollectionsView(LoginRequiredMixin, HasPermissionsMixin, DeleteView)
             return redirect('collections')
 
 
-class KeywordsImportedView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
+class ImportedView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "list-import-script.html"
     required_permission = "read_imported_script"
 
 
-class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
+class NewImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
     template_name = "import-script.html"
     form_class = NewImportScriptForm
     required_permission = "create_imported_script"
@@ -247,23 +247,27 @@ class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
                 file_content = str(file_content)[2:-1]
                 file_content = file_content.replace("\\n", "\n")
                 file_content = file_content.replace("\\t", "\t")
-                if form.cleaned_data['script_type'] == 'kw':
+
+                type_script = form.cleaned_data['script_type']
+                
+                if type_script == 'keyword':
                     model = Keyword()
-                elif form.cleaned_data['script_type'] == 'tc':
+                elif type_script == 'testcase':
                     model = TestCase()
-                elif form.cleaned_data['script_type'] == 'ts':
+                elif type_script == 'testsuite':
                     model = TestSuite()
-                print(form.cleaned_data)
+
                 model.name=form.cleaned_data['name']
                 model.description=form.cleaned_data['description']
                 model.script=file_content
                 model.user = self.request.user
                 model.script_type=2
-                if form.cleaned_data['script_type'] == 'tc' or form.cleaned_data['script_type'] == 'ts':
+                if type_script == 'testcase' or type_script == 'testsuite':
                     model.phase=form.cleaned_data['phase']
                 model.save()
                 model.collection.add(form.cleaned_data['collection'])
                 self.pk = model.pk
+                self.type_script = type_script
             except Exception as error:
                 # TODO: handle "unique constraint in name field" error
                 print(error)
@@ -274,27 +278,52 @@ class NewKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
 
     def get_success_url(self):
         messages.success(self.request, "Script imported")
-        return reverse_lazy('edit-import-script', kwargs={'pk': self.pk})
+        return reverse_lazy('edit-import-script',
+            kwargs={'pk': self.pk, 'type_script': self.type_script})
 
 
-class EditKeywordImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
+class EditImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
     form_class = EditImportScriptForm
     template_name = "edit-import-script.html"
-    model = Keyword
+    #model = Keyword
     required_permission = "update_imported_script"
+
+    def get_object(self):
+        type_script = self.kwargs['type_script']
+        self.type_script = type_script
+        if type_script == 'keyword':
+            model = Keyword
+        elif type_script == 'testcase':
+            model = TestCase
+        elif type_script == 'testsuite':
+            model = TestSuite
+
+        return model.objects.get(pk=self.kwargs['pk'])
 
     def form_invalid(self, form):
         return super(EditKeywordImportedView, self).form_invalid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Script updated")
-        return reverse_lazy('edit-import-script', kwargs={'pk': self.object.pk})
+        return reverse_lazy('edit-import-script',
+            kwargs={'pk': self.object.pk, 'type_script': self.type_script})
 
 
 class DeleteImportedScriptView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
-    model = Keyword
     template_name = 'delete-imported-script.html'
     required_permission = "delete_imported_script"
+
+    def get_object(self):
+        type_script = self.kwargs['type_script']
+        self.type_script = type_script
+        if type_script == 'keyword':
+            model = Keyword
+        elif type_script == 'testcase':
+            model = TestCase
+        elif type_script == 'testsuite':
+            model = TestSuite
+
+        return model.objects.get(pk=self.kwargs['pk'])
 
     def get_success_url(self):
         messages.success(self.request, "Script deleted")

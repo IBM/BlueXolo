@@ -6,7 +6,7 @@
         <div class="select-wrapper">
             <label for="script-type">Script type to show:</label>
             <select class="select-dropdown" id="script-type" onchange="UpdateDataTable()">
-                <optgroup id="script-type-options" label="Script types"">
+                <optgroup id="script-type-options" label="Script types">
                     <option value="keyword" selected>Keyword</option>
                     <option value="testcase">Test Case</option>
                     <option value="testsuite">Test Suite</option>
@@ -52,14 +52,15 @@
             var config = [{
                     "targets": 3,
                     data: function (row) {
+                        scriptType = document.getElementById('script-type').value;
                         return "<div>" +
                             {% if user|can:'update_imported_script' %}
-                                "<a class='btn' href='/testings/import/" + row[3]
+                                "<a class='btn' href='/testings/import/" + scriptType + "/" + row[3]
                                 + "/edit/'><i class='material-icons'>edit</i></a>" +
                             {% endif %}
                             '     ' +
                             {% if user|can:'delete_imported_script' %}
-                                "<a class='btn red' href='/testings/import/" + row[3]
+                                "<a class='btn red' href='/testings/import/" + scriptType + "/" + row[3]
                                 + "/delete/'><i class='material-icons'>delete</i></a>" +
                             {% endif %}
                             '     ' +
@@ -68,21 +69,15 @@
                     }
             }];
 
-            $(document).ready(function () {        
-                dtStart("{% url "api-imported-keywords" %}", config)
+            $(document).ready(function () {
+                dtStart("/apis/imported/list/keyword/", config)
             });
         </script>
         <script>
             function UpdateDataTable() {
                 var scriptType = document.getElementById('script-type').value
-                $('.datatable').DataTable().destroy()
-
-                if (scriptType == "keyword")
-                    dtStart("{% url "api-imported-keywords" %}", config)
-                else if (scriptType == "testcase")
-                    dtStart("{% url "api-imported-testcases" %}", config)
-                else if (scriptType == "testsuite")
-                    dtStart("{% url "api-imported-testsuites" %}", config)
+                $('.datatable').DataTable().destroy();
+                dtStart("/apis/imported/list/" + scriptType, config)
             }
         </script>
     {% endcompress %}
