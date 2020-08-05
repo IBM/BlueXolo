@@ -53,6 +53,13 @@
                     "targets": 3,
                     data: function (row) {
                         scriptType = document.getElementById('script-type').value;
+                        scriptTypeID = '1'; // By default the ID is 1 for Keywords (2 for Test Cases and 3 for Test Suites)
+
+                        if (scriptType == "testcase")
+                            scriptTypeID = '2';
+                        else if (scriptType == "testsuite")
+                            scriptTypeID = '3';
+
                         return "<div>" +
                             {% if user|can:'update_imported_script' %}
                                 "<a class='btn' href='/testings/import/" + scriptType + "/" + row[3]
@@ -64,7 +71,7 @@
                                 + "/delete/'><i class='material-icons'>delete</i></a>" +
                             {% endif %}
                             '     ' +
-                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/1/run'><i class='material-icons'>play_arrow</i></a>" +
+                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/" + scriptTypeID + "/run'><i class='material-icons'>play_arrow</i></a>" +
                             "</div>";
                     }
             }];

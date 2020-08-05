@@ -19,6 +19,7 @@
             <thead>
             <tr>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Description</th>
                 <th>Created</th>
                 <th>Options</th>
@@ -52,20 +53,20 @@
         <script>
             $(document).ready(function () {
                 var config = [{
-                    "targets": 3,
+                    "targets": 4,
                     data: function (row) {
-                        return "<div class='center'>" +
+                        return "<div>" +
                             {% if user|can:'update_test_case' %}
-                                "<a class='btn' href='/testings/testcases/edit/" + row[3]
-                                + "'><i class='material-icons'>edit</i></a>" +
+                                (row[1] == "Native" ? "<a class='btn' href='/testings/testcases/edit/" + row[4]
+                                + "'><i class='material-icons'>edit</i></a>" : "<a class='btn disabled' href='#'><i class='material-icons'>edit</i></a>") +
                             {% endif %}
                             '     ' +
                             {% if user|can:'delete_test_case' %}
-                                "<a class='btn red' href='/testings/testcases/" + row[3]
+                                "<a class='btn red' href='/testings/testcases/" + row[4]
                                 + "/delete/'><i class='material-icons'>delete</i></a>" +
                             {% endif %}
-                            '     ' +
-                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/2/run'><i class='material-icons'>play_arrow</i></a>" +
+                            '      ' +
+                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[4] + "/2/run'><i class='material-icons'>play_arrow</i></a>" +
                             "</div>";
                     }
                 }];

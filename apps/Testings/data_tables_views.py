@@ -39,8 +39,8 @@ class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
 
 class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
     model = TestCase
-    columns = ['name', 'description', 'created_at', 'pk']
-    order_columns = ['name', 'description', 'created_at', 'pk']
+    columns = ['name', 'script_type', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'script_type', 'description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
@@ -71,8 +71,8 @@ class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
 
 class TestsuitesListJson(LoginRequiredMixin, BaseDatatableView):
     model = TestSuite
-    columns = ['name', 'description', 'created_at', 'pk']
-    order_columns = ['name', 'description', 'created_at', 'pk']
+    columns = ['name', 'script_type', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'script_type', 'description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
