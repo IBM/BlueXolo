@@ -274,7 +274,7 @@ class NewImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        return super(NewKeywordImportedView, self).form_invalid(form)
+        return super(NewImportedView, self).form_invalid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Script imported")
@@ -301,7 +301,7 @@ class EditImportedView(LoginRequiredMixin, HasPermissionsMixin, UpdateView):
         return model.objects.get(pk=self.kwargs['pk'])
 
     def form_invalid(self, form):
-        return super(EditKeywordImportedView, self).form_invalid(form)
+        return super(EditImportedView, self).form_invalid(form)
 
     def get_success_url(self):
         messages.success(self.request, "Script updated")
