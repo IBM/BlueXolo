@@ -77,4 +77,8 @@ sleep 5                                         # take 5 secs
 # --------------------------------------------
 su -l postgres -c "PGPASSWORD=bluexolo  psql bluexolo < /users.sql"
 touch /var/lock/subsys/local
-
+USER_STARTUP_TASKS_FILE=$BLUEXOLO_DIR "docker/scripts/user-startup-tasks.sh"
+if [ -f "$USER_STARTUP_TASKS_FILE" ]; then
+    chmod +x docker/scripts/user-startup-tasks.sh
+    ./docker/scripts/user-startup-tasks.sh
+fi
