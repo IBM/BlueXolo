@@ -6,8 +6,6 @@ FROM ubuntu:18.04
 MAINTAINER F. Quintero <fquinteroa@gmail.com>
 ENV REFRESHED_AT=2020-07-31_12:17
 ENV container docker
-# ENV TZ=America/Mexico_City
-# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # --------------------------------
 # First step:
@@ -15,7 +13,6 @@ ENV container docker
 # --------------------------------
 RUN apt-get update
 RUN apt-get -y -qq install apt-utils;
-# RUN apt-get install -y init
 RUN apt-get -y -qq install systemd python3.6 rabbitmq-server postgresql unzip nvi; 
 RUN apt-get -y -qq install python3-pip; 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
