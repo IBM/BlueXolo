@@ -127,10 +127,29 @@ class SourceLibraryForm(forms.ModelForm):
         cleaned_data = super().clean()
         url = cleaned_data.get('url').strip()
         html_file = cleaned_data.get('html_file')
+        page_name = "http://robotframework.org"
+        html_name = ".html"
+        head_url = url[:25]
+        tail_url = url[-5:]
+
+        print ("Head URL: ")
+        print (head_url)
+        print ("Tail URL: ")
+        print (tail_url)
 
         if html_file is None and (url is None or url == ''):
             msg = "Please enter either the library's URL or HTML file."
             self.add_error('url', msg)
+
+        if page_name != head_url:
+            msg = "Please enter a valid url from Robot Framework"
+            self.add_error('url',msg)
+
+        if html_name != tail_url:
+            msg = "Please enter a valid html page from Robot Framework"
+            self.add_error('url',msg)
+
+
 
     def __init__(self, *args, **kwargs):
         """This filter only for sources in the category 4(Robot)"""
