@@ -251,23 +251,30 @@ class NewImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
                 type_script = form.cleaned_data['script_type']
                 
                 if type_script == 'keyword':
-                    model = Keyword()
+                    instance = Keyword()
+                    model = Keyword
                 elif type_script == 'testcase':
-                    model = TestCase()
+                    instance = TestCase()
+                    model = TestCase
                 elif type_script == 'testsuite':
-                    model = TestSuite()
+                    instance = TestSuite()
+                    model = TestSuite
 
-                model.name=form.cleaned_data['name']
-                model.description=form.cleaned_data['description']
-                model.script=file_content
-                model.user = self.request.user
-                model.script_type=2
-                if type_script == 'testcase' or type_script == 'testsuite':
-                    model.phase=form.cleaned_data['phase']
-                model.save()
-                model.collection.add(form.cleaned_data['collection'])
-                self.pk = model.pk
-                self.type_script = type_script
+                if model.objects.filter(name=form.cleaned_data['name']).count():
+                    messages.error(self.request, 'Name already exists')
+                    return super(NewImportedView, self).form_invalid(form)
+                else:
+                    instance.name=form.cleaned_data['name']
+                    instance.description=form.cleaned_data['description']
+                    instance.script=file_content
+                    instance.user = self.request.user
+                    instance.script_type=2
+                    if type_script == 'testcase' or type_script == 'testsuite':
+                        instance.phase=form.cleaned_data['phase']
+                    instance.save()
+                    instance.collection.add(form.cleaned_data['collection'])
+                    self.pk = instance.pk
+                    self.type_script = type_script
             except Exception as error:
                 # TODO: handle "unique constraint in name field" error
                 print(error)

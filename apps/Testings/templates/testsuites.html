@@ -52,8 +52,7 @@
                     data: function (row) {
                         return "<div>" +
                             {% if user|can:'update_test_suite' %}
-                                (row[1] == "Native" ? "<a class='btn' href='/testings/testsuites/edit/" + row[4]
-                                + "'><i class='material-icons'>edit</i></a>" : "<a class='btn disabled' href='#'><i class='material-icons'>edit</i></a>") +
+                                "<a class='btn' href='/testings/" + (row[1] == "Native" ? "testsuites/edit/" + row[4] : "import/testsuite/" + row[4] + "/edit") + "'><i class='material-icons'>edit</i></a>" +
                             {% endif %}
                             '     ' +
                             {% if user|can:'delete_test_suite' %}

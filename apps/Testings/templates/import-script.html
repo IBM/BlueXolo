@@ -33,7 +33,8 @@
                                     selectServerSide(_configPhases);
                                 }
                                 
-                                
+                                // Script input just accept .robot or .txt files.
+                                document.getElementById('id_file_script').setAttribute('accept', '.robot,.txt');
                             });
 
                             function hasValues() {
