@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ..
+cd ../..
 zip docker/sources/bluexolo_src.zip\
  -x '/docker/*' \
  -x '/tools/*' \
@@ -14,6 +14,7 @@ zip docker/sources/bluexolo_src.zip\
 today=$(date +%Y-%m-%d_%H:%M)
 # ensuring that this sed script will work on
 # any sed version. (includes macosx)
+cd ..
 sed -i '' "/REFRESHED_AT/c\\
 ENV REFRESHED_AT=$today"$'\n' Dockerfile
 docker rm $(docker ps -qa)
