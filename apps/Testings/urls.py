@@ -3,7 +3,7 @@ from django.conf.urls import url
 from .views import KeyWordsView, NewKeywordView, DeleteKeywordView, CollectionsView, NewCollectionsView, \
     EditCollectionsView, DeleteCollectionsView, EditKeywordView, TestCaseView, NewTestCaseView, EditTestCaseView, \
     DeleteTestCaseView, TestSuiteView, NewTestSuiteView, EditTestSuiteView, DeleteTestSuiteView, \
-    NewKeywordImportedView, EditKeywordImportedView, KeywordsImportedView, DeleteImportedScriptView, RunScriptView
+    NewImportedView, EditImportedView, ImportedView, DeleteImportedScriptView, RunScriptView
 
 urlpatterns = [
     url(r'^keywords/$', KeyWordsView.as_view(), name="keywords"),
@@ -26,10 +26,10 @@ urlpatterns = [
     url(r'^collections/(?P<pk>\d+)/$', EditCollectionsView.as_view(), name='edit-collections'),
     url(r'^collections/(?P<pk>\d+)/delete/$', DeleteCollectionsView.as_view(), name="delete-collections"),
     # Import
-    url(r'^imported/$', KeywordsImportedView.as_view(), name="imported-scripts"),
-    url(r'^import/$', NewKeywordImportedView.as_view(), name="new-import-script"),
-    url(r'^import/(?P<pk>\d+)/edit/$', EditKeywordImportedView.as_view(), name="edit-import-script"),
-    url(r'^import/(?P<pk>\d+)/delete/$', DeleteImportedScriptView.as_view(), name="delete-import-script"),
+    url(r'^imported/$', ImportedView.as_view(), name="imported-scripts"),
+    url(r'^import/$', NewImportedView.as_view(), name="new-import-script"),
+    url(r'^import/(?P<type_script>[\w-]+)/(?P<pk>\d+)/edit/$', EditImportedView.as_view(), name="edit-import-script"),
+    url(r'^import/(?P<type_script>[\w-]+)/(?P<pk>\d+)/delete/$', DeleteImportedScriptView.as_view(), name="delete-import-script"),
     # Run scripts
     url(r'^(?P<pk>\d+)/(?P<type_script>\d+)/run$', RunScriptView.as_view(), name="run-script"),
     # Stepper

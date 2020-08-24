@@ -14,6 +14,7 @@
             <thead>
             <tr>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Description</th>
                 <th>Created</th>
                 <th>Options</th>
@@ -47,19 +48,18 @@
         <script>
             $(document).ready(function () {
                 var config = [{
-                    "targets": 3,
+                    "targets": 4,
                     data: function (row) {
-                        return "<div class='center'>" +
+                        return "<div>" +
                             {% if user|can:'update_test_suite' %}
-                                "<a class='btn' href='/testings/testsuites/edit/" + row[3]
-                                + "'><i class='material-icons'>edit</i></a>" +
+                                "<a class='btn' href='/testings/" + (row[1] == "Native" ? "testsuites/edit/" + row[4] : "import/testsuite/" + row[4] + "/edit") + "'><i class='material-icons'>edit</i></a>" +
                             {% endif %}
                             '     ' +
                             {% if user|can:'delete_test_suite' %}
-                            "<a class='btn red' href='/testings/testsuites/" + row[3] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            "<a class='btn red' href='/testings/testsuites/" + row[4] + "/delete/'><i class='material-icons'>delete</i></a>" +
                             {% endif %}
                             '     ' +
-                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/3/run'><i class='material-icons'>play_arrow</i></a>" +
+                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[4] + "/3/run'><i class='material-icons'>play_arrow</i></a>" +
                             "</div>";
                     }
                 }];
