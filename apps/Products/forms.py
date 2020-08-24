@@ -132,11 +132,6 @@ class SourceLibraryForm(forms.ModelForm):
         head_url = url[:25]
         tail_url = url[-5:]
 
-        #print ("Head URL: ")
-        #print (head_url)
-        #print ("Tail URL: ")
-        #print (tail_url)
-
         if html_file is None and (url is None or url == ''):
             msg = "Please enter either the library's URL or HTML file."
             self.add_error('url', msg)
