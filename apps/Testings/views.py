@@ -271,6 +271,8 @@ class NewImportedView(LoginRequiredMixin, HasPermissionsMixin, FormView):
                     instance.script_type=2
                     if type_script == 'testcase' or type_script == 'testsuite':
                         instance.phase=form.cleaned_data['phase']
+                    instance.values = '[{"script_type":"Imported Script"}]'
+                    instance.extra_imports = '{"extra":[],"keywords":[],"testcases":[]}'
                     instance.save()
                     instance.collection.add(form.cleaned_data['collection'])
                     self.pk = instance.pk
