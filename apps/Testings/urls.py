@@ -3,23 +3,26 @@ from django.conf.urls import url
 from .views import KeyWordsView, NewKeywordView, DeleteKeywordView, CollectionsView, NewCollectionsView, \
     EditCollectionsView, DeleteCollectionsView, EditKeywordView, TestCaseView, NewTestCaseView, EditTestCaseView, \
     DeleteTestCaseView, TestSuiteView, NewTestSuiteView, EditTestSuiteView, DeleteTestSuiteView, \
-    NewKeywordImportedView, EditKeywordImportedView, KeywordsImportedView, DeleteImportedScriptView, RunScriptView
-
+    NewKeywordImportedView, EditKeywordImportedView, DownloadKeywordView, DownloadTestSuiteView, DownloadTestcaseView,KeywordsImportedView, DeleteImportedScriptView, RunScriptView
+ 
 urlpatterns = [
     url(r'^keywords/$', KeyWordsView.as_view(), name="keywords"),
     url(r'^keywords/new/$', NewKeywordView.as_view(), name="new-keywords"),
     url(r'^keywords/edit/(?P<pk>\d+)$', EditKeywordView.as_view(), name="edit-keywords"),
     url(r'^keywords/(?P<pk>\d+)/delete/$', DeleteKeywordView.as_view(), name="delete-keywords"),
+    url(r'^keywords/download/(?P<pk>\d+)$',DownloadKeywordView.as_view(),name="download-keywords"),
     # TestCase
     url(r'^testcases/$', TestCaseView.as_view(), name="testcases"),
     url(r'^testcases/new/$', NewTestCaseView.as_view(), name="new-testcase"),
     url(r'^testcases/edit/(?P<pk>\d+)$', EditTestCaseView.as_view(), name="edit-testcase"),
     url(r'^testcases/(?P<pk>\d+)/delete/$', DeleteTestCaseView.as_view(), name="delete-keywords"),
+    url(r'^testcases/(?P<pk>\d+)/download/$', DownloadTestcaseView.as_view(), name="download-testcase"),
     # TestSuites
     url(r'^testsuites/$', TestSuiteView.as_view(), name="testsuites"),
     url(r'^testsuites/new/$', NewTestSuiteView.as_view(), name="new-testsuites"),
     url(r'^testsuites/edit/(?P<pk>\d+)$', EditTestSuiteView.as_view(), name="edit-testsuites"),
     url(r'^testsuites/(?P<pk>\d+)/delete/$', DeleteTestSuiteView.as_view(), name="delete-testsuite"),
+    url(r'^testsuites/(?P<pk>\d+)/download/$', DownloadTestSuiteView.as_view(), name="download-testsuite"),
     # Collections
     url(r'^collections/$', CollectionsView.as_view(), name="collections"),
     url(r'^collections/new/$', NewCollectionsView.as_view(), name="new-collections"),
