@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Download  {{ data.Name }}{% endblock %}
+{% block subtitle %}Download  {{ data.Name }}{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12 offset-l3 l6 card">
+                <div class="card-content">
+                    <form action='' method="POST">
+                        {% csrf_token %}
+                        <p class="card-title">You are about to download the following TestSuite: </p>
+                        <ul>
+                            <li><b>Name:</b> {{ data.Name }}</li>
+                            <li><b>Description:</b> {{ data.Description }}</li>
+                        </ul>
+                        <p style="text-align: justify;">
+                            Click the left button to download just the testsuite content, or click the right one in order to download it with all dependencies 
+                        </p>
+                        <div class="left">
+                            <input onclick="save(data1,data2)" type = "button" value="Raw" class="btn blue">
+                        </div>
+
+                        <div class="right">
+                            <input onclick="" type = "button" value="Full" class = "btn green">
+                        </div>
+ 
+                    </form>
+                    <script type ="text/javascript">
+                        
+                        var data1="{{data.Name}}"
+                        var data2=`{{data.Script}}`
+                        console.log(data2)
+                        function save(data1, data2) {
+                        var blob = new Blob([data2], {type: 'text/plain'});
+                        if(window.navigator.msSaveOrOpenBlob) {
+                            window.navigator.msSaveBlob(blob, data1);
+                        }
+                        else{
+                            var elem = window.document.createElement('a');
+                            elem.href = window.URL.createObjectURL(blob);
+                            elem.download = data1+".robot";        
+                            document.body.appendChild(elem);
+                            elem.click();        
+                            document.body.removeChild(elem);
+                        }
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "keywords" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

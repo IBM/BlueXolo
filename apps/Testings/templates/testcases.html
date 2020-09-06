@@ -66,7 +66,10 @@
                             {% endif %}
                             '     ' +
                             "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/2/run'><i class='material-icons'>play_arrow</i></a>" +
-                            "</div>";
+                            '     '+ 
+                            "<a class='btn green waves-effect waves-light' href='/testings/testcases/" + row[3] + "/download'><i class='material-icons'>file_download</i></a>"
+
+                            + "</div>";
                     }
                 }];
                 dtStart("{% url "api-testcases-list" %}", config)
