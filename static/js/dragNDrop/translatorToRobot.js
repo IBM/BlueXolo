@@ -322,7 +322,6 @@ function translateToRobot(callBackFunction) {
     var alreadyAdded = false;
 
     for (var i = 0; i < droppedElements.length; i++) {
-
         if (droppedElements[i].category === keywordDroppedCategory) {
 
             if(!addedOwnDescription){
@@ -339,7 +338,6 @@ function translateToRobot(callBackFunction) {
             
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i];
-            
             
             if (newKeywordUsed.keywordJSON[0].script_type !== 'Imported Script') {
                 addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
@@ -372,15 +370,11 @@ function translateToRobot(callBackFunction) {
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i];
 
-
             if (newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script') {
-                addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
-            }
-
-            if(isTestsuite() && newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script'){
-                var testCaseToTranslate = droppedElements[i].keywordJSON;
-                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
-                terminal.value += testCaseTranslation;
+                var testCaseTranslation = addTestcaseToUsedArray(testcaseUsedID, newTestcaseUsed);
+                if (isTestsuite()) {
+                    terminal.value += testCaseTranslation;
+                }
             }
 
             if ((i + 1) >= droppedElements.length) {
@@ -576,7 +570,6 @@ function getTranslationOfTestcase(testcase){
     var externalLibrariesCategory = 5;
 
     var keywordDroppedCategory = 6;
-
     for (var i = 0; i < testcase.length; i++) {
 
         if (testcase[i].category === keywordDroppedCategory) {
@@ -674,6 +667,7 @@ function addTestcaseToUsedArray( testcaseID, testcase){
     };
 
     usedTestcases.push(newElement);
+    return translation;
 }
 
 function translateDroppedKeyword(keyword) {
