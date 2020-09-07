@@ -339,7 +339,11 @@ function translateToRobot(callBackFunction) {
             
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i];
-            addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
+            
+            
+            if (newKeywordUsed.keywordJSON[0].script_type !== 'Imported Script') {
+                addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
+            }
             
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
@@ -354,13 +358,12 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
-            
+
             if(!addedOwnDescription){
                 addOwnDescription();
 
                 addedOwnDescription = true;
             }
-
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
@@ -369,14 +372,18 @@ function translateToRobot(callBackFunction) {
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i];
 
-            addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
 
-            if(isTestsuite()){
-                var testCaseToTranslate = droppedElements[i].keywordJSON;
+            if (newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script') {
+                addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
+            }
 
                 // var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate); // TO CHECK !!!
 
                 // terminal.value += testCaseTranslation; // TO CHECK !!!
+            if(isTestsuite() && newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script'){
+                var testCaseToTranslate = droppedElements[i].keywordJSON;
+                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
+                terminal.value += testCaseTranslation;
             }
 
             if ((i + 1) >= droppedElements.length) {
@@ -788,8 +795,7 @@ function handleTranslationOf(data, parameters){
 
     var commandRobotCategory = 5;
   
-    var elementType = data.name;
-    var elementType = elementType.toLowerCase();
+    var elementType = (data.name ? data.name.toLowerCase() : "");
 
     if(elementType === "comment"){
         translatedRow += translateComment(parameters);

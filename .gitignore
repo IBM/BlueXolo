@@ -99,9 +99,6 @@ variables.sh
 # Localsettings
 localsettings.py
 
-# Migrations
-0*.py
-
 # Local Databases
 db.sqlite*
 DONE
