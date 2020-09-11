@@ -1,3 +1,4 @@
+import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import *
@@ -125,12 +126,22 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
         testCaseName=row[1]
         testCaseDesc=row[2]
         testCaseContent=row[3]
+        list1 = json.loads(row[10])
+        elements = list1.get('keywords')
+        if elements:
+            for k in elements:
+                current_pk = k.get('id')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM keywords where id=%s',[current_pk])
+                    row = cursor.fetchone()
+                print(row[2])
+                print(row[3])
+        testCaseDependenciesList=elements
         responseData['Name']=testCaseName
         responseData['Script']=testCaseContent
         responseData['Description']=testCaseDesc
+        responseData['Dependencies']=testCaseDependenciesList
         return render(request,'download-testcase.html',{'data':responseData})
-
-
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testcase.html"
@@ -195,9 +206,12 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
         testSuiteName=row[1]
         testSuiteDesc=row[2]
         testSuiteContent=row[3]
+        testSuiteDependenciesList=row[8]
         responseData['Name']=testSuiteName
         responseData['Script']=testSuiteContent
         responseData['Description']=testSuiteDesc
+        responseData['Dependencies']=testSuiteDependenciesList
+        print(testSuiteDependenciesList)
         return render(request,'download-testsuite.html',{'data':responseData})
 
 
