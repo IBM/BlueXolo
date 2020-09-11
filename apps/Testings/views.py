@@ -119,6 +119,7 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
     def dispatch(self, request, *args, **kwargs):
         responseData={}
         testCaseId=kwargs['pk']
+        testCaseDependencies={}
         with connection.cursor() as cursor:
             cursor.execute('SELECT * FROM testcases where id=%s',[kwargs['pk']])
             row = cursor.fetchone()
@@ -126,21 +127,21 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
         testCaseName=row[1]
         testCaseDesc=row[2]
         testCaseContent=row[3]
-        list1 = json.loads(row[10])
-        elements = list1.get('keywords')
+        KeywordsDict = json.loads(row[10])
+        elements = KeywordsDict.get('keywords')
         if elements:
             for k in elements:
                 current_pk = k.get('id')
+                current_script = str(k.get('script'))
                 with connection.cursor() as cursor:
-                    cursor.execute('SELECT * FROM keywords where id=%s',[current_pk])
+                    cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
                     row = cursor.fetchone()
-                print(row[2])
-                print(row[3])
-        testCaseDependenciesList=elements
+                keywordname = str(row[1])
+                testCaseDependencies[keywordname]=current_script
         responseData['Name']=testCaseName
         responseData['Script']=testCaseContent
         responseData['Description']=testCaseDesc
-        responseData['Dependencies']=testCaseDependenciesList
+        responseData['Dependencies']= json.dumps(testCaseDependencies)
         return render(request,'download-testcase.html',{'data':responseData})
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):

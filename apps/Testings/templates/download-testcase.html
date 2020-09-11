@@ -17,14 +17,14 @@
                                 <li><b>Description:</b> {{ data.Description }}</li>
                             </ul>
                             <p style="text-align: justify;">
-                                Click the left button to download just the testcase content, or click the right one in order to download it with all dependencies 
+                                Click the RAW button to download just the testcase content, or click the right one in order to download it with all its dependencies.
                             </p>
                             <div class="left">
                                 <button class="btn blue" onclick="save()">RAW</button>
                             </div>
     
                             <div class="right">
-                                <button class="btn green" onclick="savezipfile()" >FULL</button>
+                                <button class="btn green" onclick="savezipfile()">FULL</button>
                             </div>
      
                         </form>
@@ -32,8 +32,7 @@
                         
                             var data1="{{data.Name}}"
                             var data2=`{{data.Script}}`
-                            console.log(data2)
-                            console.log("{{data.Dependencies}}")
+                            
                             function save() {
                             var blob = new Blob([data2], {type: 'text/plain'});
                             if(window.navigator.msSaveOrOpenBlob) {
@@ -53,7 +52,15 @@
                         <script>
                             var data1="{{data.Name}}"
                             var data2=`{{data.Script}}`
-                            //import JSZip from 'jszip';
+                            var data3="{{data.Dependencies}}"
+                            console.log(data3)
+
+                            //n.forEach((num1, index) => {
+                            //const num2 = m[index];
+                            console.log(typeof(data3));
+                            //});
+
+
                             function savezipfile() {
                             var blob = new Blob([data2], {type: 'text/plain'});
                             if(window.navigator.msSaveOrOpenBlob) {
@@ -63,6 +70,11 @@
                                 var zip = new JSZip();
     
                                 zip.file(data1 + '.robot', data2);
+
+                                data3.forEach((kname, index) => {
+                                    var kscript = data4[index];
+                                    zip.file(kname + '.robot', kscript);
+                                });
     
                                 zip.generateAsync({type:"blob"}).then(function(content) {
                                     // see FileSaver.js
