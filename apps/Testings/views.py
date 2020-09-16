@@ -132,16 +132,15 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
         if elements:
             for k in elements:
                 current_pk = k.get('id')
-                current_script = str(k.get('script'))
+                current_script = k.get('script')
                 with connection.cursor() as cursor:
                     cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
                     row = cursor.fetchone()
-                keywordname = str(row[1])
-                testCaseDependencies[keywordname]=current_script
+                testCaseDependencies[row[1]] = current_script
         responseData['Name']=testCaseName
         responseData['Script']=testCaseContent
         responseData['Description']=testCaseDesc
-        responseData['Dependencies']= json.dumps(testCaseDependencies)
+        responseData['Dependencies']=testCaseDependencies
         return render(request,'download-testcase.html',{'data':responseData})
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -200,6 +199,7 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
     def dispatch(self, request, *args, **kwargs):
         responseData={}
         testCaseId=kwargs['pk']
+        testSuiteDependencies = {}
         with connection.cursor() as cursor:
             cursor.execute('SELECT * FROM testsuites where id=%s',[kwargs['pk']])
             row = cursor.fetchone()
@@ -207,12 +207,36 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
         testSuiteName=row[1]
         testSuiteDesc=row[2]
         testSuiteContent=row[3]
-        testSuiteDependenciesList=row[8]
+        DependenciesList=json.loads(row[8])
+        keywordsDict = DependenciesList.get('keywords')
+        testcasesDict = DependenciesList.get('testcases')
+
+        if keywordsDict:
+            for k in keywordsDict:
+                current_pk = k.get('id')
+                current_script = k.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testSuiteDependencies[row[1]] = current_script
+        if testcasesDict:
+            for t in testcasesDict:
+                current_pk = t.get('id')
+                current_script = t.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM testcases where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testSuiteDependencies[row[1]] = current_script
+        print(testSuiteDependencies)
         responseData['Name']=testSuiteName
         responseData['Script']=testSuiteContent
         responseData['Description']=testSuiteDesc
-        responseData['Dependencies']=testSuiteDependenciesList
-        print(testSuiteDependenciesList)
+        responseData['Dependencies']=testSuiteDependencies
+        return render(request,'download-testsuite.html',{'data':responseData})
+
+        responseData['Name']=testSuiteName
+        responseData['Script']=testSuiteContent
+        responseData['Description']=testSuiteDesc
         return render(request,'download-testsuite.html',{'data':responseData})
 
 

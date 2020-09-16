@@ -10,7 +10,7 @@
                 <div class="card-content">
                     <form action='' method="POST">
                         {% csrf_token %}
-                        <p class="card-title">You are about to download the following TestSuite: </p>
+                        <p class="card-title">You are about to download the following Test Suite: </p>
                         <ul>
                             <li><b>Name:</b> {{ data.Name }}</li>
                             <li><b>Description:</b> {{ data.Description }}</li>
@@ -51,7 +51,7 @@
                     <script>
                         var data1="{{data.Name}}"
                         var data2=`{{data.Script}}`
-                        //import JSZip from 'jszip';
+                        
                         function savezipfile() {
                         var blob = new Blob([data2], {type: 'text/plain'});
                         if(window.navigator.msSaveOrOpenBlob) {
@@ -61,6 +61,12 @@
                             var zip = new JSZip();
 
                             zip.file(data1 + '.robot', data2);
+                            
+                            {% for mykey, myvalue in data.Dependencies.items %}
+                                var data3 = "{{ mykey }}"
+                                var data4 = `{{ myvalue }}`
+                                zip.file(data3 + '.robot', data4);
+                            {% endfor %}
 
                             zip.generateAsync({type:"blob"}).then(function(content) {
                                 // see FileSaver.js
@@ -74,7 +80,7 @@
         </div>
     </div>
     <div class="fixed-action-btn left-button ">
-        <a href="{% url "keywords" %}" id="btn_play"
+        <a href="{% url "testsuites" %}" id="btn_play"
            class="btn-floating btn-large waves-effect waves-light grey">
             <i class="material-icons">arrow_back</i></a>
     </div>
