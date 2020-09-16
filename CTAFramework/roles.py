@@ -28,6 +28,7 @@ class Developer(AbstractUserRole):
         'read_keyword': True,
         'update_keyword': True,
         'delete_keyword': True,
+        'download_keyword': True,
         # Test Cases
         'create_test_case': True,
         'read_test_case': True,
