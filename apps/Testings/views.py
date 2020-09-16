@@ -227,18 +227,12 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
                     cursor.execute('SELECT * FROM testcases where id=%s',(current_pk))
                     row = cursor.fetchone()
                 testSuiteDependencies[row[1]] = current_script
-        print(testSuiteDependencies)
+
         responseData['Name']=testSuiteName
         responseData['Script']=testSuiteContent
         responseData['Description']=testSuiteDesc
         responseData['Dependencies']=testSuiteDependencies
         return render(request,'download-testsuite.html',{'data':responseData})
-
-        responseData['Name']=testSuiteName
-        responseData['Script']=testSuiteContent
-        responseData['Description']=testSuiteDesc
-        return render(request,'download-testsuite.html',{'data':responseData})
-
 
 class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testsuite.html"
