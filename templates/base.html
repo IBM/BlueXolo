@@ -23,7 +23,6 @@
         <script src="{% static "js/main.js" %}"></script>
         <script src="{% static "js/mstepper.min.js" %}"></script>
     {% endcompress %}
-
 </head>
 <body>
 <!-- messages  -->
@@ -63,6 +62,13 @@
         $('.materialize-textarea').trigger('autoresize');
     });
 </script>
+
+<!-- Chatbot -->
+<script src="http://localhost:3000/assets/modules/channel-web/inject.js"></script>
+<script>
+    window.botpressWebChat.init({ host: 'http://localhost:3000', botId: 'bluexolo-assistant', id: 'sss' })
+</script>
+
 {% block extraScripts %}{% endblock extraScripts %}
 <!-- End Scripts -->
 </body>
