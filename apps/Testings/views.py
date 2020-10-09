@@ -1,3 +1,4 @@
+import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import *
@@ -118,6 +119,7 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
     def dispatch(self, request, *args, **kwargs):
         responseData={}
         testCaseId=kwargs['pk']
+        testCaseDependencies={}
         with connection.cursor() as cursor:
             cursor.execute('SELECT * FROM testcases where id=%s',[kwargs['pk']])
             row = cursor.fetchone()
@@ -125,12 +127,21 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
         testCaseName=row[1]
         testCaseDesc=row[2]
         testCaseContent=row[3]
+        KeywordsDict = json.loads(row[10])
+        elements = KeywordsDict.get('keywords')
+        if elements:
+            for k in elements:
+                current_pk = k.get('id')
+                current_script = k.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testCaseDependencies[row[1]] = current_script
         responseData['Name']=testCaseName
         responseData['Script']=testCaseContent
         responseData['Description']=testCaseDesc
+        responseData['Dependencies']=testCaseDependencies
         return render(request,'download-testcase.html',{'data':responseData})
-
-
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testcase.html"
@@ -188,6 +199,7 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
     def dispatch(self, request, *args, **kwargs):
         responseData={}
         testCaseId=kwargs['pk']
+        testSuiteDependencies = {}
         with connection.cursor() as cursor:
             cursor.execute('SELECT * FROM testsuites where id=%s',[kwargs['pk']])
             row = cursor.fetchone()
@@ -195,11 +207,32 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
         testSuiteName=row[1]
         testSuiteDesc=row[2]
         testSuiteContent=row[3]
+        DependenciesList=json.loads(row[8])
+        keywordsDict = DependenciesList.get('keywords')
+        testcasesDict = DependenciesList.get('testcases')
+
+        if keywordsDict:
+            for k in keywordsDict:
+                current_pk = k.get('id')
+                current_script = k.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testSuiteDependencies[row[1]] = current_script
+        if testcasesDict:
+            for t in testcasesDict:
+                current_pk = t.get('id')
+                current_script = t.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM testcases where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testSuiteDependencies[row[1]] = current_script
+
         responseData['Name']=testSuiteName
         responseData['Script']=testSuiteContent
         responseData['Description']=testSuiteDesc
+        responseData['Dependencies']=testSuiteDependencies
         return render(request,'download-testsuite.html',{'data':responseData})
-
 
 class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testsuite.html"

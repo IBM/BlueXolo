@@ -9,16 +9,16 @@
                     <div>
                         <form action='' method="POST">
                             {% csrf_token %}
-                            <p class="card-title">Are you sure you want to download the follow Keyword?</p>
+                            <p class="card-title">Are you sure you want to download the following Keyword?</p>
                             <ul>
                                 <li><b>Name:</b> {{ data.Name }}</li>
                                 <li><b>Description:</b> {{ data.Description }}</li>
                             </ul>
                             <div class="center">
                                 <p>
-                                    If your download does not begin, do not worry and click the Download Key 
+                                    If your download does not begin automatically, please click the download button.
                                 </p>  
-                                <input onclick="save(data1,data2)" type="submit" value="Download" class="btn green"/>   
+                                <button onclick="save()" class="btn green">Download</button>
                            
                             </div>
                         </form>
@@ -26,8 +26,8 @@
                             
                             var data1="{{data.Name}}"
                             var data2=`{{data.Script}}`
-                            console.log(data2)
-                            function save(data1, data2) {
+                            
+                            function save() {
                             var blob = new Blob([data2], {type: 'text/plain'});
                             if(window.navigator.msSaveOrOpenBlob) {
                                 window.navigator.msSaveBlob(blob, data1);
@@ -41,7 +41,7 @@
                                 document.body.removeChild(elem);
                             }
                         }
-                            save(data1,data2);
+                            save();
                         </script>
                         
                     </div>
