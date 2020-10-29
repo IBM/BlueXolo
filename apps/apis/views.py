@@ -600,7 +600,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _data['obj_id'] = obj_id
             _data['type_script'] = type_script
             _data['profiles'] = json.loads(request.data.get('profile'))
-            if type_script == 1:
+            if type_script in [1, 4]:
                 """is keywords"""
                 obj = Keyword.objects.get(id=obj_id)
             elif type_script == 2:
