@@ -586,7 +586,7 @@ def generate_file(obj, type_script, params, filename, client):
             check = send_files(ts_file.name, 7, config, client)
             if check.get('text'):
                 raise Exception(check.get('text'))
-        #! Verify requirements
+        #! This commented section will be removed after testing the import feature
         # elif type_script == 4:
         #     """ Imported Keywords """
         #     """ Dummy Test Case file"""
