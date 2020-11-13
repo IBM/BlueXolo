@@ -31,7 +31,6 @@
                         
                         var data1="{{data.Name}}"
                         var data2=`{{data.Script}}`
-                        console.log(data2)
                         function save() {
                         var blob = new Blob([data2], {type: 'text/plain'});
                         if(window.navigator.msSaveOrOpenBlob) {
