@@ -39,7 +39,7 @@ class SourceSerialzer(serializers.ModelSerializer):
 
 
 class CommandsSerializer(serializers.ModelSerializer):
-    source = SourceSerialzer(many=True)
+    source = SourceSerialzer(read_only=True,many=True)
     arguments = serializers.ReadOnlyField()
 
     class Meta:
@@ -62,7 +62,7 @@ class CommandsSerializer(serializers.ModelSerializer):
             srcs = json.loads(self.initial_data['source'])
             instance.name = validated_data.get('name')
             instance.description = validated_data.get('description')
-            instance.source = validated_data.get('source')
+            #instance.source = validated_data.get('source')
 
             for s in instance.source.all():
                 instance.source.remove(s)
