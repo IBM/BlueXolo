@@ -46,9 +46,9 @@ class KeywordAPIView(LoginRequiredMixin,
         name = self.request.query_params.get('name')
         collection = self.request.query_params.get('collection')
         if collection:
-            queryset = queryset.filter(collection=collection)
+            queryset = queryset.filter(collection=collection).order_by('name')
         if name:
-            queryset = queryset.filter(name__istartswith=name)
+            queryset = queryset.filter(name__istartswith=name).order_by('name')
         return queryset
 
     def get(self, request, *args, **kwargs):
@@ -417,9 +417,9 @@ class TestCaseApiView(LoginRequiredMixin,
         name = self.request.query_params.get('name')
         collection = self.request.query_params.get('collection')
         if collection:
-            queryset = queryset.filter(collection=collection)
+            queryset = queryset.filter(collection=collection).order_by('name')
         if name:
-            queryset = queryset.filter(name__istartswith=name)
+            queryset = queryset.filter(name__istartswith=name).order_by('name')
         return queryset
 
     def get(self, request, *args, **kwargs):
