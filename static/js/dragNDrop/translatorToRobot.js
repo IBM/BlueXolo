@@ -365,7 +365,10 @@ function translateToRobot(callBackFunction) {
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
-            terminal.value += translatedRow;
+
+            if (!isTestsuite()) {
+                terminal.value += translatedRow;
+            }
 
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i];
