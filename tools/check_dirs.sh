@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # | - - - - - - - - - - - - - - - - - - - - - - - - - - -  |
 # |    Script for create the directory schema on media     |

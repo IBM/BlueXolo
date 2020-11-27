@@ -74,6 +74,7 @@ class TestCase(models.Model):
     extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
     modified = models.DateTimeField(_('modified'), auto_now=True)
+    script_type = models.PositiveIntegerField(_('script type'), choices=SCRIPT_TYPE_CHOICES, default=1)
 
     class Meta:
         verbose_name = _('test case')
@@ -94,6 +95,7 @@ class TestSuite(models.Model):
     extra_imports = models.TextField(_('extra imports '), blank=True)
     created_at = models.DateTimeField(_('created_at'), auto_now_add=True, editable=False)
     modified = models.DateTimeField(_('modified'), auto_now=True)
+    script_type = models.PositiveIntegerField(_('script type'), choices=SCRIPT_TYPE_CHOICES, default=1)
 
     class Meta:
         verbose_name = _('test suite')

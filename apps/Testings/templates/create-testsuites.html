@@ -140,7 +140,7 @@
             function writeTestSuiteDatabase() {
                 var testSuiteName = document.getElementById("testsuite_name").value;
                 var testSuiteDescription = document.getElementById("testsuite_description").value;
-                var testSuiteValues = droppedElements;
+                var testSuiteValues = droppedElements || [];
                 var testSuiteCollection = document.getElementById('collection').value;
                 var testSuiteScript = document.getElementById("terminal").value;
                 var stepper = '{{stepper}}';

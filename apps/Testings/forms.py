@@ -1,7 +1,14 @@
 from django import forms
 
-from .models import Collection, Keyword
+from .models import Collection, Keyword, Phase, Collection
 from apps.Products.models import Source
+
+SCRIPT_TYPE_CHOICES = (
+    (None, 'Choose a script type'),
+    ('keyword', 'Keyword'),
+    ('testcase', 'Test case'),
+    ('testsuite', 'Test suite'),
+)
 
 
 class CollectionForm(forms.ModelForm):
@@ -23,19 +30,14 @@ class CollectionForm(forms.ModelForm):
         self.fields['product'].queryset = Source.objects.filter(category=3)
 
 
-class ImportScriptForm(forms.ModelForm):
+class NewImportScriptForm(forms.Form):
+    script_type = forms.CharField(widget=forms.Select(choices=SCRIPT_TYPE_CHOICES))
+    collection = forms.ModelChoiceField(queryset=Collection.objects.all())
+    phase = forms.ModelChoiceField(queryset=Phase.objects.all())
+    name = forms.CharField(max_length=100)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'materialize-textarea'}), required=False)
     file_script = forms.FileField()
-
-    class Meta:
-        model = Keyword
-        fields = [
-            'name',
-            'description',
-            'file_script'
-        ]
-        widgets = {
-            'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),
-        }
 
 
 class EditImportScriptForm(forms.ModelForm):
@@ -44,8 +46,7 @@ class EditImportScriptForm(forms.ModelForm):
         fields = [
             'name',
             'description',
-            'script',
-
+            'script'
         ]
         widgets = {
             'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),

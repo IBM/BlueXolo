@@ -39,8 +39,8 @@ class KeywordsListJson(LoginRequiredMixin, BaseDatatableView):
 
 class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
     model = TestCase
-    columns = ['name', 'description', 'created_at', 'pk']
-    order_columns = ['name', 'description', 'created_at', 'pk']
+    columns = ['name', 'script_type', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'script_type', 'description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
@@ -71,8 +71,8 @@ class TestcasesListJson(LoginRequiredMixin, BaseDatatableView):
 
 class TestsuitesListJson(LoginRequiredMixin, BaseDatatableView):
     model = TestSuite
-    columns = ['name', 'description', 'created_at', 'pk']
-    order_columns = ['name', 'description', 'created_at', 'pk']
+    columns = ['name', 'script_type', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'script_type', 'description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
@@ -130,14 +130,21 @@ class PhasesListJson(LoginRequiredMixin, BaseDatatableView):
         return qs
 
 
-class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
-    model = Keyword
+class ImportedListJson(LoginRequiredMixin, BaseDatatableView):
     columns = ['name', 'description', 'created_at', 'pk']
     order_columns = ['name', 'description', 'created_at', 'pk']
     max_display_length = 100
 
     def get_initial_queryset(self):
-        qs = Keyword.objects.filter(script_type=2).order_by('created_at')
+        type_script = self.kwargs['type_script']
+                
+        if type_script == 'keyword':
+            model = Keyword
+        elif type_script == 'testcase':
+            model = TestCase
+        elif type_script == 'testsuite':
+            model = TestSuite
+        qs = model.objects.filter(script_type=2).order_by('created_at')
         return qs
 
     def filter_queryset(self, qs):
@@ -153,4 +160,54 @@ class KeywordsImportedListJson(LoginRequiredMixin, BaseDatatableView):
         if column == 'created_at':
             return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
         else:
-            return super(KeywordsImportedListJson, self).render_column(row, column)
+            return super(ImportedListJson, self).render_column(row, column)
+
+class TestCasesImportedListJson(LoginRequiredMixin, BaseDatatableView):
+    model = TestCase
+    columns = ['name', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'description', 'created_at', 'pk']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        qs = TestCase.objects.filter(script_type=2).order_by('created_at')
+        return qs
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return qs
+
+    def render_column(self, row, column):
+        if column == 'created_at':
+            return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
+        else:
+            return super(TestCasesImportedListJson, self).render_column(row, column)
+            
+class TestSuitesImportedListJson(LoginRequiredMixin, BaseDatatableView):
+    model = TestSuite
+    columns = ['name', 'description', 'created_at', 'pk']
+    order_columns = ['name', 'description', 'created_at', 'pk']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        qs = TestSuite.objects.filter(script_type=2).order_by('created_at')
+        return qs
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return qs
+
+    def render_column(self, row, column):
+        if column == 'created_at':
+            return '{}'.format(row.created_at.strftime("%d/%b/%Y - %H:%M"))
+        else:
+            return super(TestSuitesImportedListJson, self).render_column(row, column)

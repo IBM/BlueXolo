@@ -11,3 +11,8 @@ nohup docker run --privileged \
 -v /opt/bluexolo-data:/var/lib/postgresql \
 --name bluexolo \
 bluexolo/bluexolo  &
+
+# Configure bluexolo user
+docker exec -ti bluexolo bash -c "/opt/BlueXolo-src/docker/scripts/config-user.sh"
+
+exit 0

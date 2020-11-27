@@ -47,8 +47,8 @@
                 var config = [{
                     "targets": 4,
                     data: function (row) {
-                        return "<div>" +
-                            (row[1] == "Native" ? "<a class='btn waves-effect waves-light' href='/testings/keywords/edit/" + row[4] + "'><i class='material-icons'>edit</i></a>" : "<a class='btn disabled' href='#'><i class='material-icons'>edit</i></a>") +
+                        return "<div>" + "<a class='btn waves-effect waves-light' href='/testings/" +
+                            (row[1] == "Native" ? "keywords/edit/" + row[4] : "import/keyword/" + row[4] + "/edit") + "'><i class='material-icons'>edit</i></a>" + 
                             '     ' +
                             "<a class='btn red waves-effect waves-light' href='/testings/keywords/" + row[4] + "/delete/'><i class='material-icons'>delete</i></a>" +
                             '     ' +

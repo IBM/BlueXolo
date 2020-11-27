@@ -322,7 +322,6 @@ function translateToRobot(callBackFunction) {
     var alreadyAdded = false;
 
     for (var i = 0; i < droppedElements.length; i++) {
-
         if (droppedElements[i].category === keywordDroppedCategory) {
 
             if(!addedOwnDescription){
@@ -339,7 +338,10 @@ function translateToRobot(callBackFunction) {
             
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i];
-            addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
+            
+            if (newKeywordUsed.keywordJSON[0].script_type !== 'Imported Script') {
+                addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
+            }
             
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
@@ -354,6 +356,9 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
+            if (terminal.value === "") {
+                terminal.value = "*** Test Cases ***\n";
+            }
             
             if(!addedOwnDescription){
                 addOwnDescription();
@@ -361,22 +366,33 @@ function translateToRobot(callBackFunction) {
                 addedOwnDescription = true;
             }
 
-
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
-            terminal.value += translatedRow;
+
+            if (!isTestsuite()) {
+                terminal.value += translatedRow;
+            }
 
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i];
+            
+            if (newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script') {
+                var testCaseTranslation = addTestcaseToUsedArray(testcaseUsedID, newTestcaseUsed);
+                if (isTestsuite()) {
+                    terminal.value += testCaseTranslation;
+                }
+            }
+            else {
+                var importedScript = droppedElements[i].script;
 
-            addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
+                if (importedScript !== "") {
+                    const testcaseHeaderLength = "\n*** Test Cases ***\n".length;  
 
-            if(isTestsuite()){
-                var testCaseToTranslate = droppedElements[i].keywordJSON;
-
-                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
-
-                terminal.value += testCaseTranslation;
+                    // This removes the "*** Test Cases ***" part of the imported test case script
+                    importedScript = importedScript.substr(testcaseHeaderLength, importedScript.length);
+                }
+                
+                terminal.value += importedScript;
             }
 
             if ((i + 1) >= droppedElements.length) {
@@ -572,7 +588,6 @@ function getTranslationOfTestcase(testcase){
     var externalLibrariesCategory = 5;
 
     var keywordDroppedCategory = 6;
-
     for (var i = 0; i < testcase.length; i++) {
 
         if (testcase[i].category === keywordDroppedCategory) {
@@ -656,8 +671,8 @@ function addExtraToUsedArray(sourceID){
     usedExtras.push(newElement);
 }
 
-function addTestcaseToUsedArray( testcaseID, testcase){
-    var translation = "*** Test Cases ***\n";
+function addTestcaseToUsedArray(testcaseID, testcase){
+    var translation = "";
     translation += testcase.name + "\n";
     translation += "    [Documentation]    ";
     translation += testcase.description + "\n";
@@ -670,6 +685,7 @@ function addTestcaseToUsedArray( testcaseID, testcase){
     };
 
     usedTestcases.push(newElement);
+    return translation;
 }
 
 function translateDroppedKeyword(keyword) {
@@ -788,8 +804,7 @@ function handleTranslationOf(data, parameters){
 
     var commandRobotCategory = 5;
   
-    var elementType = data.name;
-    var elementType = elementType.toLowerCase();
+    var elementType = (data.name ? data.name.toLowerCase() : "");
 
     if(elementType === "comment"){
         translatedRow += translateComment(parameters);
