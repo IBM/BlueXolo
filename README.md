@@ -43,7 +43,7 @@ If you experience any issues with BlueXolo on any Operating System, or you have 
 
 ## Contact Links
 
-[BlueXolo Google Group (edited)](https://groups.google.com/forum/#!forum/bluexolo)
+[BlueXolo Google Group (edited)](https://groups.google.com/forum/#!forum/bluexolo/join)
 [BlueXolo Web Page](https://ibm.github.io/BlueXolo/)
 [BlueXolo ZenHub](https://app.zenhub.com/workspaces/bluexolo-5c09910d4b5806bc2bfb46c4/board)
 [BlueXolo GitHub](https://github.com/IBM/BlueXolo)
