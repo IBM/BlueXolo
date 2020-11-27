@@ -58,6 +58,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
             var testcaseCategory = 7;
+            var testcaseScript = data.script || "";
 
             droppedElements.push({
                 id: testcaseID,
@@ -68,6 +69,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
                 indentation: indentation,
                 keywordJSON: testcaseValues,
                 arguments: testcaseArguments,
+                script: testcaseScript,
                 extraValue: undefined,
             });
             drawElementsFromJSON();
@@ -94,6 +96,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
             var testcaseCategory = 7;
+            var testcaseScript = data.script || "";
 
             var droppedElement = {
                 id: testcaseID,
@@ -104,6 +107,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
                 indentation: indentation,
                 keywordJSON: testcaseValues,
                 arguments: testcaseArguments,
+                script: testcaseScript,
                 extraValue: undefined,
             };
             droppedElements.splice(addElementInThisPosition, 0, droppedElement);

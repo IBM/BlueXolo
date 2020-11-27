@@ -356,7 +356,10 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
-
+            if (terminal.value === "") {
+                terminal.value = "*** Test Cases ***\n";
+            }
+            
             if(!addedOwnDescription){
                 addOwnDescription();
 
@@ -365,16 +368,31 @@ function translateToRobot(callBackFunction) {
 
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
-            terminal.value += translatedRow;
+
+            if (!isTestsuite()) {
+                terminal.value += translatedRow;
+            }
 
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i];
-
+            
             if (newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script') {
                 var testCaseTranslation = addTestcaseToUsedArray(testcaseUsedID, newTestcaseUsed);
                 if (isTestsuite()) {
                     terminal.value += testCaseTranslation;
                 }
+            }
+            else {
+                var importedScript = droppedElements[i].script;
+
+                if (importedScript !== "") {
+                    const testcaseHeaderLength = "\n*** Test Cases ***\n".length;  
+
+                    // This removes the "*** Test Cases ***" part of the imported test case script
+                    importedScript = importedScript.substr(testcaseHeaderLength, importedScript.length);
+                }
+                
+                terminal.value += importedScript;
             }
 
             if ((i + 1) >= droppedElements.length) {
@@ -653,8 +671,8 @@ function addExtraToUsedArray(sourceID){
     usedExtras.push(newElement);
 }
 
-function addTestcaseToUsedArray( testcaseID, testcase){
-    var translation = "*** Test Cases ***\n";
+function addTestcaseToUsedArray(testcaseID, testcase){
+    var translation = "";
     translation += testcase.name + "\n";
     translation += "    [Documentation]    ";
     translation += testcase.description + "\n";
