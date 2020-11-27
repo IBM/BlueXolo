@@ -586,23 +586,6 @@ def generate_file(obj, type_script, params, filename, client):
             check = send_files(ts_file.name, 7, config, client)
             if check.get('text'):
                 raise Exception(check.get('text'))
-        #! This commented section will be removed after testing the import feature
-        # elif type_script == 4:
-        #     """ Imported Keywords """
-        #     """ Dummy Test Case file"""
-        #     dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
-        #                          "w")
-        #     dummy_tc_file.write("*** Settings ***\n")
-        #     dummy_tc_file.write("\n")
-        #     if libraries:
-        #         for library in libraries:
-        #             dummy_tc_file.write("Library\t\t{0}\n".format(library))
-        #         dummy_tc_file.write("\n")
-        #     dummy_tc_file.write(obj.script)
-        #     dummy_tc_file.close()
-        #     check = send_files(dummy_tc_file.name, 5, config, client)
-        #     if check.get('text'):
-        #         raise Exception(check.get('text'))
 
         """Need a variables Profile File"""
         arguments = params.get('global_variables')
