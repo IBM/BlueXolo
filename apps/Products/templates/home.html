@@ -41,6 +41,27 @@
             </div>
             <div class="col s9">
                     <div class="center">
+
+                        <script type="text/javascript">
+                            function showTaskResults() {
+                                var taskCards = document.getElementsByClassName("yellow-text center")
+
+                                for (const item of taskCards) {
+                                    var file = (item.title).substring(0, (item.title).length - 11) + "output.xml"
+                                    $.get(file, function (data) {
+                                        var content = new XMLSerializer().serializeToString(data.documentElement)
+                                        if (content.includes('level="FAIL"')) {
+                                            item.textContent = "Failure"
+                                            item.className = "red-text"
+                                        }
+                                        else {
+                                            item.textContent = "Success"
+                                            item.className = "green-text"
+                                        }
+                                    });
+                                } 
+                            }
+                        </script>
                         <!-- Modal Trigger 
                        <div>
                        <h4 class="blue-grey-text light">Configure your environment</h4>
@@ -86,18 +107,19 @@
     
                                         {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
                                     {% elif task.state == "SUCCESS" %}
-                                        <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                        <h5 class="app-title blue-grey-text"><i class="material-icons">done</i>
                                             {{ task.name }}</h5>
                                         <div class="progress">
-                                            <div class="determinate green" style="width: 100%"></div>
+                                            <div class="determinate blue-grey" style="width: 100%"></div>
                                         </div>
                                         <p class="blue-grey-text center">EXECUTION COMPLETE</p>
+                                        <p class="yellow-text center" title="{{ task.task_result }}" style="pointer-events: none;"></p>
                                         <p class="grey-text">Started: {{ task.created_at }}</p>
                                         <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                         {% if task.category == 2 %}
                                             <div class="center ">
                                                 <a target="_blank" href="{{ task.task_result }}"
-                                                   class="btn-flat green-text waves-effect">View Result</a>
+                                                   class="btn-flat blue-grey-text waves-effect">View Result</a>
                                             </div>
                                         {% endif %}
     
@@ -152,18 +174,19 @@
     
                                         {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
                                     {% elif task.state == "SUCCESS" %}
-                                        <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                        <h5 class="app-title blue-grey-text"><i class="material-icons">done</i>
                                             {{ task.name }}</h5>
                                         <div class="progress">
-                                            <div class="determinate green" style="width: 100%"></div>
+                                            <div class="determinate blue-grey" style="width: 100%"></div>
                                         </div>
                                         <p class="blue-grey-text center">EXECUTION COMPLETE</p>
+                                        <p class="yellow-text center" title="{{ task.task_result }}" style="pointer-events: none;"></p>
                                         <p class="grey-text">Started: {{ task.created_at }}</p>
                                         <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                         {% if task.category == 2 %}
                                             <div class="center ">
                                                 <a target="_blank" href="{{ task.task_result }}"
-                                                   class="btn-flat green-text waves-effect">View Result</a>
+                                                   class="btn-flat blue-grey-text waves-effect">View Result</a>
                                             </div>
                                         {% endif %}
     
@@ -198,6 +221,8 @@
                                 </div>
                             </div>
                         {% endfor %}
+
+                        <script>window.showTaskResults()</script>
     
                         <!-- Bottom Buttons-->
                         <br>
