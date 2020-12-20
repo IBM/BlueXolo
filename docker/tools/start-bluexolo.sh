@@ -13,6 +13,7 @@ nohup docker run --privileged \
 bluexolo/bluexolo  &
 
 # Configure bluexolo user
-docker exec -ti bluexolo bash -c "/opt/BlueXolo-src/docker/scripts/config-user.sh"
+docker exec -ti bluexolo bash -c "/opt/BlueXolo-src/docker/scripts/config-user.sh && /opt/BlueXolo-src/tools/check_dirs.sh"
 
 exit 0
+
