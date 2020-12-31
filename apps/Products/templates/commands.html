@@ -77,20 +77,19 @@
                 </div>
             </div>
         </div>
-        <div class="fixed-action-btn">
-            <a id="menu" style="float:left;margin:0.7rem;right:260px;bottom:5px;" class="btn-floating btn-large blue-grey">
+        <div class="fixed-action-btn "style="float:left;margin:0.7rem;right:272px;bottom:7px;">
+            <a id="menu" style="margin:0.7rem;bottom:10px;" class="btn-floating btn-large blue-grey">
                 <i class="large material-icons">add</i>
             </a>
             <ul>
                 {% if stepper != 'stepper' %}
-                <li><a style="float:left;margin:0.7rem;right:255px;bottom:5px;" class="btn-floating blue tooltipped" data-position="left" data-delay="50"
-                       data-tooltip="Manual" href="{% url "new-command" %}">
+                <li><a class="btn-floating blue tooltipped" style="margin:0.7rem;top:15px"data-position="left" data-delay="50" data-tooltip="Manual" href="{% url "new-command" %}">
                     <i class="material-icons">create</i></a></li>
                 {% endif %}
                 <li>
-                    <button style="float:left;margin:0.7rem;right:255px;bottom:10px;" class="btn-floating green tooltipped" data-position="left" data-delay="50"
-                            data-tooltip="Extract from Operation System (M-Extract)" onclick="modal_extract()">
+                    <button style="margin:0.7rem;bottom:5px;" class="btn-floating green tooltipped" data-position="left" data-delay="50" data-tooltip="Extract from Operation System (M-Extract)" onclick="modal_extract()">
                         <i class="material-icons">launch</i>
+                    </button>
                     </button>
                 </li>
             </ul>

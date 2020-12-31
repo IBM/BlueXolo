@@ -113,7 +113,7 @@
                 var testcaseName = document.getElementById("testcase_name").value;
                 var testcaseDescription = document.getElementById("testcase_description").value;
                 var testcaseCollection = document.getElementById("collection").value;
-                var testcaseValues = droppedElements;
+                var testcaseValues = droppedElements || [];
                 var testcaseScript = document.getElementById("terminal").value;
                 var testcaseFunctions = $('#testecase_functions').material_chip('data');
                 var testcasePhase = document.getElementById("phases_list").value;

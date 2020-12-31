@@ -3,6 +3,17 @@
 {% load permission_tags %}
 {% block content %}
     <div class="container">
+        <div class="select-wrapper">
+            <label for="script-type">Script type to show:</label>
+            <select class="select-dropdown" id="script-type" onchange="UpdateDataTable()">
+                <optgroup id="script-type-options" label="Script types">
+                    <option value="keyword" selected>Keyword</option>
+                    <option value="testcase">Test Case</option>
+                    <option value="testsuite">Test Suite</option>
+                </optgroup>
+            </select>
+        </div>
+        <br>
         <table class="datatable">
             <thead>
             <tr>
@@ -38,27 +49,43 @@
         <script src="{% static "js/datatables.min.js" %}"></script>
         <script src="{% static "js/DTBoilerPlate.js" %}"></script>
         <script>
-            $(document).ready(function () {
-                var config = [{
+            var config = [{
                     "targets": 3,
                     data: function (row) {
+                        scriptType = document.getElementById('script-type').value;
+                        scriptTypeID = '1'; // By default the ID is 1 for Keywords (2 for Test Cases and 3 for Test Suites)
+
+                        if (scriptType == "testcase")
+                            scriptTypeID = '2';
+                        else if (scriptType == "testsuite")
+                            scriptTypeID = '3';
+
                         return "<div>" +
                             {% if user|can:'update_imported_script' %}
-                                "<a class='btn' href='/testings/import/" + row[3]
+                                "<a class='btn' href='/testings/import/" + scriptType + "/" + row[3]
                                 + "/edit/'><i class='material-icons'>edit</i></a>" +
                             {% endif %}
                             '     ' +
                             {% if user|can:'delete_imported_script' %}
-                                "<a class='btn red' href='/testings/import/" + row[3]
+                                "<a class='btn red' href='/testings/import/" + scriptType + "/" + row[3]
                                 + "/delete/'><i class='material-icons'>delete</i></a>" +
                             {% endif %}
                             '     ' +
-                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/1/run'><i class='material-icons'>play_arrow</i></a>" +
+                            "<a class='btn blue waves-effect waves-light' href='/testings/" + row[3] + "/" + scriptTypeID + "/run'><i class='material-icons'>play_arrow</i></a>" +
                             "</div>";
                     }
-                }];
-                dtStart("{% url "api-imported-list" %}", config)
+            }];
+
+            $(document).ready(function () {
+                dtStart("/apis/imported/list/keyword/", config)
             });
+        </script>
+        <script>
+            function UpdateDataTable() {
+                var scriptType = document.getElementById('script-type').value
+                $('.datatable').DataTable().destroy();
+                dtStart("/apis/imported/list/" + scriptType, config)
+            }
         </script>
     {% endcompress %}
 {% endblock %}
