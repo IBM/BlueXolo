@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Keywords{% endblock %}{% block subtitle %}Keywords{% endblock %}
+{% load permission_tags %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -20,12 +21,14 @@
             </tr>
             </thead>
         </table>
-        <div class="fixed-action-btn">
-            <a href="{% url "new-keywords" %}"
-               class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
-               style="float:left;margin:0.7rem;right:260px;bottom:5px;" data-tooltip="New Keyword">
-               <i class="material-icons">add</i></a>
-        </div>
+        {% if user|can:'create_keyword' %}
+            <div class="fixed-action-btn">
+                <a href="{% url "new-keywords" %}"
+                class="btn-floating btn-large waves-effect waves-light blue-grey tooltipped" data-position="left"
+                style="float:left;margin:0.7rem;right:260px;bottom:5px;" data-tooltip="New Keyword">
+                <i class="material-icons">add</i></a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -47,12 +50,19 @@
                 var config = [{
                     "targets": 4,
                     data: function (row) {
-                        return "<div>" + "<a class='btn waves-effect waves-light' href='/testings/" +
-                            (row[1] == "Native" ? "keywords/edit/" + row[4] : "import/keyword/" + row[4] + "/edit") + "'><i class='material-icons'>edit</i></a>" + 
+                        return "<div>" +
+                            {% if user|can:'update_keyword' %}
+                                "<a class='btn waves-effect waves-light' href='/testings/" +
+                                (row[1] == "Native" ? "keywords/edit/" + row[4] : "import/keyword/" + row[4] + "/edit") + "'><i class='material-icons'>edit</i></a>" + 
+                            {% endif %}
                             '     ' +
-                            "<a class='btn red waves-effect waves-light' href='/testings/keywords/" + row[4] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            {% if user|can:'delete_keyword' %}
+                                "<a class='btn red waves-effect waves-light' href='/testings/keywords/" + row[4] + "/delete/'><i class='material-icons'>delete</i></a>" +
+                            {% endif %}
                             '     ' +
+                            {% if user|can:'run_scripts' %}
                             "<a class='btn blue waves-effect waves-light' href='/testings/" + row[4] + "/1/run'><i class='material-icons'>play_arrow</i></a>" +
+                            {% endif %}
                             "</div>";
                     }
                 }];
