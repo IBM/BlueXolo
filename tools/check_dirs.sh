@@ -15,10 +15,11 @@ DIRS_SCHEMA=(
     "profiles"
     )
 echo "Checking the media schema"
+MEDIA_DIR="/opt/BlueXolo-src"
 for i in "${DIRS_SCHEMA[@]}"
 do
-    if [ ! -d "$BASE_DIR/media/$i" ]; then
-    mkdir "$BASE_DIR/media/$i"
+    if [ ! -d "$MEDIA_DIR/media/$i" ]; then
+    mkdir "$MEDIA_DIR/media/$i"
     printf "$CYN Created\n\n"
 fi
 done
