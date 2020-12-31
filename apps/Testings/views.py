@@ -115,7 +115,7 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
     def get_context_data(self, **kwargs):
         context = super(DownloadTestcaseView, self).get_context_data(**kwargs)
         keywordId=kwargs['pk']
-        return context;
+        return context
     def dispatch(self, request, *args, **kwargs):
         responseData={}
         testCaseId=kwargs['pk']
@@ -127,7 +127,7 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
         testCaseName=row[1]
         testCaseDesc=row[2]
         testCaseContent=row[3]
-        KeywordsDict = json.loads(row[10])
+        KeywordsDict = json.loads(row[6])
         elements = KeywordsDict.get('keywords')
         if elements:
             for k in elements:
@@ -195,7 +195,7 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
     def get_context_data(self, **kwargs):
         context = super(DownloadTestSuiteView, self).get_context_data(**kwargs)
         keywordId=kwargs['pk']
-        return context;
+        return context
     def dispatch(self, request, *args, **kwargs):
         responseData={}
         testCaseId=kwargs['pk']
@@ -207,7 +207,7 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
         testSuiteName=row[1]
         testSuiteDesc=row[2]
         testSuiteContent=row[3]
-        DependenciesList=json.loads(row[8])
+        DependenciesList=json.loads(row[5])
         keywordsDict = DependenciesList.get('keywords')
         testcasesDict = DependenciesList.get('testcases')
 
