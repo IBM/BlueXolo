@@ -253,10 +253,10 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         stepper = self.kwargs.get('stepper')
-        source_pk = self.pk
         if stepper != 'stepper':
             return reverse_lazy('source-list', kwargs={'slug': self.kwargs.get('slug')})
         else:
+            source_pk = self.pk
             return reverse_lazy('successful', kwargs={'step': self.kwargs.get('slug'), 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
@@ -324,10 +324,10 @@ class EditSourceView(LoginRequiredMixin, UpdateView):
         if _category == 5:
             slug = 'libraries'
         stepper = self.kwargs.get('stepper')
-        source_pk = self.pk
         if stepper != 'stepper':
             return reverse_lazy('source-list', kwargs={'slug': slug})
         else:
+            source_pk = self.pk
             return reverse_lazy('successful', kwargs={'step': slug, 'pk': source_pk})
 
     def get_context_data(self, **kwargs):
