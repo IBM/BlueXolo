@@ -63,6 +63,8 @@
                             {% if user|can:'run_scripts' %}
                             "<a class='btn blue waves-effect waves-light' href='/testings/" + row[4] + "/1/run'><i class='material-icons'>play_arrow</i></a>" +
                             {% endif %}
+                            '     ' +
+                            "<a class='btn green waves-effect waves-light' href='/testings/keywords/download/" + row[4] + "'><i class='material-icons'>file_download</i></a>" +
                             "</div>";
                     }
                 }];

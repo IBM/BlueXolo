@@ -1,16 +1,19 @@
+import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
+from django.shortcuts import *
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DeleteView, CreateView, UpdateView, DetailView, FormView
+from django.core.files import File
+from django.db import connection
 from pygments import highlight
 from pygments.formatters.html import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
 from rolepermissions.mixins import HasPermissionsMixin
 
-from apps.Testings.models import Keyword, Collection, TestCase, TestSuite, Phase
-from apps.Testings.forms import (CollectionForm, EditImportScriptForm, NewImportScriptForm)
-
+from apps.Testings.models import Keyword, Collection, TestCase, TestSuite
+from apps.Testings.forms import CollectionForm, NewImportScriptForm, EditImportScriptForm
+from json import *
 
 class KeyWordsView(LoginRequiredMixin, HasPermissionsMixin, TemplateView):
     template_name = "keywords.html"
@@ -36,6 +39,29 @@ class EditKeywordView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
         context = super(EditKeywordView, self).get_context_data(**kwargs)
         context['stepper'] = self.kwargs.get('stepper')
         return context
+
+class DownloadKeywordView(LoginRequiredMixin,HasPermissionsMixin, TemplateView):
+    model=Keyword
+    template_name="download-keyword.html"
+    required_permission="download_keyword"
+    responseData={}
+    def get_context_data(self, **kwargs):
+        context = super(DownloadKeywordView, self).get_context_data(**kwargs)
+        keywordId=kwargs['pk']
+        return context
+    def dispatch(self, request, *args, **kwargs):
+        responseData={}
+        keywordId=kwargs['pk']
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT * FROM keywords where id=%s',[kwargs['pk']])
+            row = cursor.fetchone()
+        keywordName=row[1]
+        keywordDesc=row[2]
+        keywordScript=row[3]
+        responseData['Name']=keywordName
+        responseData['Script']=keywordScript
+        responseData['Description']=keywordDesc
+        return render(request,'download-keyword.html',{'data':responseData})
 
 
 class DeleteKeywordView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
@@ -81,6 +107,41 @@ class EditTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
         context['stepper'] = self.kwargs.get('stepper')
         return context
 
+class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView):
+    model=TestCase
+    template_name="download-testcase.html"
+    required_permission="download_test_case"
+    responseData={}
+    def get_context_data(self, **kwargs):
+        context = super(DownloadTestcaseView, self).get_context_data(**kwargs)
+        keywordId=kwargs['pk']
+        return context
+    def dispatch(self, request, *args, **kwargs):
+        responseData={}
+        testCaseId=kwargs['pk']
+        testCaseDependencies={}
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT * FROM testcases where id=%s',[kwargs['pk']])
+            row = cursor.fetchone()
+        subId=row[0]
+        testCaseName=row[1]
+        testCaseDesc=row[2]
+        testCaseContent=row[3]
+        KeywordsDict = json.loads(row[6])
+        elements = KeywordsDict.get('keywords')
+        if elements:
+            for k in elements:
+                current_pk = k.get('id')
+                current_script = k.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testCaseDependencies[row[1]] = current_script
+        responseData['Name']=testCaseName
+        responseData['Script']=testCaseContent
+        responseData['Description']=testCaseDesc
+        responseData['Dependencies']=testCaseDependencies
+        return render(request,'download-testcase.html',{'data':responseData})
 
 class DeleteTestCaseView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testcase.html"
@@ -126,6 +187,52 @@ class EditTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DetailView):
         context['stepper'] = self.kwargs.get('stepper')
         return context
 
+class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
+    model=TestSuite
+    template_name="download-testsuites.html"
+    required_permission="download_test_suite"
+    responseData={}
+    def get_context_data(self, **kwargs):
+        context = super(DownloadTestSuiteView, self).get_context_data(**kwargs)
+        keywordId=kwargs['pk']
+        return context
+    def dispatch(self, request, *args, **kwargs):
+        responseData={}
+        testCaseId=kwargs['pk']
+        testSuiteDependencies = {}
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT * FROM testsuites where id=%s',[kwargs['pk']])
+            row = cursor.fetchone()
+        subId=row[0]
+        testSuiteName=row[1]
+        testSuiteDesc=row[2]
+        testSuiteContent=row[3]
+        DependenciesList=json.loads(row[5])
+        keywordsDict = DependenciesList.get('keywords')
+        testcasesDict = DependenciesList.get('testcases')
+
+        if keywordsDict:
+            for k in keywordsDict:
+                current_pk = k.get('id')
+                current_script = k.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testSuiteDependencies[row[1]] = current_script
+        if testcasesDict:
+            for t in testcasesDict:
+                current_pk = t.get('id')
+                current_script = t.get('script')
+                with connection.cursor() as cursor:
+                    cursor.execute('SELECT * FROM testcases where id=%s',(current_pk))
+                    row = cursor.fetchone()
+                testSuiteDependencies[row[1]] = current_script
+
+        responseData['Name']=testSuiteName
+        responseData['Script']=testSuiteContent
+        responseData['Description']=testSuiteDesc
+        responseData['Dependencies']=testSuiteDependencies
+        return render(request,'download-testsuite.html',{'data':responseData})
 
 class DeleteTestSuiteView(LoginRequiredMixin, HasPermissionsMixin, DeleteView):
     template_name = "delete-testsuite.html"

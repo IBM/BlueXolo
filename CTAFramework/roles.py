@@ -29,16 +29,19 @@ class Developer(AbstractUserRole):
         'read_keyword': True,
         'update_keyword': True,
         'delete_keyword': True,
+        'download_keyword': True,
         # Test Cases
         'create_test_case': True,
         'read_test_case': True,
         'update_test_case': True,
         'delete_test_case': True,
+        'download_test_case': True,
         # Test suites
         'create_test_suite': True,
         'read_test_suite': True,
         'update_test_suite': True,
         'delete_test_suite': True,
+        'download_test_suite': True,
         # Imported Script
         'create_imported_script': True,
         'read_imported_script': True,
