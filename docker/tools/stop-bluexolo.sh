@@ -13,7 +13,8 @@
 
 #set -o nounset  # Treat unset variables as an error
 
-docker kill bluexolo
-docker rm $(docker ps -qa)
+docker kill bluexolo bluexolo-assistant
+
+exit 0
 
 
