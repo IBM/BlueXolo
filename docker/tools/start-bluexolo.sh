@@ -75,8 +75,8 @@ docker run -d --privileged --rm \
 -h bluexolo \
 -e container=docker \
 -v /sys/fs/cgroup:/sys/fs/cgroup \
--v /opt/sources/BlueXolo:/opt/BlueXolo-src \
--v /opt/bluexolo-data:/var/lib/postgresql \
+-v ${BLUEXOLO_DIR}:/opt/BlueXolo-src \
+-v ${BLUEXOLO_DATA}:/var/lib/postgresql \
 --name bluexolo \
 bluexolo/bluexolo
 
