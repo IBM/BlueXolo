@@ -70,7 +70,7 @@ docker run -d --privileged --rm -p 8000:8000 -h bluexolo -e container=docker -v 
 
 :: Configure bluexolo user and check required directories
 echo Running startup configurations . . .
-docker exec -ti bluexolo bash -c "sleep 3 && /opt/BlueXolo-src/docker/scripts/config-user.sh && /opt/BlueXolo-src/tools/check_dirs.sh"
+docker exec -ti bluexolo bash -c "sleep 5 && /opt/BlueXolo-src/tools/check_dirs.sh && /opt/BlueXolo-src/docker/scripts/config-user.sh"
 
 echo:
 exit 0
