@@ -19,7 +19,7 @@ OPTION=$1
 docker kill bluexolo bluexolo_assistant
 
 # Remove offline execution resources
-if [ $OPTION == "--offline" ]
+if [ "$OPTION" == "--offline" ]
 then
     docker kill language_server
     docker network rm offline_assistant

@@ -82,7 +82,8 @@ bluexolo/bluexolo
 
 # Configure bluexolo user and check required directories
 echo "Running startup configurations . . .${DEFAULT}"
-docker exec -ti bluexolo bash -c "sleep 5 && /opt/BlueXolo-src/tools/check_dirs.sh && /opt/BlueXolo-src/docker/scripts/config-user.sh"
+docker exec -ti bluexolo bash -c "/opt/BlueXolo-src/tools/check_dirs.sh && sleep 15"
+docker exec -ti bluexolo bash -c "/opt/BlueXolo-src/docker/scripts/config-user.sh"
 
 exit 0
 ​
