@@ -672,7 +672,7 @@ function addExtraToUsedArray(sourceID){
 }
 
 function addTestcaseToUsedArray(testcaseID, testcase){
-    var translation = "";
+    var translation = "*** Test Cases ***\n";
     translation += testcase.name + "\n";
     translation += "    [Documentation]    ";
     translation += testcase.description + "\n";
