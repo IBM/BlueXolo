@@ -59,7 +59,8 @@ class DownloadKeywordView(LoginRequiredMixin,HasPermissionsMixin, TemplateView):
         keywordDesc=row[2]
         keywordScript=row[3]
         responseData['Name']=keywordName
-        responseData['Script']=keywordScript
+        replacer = keywordScript.replace('$', '\$')
+        responseData['Script']=replacer
         responseData['Description']=keywordDesc
         return render(request,'download-keyword.html',{'data':responseData})
 
@@ -133,12 +134,15 @@ class DownloadTestcaseView(LoginRequiredMixin,HasPermissionsMixin, TemplateView)
             for k in elements:
                 current_pk = k.get('id')
                 current_script = k.get('script')
+                replacer = current_script.replace('$', '\$')
+                replacer = replacer.replace('\n\n', '\n')
                 with connection.cursor() as cursor:
                     cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
                     row = cursor.fetchone()
-                testCaseDependencies[row[1]] = current_script
+                testCaseDependencies[row[1]] = replacer
         responseData['Name']=testCaseName
-        responseData['Script']=testCaseContent
+        replacer = testCaseContent.replace('$', '\$')
+        responseData['Script']=replacer
         responseData['Description']=testCaseDesc
         responseData['Dependencies']=testCaseDependencies
         return render(request,'download-testcase.html',{'data':responseData})
@@ -215,21 +219,26 @@ class DownloadTestSuiteView(LoginRequiredMixin,HasPermissionsMixin,DetailView):
             for k in keywordsDict:
                 current_pk = k.get('id')
                 current_script = k.get('script')
+                replacer = current_script.replace('$', '\$')
+                replacer = replacer.replace('\n\n', '\n')
                 with connection.cursor() as cursor:
                     cursor.execute('SELECT * FROM keywords where id=%s',(current_pk))
                     row = cursor.fetchone()
-                testSuiteDependencies[row[1]] = current_script
+                testSuiteDependencies[row[1]] = replacer
         if testcasesDict:
             for t in testcasesDict:
                 current_pk = t.get('id')
                 current_script = t.get('script')
+                replacer = current_script.replace('$', '\$')
+                replacer = replacer.replace('\n\n', '\n')
                 with connection.cursor() as cursor:
                     cursor.execute('SELECT * FROM testcases where id=%s',(current_pk))
                     row = cursor.fetchone()
-                testSuiteDependencies[row[1]] = current_script
+                testSuiteDependencies[row[1]] = replacer
 
         responseData['Name']=testSuiteName
-        responseData['Script']=testSuiteContent
+        replacer = testSuiteContent.replace('$', '\$')
+        responseData['Script']=replacer
         responseData['Description']=testSuiteDesc
         responseData['Dependencies']=testSuiteDependencies
         return render(request,'download-testsuite.html',{'data':responseData})
