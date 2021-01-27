@@ -681,7 +681,7 @@ function addTestcaseToUsedArray(testcaseID, testcase){
 
     var newElement = {
         id: testcaseID,
-        script: translation,
+        script: "*** Test Cases ***\n" + translation,
     };
 
     usedTestcases.push(newElement);
