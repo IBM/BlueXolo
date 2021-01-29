@@ -32,20 +32,20 @@ goto :run-bluexolo
 :: Run BlueXolo Assistant docker image independent of internet connection
 :run-assistant-offline
 echo Fetching latest version of BlueXolo Assistant Offline . . .
-docker pull snvc00/bluexolo-assistant:offline
+docker pull bluexolo/assistant:offline
 echo Starting BlueXolo Assistant Offline . . .
 docker network create offline_assistant
-docker run --rm -d --name language_server --network offline_assistant snvc00/bluexolo-assistant:offline
-docker run --rm -d -p 3000:3000 --name bluexolo_assistant --network offline_assistant snvc00/bluexolo-assistant:offline bash -c "/botpress/duckling -p 8080 & /botpress/bp"
+docker run --rm -d --name language_server --network offline_assistant bluexolo/assistant:offline
+docker run --rm -d -p 3000:3000 --name bluexolo_assistant --network offline_assistant bluexolo/assistant:offline bash -c "/botpress/duckling -p 8080 & /botpress/bp"
 
 goto :run-bluexolo
 
 :: Run BlueXolo Assistant default docker image
 :run-assistant
 echo Fetching latest version of BlueXolo Assistant . . .
-docker pull snvc00/bluexolo-assistant:beta
+docker pull bluexolo/assistant:latest
 echo Starting BlueXolo Assistant . . .
-docker run --rm -d -p 3000:3000 --name bluexolo_assistant snvc00/bluexolo-assistant:beta
+docker run --rm -d -p 3000:3000 --name bluexolo_assistant bluexolo/assistant:latest
 goto :run-bluexolo
 
 :: Run BlueXolo

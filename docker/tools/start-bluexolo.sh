@@ -27,20 +27,20 @@ Run_Assistant() {
     if [ -z "$OPTION" ]
     then
         echo "Fetching latest version of BlueXolo Assistant . . ."
-    	docker pull snvc00/bluexolo-assistant:beta
+    	docker pull bluexolo/assistant:latest
         echo "${SUCCESS}Starting BlueXolo Assistant . . .${DEFAULT}"
-    	docker run --rm -d -p 3000:3000 --name bluexolo_assistant snvc00/bluexolo-assistant:beta
+    	docker run --rm -d -p 3000:3000 --name bluexolo_assistant bluexolo/assistant:latest
     elif [ $OPTION == "--no-assistant" ]
     then 
         echo "${WARNING}BlueXolo Assistant disabled.${DEFAULT}"
     elif [ $OPTION == "--offline" ]
     then 
         echo "Fetching latest version of BlueXolo Assistant Offline . . ."
-    	docker pull snvc00/bluexolo-assistant:offline
+    	docker pull bluexolo/assistant:offline
         echo "${SUCCESS}Starting BlueXolo Assistant Offline . . .${DEFAULT}"
         docker network create offline_assistant
-        docker run --rm -d --name language_server --network offline_assistant snvc00/bluexolo-assistant:offline
-        docker run --rm -d -p 3000:3000 --name bluexolo_assistant --network offline_assistant snvc00/bluexolo-assistant:offline bash -c "/botpress/duckling -p 8080 & /botpress/bp"
+        docker run --rm -d --name language_server --network offline_assistant bluexolo/assistant:offline
+        docker run --rm -d -p 3000:3000 --name bluexolo_assistant --network offline_assistant bluexolo/assistant:offline bash -c "/botpress/duckling -p 8080 & /botpress/bp"
     elif [ $OPTION == "--help" ]
     then
         Show_Help
