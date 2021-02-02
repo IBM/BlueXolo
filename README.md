@@ -22,6 +22,8 @@ Please read [Full Installation guide](https://github.com/IBM/BlueXolo/blob/maste
 
 ## Usage
 
+To know more about some common use cases of BlueXolo, please read the [User Guide](https://github.com/IBM/BlueXolo/blob/master/User_Guide.md).
+
 ## How To Contribute
 
 Please read [How_To_Contribute.md](https://github.com/IBM/BlueXolo/blob/master/How_To_Contribute.md) for details on our code of conduct, and the process for submitting pull requests to us.
