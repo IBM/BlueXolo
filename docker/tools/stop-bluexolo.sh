@@ -13,7 +13,18 @@
 
 #set -o nounset  # Treat unset variables as an error
 
-docker kill bluexolo
-docker rm $(docker ps -qa)
+OPTION=$1
+
+# Kill BlueXolo and BlueXoloAssistant running containers
+docker kill bluexolo bluexolo_assistant
+
+# Remove offline execution resources
+if [ "$OPTION" == "--offline" ]
+then
+    docker kill language_server
+    docker network rm offline_assistant
+fi
+
+exit 0
 
 

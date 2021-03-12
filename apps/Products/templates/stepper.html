@@ -34,7 +34,7 @@
           <div class="row">
               <div>
                 <br/><h4>Getting the Products Commands</h4><br/>
-                  <iframe onload="showContent('loader_stepper', 'div_loader')" id="iframe_product" frameborder="0" height="1300px" width="100%" src="{% url 'new-source-stepper' slug='products' stepper='stepper'  %}?content_only=1">
+                  <iframe onload="showContent('loader_stepper', 'div_loader', 'iframe_product')" id="iframe_product" frameborder="0" height="1300px" width="100%" src="{% url 'new-source-stepper' slug='products' stepper='stepper'  %}?content_only=1">
                   </iframe>               
               </div>
           </div>
@@ -49,7 +49,7 @@
           <div class="row">
               <div class="">
                 <h4>Extract the OS Commands</h4>
-                  <iframe id="iframe_commands" frameborder="0" height="600px" width="100%" src="{% url 'commands-stepper' stepper='stepper'  %}?content_only=1">
+                  <iframe onload="hideChatbot('iframe_commands')" id="iframe_commands" frameborder="0" height="600px" width="100%" src="{% url 'commands-stepper' stepper='stepper'  %}?content_only=1">
                   </iframe>
               </div>
           </div>
@@ -65,7 +65,7 @@
           <div class="row">
               <div class="input-field col s12">
                 <br/><h4>Specifying our Robot Framework Version</h4><br/>
-                  <iframe id="iframe_robot" frameborder="0" height="650px" width="100%" src="{% url 'new-source-stepper' slug='robot' stepper='stepper'  %}?content_only=1">
+                  <iframe onload="hideChatbot('iframe_robot')" id="iframe_robot" frameborder="0" height="650px" width="100%" src="{% url 'new-source-stepper' slug='robot' stepper='stepper'  %}?content_only=1">
                   </iframe>
               </div>
           </div>
@@ -81,7 +81,7 @@
           <div class="row">
               <div class="input-field col s12">
                 <br/><h4>Extracting the libraries needed from Robot</h4><br/>
-                  <iframe id="iframe_libraries" frameborder="0" height="800px" width="100%" src="{% url 'new-source-stepper' slug='libraries' stepper='stepper'  %}?content_only=1">
+                  <iframe onload="hideChatbot('iframe_libraries')" id="iframe_libraries" frameborder="0" height="800px" width="100%" src="{% url 'new-source-stepper' slug='libraries' stepper='stepper'  %}?content_only=1">
                   </iframe>
               </div>
           </div>
@@ -97,7 +97,7 @@
           <div class="row">
             <div class="input-field col s12">
               <br/><h4>Creating a Phase for a new Project</h4>
-                <iframe id="iframe_phase" frameborder="0" height="550px" width="100%" src="{% url 'new-phase-stepper' stepper='stepper'  %}?content_only=1">
+                <iframe onload="hideChatbot('iframe_phase')" id="iframe_phase" frameborder="0" height="550px" width="100%" src="{% url 'new-phase-stepper' stepper='stepper'  %}?content_only=1">
                 </iframe>
               </div>
           </div>
@@ -118,7 +118,7 @@
           <div class="">
               <div class="">
                 <br/><h4>Creating a Template for a new Project</h4><br/>
-                <iframe id="iframe_template" frameborder="0" height="1400px" width="100%" src="{% url 'new-server-template-stepper' stepper='stepper'  %}?content_only=1">
+                <iframe onload="hideChatbot('iframe_template')" id="iframe_template" frameborder="0" height="1400px" width="100%" src="{% url 'new-server-template-stepper' stepper='stepper'  %}?content_only=1">
                 </iframe>
               </div>
           </div>
@@ -134,7 +134,7 @@
           <div class="row">
               <div class="">
                 <br/><h4>Creating a Profile for a new Project</h4><br/>
-                <iframe id="iframe_profile" frameborder="0" height="1400px" width="100%" src="{% url 'new-server-profile-stepper' stepper='stepper'  %}?content_only=1">
+                <iframe onload="hideChatbot('iframe_profile')" id="iframe_profile" frameborder="0" height="1400px" width="100%" src="{% url 'new-server-profile-stepper' stepper='stepper'  %}?content_only=1">
                 </iframe>
               </div>
           </div>
@@ -150,7 +150,7 @@
           <div class="row">
               <div class="input-field col s12">
                 <br/><h4>Creating Parameters for a new Project</h4><br/>
-                <iframe id="iframe_parameter" frameborder="0" height="700px" width="100%" src="{% url 'new-parameters-stepper' stepper='stepper'  %}?content_only=1">
+                <iframe onload="hideChatbot('iframe_paramater')" id="iframe_parameter" frameborder="0" height="700px" width="100%" src="{% url 'new-parameters-stepper' stepper='stepper'  %}?content_only=1">
                 </iframe>
               </div>
           </div>
@@ -171,7 +171,7 @@
           <div class="">
               <div class="">
                 <br/><h4>Create a new Collection</h4><br/>
-                    <iframe id="iframe_collection" frameborder="0" height="1400px" width="100%" src="{% url 'new-collections-stepper' stepper='stepper'  %}?content_only=1">
+                    <iframe onload="hideChatbot('iframe_collection')" id="iframe_collection" frameborder="0" height="1400px" width="100%" src="{% url 'new-collections-stepper' stepper='stepper'  %}?content_only=1">
                     </iframe>
               </div>
           </div>
@@ -187,7 +187,7 @@
           <div class="row">
               <div class="">
                 <h4>Create a new Keyword</h4>
-                    <iframe id="iframe_keyword" frameborder="0" height="950px" width="100%" src="{% url 'new-keywords-stepper' stepper='stepper'  %}?content_only=1">
+                    <iframe onload="hideChatbot('iframe_keyword')" id="iframe_keyword" frameborder="0" height="950px" width="100%" src="{% url 'new-keywords-stepper' stepper='stepper'  %}?content_only=1">
                     </iframe>
               </div>
           </div>
@@ -203,7 +203,7 @@
           <div class="row">
               <div class="input-field col s12">
                 <h4 style="margin-top:-.5rem;">Create a new Test Cases</h4>
-                    <iframe id="iframe_testcases" frameborder="0" height="950px" width="100%" src="{% url 'new-testcase-stepper' stepper='stepper'  %}?content_only=1">
+                    <iframe onload="hideChatbot('iframe_testcases')" id="iframe_testcases" frameborder="0" height="950px" width="100%" src="{% url 'new-testcase-stepper' stepper='stepper'  %}?content_only=1">
                     </iframe>
               </div>
           </div>
@@ -219,7 +219,7 @@
           <div class="row">
               <div class="input-field col s12">
                 <h4 style="margin-top:-.5rem;">Create a new Test Suite</h4>
-                    <iframe id="iframe_testsuite" frameborder="0" height="950px" width="100%" src="{% url 'new-testsuites-stepper' stepper='stepper'  %}?content_only=1">
+                    <iframe onload="hideChatbot('iframe_testsuite')" id="iframe_testsuite" frameborder="0" height="950px" width="100%" src="{% url 'new-testsuites-stepper' stepper='stepper'  %}?content_only=1">
                     </iframe>
               </div>
           </div>
@@ -240,7 +240,7 @@
           <div class="">
               <div class="">
                 <h4>Here you'll find the results</h4>
-                  <iframe id="iframe_home" scrolling="no" frameborder="0" height="1450px" width="100%" src="{% url 'home' %}?content_only=1">
+                  <iframe onload="hideChatbot('iframe_home')" id="iframe_home" scrolling="no" frameborder="0" height="1450px" width="100%" src="{% url 'home' %}?content_only=1">
                   </iframe>
               </div>
           </div><!--
@@ -464,7 +464,7 @@
             }
         }
 
-        function showContent(loader_element, div_element) {
+        function showContent(loader_element, div_element, iframe_id) {
 
             if(onloadIframe < 1){
                 var stepsArray = localStorage.getItem("stepsArray");
@@ -476,13 +476,13 @@
                     
                     if(result != undefined) {
                         var iframe_paramaters = [];
-                        iframe_paramaters.push('iframe_product');
+                        iframe_paramaters.push(iframe_id);
                         iframe_paramaters.push(true); 
                         iframe_paramaters.push('1');
                         iframe_paramaters.push('products');
                         iframe_paramaters.push('sources');
                         localStorage.setItem("lastStep", JSON.stringify(iframe_paramaters));
-                        changeLastIframe('iframe_product', true, '1', 'products', 'sources');
+                        changeLastIframe(iframe_id, true, '1', 'products', 'sources');
                     } else {
                         document.getElementById(loader_element).style.display = "none";
                         document.getElementById(div_element).style.display = "block";
@@ -499,7 +499,7 @@
                 document.getElementById(div_element).style.display = "block";
             }
 
-             
+            hideChatbot(iframe_id);
         }
 
         function generate_url(location, pk) {
@@ -513,6 +513,18 @@
             localStorage.removeItem("stepsNoDisabled");
             location.reload();
         }
+        </script>
+
+        <!-- Hide Chatbot button on requested iframes -->
+        <script>
+            function hideChatbot(iframeId) {
+                var iframe = document.getElementById(iframeId);
+
+                if (iframe) {
+                    var chatbot = iframe.contentWindow.document.getElementById("bp-widget");
+                    chatbot.style.display = "none";
+                }
+            }
         </script>
     {% endcompress %}
 {% endblock %}

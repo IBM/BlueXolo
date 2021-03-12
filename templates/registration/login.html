@@ -55,6 +55,12 @@
         {% endif %}
     </main>
 
+    <!-- Chatbot -->
+    <script src="http://localhost:3000/assets/modules/channel-web/inject.js"></script>
+    <script>
+        window.botpressWebChat.init({ host: 'http://localhost:3000', botId: 'bluexolo-assistant' })
+    </script>
+
     <!-- Footer -->
     {% include "footer-block.html" %}
     <!-- end Footer -->
