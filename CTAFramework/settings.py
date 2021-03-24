@@ -160,14 +160,14 @@ STATICFILES_FINDERS = (
     "compressor.finders.CompressorFinder",
 )
 
-STATIC_ROOT = "/bluexolo/static/"
+STATIC_ROOT = "/var/www/static/"
 STATIC_URL = "/static/"
 
 COMPRESS_ENABLED = DEBUG
 COMPRESS_URL = STATIC_URL
 COMPRESS_ROOT = STATIC_ROOT
 
-MEDIA_ROOT = "/vol/web/media/"
+MEDIA_ROOT = "/var/www/media/"
 MEDIA_URL = "media/"
 
 AUTH_USER_MODEL = "Users.User"
