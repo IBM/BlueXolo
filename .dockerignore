@@ -1,0 +1,16 @@
+# Repository Information
+.github
+.git
+
+# Cache
+__pycache__
+static/CACHE
+
+# Documentation
+docs
+contribuitor_documentation
+*.md
+
+# Environment Variables
+*.env
+secrets.json
