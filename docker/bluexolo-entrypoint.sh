@@ -25,4 +25,5 @@ PORT=${DJANGO_PORT:-8000}
 # ------------------------------------------------------------------------
 
 # Run (alternative to python3 manage.py runserver $DJANGO_IP:$DJANGO_PORT)
-gunicorn --bind :$PORT --workers 3 CTAFramework.wsgi:application
+GUNICORN_LOG_FILE=gunicorn_$(date +"%D-%X").log
+gunicorn --bind :$PORT --workers 3 CTAFramework.wsgi:application > /var/www/logs/$GUNICORN_LOG_FILE &
