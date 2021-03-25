@@ -2,8 +2,6 @@
 
 set -e
 
-PORT=${DJANGO_PORT:-8000}
-
 # IMPORTANT: These commands are commented until the team define who
 #            is going to run them and when.
 # ------------------------------------------------------------------------
@@ -25,5 +23,4 @@ PORT=${DJANGO_PORT:-8000}
 # ------------------------------------------------------------------------
 
 # Run (alternative to python3 manage.py runserver $DJANGO_IP:$DJANGO_PORT)
-GUNICORN_LOG_FILE=gunicorn_$(date +'%m_%d_%Y-%X').log
-nohup gunicorn --bind :$PORT --workers 3 CTAFramework.wsgi:application > /var/www/logs/$GUNICORN_LOG_FILE &
+gunicorn -c python:CTAFramework.gunicorn CTAFramework.wsgi:application
