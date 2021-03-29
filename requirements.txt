@@ -11,5 +11,5 @@ ldap3==2.6
 paramiko==2.4.2
 pexpect==4.6.0
 psycopg2==2.7.6.1
-Pygments==2.3.1
+Pygments==2.7.4
 scp==0.13.0
