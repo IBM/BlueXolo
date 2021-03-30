@@ -111,7 +111,7 @@ WSGI_APPLICATION = "CTAFramework.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": os.environ.get("DB_ENGINE"),
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASSWORD"),
@@ -209,8 +209,3 @@ ROLEPERMISSIONS_MODULE = "CTAFramework.roles"
 ROLEPERMISSIONS_REDIRECT_TO_LOGIN = True
 
 CTA_MAN_COMMAND = "man -L en"
-
-try:
-    from .localsettings import *
-except:
-    pass

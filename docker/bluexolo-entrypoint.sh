@@ -6,17 +6,14 @@ set -e
 #            is going to run them and when.
 # ------------------------------------------------------------------------
 # Check for schema changes and apply them
-#python3 manage.py makemigrations
-#python3 manage.py migrate
+python3 manage.py makemigrations
+python3 manage.py migrate
 
-# Add superuser
-#python3 manage.py createsuperuser --email bluexolo@bluexolo.net --no-input
-
-# Add variables to database
-#python3 manage.py run_base_migrations.py
+# Create superuser and add variables to database
+python3 run_base_migrations.py
 
 # For robot control flow sentences
-#python3 manage.py initialize_robot
+python3 manage.py initialize_robot
 
 # Reset ID's to prevent duplications due legacy data in DB
 #python3 manage.py sqlsequencereset Products Servers Testings Users

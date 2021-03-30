@@ -100,6 +100,6 @@ variables.sh
 localsettings.py
 
 # Local Databases
-db.sqlite*
+*.sqlite*
 DONE
 secrets.json
