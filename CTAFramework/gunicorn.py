@@ -29,7 +29,7 @@ logconfig_dict = {
     }
 }
 
-workers = int(os.environ.get("GUNICORN_WORKERS", default=multiprocessing.cpu_count() * 2))
-threads = int(os.environ.get("GUNICORN_MAX_THREADS", default=1))
+workers = int(os.environ.get("GUNICORN_WORKERS", default=multiprocessing.cpu_count() * 2) + 1)
+threads = int(os.environ.get("GUNICORN_MAX_THREADS", default=2))
 
 reload = bool(int(os.environ.get("GUNICORN_RELOAD", default=1)))
