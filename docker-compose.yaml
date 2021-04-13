@@ -1,0 +1,82 @@
+version: "3.8"
+services:
+  bluexolo:
+    image: bluexolo:development
+    volumes:
+      - media:/var/www/media
+      - ./:/bluexolo
+    env_file:
+      - ./.dev.env
+    build:
+      context: .
+      dockerfile: ./docker/bluexolo-dev.dockerfile
+    container_name: bluexolo
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - botpress
+      - celery
+      - robot3.2.2
+      - redis
+    restart: on-failure
+  redis:
+    image: redis:6.2.1-alpine
+  celery:
+    image: bluexolo:development
+    volumes:
+      - media:/var/www/media
+      - ./:/bluexolo
+    env_file:
+      - ./.dev.env
+    container_name: bluexolo-celery
+    command: docker/celery-entrypoint.sh
+  postgres:
+    image: postgres:9.6.21-alpine
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: bluexolo
+      POSTGRES_PASSWORD: bluexolo
+      POSTGRES_DB: bluexolo
+    container_name: bluexolo-postgres
+    command: -c listen_addresses=*
+  botpress:
+    image: bluexolo/assistant
+    ports:
+      - "3000:3000"
+    container_name: bluexolo-assistant
+  robot3.2.2:
+    image: bluexolo:robotframework3.2.2
+    volumes:
+      - media:/var/www/media
+    build:
+      context: ./docker
+      dockerfile: robotframework.dockerfile
+      args:
+        USER_PASSWORD: bluexolo
+        ROBOT_VERSION: 3.2.2
+    container_name: robot3.2.2
+  robot4.0:
+    image: bluexolo:robotframework4.0
+    build:
+      context: ./docker
+      dockerfile: robotframework.dockerfile
+      args:
+        USER_PASSWORD: bluexolo
+        ROBOT_VERSION: 4.0
+    container_name: robot4.0
+  robot2.9:
+    image: bluexolo:robotframework2.9
+    build:
+      context: ./docker
+      dockerfile: robotframework.dockerfile
+      args:
+        USER_PASSWORD: bluexolo
+        ROBOT_VERSION: 2.9
+        PYTHON_VERSION: 2.7
+    container_name: robot2.9
+volumes:
+  media:
+  db:
+
