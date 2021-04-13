@@ -13,7 +13,7 @@ COPY . /bluexolo/
 
 WORKDIR /bluexolo
 
-RUN apt update && apt install -y -qq gcc \
+RUN apt update && apt install -y -qq gcc libpq-dev \
     && pip3 install --no-cache-dir -U -r requirements-local.txt
 
 RUN mkdir -p /var/www/media/ /var/www/static/ /var/www/logs/

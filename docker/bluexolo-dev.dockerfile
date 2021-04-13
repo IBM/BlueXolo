@@ -6,8 +6,8 @@ COPY . /bluexolo/
 
 WORKDIR /bluexolo
 
-RUN apt update && apt install -y -qq \
-    libpq-dev gcc python3 python3-pip \
+RUN apt update && apt install -y -qq libpq-dev gcc \
+    python3 python3-pip nano net-tools \
     && pip3 install -U -r requirements.txt
 
 RUN mkdir -p /var/www/media/ /var/www/static/ /var/www/logs/

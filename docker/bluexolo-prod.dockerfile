@@ -1,23 +1,23 @@
-FROM ubuntu:20.04
+FROM python:3.8-slim-buster
 
-ARG DEBIAN_FRONTEND="noninteractive"
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 COPY . /bluexolo/
 
 WORKDIR /bluexolo
 
-RUN apt update && apt install -y -qq \
-    libpq-dev gcc python3 python3-pip \
-    && pip3 install -U -r requirements.txt
+RUN apt update && apt install -y -qq gcc libpq-dev \
+    && pip3 install --no-cache-dir -U -r requirements.txt
 
-RUN mkdir -p {/var/www/media/,/var/www/static/}
+RUN mkdir -p /var/www/media/ /var/www/static/ /var/www/logs/ \
+    && mv static/* /var/www/static/ && rm -rf static
 
-RUN adduser -D bluexolo
-RUN chown -R user:bluexolo {/vol,/bluexolo/docker}
-RUN chmod -R 755 /vol/web
+RUN adduser bluexolo && echo "bluexolo:${USER_PASSWORD}" | chpasswd \
+    && chown -R bluexolo /var/www/
 
 USER bluexolo
 
 EXPOSE 8000
 
-CMD [ "/bin/bash", "bluexolo-entrypoint.sh" ]
+CMD [ "/bin/bash", "docker/bluexolo-entrypoint-prod.sh" ]

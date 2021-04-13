@@ -2,9 +2,6 @@
 
 set -e
 
-# IMPORTANT: These commands are commented until the team define who
-#            is going to run them and when.
-# ------------------------------------------------------------------------
 # Check for schema changes and apply them
 python3 manage.py makemigrations
 python3 manage.py migrate
@@ -15,9 +12,14 @@ python3 run_base_migrations.py
 # For robot control flow sentences
 python3 manage.py initialize_robot
 
-# Reset ID's to prevent duplications due legacy data in DB
-#python3 manage.py sqlsequencereset Products Servers Testings Users
-# ------------------------------------------------------------------------
+# Check the existance of all the required media directories
+python3 manage.py check_media_dirs
 
-# Run (alternative to python3 manage.py runserver $DJANGO_IP:$DJANGO_PORT)
-gunicorn -c python:CTAFramework.gunicorn CTAFramework.wsgi:application
+if [ "$ENV_FILE" == "development" ]
+then
+    # Run (alternative to python3 manage.py runserver $DJANGO_IP:$DJANGO_PORT)
+    gunicorn -c python:CTAFramework.gunicorn CTAFramework.wsgi:application
+else
+    # Enable uWSGI application
+    uwsgi --socket :8000 --master --enable-threads --module CTAFramework.wsgi
+fi
