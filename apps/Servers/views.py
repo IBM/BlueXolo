@@ -659,7 +659,7 @@ def run_on_server(_data):
             result = get_result_files(client, filename, configs)
             if result.get('error'):
                 raise Exception(result.get('error'))
-            data_result['link'] = "{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
+            data_result['link'] = "{0}{1}test_result/{2}_report.html".format(settings.SITE_DNS,
                                                                               settings.MEDIA_URL,
                                                                               filename)
         else:
