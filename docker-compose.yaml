@@ -30,7 +30,7 @@ services:
     env_file:
       - ./.dev.env
     container_name: bluexolo-celery
-    command: docker/celery-entrypoint.sh
+    command: ["/bin/bash", "docker/celery-entrypoint.sh"]
   postgres:
     image: postgres:9.6.21-alpine
     volumes:
