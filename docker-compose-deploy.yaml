@@ -9,7 +9,9 @@ services:
       - ./.env
     build:
       context: .
-      dockerfile: ./docker/bluexolo-local.dockerfile
+      dockerfile: ./docker/bluexolo-prod.dockerfile
+      args:
+        USER_PASSWORD: bluexolo
     container_name: bluexolo
     depends_on:
       - postgres
