@@ -1,0 +1,2 @@
+# Set .sh files to use LF. (CRLF cause execution errors in dockerized ubuntu)
+*.sh        eol=lf

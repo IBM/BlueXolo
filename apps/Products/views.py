@@ -208,7 +208,7 @@ class CreateSourceView(LoginRequiredMixin, CreateView):
             if file:
                 fs = FileSystemStorage(location='{0}/zip/'.format(settings.MEDIA_ROOT))
                 filename = fs.save(file.name, file)
-                uploaded_file_url = fs.url('zip/{}'.format(filename))
+                uploaded_file_url = "{0}/zip/{1}".format(settings.MEDIA_ROOT, filename)
                 _config = {
                     'category': 4,
                     'source': source.pk,
