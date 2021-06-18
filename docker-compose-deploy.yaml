@@ -28,6 +28,10 @@ services:
     volumes:
       - static:/var/www/static
       - media:/var/www/media
+    environment:
+      NGINX_PORT: 80
+      BLUEXOLO_HOST: bluexolo
+      BLUEXOLO_PORT: 8000
     ports:
       - "80:80"
     container_name: bluexolo-proxy
@@ -88,6 +92,7 @@ services:
         USER_PASSWORD: bluexolo
         ROBOT_VERSION: 2.9
         PYTHON_VERSION: 2.7
+        ROBOT_EXECUTABLE: pybot
     container_name: robot2.9
 volumes:
   media:
