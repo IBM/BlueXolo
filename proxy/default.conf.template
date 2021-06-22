@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen ${NGINX_PORT};
 
     location /static {
         alias /var/www/static;
@@ -10,7 +10,7 @@ server {
     }
 
     location / {
-        uwsgi_pass bluexolo:8000;
+        uwsgi_pass ${BLUEXOLO_HOST}:${BLUEXOLO_PORT};
         include /etc/nginx/uwsgi_params;
     }
     

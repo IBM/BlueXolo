@@ -75,6 +75,7 @@ services:
         USER_PASSWORD: bluexolo
         ROBOT_VERSION: 2.9
         PYTHON_VERSION: 2.7
+        ROBOT_EXECUTABLE: pybot
     container_name: robot2.9
 volumes:
   media:
