@@ -1,0 +1,12 @@
+namespace: bluexolo
+resources:
+  - "namespace.yaml"
+  - "persistent-volumes.yaml"
+  - "persistent-volume-claims.yaml"
+  - "config-maps.yaml"
+  - "deployments.yaml"
+  - "services.yaml"
+secretGenerator:
+  - name: bluexolo-secrets
+    envs:
+    - ".k8.env" # Maybe this will be renamed as .env
