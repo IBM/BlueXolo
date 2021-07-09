@@ -171,7 +171,7 @@ spec:
         #     memory: "256Mi"
         #     cpu: "500m"
         ports:
-        - containerPort: 8080
+        - containerPort: 80
         envFrom:
           - configMapRef:
               name: proxy
