@@ -45,8 +45,8 @@ spec:
   selector:
     app: nginx
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 80
+    targetPort: 80
   type: LoadBalancer
 ---
 apiVersion: v1
