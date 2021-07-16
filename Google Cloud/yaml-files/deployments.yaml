@@ -165,13 +165,13 @@ spec:
               claimName: media-pvc
       containers:
       - name: nginx
-        image: bluexolo/proxy:nginx #snvc00/bluexolo:proxyenvstatic # # Directly from Docker Hub
+        image: snvc00/bluexolo:privileged-proxy #bluexolo/proxy:nginx  # # Directly from Docker Hub
         # resources:
         #   limits:
         #     memory: "256Mi"
         #     cpu: "500m"
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         envFrom:
           - configMapRef:
               name: proxy
@@ -243,5 +243,41 @@ spec:
         image: bluexolo/robot:4.0 # 2.9 - 3.2.2 
         ports:
         - containerPort: 22
-
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: bluexolo
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:9.6.21-alpine
+        env:
+          - name: POSTGRES_USER
+            value: bluexolo
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DB_PASSWORD
+          - name: POSTGRES_DB
+            value: bluexolo
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        args:
+          - "-c"
+          - "listen_addresses=*"
+        ports:
+          - containerPort: 5432
 #paulbouwer/hello-kubernetes:1.5

@@ -11,10 +11,10 @@ data:
     EMAIL_HOST_USER: MAILUSER
     EMAIL_PORT: "111"
     DB_ENGINE: django.db.backends.postgresql
-    DB_NAME: bluexolo-db
-    DB_USER: postgres
+    DB_NAME: bluexolo
+    DB_USER: bluexolo
     DB_PORT: "5432"
-    SITE_DNS: http://localhost
+    SITE_DNS: localhost/ #bluexolo.net
     IBM_CLIENT: "0"
     DEPTH_SEARCH: "0"
     PLATFORM_VERSION: "3.1.0"

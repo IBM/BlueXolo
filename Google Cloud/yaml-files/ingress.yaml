@@ -14,7 +14,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: bluexolo-np
+            name: nginx
             port:
               number: 80
     

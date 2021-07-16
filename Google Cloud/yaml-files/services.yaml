@@ -1,17 +1,17 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: bluexolo-np
-  namespace: bluexolo
-spec:
-  type: NodePort #DNS
-  selector:
-    app: nginx
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80 #8080
----
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: bluexolo-np
+#   namespace: bluexolo
+# spec:
+#   type: NodePort #DNS
+#   selector:
+#     app: nginx
+#   ports:
+#   - protocol: TCP
+#     port: 80
+#     targetPort: 80 #8080
+# ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -23,6 +23,18 @@ spec:
   ports:
   - port: 8000
     targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: bluexolo
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
 ---
 apiVersion: v1
 kind: Service
