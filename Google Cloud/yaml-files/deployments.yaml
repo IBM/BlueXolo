@@ -165,13 +165,27 @@ spec:
               claimName: media-pvc
       containers:
       - name: nginx
-        image: snvc00/bluexolo:privileged-proxy #bluexolo/proxy:nginx  # # Directly from Docker Hub
+        image: bluexolo/proxy:nginxb #bluexolo/proxy:nginxdemo #bluexolo/proxy:nginx #bluexolo/proxy:nginxdemo #bluexolo/proxy:nginx #snvc00/bluexolo:privileged-proxy # Directly from Docker Hub
         # resources:
-        #   limits:
+        #   limits:s
         #     memory: "256Mi"
         #     cpu: "500m"
+        env:
+          - name: CERT_AND_CA_BUNDLE
+            valueFrom:
+              secretKeyRef:
+                name: ca-cert
+                key: ca-cert.txt
+          - name: CERT_PRIVATE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: cert-privkey
+                key: cert-privkey.txt
         ports:
-        - containerPort: 8080
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
         envFrom:
           - configMapRef:
               name: proxy
@@ -220,6 +234,9 @@ spec:
         image: bluexolo/assistant # Directly from Docker Hub
         ports:
         - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: assistant
 ---
 apiVersion: apps/v1
 kind: Deployment

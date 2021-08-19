@@ -9,10 +9,18 @@ resources:
   - "config-maps.yaml"
   - "deployments.yaml"
   - "services.yaml"
-  - "ingress.yaml"
   - "autoscaling.yaml"
 secretGenerator:
   - name: "bluexolo-secrets"
     namespace: bluexolo
     envs:
     - ".k8.env" # Maybe this will be renamed as .env
+  - name: "ca-cert"
+    namespace: bluexolo
+    files:
+    - ca-cert.txt
+  - name: "cert-privkey"
+    namespace: bluexolo
+    files:
+    - cert-privkey.txt
+  
