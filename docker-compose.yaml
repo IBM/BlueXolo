@@ -46,6 +46,9 @@ services:
     ports:
       - "3000:3000"
     container_name: bluexolo-assistant
+    environment:
+      BP_PRODUCTION: 0
+      VERBOSITY_LEVEL: 3
   robot3.2.2:
     image: bluexolo/robot:3.2.2
     volumes:
