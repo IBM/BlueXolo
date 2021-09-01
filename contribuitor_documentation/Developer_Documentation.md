@@ -57,6 +57,8 @@ Defined in `docker-compose.yaml`.
 
 Located at `settings.py`, most of them defined in `.env` or `.dev.env` depending on the enviroment. The differences between configurations for development and production are important, feel free to use the following example for the production environment, just make sure to use your own secret key and passwords. You can also use this example to define de development configuration in `.dev.env` just follow the instructions in the comments. 
 
+> This is just an example for you to create your own `.dev.env` or `.env` file, do not forget to remove the comments pointing the differences between the configurations according to the environment.
+
 ```bash
 ENV_FILE=production # or development
 SECRET_KEY=yourSecretKey
@@ -80,7 +82,7 @@ PLATFORM_VERSION=3.1.0
 CELERY_BROKER_URL=redis://redis:6379/0
 CELERY_RESULT_BACKEND=redis://redis:6379/0
 COMPRESS_OFFLINE=0
-DEBUG=0
+DEBUG=0 # 1  in development
 X_FRAME_OPTIONS=SAMEORIGIN
 BOTPRESS_ENDPOINT=/botpress # http://localhost:3000 in development
 SESSION_COOKIE_SECURE=0
