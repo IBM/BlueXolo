@@ -98,7 +98,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "CTAFramework.context_processors.sitewide"
+                "CTAFramework.context_processors.sitewide",
+                "CTAFramework.context_processors.botpress_endpoint"
             ],
         },
     },
@@ -169,6 +170,8 @@ COMPRESS_ROOT = STATIC_ROOT
 
 MEDIA_ROOT = "/var/www/media"
 MEDIA_URL = "media/"
+
+BOTPRESS_ENDPOINT = os.environ.get("BOTPRESS_ENDPOINT")
 
 AUTH_USER_MODEL = "Users.User"
 

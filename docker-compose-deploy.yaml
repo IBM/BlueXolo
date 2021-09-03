@@ -4,7 +4,6 @@ services:
     image: bluexolo/bluexolo:production
     volumes:
       - media:/var/www/media
-      - static:/var/www/static
     env_file:
       - ./.env
     build:
@@ -22,21 +21,25 @@ services:
     restart: on-failure
   proxy:
     image: bluexolo/proxy:nginx
+    restart: always
     build:
-      context: ./proxy
-      dockerfile: proxy.dockerfile
+      context: .
+      dockerfile: ./proxy/proxy.dockerfile
     volumes:
-      - static:/var/www/static
       - media:/var/www/media
     environment:
       NGINX_PORT: 80
       BLUEXOLO_HOST: bluexolo
       BLUEXOLO_PORT: 8000
+      BOTPRESS_HOST: bluexolo-assistant
+      BOTPRESS_PORT: 3000
+      NGINX_ENTRYPOINT_QUIET_LOGS: 1
     ports:
       - "80:80"
     container_name: bluexolo-proxy
     depends_on:
       - bluexolo
+      - botpress
     restart: on-failure
   redis:
     image: redis:6.2.1-alpine
@@ -60,9 +63,14 @@ services:
     command: -c listen_addresses=*
   botpress:
     image: bluexolo/assistant
-    ports:
-      - "3000:3000"
     container_name: bluexolo-assistant
+    environment: 
+      EXTERNAL_URL: "http://localhost/botpress"
+      BP_HOST: "localhost"
+      PORT: 3000
+      REVERSE_PROXY: 1
+      BP_PRODUCTION: 1
+      VERBOSITY_LEVEL: 1
   robot3.2.2:
     image: bluexolo/robot:3.2.2
     volumes:
@@ -97,4 +105,3 @@ services:
 volumes:
   media:
   db:
-  static:
