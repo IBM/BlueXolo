@@ -1,3 +1,3 @@
 ::Destroy Cluster and all its components
 
-terraform destroy --force
+terraform destroy -auto-approve
