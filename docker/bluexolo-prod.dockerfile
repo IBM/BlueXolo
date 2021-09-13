@@ -4,6 +4,8 @@ ARG USER_PASSWORD=bluexolo
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV ENV_FILE production
+ENV DEBUG 0
 
 COPY . /bluexolo/
 
@@ -18,7 +20,8 @@ RUN useradd bluexolo && echo "bluexolo:${USER_PASSWORD}" | chpasswd \
 USER bluexolo
 
 RUN mkdir -p /var/www/media/ /var/www/static/ /var/www/logs/ \
-    && mv static/* /var/www/static/ && rm -rf static
+    && mv static/* /var/www/static/ && rm -rf static \
+    && python manage.py check_media_dirs
 
 EXPOSE 8000
 
