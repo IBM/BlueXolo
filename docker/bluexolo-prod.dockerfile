@@ -12,13 +12,13 @@ WORKDIR /bluexolo
 RUN apt update && apt install -y -qq gcc libpq-dev \
     && pip3 install --no-cache-dir -U -r requirements.txt
 
-RUN mkdir -p /var/www/media/ /var/www/static/ /var/www/logs/ \
-    && mv static/* /var/www/static/ && rm -rf static
-
 RUN useradd bluexolo && echo "bluexolo:${USER_PASSWORD}" | chpasswd \
-    && chown -R bluexolo /var/www/ /bluexolo/docker
+    && mkdir /var/www && chown -R bluexolo /bluexolo /var/www
 
 USER bluexolo
+
+RUN mkdir -p /var/www/media/ /var/www/static/ /var/www/logs/ \
+    && mv static/* /var/www/static/ && rm -rf static
 
 EXPOSE 8000
 

@@ -3,7 +3,7 @@ services:
   bluexolo:
     image:  bluexolo/bluexolo:development
     volumes:
-      - media:/var/www/media
+      - development_media:/var/www/media
       - ./:/bluexolo
     env_file:
       - ./.dev.env
@@ -25,7 +25,7 @@ services:
   celery:
     image: bluexolo/bluexolo:development
     volumes:
-      - media:/var/www/media
+      - development_media:/var/www/media
       - ./:/bluexolo
     env_file:
       - ./.dev.env
@@ -34,7 +34,7 @@ services:
   postgres:
     image: postgres:9.6.21-alpine
     volumes:
-      - db:/var/lib/postgresql/data
+      - development_db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: bluexolo
       POSTGRES_PASSWORD: bluexolo
@@ -52,7 +52,7 @@ services:
   robot3.2.2:
     image: bluexolo/robot:3.2.2
     volumes:
-      - media:/var/www/media
+      - development_media:/var/www/media
     build:
       context: ./docker
       dockerfile: robotframework.dockerfile
@@ -81,6 +81,6 @@ services:
         ROBOT_EXECUTABLE: pybot
     container_name: robot2.9
 volumes:
-  media:
-  db:
+  development_media:
+  development_db:
 
