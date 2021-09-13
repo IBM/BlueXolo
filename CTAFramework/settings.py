@@ -25,21 +25,21 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "ConfigureThisInEnvFile")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG")))
 
 # Settings for production environment
 if DEBUG == False:
-    SESSION_COOKIE_SECURE = bool(int(os.environ.get("SESSION_COOKIE_SECURE")))
-    SECURE_SSL_REDIRECT = bool(int(os.environ.get("SECURE_SSL_REDIRECT")))
-    CSRF_COOKIE_SECURE = bool(int(os.environ.get("CSRF_COOKIE_SECURE")))
-    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS"))
+    SESSION_COOKIE_SECURE = bool(int(os.environ.get("SESSION_COOKIE_SECURE", 0)))
+    SECURE_SSL_REDIRECT = bool(int(os.environ.get("SECURE_SSL_REDIRECT", 0)))
+    CSRF_COOKIE_SECURE = bool(int(os.environ.get("CSRF_COOKIE_SECURE", 0)))
+    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", 3600))
 
-COMPRESS_OFFLINE = bool(int(os.environ.get("COMPRESS_OFFLINE")))
+COMPRESS_OFFLINE = bool(int(os.environ.get("COMPRESS_OFFLINE", 0)))
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 print(ALLOWED_HOSTS)
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
@@ -117,7 +117,7 @@ DATABASES = {
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASSWORD"),
         "HOST": os.environ.get("DB_HOST"),
-        "PORT": int(os.environ.get("DB_PORT")),
+        "PORT": int(os.environ.get("DB_PORT", 5432)),
     }
 }
 
@@ -179,7 +179,7 @@ ADMIN_MAIL = os.environ.get("ADMIN_MAIL")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT"))
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 111))
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
@@ -188,9 +188,9 @@ DEFAULT_FROM_EMAIL = "TestSite Team <{}>".format(os.environ.get("EMAIL_HOST_USER
 SITE_DNS = os.environ.get("SITE_DNS")
 
 # Flag for use BluePage Auth
-IBM_CLIENT = int(os.environ.get("IBM_CLIENT"))
+IBM_CLIENT = int(os.environ.get("IBM_CLIENT", 0))
 # Flag for use UTF-8 on extract  (Disable improve the speed)
-DEPTH_SEARCH = int(os.environ.get("DEPTH_SEARCH"))
+DEPTH_SEARCH = int(os.environ.get("DEPTH_SEARCH", 0))
 
 PLATFORM_VERSION = os.environ.get("PLATFORM_VERSION")
 
