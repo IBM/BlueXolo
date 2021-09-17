@@ -64,7 +64,7 @@ test case by clicking in the lower right green button.
 ### Create Parameters
 
 To run any testing item in BlueXolo you need a **Local Network Connection Profile** to connect to an
-external server with Robot Framework installed, so you need to create some parameters first. Open the
+external server with Robot Framework installed, so you need to create some parameters first, by default the required parameters for a Local Network Connection are available in the **Base Connection Template**, but if you are working on a manually defined database there is a guide to create them. Open the
 menu and go to `Parameters`, click on the :heavy_plus_sign: and select _Local Network Connection_ as category group,
 give the name of _path_ and click on `Create`. Finally, replicate this process to create other three
 parameters _user_, _passwd_ and _host_.
@@ -74,22 +74,24 @@ parameters _user_, _passwd_ and _host_.
 ### Create a Template
 
 A template is basically a wrapper for the parameters that you have created, and it is required to
-create a profile, to create this template open the menu and select `Templates`, click on :heavy_plus_sign:,
-give it the name of _Demo_Template_ and select the _Local Network Connection_ category group, then
+create a profile. If in your environment you already have a template named **Base Connections**, go to the next step. To create this template open the menu and select `Templates`, click on :heavy_plus_sign:,
+give it the name of _Base Connection_ and select the _Local Network Connection_ category group, then
 search and add the four parameters created in the previous step. Finally, click on `Create Template`.
 
 ### Create a Profile
 
 The last thing to do before you can run any testing item is create a profile, for this you need to
 go to the menu and click on `Profiles`, then give it a name, in this case _Demo_Profile_ and select
-the _Demo_Template_. Once you have done that give the following values to the parameters:
+the _Base Connection_. Once you have done that give the following values to the parameters:
 
-- **host** `bluexolo`
-- **user** `bluexolo`
+- **host** `robot3.2.2`
+- **user** `robot`
 - **passwd** `bluexolo`
-- **path** `/home/bluexolo`
+- **path** `/robot`
 
 Finally, click on `Create`.
+
+> **Note:** The *host* variable in the profile needs to has the value of an reachable IP running a SSH server with Robot Framework installed, by default robot2.9, robot3.2.2 and robot4.0 are reachable thanks to the *out-of-the-box* Robot Framework services defined in the compose environments of BlueXolo. We ca take advantage of the internal DNS service built in Docker to pass a the name of the container as host.
 
 ### Run a Test Case
 
