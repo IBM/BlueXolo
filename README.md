@@ -4,21 +4,75 @@
 
 BlueXolo is a WEB framework that allows the generation of test scripts in a visual way using a “drag and drop” interface which allows the generation of complex test cases spending a minimum amount of time. 
 
-> Here you can find the [main characteristics](https://github.com/IBM/BlueXolo/blob/master/Main_Characteristics.md) of BlueXolo.
+> Here you can find the [Main Characteristics](https://github.com/IBM/BlueXolo/blob/master/Main_Characteristics.md) of BlueXolo.
 
 ## Getting Started
 
-BlueXolo runs under Linux/OS X/Windows, The following is required to start using BlueXolo:
+BlueXolo runs using a Docker Compose environment, so you just need to install:
 
-- Python 3.6
-- virtualenv
-- Install epel repo
-- Rabbit-mq
-- Postgresql
+- Docker
+- Docker Compose
+- Git
 
 ## Installation Guide
 
-Please read [Full Installation guide](https://github.com/IBM/BlueXolo/blob/master/INSTALL.md) to get started.
+Please read the [Installation Guide](INSTALL.md) to get started.
+
+## Development environment
+
+BlueXolo has a development environment to share your local repository with the Docker container running and make the development easy with features like live code changes and configurations for verbose logging. Once you have followed the installation steps you just need to execute one command to run.
+
+### Run
+
+```bash
+docker-compose -f docker-compose.yaml up
+```
+
+### Stop
+
+```bash
+docker-compose -f docker-compose.yaml down
+```
+
+### Build
+
+```bash
+docker-compose -f docker-compose.yaml build
+```
+
+### Clear persistent storage
+
+```bash
+docker volume rm bluexolo_development_db bluexolo_development_media
+```
+
+## Production environment
+
+This environment is optimized for a faster experience using BlueXolo, with light-weight images just with the required packages.
+
+### Run
+
+```bash
+docker-compose -f docker-compose-deploy.yaml up
+```
+
+### Stop
+
+```bash
+docker-compose -f docker-compose-deploy.yaml down
+```
+
+### Build
+
+```bash
+docker-compose -f docker-compose-deploy.yaml build
+```
+
+### Clear persistent storage
+
+```bash
+docker volume rm bluexolo_production_db bluexolo_production_media
+```
 
 ## Usage
 
