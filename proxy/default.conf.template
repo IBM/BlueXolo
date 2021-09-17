@@ -23,7 +23,7 @@ server {
     }
 
     location /api/ {
-        proxy_pass http://assistant.bluexolo:3000/botpress/api/;
+        proxy_pass http://${BOTPRESS_HOST}:${BOTPRESS_PORT}/botpress/api/;
     }
     
     location /static {
