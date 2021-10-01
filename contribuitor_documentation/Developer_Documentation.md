@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This document complements the [user guide](../README.md). Here you can find specifics about the services used by BlueXolo to have a better understanding during development and configure both docker compose environments `docker-compose-deploy.yaml` and `docker-compose.yaml`.
+This document complements the [User Guide](../README.md). Here you can find specifics about the services used by BlueXolo to have a better understanding during development and configure both docker compose environments `docker-compose-deploy.yaml` and `docker-compose.yaml`.
 
 ## Architecture
 
-Insert image here.
+You can find a simple diagram with the architecture from a component view in this [image](BlueXolo_Architecture.png).
 
 ## Environments
 
