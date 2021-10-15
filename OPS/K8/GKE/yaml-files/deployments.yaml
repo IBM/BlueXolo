@@ -1,0 +1,300 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system
+---
+# Create ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system
+---
+apiVersion: apps/v1 # bluexolo production
+kind: Deployment
+metadata:
+  name: django
+  namespace: bluexolo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django
+  template:
+    metadata:
+      labels:
+        app: django
+    spec:
+      securityContext:
+          fsGroup: 1000
+      volumes:
+        - name: media-volume
+          persistentVolumeClaim:
+            claimName: media-pvc
+      containers:
+      - name: django
+        image: bluexolo/bluexolo:production
+        # resources:
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "500m"
+        ports:
+        - containerPort: 8000
+        env:
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DB_HOST
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DB_PASSWORD
+          - name: DJANGO_SU_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DJANGO_SU_PASSWORD
+          - name: EMAIL_HOST_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: EMAIL_HOST_PASSWORD
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: SECRET_KEY
+        envFrom:
+          - configMapRef: 
+              name: django
+        volumeMounts:
+          - mountPath: "/var/www/media"
+            name: media-volume
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: celery
+  namespace: bluexolo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery
+  template:
+    metadata:
+      labels:
+        app: celery
+    spec:
+      securityContext:
+        fsGroup: 1000
+      volumes:
+        - name: media-volume
+          persistentVolumeClaim:
+            claimName: media-pvc
+      containers:
+      - name: celery
+        image: bluexolo/bluexolo:production
+        # resources:
+        #   limits:
+        #     memory: "512Mi"
+        #     cpu: "500m"
+        command: ["/bin/bash"]
+        args: ["docker/celery-entrypoint.sh"]
+        env:
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DB_HOST
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DB_PASSWORD
+          - name: DJANGO_SU_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DJANGO_SU_PASSWORD
+          - name: EMAIL_HOST_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: EMAIL_HOST_PASSWORD
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: SECRET_KEY
+        envFrom:
+          - configMapRef: 
+              name: django
+        volumeMounts:
+          - mountPath: "/var/www/media"
+            name: media-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: bluexolo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+          - name: media-volume
+            persistentVolumeClaim:
+              claimName: media-pvc
+      containers:
+      - name: nginx
+        image: bluexolo/proxy:nginxb #bluexolo/proxy:nginxdemo #bluexolo/proxy:nginx #bluexolo/proxy:nginxdemo #bluexolo/proxy:nginx #snvc00/bluexolo:privileged-proxy # Directly from Docker Hub
+        # resources:
+        #   limits:s
+        #     memory: "256Mi"
+        #     cpu: "500m"
+        env:
+          - name: CERT_AND_CA_BUNDLE
+            valueFrom:
+              secretKeyRef:
+                name: ca-cert
+                key: ca-cert.txt
+          - name: CERT_PRIVATE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: cert-privkey
+                key: cert-privkey.txt
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        envFrom:
+          - configMapRef:
+              name: proxy
+        volumeMounts:
+          - mountPath: "/var/www/media"
+            name: media-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: bluexolo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:6.2.1-alpine # Directly from Docker Hub
+        ports:
+          - containerPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assistant
+  namespace: bluexolo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assistant
+  template:
+    metadata:
+      labels:
+        app: assistant
+    spec:
+      containers:
+      - name: assistant
+        image: bluexolo/assistant # Directly from Docker Hub
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: assistant
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: robot4-0
+  namespace: bluexolo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: robot4-0
+  template:
+    metadata:
+      labels:
+        app: robot4-0
+    spec:
+      securityContext:
+          fsGroup: 1000
+      containers:
+      - name: robot4-0
+        image: bluexolo/robot:4.0 # 2.9 - 3.2.2 
+        ports:
+        - containerPort: 22
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: bluexolo
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:9.6.21-alpine
+        env:
+          - name: POSTGRES_USER
+            value: bluexolo
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bluexolo-secrets
+                key: DB_PASSWORD
+          - name: POSTGRES_DB
+            value: bluexolo
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        args:
+          - "-c"
+          - "listen_addresses=*"
+        ports:
+          - containerPort: 5432
+#paulbouwer/hello-kubernetes:1.5
