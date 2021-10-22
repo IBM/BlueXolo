@@ -62,3 +62,5 @@ The IP to be selected is the one in the "EXTERNAL-IP" column. To access the site
 ```
 
 To destroy the cluster simply run the ***kill-cluster.bat*** script.
+
+To configure HTTPS please visit this [page](https://github.com/IBM/BlueXolo/issues/518). 
