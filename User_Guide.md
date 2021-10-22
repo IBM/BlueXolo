@@ -91,7 +91,7 @@ the _Base Connection_. Once you have done that give the following values to the 
 
 Finally, click on `Create`.
 
-> **Note:** The *host* variable in the profile needs to has the value of an reachable IP running a SSH server with Robot Framework installed, by default robot2.9, robot3.2.2 and robot4.0 are reachable thanks to the *out-of-the-box* Robot Framework services defined in the compose environments of BlueXolo. We ca take advantage of the internal DNS service built in Docker to pass a the name of the container as host.
+> **Note:** The *host* variable in the profile needs to have the value of a reachable IP running a SSH server with Robot Framework installed, by default robot2.9, robot3.2.2 and robot4.0 are reachable thanks to the *out-of-the-box* Robot Framework services defined in the compose environments of BlueXolo. We can take advantage of the internal DNS service built in Docker to pass the name of the container as host.
 
 ### Run a Test Case
 
