@@ -14,7 +14,7 @@ data:
     DB_NAME: bluexolo
     DB_USER: bluexolo
     DB_PORT: "5432"
-    SITE_DNS: "bluexolo.net/" #localhost/
+    SITE_DNS: "bluexolo.net/" 
     IBM_CLIENT: "0"
     DEPTH_SEARCH: "0"
     PLATFORM_VERSION: "3.1.0"
@@ -41,7 +41,7 @@ data:
   BOTPRESS_HOST: assistant.bluexolo
   BOTPRESS_PORT: "3000"
   NGINX_ENTRYPOINT_QUIET_LOGS: "1"
-  NGINX_SERVER_NAME: "bluexolo.net" #Certificate 
+  NGINX_SERVER_NAME: "bluexolo.net"  
   BLUEXOLO_DOMAIN: "bluexolo.net"
 ---
 apiVersion: v1

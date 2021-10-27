@@ -18,7 +18,7 @@ subjects:
   name: admin-user
   namespace: kube-system
 ---
-apiVersion: apps/v1 # bluexolo production
+apiVersion: apps/v1 
 kind: Deployment
 metadata:
   name: django
@@ -42,10 +42,6 @@ spec:
       containers:
       - name: django
         image: bluexolo/bluexolo:production
-        # resources:
-        #   limits:
-        #     memory: "128Mi"
-        #     cpu: "500m"
         ports:
         - containerPort: 8000
         env:
@@ -105,10 +101,6 @@ spec:
       containers:
       - name: celery
         image: bluexolo/bluexolo:production
-        # resources:
-        #   limits:
-        #     memory: "512Mi"
-        #     cpu: "500m"
         command: ["/bin/bash"]
         args: ["docker/celery-entrypoint.sh"]
         env:
@@ -165,11 +157,7 @@ spec:
               claimName: media-pvc
       containers:
       - name: nginx
-        image: bluexolo/proxy:nginxb #bluexolo/proxy:nginxdemo #bluexolo/proxy:nginx #bluexolo/proxy:nginxdemo #bluexolo/proxy:nginx #snvc00/bluexolo:privileged-proxy # Directly from Docker Hub
-        # resources:
-        #   limits:s
-        #     memory: "256Mi"
-        #     cpu: "500m"
+        image: bluexolo/proxy:nginxb 
         env:
           - name: CERT_AND_CA_BUNDLE
             valueFrom:
@@ -297,4 +285,3 @@ spec:
           - "listen_addresses=*"
         ports:
           - containerPort: 5432
-#paulbouwer/hello-kubernetes:1.5

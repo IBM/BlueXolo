@@ -14,7 +14,7 @@ secretGenerator:
   - name: "bluexolo-secrets"
     namespace: bluexolo
     envs:
-    - ".k8.env" # Maybe this will be renamed as .env
+    - ".k8.env" 
   - name: "ca-cert"
     namespace: bluexolo
     files:
