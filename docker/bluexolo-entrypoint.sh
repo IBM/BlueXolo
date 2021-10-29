@@ -21,5 +21,5 @@ then
     gunicorn -c python:CTAFramework.gunicorn CTAFramework.wsgi:application
 else
     # Enable uWSGI application
-    uwsgi --socket :8000 --master --enable-threads --module CTAFramework.wsgi
+    uwsgi --uid 1000 --socket :8000 --master --enable-threads --module CTAFramework.wsgi
 fi
