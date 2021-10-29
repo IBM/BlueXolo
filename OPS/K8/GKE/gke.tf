@@ -74,8 +74,6 @@ resource "google_compute_firewall" "default" {
   name          = "bluexolo-firewall"
   network       = google_compute_network.vpc.name
   source_ranges = ["0.0.0.0/0"]
-  //By default, the next rules are INGRESS RULES.
-  //Due the ignorance of IP directions of our team, we can't put EGRESS RULES.
   allow {
     protocol = "icmp"
   }
