@@ -1,0 +1,46 @@
+pipeline{
+    agent any
+    tools {
+        terraform 'terraform'
+    }
+    stages{
+        stage('Deploying terraform'){
+            steps{
+                echo 'Iniciando...'
+                script {
+                    env.UNIX = isUnix()
+                    if (Boolean.valueOf(env.UNIX)) {
+                        sh 'terraform init'
+                        sh 'terraform apply -auto-approve'
+                        sh 'gcloud container clusters get-credentials bluexolo-cluster-dev1-gke --region us-east1 --project bluexolo-cluster-dev1'
+                    }
+                    else{
+                        bat 'terraform init'
+                        bat 'terraform apply -auto-approve'
+                        bat 'gcloud container clusters get-credentials bluexolo-cluster-dev1-gke --region us-east1 --project bluexolo-cluster-dev1'
+                    }
+                }
+            }
+        }
+        stage('Deploying'){
+            steps{
+                echo 'Deploying to kubernetes...'
+                script {
+                    env.UNIX = isUnix()
+                    if (Boolean.valueOf(env.UNIX)) {
+                        sh 'kubectl apply -k yaml-files'
+                    }
+                    else{
+                        bat 'kubectl apply -k yaml-files'
+                    }
+                }
+            }
+        }
+        stage("Performing unit tests") {
+            steps {
+                echo 'Testing the login...'
+                build job: 'tester', propagate: true, wait: true
+            }
+        }
+    }
+}

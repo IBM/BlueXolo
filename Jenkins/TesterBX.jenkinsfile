@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+    stages{
+        stage("Performing unit tests") {
+            steps {
+                script {
+                    env.UNIX = isUnix()
+                    if (Boolean.valueOf(env.UNIX)) {
+                        sh 'g++ -o runTest loginTest.cpp'
+                        sh './runTest %USER_NAME% %BX_PASSWD% %CHROME_DRIVER_PATH%'
+                    }
+                    else{
+                        bat 'g++ -o runTest.exe loginTest.cpp'
+                        bat 'runTest.exe'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,100 @@
+pipeline {
+   agent any
+   environment {
+       DOCKERHUB_CREDENTIALS=credentials('dockerHub')
+       PROJECT_PATH=credentials('CONFIG_PATH')
+       DEPLOY_PATH=credentials('DEPLOY_PATH')
+   }
+   stages {
+       
+      stage('git') {
+          steps{
+              git branch: 'development', credentialsId: 'ewe', url: 'https://github.com/PanAMD/BlueXolo'
+          }
+      }
+      
+      stage('build images') {
+          steps{
+              script {
+                env.UNIX = isUnix()
+                if (Boolean.valueOf(env.UNIX)) {
+                    sh 'docker compose -f docker-compose-deploy.yaml build'
+                }
+                else{
+                    bat 'docker compose -f docker-compose-deploy.yaml build'
+                }
+              }
+          }
+      }
+      
+      stage('logging to docker hub') {
+          steps{
+              script {
+                env.UNIX = isUnix()
+                if (Boolean.valueOf(env.UNIX)) {
+                    sh 'docker login -u %DOCKERHUB_CREDENTIALS_USR% --password %DOCKERHUB_CREDENTIALS_PSW%'
+                }
+                else{
+                    bat 'docker login -u %DOCKERHUB_CREDENTIALS_USR% --password %DOCKERHUB_CREDENTIALS_PSW%'
+                }
+              }
+          }
+      }
+      
+      stage('push images'){
+          steps{
+              script {
+                env.UNIX = isUnix()
+                if (Boolean.valueOf(env.UNIX)) {
+                    sh 'docker push bluexoloweb/bluexolo:production'
+                    sh 'docker push bluexoloweb/proxy:nginx'
+                    sh 'docker push bluexoloweb/robot:3.2.2'
+                    sh 'docker push bluexoloweb/robot:4.0'
+                    sh 'docker push bluexoloweb/robot:2.9'
+                }
+                else {
+                    bat 'docker push bluexoloweb/bluexolo:production'
+                    bat 'docker push bluexoloweb/proxy:nginx'
+                    bat 'docker push bluexoloweb/robot:3.2.2'
+                    bat 'docker push bluexoloweb/robot:4.0'
+                    bat 'docker push bluexoloweb/robot:2.9'
+                }
+              }
+          }
+          
+      }
+      
+      stage('Prepare next pipeline'){
+          steps{
+              script {
+                env.UNIX = isUnix()
+                if (Boolean.valueOf(env.UNIX)) {
+                    sh 'cp -r -i --update %PROJECT_PATH% %DEPLOY_PATH%'
+                }
+                else {
+                    bat 'xcopy %PROJECT_PATH% %DEPLOY_PATH% /O /X /E /H /Y /K'
+                }
+              }
+          }
+      }
+      stage('Launch pipeline'){
+          steps{
+              build job: 'deploy_bx', propagate: true, wait: true
+          }
+      }
+
+   }
+   post {
+       always {
+           script {
+               env.UNIX = isUnix()
+               if (Boolean.valueOf(env.UNIX)) {
+                   sh 'docker logout'  
+               }
+               else {
+                   bat 'docker logout'                   
+               }
+            }
+       }
+   }
+}
