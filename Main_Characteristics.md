@@ -1,7 +1,7 @@
 ### Its main characteristics are the following:
 
 - Web service that can be accessed from any dispositive with a web browser.
-- BlueXolo is compatible with UNIX OS Linux/AIX.
+- BlueXolo is now compatible with Windows/MacOS/UNIX OS Linux/AIX.
 - BlueXolo allows the creation of Keywords and Test Scripts Elements by a drag and drop interface in which you are able to:
 	- Connect multiple Keywords and Test Scripts 
 	- Change their properties such as the variables to be used and the values to be used for for its execution.
@@ -28,6 +28,8 @@
       - Test Cases.
       - Existent Test Suites.
     - Owner: Is the responsible grant access to new users, as well as the capability to see the history of the Tasks, Collections, Parameters and all the elements related with the products.
+ ### Bluexolo has Chatbot support to assist you in all your issues and get them resolved instatntly.
+![img](static/img/ChatBot.png)
 - BlueXolo has the ability to share the Test cases between users of the framework.
 - The Test Cases can be executed using BlueXolo Framework.
 - BlueXolo has the capability to import scripts created outside the platform to be used inside the test cases.
