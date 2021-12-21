@@ -28,7 +28,7 @@
       - Test Cases.
       - Existent Test Suites.
     - Owner: Is the responsible grant access to new users, as well as the capability to see the history of the Tasks, Collections, Parameters and all the elements related with the products.
- ### Bluexolo has Chatbot support to assist you in all your issues and get them resolved instatntly.
+ ### Bluexolo has Chatbot support to assist you in all your issues and get them resolved instantly.
 ![img](static/img/ChatBot.png)
 - BlueXolo has the ability to share the Test cases between users of the framework.
 - The Test Cases can be executed using BlueXolo Framework.
