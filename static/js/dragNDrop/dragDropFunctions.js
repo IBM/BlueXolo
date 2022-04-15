@@ -76,14 +76,16 @@ function dropBeforeThisElement(ev) {
         positionToAddElement = positionToAddElement.split("-")[2];
         positionToAddElement--;
 
-        var elementID = data.split("-")[0];
+        var firstElement = data.split("-")[0];
+        var elementID = firstElement.indexOf("_") ? firstElement.split("_")[0] : firstElement;
+        var sourceID = firstElement.indexOf("_") ? parseInt(firstElement.split("_")[1]) : null;
         var indentation = 1;
 
         if(positionToAddElement === -1){
             positionToAddElement = droppedElements.length;
         }
 
-        addElementToJSONInIndex(indentation, elementID, positionToAddElement);
+        addElementToJSONInIndex(indentation, elementID, positionToAddElement, sourceID);
         drawElementsFromJSON();
 
         return true;
@@ -299,7 +301,10 @@ function drop(ev) {
     }
 
     nodeCopy.className = newClass;
-    var commandID = elementID.split("-")[0];
+
+    var firstElement = elementID.split("-")[0];
+    var commandID = firstElement.indexOf("_") ? firstElement.split("_")[0] : firstElement;
+    var sourceID = firstElement.indexOf("_") ? parseInt(firstElement.split("_")[1]) : null;
     var indentation = nodeCopy.className.split("-")[1];
 
     var belongsToPanel = elementID.slice(elementID.length - 9);
@@ -339,9 +344,9 @@ function drop(ev) {
     else {
         if (targetRow !== "") {
             var addElementInThisPosition = getLastIdentationChild(targetRow - 1);
-            addElementToJSONInIndex(indentation, commandID, addElementInThisPosition);
+            addElementToJSONInIndex(indentation, commandID, addElementInThisPosition, sourceID);
         } else {
-            addElementToJSON(indentation, commandID);
+            addElementToJSON(indentation, commandID, sourceID);
         }
 
         var belongsToPanel = elementID.slice(elementID.length - dragAndDropPanel.length);

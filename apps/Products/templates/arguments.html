@@ -13,11 +13,12 @@
         </table>
         <div class="fixed-action-btn">
             <a href="{% url 'new-argument' %}"
-               class="btn-floating btn-large waves-effect waves-light blue-grey"><i class="material-icons">add</i></a>
+               class="btn-floating btn-large waves-effect waves-light blue-grey" style="float:left;margin:0.7rem;right:260px;bottom:5px;">
+               <i class="material-icons">add</i></a>
         </div>
     </div>
 {% endblock %}
-{% load staticfiles %}
+{% load static %}
 {% block extraStyles %}
     <link rel="stylesheet" href="{% static "css/dataTablesMaterial.css" %}">
 {% endblock %}

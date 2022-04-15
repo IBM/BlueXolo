@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Create Test Suite{% endblock %}{% block subtitle %}Create Test Suite{% endblock %}
 
-{% load staticfiles %}
+{% load static %}
 {% load compress %}
 
 {% block content %}
@@ -140,7 +140,7 @@
             function writeTestSuiteDatabase() {
                 var testSuiteName = document.getElementById("testsuite_name").value;
                 var testSuiteDescription = document.getElementById("testsuite_description").value;
-                var testSuiteValues = droppedElements;
+                var testSuiteValues = droppedElements || [];
                 var testSuiteCollection = document.getElementById('collection').value;
                 var testSuiteScript = document.getElementById("terminal").value;
                 var stepper = '{{stepper}}';
@@ -306,7 +306,7 @@
 
     </div>
     <div class="fixed-action-btn">
-        <button onclick="saveTestsuite()" id="btn_play"
+        <button style="margin-right: 8rem;" onclick="saveTestsuite()" id="btn_play"
                 class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="left"
                 data-tooltip="Create" disabled="true">
             <i class="material-icons">save</i></button>

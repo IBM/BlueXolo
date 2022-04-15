@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Import Script{% endblock %}{% block subtitle %}Import Script{% endblock %}
+{% load static %}
+{% load compress %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -8,6 +10,65 @@
                     <form method="POST" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         {% include "form-snippet.html" %}
+                        
+                        {% compress js %}
+                        <script type="text/javascript" src="{% static "js/dragNDrop/getInitial.js" %}"></script>
+                        <script>
+                            $(document).ready(function () {
+                                $('.chips').material_chip();
+                        
+                                setTimeout(function () {
+                                    getPhases();
+                                }, 1000);
+                            
+                                function getPhases() {
+                                    var _configPhases = {
+                                        "url": "{% url "api-phases" %}",
+                                        "data": {
+                                            "collection": 1
+                                        },
+                                        "container": "phases_list"
+                                    };
+                                
+                                    selectServerSide(_configPhases);
+                                }
+                                
+                                // Script input just accept .robot or .txt files.
+                                document.getElementById('id_file_script').setAttribute('accept', '.robot,.txt');
+                            });
+
+                            function hasValues() {
+                                var _phase = document.getElementById('phases_list');
+                                var _error_filed_phase = document.getElementById('error_field_phase');
+                                showError(_phase, _error_filed_phase);
+                            }
+
+                            function showError(element, destiny) {
+                                var _btn_save = document.getElementById('btn_play');
+                                if (!element.value) {
+                                    _btn_save.disabled = true;
+                                    destiny.innerHTML = "This field is required";
+                                } else {
+                                    _btn_save.disabled = false;
+                                    destiny.innerHTML = "";
+                                }
+                            }
+
+                            function showAdditionalOptions() {
+                                var script_types = document.getElementById("script_types");
+                                var additional_options = document.getElementById("additional-options");
+
+                                if (script_types.value == "testcase") {
+                                    additional_options.style.display = "block";
+                                }
+                                else {
+                                    additional_options.style.display = "none";
+                                }
+                            }
+                        </script>
+
+                        {% endcompress %}
+
                         <div class="center">
                             <input type="submit" value="Import" class="btn">
                         </div>

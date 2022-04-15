@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Edit Test Case{% endblock %}{% block subtitle %}EditTest Case{% endblock %}
 
-{% load staticfiles %}
+{% load static %}
 {% load compress %}
 
 {% block content %}
@@ -315,6 +315,7 @@
     <div class="fixed-action-btn">
         <button onclick="saveTestcase()" id="btn_play"
                 class="btn-floating btn-large waves-effect waves-light blue tooltipped" data-position="left"
+                style="margin-right: 8rem;"
                 data-tooltip="Save">
             <i class="material-icons">save</i></button>
     </div>

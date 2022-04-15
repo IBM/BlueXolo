@@ -343,7 +343,7 @@ def run_script(filename, params, client, type_script):
         config = params.get('config')
         arguments = params.get('global_variables')
         if arguments:
-            stdin, stdout, stderr = client.exec_command("cd {0}/Results && pybot -V ../Profiles/{1}_profile.py"
+            stdin, stdout, stderr = client.exec_command("cd {0}/Results && robot -V ../Profiles/{1}_profile.py"
                                                         " -o {1}_output.xml"
                                                         " -l {1}_log.html"
                                                         " -r {1}_report.html {2}".format(config.get('path'),
@@ -353,7 +353,7 @@ def run_script(filename, params, client, type_script):
             stdin.flush()
             output = "{0}".format(stdout.read())
         else:
-            stdin, stdout, stderr = client.exec_command("cd {0}/Results && pybot "
+            stdin, stdout, stderr = client.exec_command("cd {0}/Results && robot "
                                                         " -o {1}_output.xml"
                                                         " -l {1}_log.html"
                                                         " -r {1}_report.html {2}".format(config.get('path'),
@@ -418,7 +418,7 @@ def generate_resource_files(extra_import):
                     pks_used.append(current_pk)
                     obj = Keyword.objects.get(pk=current_pk)
                     filename = generate_filename(obj.name)
-                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
                     kwd_file.write(k.get('script'))
                     kwd_file.close()
                     inner_extras = search_for_script_names(obj.script)
@@ -433,7 +433,7 @@ def generate_resource_files(extra_import):
                     pks_used.append(str(pk))
                     obj = Keyword.objects.get(pk=pk)
                     filename = generate_filename(obj.name)
-                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
                     kwd_file.write(obj.script)
                     kwd_file.close()
                     result['filename'] = filename
@@ -447,7 +447,7 @@ def generate_resource_files(extra_import):
                     pks_used.append(str(pk))
                     obj = Keyword.objects.get(pk=pk)
                     filename = generate_filename(obj.name)
-                    kwd_file = open("{0}/keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
+                    kwd_file = open("{0}/test_keywords/{1}_keyword.robot".format(settings.MEDIA_ROOT, filename), "w")
                     kwd_file.write(obj.script)
                     kwd_file.close()
                     result['filename'] = filename
@@ -467,7 +467,7 @@ def generate_file(obj, type_script, params, filename, client):
             name__in=['Dialogs', 'Screenshot']
         ).values_list('name', flat=True)
         """Generate robot files"""
-        if type_script == 1:
+        if type_script in [1, 4]:
             extra_elements = json.loads(obj.extra_imports)
             resources = generate_resource_files(extra_elements)
 
@@ -587,23 +587,6 @@ def generate_file(obj, type_script, params, filename, client):
             if check.get('text'):
                 raise Exception(check.get('text'))
 
-        elif type_script == 4:
-            """ Imported Keywords """
-            """ Dummy Test Case file"""
-            dummy_tc_file = open("{0}/test_keywords/{1}_test_case.robot".format(settings.MEDIA_ROOT, filename),
-                                 "w")
-            dummy_tc_file.write("*** Settings ***\n")
-            dummy_tc_file.write("\n")
-            if libraries:
-                for library in libraries:
-                    dummy_tc_file.write("Library\t\t{0}\n".format(library))
-                dummy_tc_file.write("\n")
-            dummy_tc_file.write(obj.script)
-            dummy_tc_file.close()
-            check = send_files(dummy_tc_file.name, 5, config, client)
-            if check.get('text'):
-                raise Exception(check.get('text'))
-
         """Need a variables Profile File"""
         arguments = params.get('global_variables')
         if arguments:
@@ -676,7 +659,7 @@ def run_on_server(_data):
             result = get_result_files(client, filename, configs)
             if result.get('error'):
                 raise Exception(result.get('error'))
-            data_result['link'] = "{0}/{1}test_result/{2}_report.html".format(settings.SITE_DNS,
+            data_result['link'] = "{0}{1}test_result/{2}_report.html".format(settings.SITE_DNS,
                                                                               settings.MEDIA_URL,
                                                                               filename)
         else:

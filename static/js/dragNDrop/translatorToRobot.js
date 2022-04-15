@@ -260,10 +260,12 @@ function createTerminalWithColors(scriptText){
             'script': scriptText,
         }, success: function (data) {
 
-            var colorfulTerminal = document.getElementById("colorfulTerminal");            
-            if(colorfulTerminal !== undefined && colorfulTerminal !== null){
-                colorfulTerminal.parentNode.removeChild(colorfulTerminal);
-            }
+            ["colorfulTerminal", "downloadLink"].forEach(function(elementId) {
+                var elementId = document.getElementById(elementId);
+                if (elementId !== undefined && elementId !== null){
+                    elementId.parentNode.removeChild(elementId);
+                }
+            });
 
             var terminal = document.getElementById("terminal");
             var newTerminal = document.createElement("div");
@@ -273,6 +275,22 @@ function createTerminalWithColors(scriptText){
             terminal.parentNode.append(newTerminal);
 
             terminal.style.display = 'none';
+
+            var fileName = "bluexolo_content";
+            ["keyword", "testcase", "testsuit"].forEach(function(i) {
+                var element = document.getElementById(i + "_name");
+                if (element !== undefined && element !== null && element.value.trim() != "") {
+                    fileName = element.value;
+                }
+            });
+
+            var downloadLink = document.createElement("a");
+            downloadLink.id = "downloadLink";
+            downloadLink.download = fileName + ".robot";
+            downloadLink.href = "data:text/plain;charset=utf-8," + encodeURI(scriptText);
+            downloadLink.innerHTML = "Download robot code";
+
+            terminal.parentNode.append(downloadLink);
         }, error: function (err) {
             drawMessage(err.text, 'red');
         }
@@ -304,7 +322,6 @@ function translateToRobot(callBackFunction) {
     var alreadyAdded = false;
 
     for (var i = 0; i < droppedElements.length; i++) {
-
         if (droppedElements[i].category === keywordDroppedCategory) {
 
             if(!addedOwnDescription){
@@ -321,7 +338,10 @@ function translateToRobot(callBackFunction) {
             
             var keywordUsedID = droppedElements[i].id;
             var newKeywordUsed = droppedElements[i];
-            addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
+            
+            if (newKeywordUsed.keywordJSON[0].script_type !== 'Imported Script') {
+                addKeywordToUsedArray( keywordUsedID, newKeywordUsed);
+            }
             
             if ((i + 1) >= droppedElements.length) {
                 if (callBackFunction !== undefined) {
@@ -336,6 +356,9 @@ function translateToRobot(callBackFunction) {
         }
 
         if (droppedElements[i].category === testcaseDroppedCategory) {
+            if (terminal.value === "") {
+                terminal.value = "*** Test Cases ***\n";
+            }
             
             if(!addedOwnDescription){
                 addOwnDescription();
@@ -343,22 +366,33 @@ function translateToRobot(callBackFunction) {
                 addedOwnDescription = true;
             }
 
-
             var testcaseName = droppedElements[i].name;
             var translatedRow = handleTestcaseSection(testcaseName);
-            terminal.value += translatedRow;
+
+            if (!isTestsuite()) {
+                terminal.value += translatedRow;
+            }
 
             var testcaseUsedID = droppedElements[i].id;
             var newTestcaseUsed = droppedElements[i];
+            
+            if (newTestcaseUsed.keywordJSON[0].script_type !== 'Imported Script') {
+                var testCaseTranslation = addTestcaseToUsedArray(testcaseUsedID, newTestcaseUsed);
+                if (isTestsuite()) {
+                    terminal.value += testCaseTranslation;
+                }
+            }
+            else {
+                var importedScript = droppedElements[i].script;
 
-            addTestcaseToUsedArray( testcaseUsedID, newTestcaseUsed);
+                if (importedScript !== "") {
+                    const testcaseHeaderLength = "\n*** Test Cases ***\n".length;  
 
-            if(isTestsuite()){
-                var testCaseToTranslate = droppedElements[i].keywordJSON;
-
-                var testCaseTranslation = getTranslationOfTestcase(testCaseToTranslate);
-
-                terminal.value += testCaseTranslation;
+                    // This removes the "*** Test Cases ***" part of the imported test case script
+                    importedScript = importedScript.substr(testcaseHeaderLength, importedScript.length);
+                }
+                
+                terminal.value += importedScript;
             }
 
             if ((i + 1) >= droppedElements.length) {
@@ -554,7 +588,6 @@ function getTranslationOfTestcase(testcase){
     var externalLibrariesCategory = 5;
 
     var keywordDroppedCategory = 6;
-
     for (var i = 0; i < testcase.length; i++) {
 
         if (testcase[i].category === keywordDroppedCategory) {
@@ -638,8 +671,8 @@ function addExtraToUsedArray(sourceID){
     usedExtras.push(newElement);
 }
 
-function addTestcaseToUsedArray( testcaseID, testcase){
-    var translation = "*** Test Cases ***\n";
+function addTestcaseToUsedArray(testcaseID, testcase){
+    var translation = "";
     translation += testcase.name + "\n";
     translation += "    [Documentation]    ";
     translation += testcase.description + "\n";
@@ -648,10 +681,11 @@ function addTestcaseToUsedArray( testcaseID, testcase){
 
     var newElement = {
         id: testcaseID,
-        script: translation,
+        script: "*** Test Cases ***\n" + translation,
     };
 
     usedTestcases.push(newElement);
+    return translation;
 }
 
 function translateDroppedKeyword(keyword) {
@@ -770,8 +804,7 @@ function handleTranslationOf(data, parameters){
 
     var commandRobotCategory = 5;
   
-    var elementType = data.name;
-    var elementType = elementType.toLowerCase();
+    var elementType = (data.name ? data.name.toLowerCase() : "");
 
     if(elementType === "comment"){
         translatedRow += translateComment(parameters);

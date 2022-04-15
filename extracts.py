@@ -536,16 +536,19 @@ class RExtract():
                     instance.save()
                     self.source_dict[name] = instance
         elif _category == 5:
-            self.lib_url = config.get("url")
-            req = urllib.request.Request(self.lib_url)
-            res = urllib.request.urlopen(req)
-            name = self.lib_url.split('/')[-1].split('.')[0]
-            self.libraries.append({
-                'name': name,
-                'lib_page': res.readlines()
-            })
-            self.source_dict[name] = robot_version
-
+            self.lib_url = config.get("url").strip()
+            try:
+                req = urllib.request.Request(self.lib_url)
+                res = urllib.request.urlopen(req)
+                name = self.lib_url.split('/')[-1].split('.')[0]
+                self.libraries.append({
+                    'name': name,
+                    'lib_page': res.readlines()
+                })
+                self.source_dict[name] = robot_version
+            except ValueError as e:
+                print('Invalid URL: {0}'.format(e))
+                raise
 
 
     def _lib_parser(self, lib):

@@ -1,5 +1,5 @@
 {% extends "registration/base_registration.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block content %}
     <main class="container">
@@ -54,6 +54,12 @@
             </div>
         {% endif %}
     </main>
+
+    <!-- Chatbot -->
+    <script src="{{ BOTPRESS_ENDPOINT }}/assets/modules/channel-web/inject.js"></script>
+    <script>
+        window.botpressWebChat.init({ host: '{{ BOTPRESS_ENDPOINT }}', botId: 'bluexolo-assistant' })
+    </script>
 
     <!-- Footer -->
     {% include "footer-block.html" %}

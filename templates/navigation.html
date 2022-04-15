@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% load permission_tags %}
 
 <ul id="slide-out" class="side-nav ">
@@ -12,10 +12,12 @@
         </div>
     </li>
 
+    {% if user|can:'access_stepper' %}
     <li><a class="subheader blue-grey-text">First steps</a></li>
     <li>
         <a class="waves-effect" href="{% url "stepper" %}"><i class="material-icons">navigate_next</i>Configure</a>
     </li>
+    {% endif %}
 
     {% if user|can:'access_testing' %}
         <li><a class="subheader blue-grey-text">Testing</a></li>

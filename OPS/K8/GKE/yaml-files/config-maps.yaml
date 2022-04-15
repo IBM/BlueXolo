@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django
+  namespace: bluexolo
+data:
+    ENV_FILE: production
+    ALLOWED_HOSTS: "*"
+    ADMIN_MAIL: bluexolo@bluexolo.net
+    EMAIL_HOST: HOST
+    EMAIL_HOST_USER: MAILUSER
+    EMAIL_PORT: "111"
+    DB_ENGINE: django.db.backends.postgresql
+    DB_NAME: bluexolo
+    DB_USER: bluexolo
+    DB_PORT: "5432"
+    SITE_DNS: "bluexolo.net/" 
+    IBM_CLIENT: "0"
+    DEPTH_SEARCH: "0"
+    PLATFORM_VERSION: "3.1.0"
+    CELERY_BROKER_URL: "redis://redis:6379/0"
+    CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    COMPRESS_OFFLINE: "0"
+    DEBUG: "0"
+    X_FRAME_OPTIONS: SAMEORIGIN
+    SESSION_COOKIE_SECURE: "0"
+    CSRF_COOKIE_SECURE: "0"
+    SECURE_SSL_REDIRECT: "0"
+    SECURE_HSTS_SECONDS: "3600"
+    BOTPRESS_ENDPOINT: "/botpress"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy
+  namespace: bluexolo
+data:
+  NGINX_PORT: "443"
+  BLUEXOLO_HOST: django.bluexolo
+  BLUEXOLO_PORT: "8000"
+  BOTPRESS_HOST: assistant.bluexolo
+  BOTPRESS_PORT: "3000"
+  NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+  NGINX_SERVER_NAME: "bluexolo.net"  
+  BLUEXOLO_DOMAIN: "bluexolo.net"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: assistant
+  namespace: bluexolo
+data:
+  EXTERNAL_URL: "http://bluexolo.net/botpress/"
+  BP_HOST: "localhost"
+  PORT: "3000"
+  REVERSE_PROXY: "1"
+  BP_PRODUCTION: "1"
+  VERBOSITY_LEVEL: "1"

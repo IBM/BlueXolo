@@ -58,6 +58,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
             var testcaseCategory = 7;
+            var testcaseScript = data.script || "";
 
             droppedElements.push({
                 id: testcaseID,
@@ -68,6 +69,7 @@ function addTestcaseToJSON(indentation, testcaseID) {
                 indentation: indentation,
                 keywordJSON: testcaseValues,
                 arguments: testcaseArguments,
+                script: testcaseScript,
                 extraValue: undefined,
             });
             drawElementsFromJSON();
@@ -94,6 +96,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
             var valuesAsString = data.values;
             var testcaseValues = JSON.parse(valuesAsString.replace(/&quot;/g, '"'));
             var testcaseCategory = 7;
+            var testcaseScript = data.script || "";
 
             var droppedElement = {
                 id: testcaseID,
@@ -104,6 +107,7 @@ function addTestcaseToJSONInIndex(indentation, testcaseID, addElementInThisPosit
                 indentation: indentation,
                 keywordJSON: testcaseValues,
                 arguments: testcaseArguments,
+                script: testcaseScript,
                 extraValue: undefined,
             };
             droppedElements.splice(addElementInThisPosition, 0, droppedElement);
@@ -191,7 +195,7 @@ function addKeywordToJSONInIndex(indentation, keywordID, addElementInThisPositio
     });
 }
 
-function addElementToJSON(indentation, commandID) {
+function addElementToJSON(indentation, commandID, sourceID) {
 
     $.ajax({
         url: "/apis/commands/",
@@ -204,7 +208,7 @@ function addElementToJSON(indentation, commandID) {
             var commandName = data.results[0].name;
             var commandArguments = data.results[0].arguments;
             var commandCategory = data.results[0].source[0].category;
-            var commandSource = data.results[0].source[0];
+            var commandSource = data.results[0].source[sourceID];
 
             droppedElements.push({
                 id: commandID,
@@ -226,7 +230,7 @@ function addElementToJSON(indentation, commandID) {
     });
 }
 
-function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition) {
+function addElementToJSONInIndex(indentation, commandID, addElementInThisPosition, sourceID) {
 
     $.ajax({
         url: "/apis/commands/",
@@ -239,7 +243,7 @@ function addElementToJSONInIndex(indentation, commandID, addElementInThisPositio
             var commandName = data.results[0].name;
             var commandArguments = data.results[0].arguments;
             var commandCategory = data.results[0].source[0].category;
-            var commandSource = data.results[0].source[0];
+            var commandSource = data.results[0].source[sourceID];
 
             var droppedElement = {
                 id: commandID,

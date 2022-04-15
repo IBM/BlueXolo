@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Download  {{ data.Name }}{% endblock %}
+{% block subtitle %}Download  {{ data.Name }}{% endblock %}
+{% block content %}
+<script src="/static/js/jszip.js" type ="text/javascript"></script>
+<script src="/static/js/FileSaver.js" type ="text/javascript"></script>
+    <div class="container">
+        <div class="row">
+            <div class="col s12 offset-l3 l6 card">
+                <div class="card-content">
+                    <form action='' method="POST">
+                        {% csrf_token %}
+                        <p class="card-title">You are about to download the following Test Suite: </p>
+                        <ul>
+                            <li><b>Name:</b> {{ data.Name }}</li>
+                            <li><b>Description:</b> {{ data.Description }}</li>
+                        </ul>
+                        <p style="text-align: justify;">
+                            Click the left button to download just the testsuite content, or click the right one in order to download it with all dependencies 
+                        </p>
+                        <div class="left">
+                            <button class="btn blue" onclick="save()">RAW</button>
+                        </div>
+
+                        <div class="right">
+                            <button class="btn green" onclick="savezipfile()" >FULL</button>
+                        </div>
+ 
+                    </form>
+                    <script type ="text/javascript">
+                        
+                        var data1="{{data.Name}}"
+                        var data2=`{{data.Script}}`
+                        function save() {
+                        var blob = new Blob([data2], {type: 'text/plain'});
+                        if(window.navigator.msSaveOrOpenBlob) {
+                            window.navigator.msSaveBlob(blob, data1);
+                        }
+                        else{
+                            var elem = window.document.createElement('a');
+                            elem.href = window.URL.createObjectURL(blob);
+                            elem.download = data1+".robot";        
+                            document.body.appendChild(elem);
+                            elem.click();        
+                            document.body.removeChild(elem);
+                        }
+                    }
+                    </script>
+                    
+                    <script>
+                        var data1="{{data.Name}}"
+                        var data2=`{{data.Script}}`
+                        
+                        function savezipfile() {
+                        var blob = new Blob([data2], {type: 'text/plain'});
+                        if(window.navigator.msSaveOrOpenBlob) {
+                            window.navigator.msSaveBlob(blob, data1);
+                        }
+                        else{
+                            var zip = new JSZip();
+
+                            zip.file(data1 + '.robot', data2);
+                            
+                            {% for mykey, myvalue in data.Dependencies.items %}
+                                var data3 = "{{ mykey }}"
+                                var data4 = `{{ myvalue }}`
+                                zip.file(data3 + '.robot', data4);
+                            {% endfor %}
+
+                            zip.generateAsync({type:"blob"}).then(function(content) {
+                                // see FileSaver.js
+                                saveAs(content, data1 + ".zip");
+                            });
+                        }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-action-btn left-button ">
+        <a href="{% url "testsuites" %}" id="btn_play"
+           class="btn-floating btn-large waves-effect waves-light grey">
+            <i class="material-icons">arrow_back</i></a>
+    </div>
+{% endblock %}

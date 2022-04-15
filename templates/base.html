@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-{% load staticfiles %}
+{% load static %}
 {% load compress %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block  title %}Blue Xolo{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static "img/favicon.ico" %}">
     <!-- Styles-->
     {% compress css %}
         <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
@@ -23,7 +24,6 @@
         <script src="{% static "js/main.js" %}"></script>
         <script src="{% static "js/mstepper.min.js" %}"></script>
     {% endcompress %}
-
 </head>
 <body>
 <!-- messages  -->
@@ -63,6 +63,18 @@
         $('.materialize-textarea').trigger('autoresize');
     });
 </script>
+
+<!-- Chatbot -->
+<script src="{{ BOTPRESS_ENDPOINT }}/assets/modules/channel-web/inject.js"></script>
+<script>
+    window.botpressWebChat.init({ host: '{{ BOTPRESS_ENDPOINT }}', botId: 'bluexolo-assistant', id: 'bluexolo-assistant' });
+</script>
+<script>
+    var chatbotButton = document.getElementById("bp-widget");
+    chatbotButton.style.position = "fixed";
+    chatbotButton.style.zIndex = 1000;
+</script>
+
 {% block extraScripts %}{% endblock extraScripts %}
 <!-- End Scripts -->
 </body>

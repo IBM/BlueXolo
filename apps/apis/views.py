@@ -46,9 +46,9 @@ class KeywordAPIView(LoginRequiredMixin,
         name = self.request.query_params.get('name')
         collection = self.request.query_params.get('collection')
         if collection:
-            queryset = queryset.filter(collection=collection)
+            queryset = queryset.filter(collection=collection).order_by('name')
         if name:
-            queryset = queryset.filter(name__istartswith=name)
+            queryset = queryset.filter(name__istartswith=name).order_by('name')
         return queryset
 
     def get(self, request, *args, **kwargs):
@@ -208,7 +208,7 @@ class CommandsApiView(mixins.ListModelMixin,
             queryset = queryset.filter(id=id_command)
         if source:
             queryset = queryset.filter(source__id=source)
-        return queryset
+        return queryset 
 
     def get_serializer_class(self):
         serializer = BasicCommandsSerializer
@@ -417,9 +417,9 @@ class TestCaseApiView(LoginRequiredMixin,
         name = self.request.query_params.get('name')
         collection = self.request.query_params.get('collection')
         if collection:
-            queryset = queryset.filter(collection=collection)
+            queryset = queryset.filter(collection=collection).order_by('name')
         if name:
-            queryset = queryset.filter(name__istartswith=name)
+            queryset = queryset.filter(name__istartswith=name).order_by('name')
         return queryset
 
     def get(self, request, *args, **kwargs):
@@ -600,7 +600,7 @@ class RunOnServerApiView(LoginRequiredMixin, APIView):
             _data['obj_id'] = obj_id
             _data['type_script'] = type_script
             _data['profiles'] = json.loads(request.data.get('profile'))
-            if type_script == 1:
+            if type_script in [1, 4]:
                 """is keywords"""
                 obj = Keyword.objects.get(id=obj_id)
             elif type_script == 2:

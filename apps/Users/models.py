@@ -77,11 +77,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def get_all_tasks(self):
-        """Return last 6 tasks fo this user"""
+        """Return last 6 tasks for this user"""
         user_tasks = []
         for task in self.tasks.all().order_by('-created_at')[:6]:
             res = AsyncResult(task.task_id)
-            if res.ready() and res.state != task.state:
+            if res.ready() and (res.state != task.state or task.task_info == 'Started'):
                 if task.category == 1:
                     task.state = res.state
                     task.task_info = res.result or ''
@@ -102,7 +102,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             if task.category == 1:
                 try:
                     task.task_info = json.loads(task.task_info)
-                except ValueError:
+                except (ValueError, TypeError):
                     pass
             user_tasks.append(task)
         return user_tasks

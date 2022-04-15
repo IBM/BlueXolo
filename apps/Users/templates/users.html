@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Users{% endblock %}
 {% block subtitle %}Users{% endblock %}
-{% load staticfiles %}
+{% load static %}
 {% block content %}
     <div class="container">
         <table class="datatable">
@@ -16,7 +16,8 @@
             </thead>
         </table>
         <div class="fixed-action-btn">
-            <a href="{% url "create-user" %}" class="btn-floating btn-large waves-effect waves-light blue-grey">
+            <a href="{% url "create-user" %}" class="btn-floating btn-large waves-effect waves-light blue-grey" 
+            style="float:left;margin:0.7rem;right:260px;bottom:5px;">
                 <i class="material-icons">add</i>
             </a>
         </div>

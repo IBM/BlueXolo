@@ -4,6 +4,7 @@ from rolepermissions.roles import AbstractUserRole
 class Developer(AbstractUserRole):
     available_permissions = {
         # Tags
+        'access_stepper': True,
         'access_server': True,
         'access_testing': True,
         'access_sources': True,
@@ -28,16 +29,19 @@ class Developer(AbstractUserRole):
         'read_keyword': True,
         'update_keyword': True,
         'delete_keyword': True,
+        'download_keyword': True,
         # Test Cases
         'create_test_case': True,
         'read_test_case': True,
         'update_test_case': True,
         'delete_test_case': True,
+        'download_test_case': True,
         # Test suites
         'create_test_suite': True,
         'read_test_suite': True,
         'update_test_suite': True,
         'delete_test_suite': True,
+        'download_test_suite': True,
         # Imported Script
         'create_imported_script': True,
         'read_imported_script': True,
@@ -91,6 +95,7 @@ class Developer(AbstractUserRole):
 class Tester(AbstractUserRole):
     available_permissions = {
         # Tags
+        'access_stepper': False,
         'access_server': False,
         'access_testing': True,
         'access_sources': False,
@@ -111,6 +116,7 @@ class Tester(AbstractUserRole):
 class Auditor(AbstractUserRole):
     available_permissions = {
         # Tags
+        'access_stepper': False,
         'access_server': True,
         'access_testing': True,
         'access_sources': True,
@@ -118,8 +124,8 @@ class Auditor(AbstractUserRole):
         # Profiles
         'create_server_profile': True,
         'read_server_profile': True,
-        'update_server_profile': True,
-        'delete_server_profile': True,
+        'update_server_profile': False,
+        'delete_server_profile': False,
         # Parameters
         'create_server_parameter': True,
         'read_server_parameter': True,
@@ -134,7 +140,7 @@ class Auditor(AbstractUserRole):
         # Collection
         'read_collection': True,
         # Imported Script
-        'read_imported_script': True,
+        'read_imported_script': False,
         # Sources - Robot
         'read_robot': True,
         # Sources - Libraries
@@ -151,6 +157,7 @@ class Auditor(AbstractUserRole):
 class Owner(AbstractUserRole):
     available_permissions = {
         # Tags
+        'access_stepper': True,
         'access_server': True,
         'access_testing': True,
         'access_sources': True,

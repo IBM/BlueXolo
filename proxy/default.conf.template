@@ -1,0 +1,43 @@
+server {
+    listen ${NGINX_PORT};
+
+    location ~ .*/assets/.* {
+      proxy_pass http://${BOTPRESS_HOST}:${BOTPRESS_PORT};
+      proxy_ignore_headers Cache-Control;
+      proxy_hide_header Cache-Control;
+      proxy_hide_header Pragma;
+      proxy_cache_valid any 30m;
+      proxy_set_header Cache-Control max-age=30;
+      add_header Cache-Control max-age=30;
+    }
+    
+    location ~ .*/socket.io/.* {
+      proxy_pass http://${BOTPRESS_HOST}:${BOTPRESS_PORT};
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "Upgrade";
+    }
+    
+    location /botpress {
+      proxy_pass http://${BOTPRESS_HOST}:${BOTPRESS_PORT}/botpress;
+    }
+
+    location /api/ {
+        proxy_pass http://${BOTPRESS_HOST}:${BOTPRESS_PORT}/botpress/api/;
+    }
+    
+    location /static {
+        alias /var/www/static;
+    }
+
+    location /media {
+        alias /var/www/media;
+    }
+
+    location / {
+        uwsgi_pass ${BLUEXOLO_HOST}:${BLUEXOLO_PORT};
+        include /etc/nginx/uwsgi_params;
+    }
+
+    client_max_body_size 0;
+}

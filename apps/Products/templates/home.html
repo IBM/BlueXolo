@@ -39,8 +39,29 @@
             <div class="col s1">
                 <!--Left Content-->
             </div>
-            <div class="col s8">
+            <div class="col s9">
                     <div class="center">
+
+                        <script type="text/javascript">
+                            function showTaskResults() {
+                                var taskCards = document.getElementsByClassName("yellow-text center")
+
+                                for (const item of taskCards) {
+                                    var file = (item.title).substring(0, (item.title).length - 11) + "output.xml"
+                                    $.get(file, function (data) {
+                                        var content = new XMLSerializer().serializeToString(data.documentElement)
+                                        if (content.includes('level="FAIL"')) {
+                                            item.textContent = "Failure"
+                                            item.className = "red-text"
+                                        }
+                                        else {
+                                            item.textContent = "Success"
+                                            item.className = "green-text"
+                                        }
+                                    });
+                                } 
+                            }
+                        </script>
                         <!-- Modal Trigger 
                        <div>
                        <h4 class="blue-grey-text light">Configure your environment</h4>
@@ -58,6 +79,9 @@
                             <a class="waves-effect waves-light btn" href="{% url "tasks" %}">
                                 All Tasks
                             </a>
+                            <button class="waves-effect waves-light btn" id="helpButton" onclick="window.showHelp()">
+                                Show Help
+                            </button>
                             
                             <!--
                                 <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
@@ -83,18 +107,19 @@
     
                                         {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
                                     {% elif task.state == "SUCCESS" %}
-                                        <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                        <h5 class="app-title blue-grey-text"><i class="material-icons">done</i>
                                             {{ task.name }}</h5>
                                         <div class="progress">
-                                            <div class="determinate green" style="width: 100%"></div>
+                                            <div class="determinate blue-grey" style="width: 100%"></div>
                                         </div>
                                         <p class="blue-grey-text center">EXECUTION COMPLETE</p>
+                                        <p class="yellow-text center" title="{{ task.task_result }}" style="pointer-events: none;"></p>
                                         <p class="grey-text">Started: {{ task.created_at }}</p>
                                         <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                         {% if task.category == 2 %}
                                             <div class="center ">
                                                 <a target="_blank" href="{{ task.task_result }}"
-                                                   class="btn-flat green-text waves-effect">View Result</a>
+                                                   class="btn-flat blue-grey-text waves-effect">View Result</a>
                                             </div>
                                         {% endif %}
     
@@ -149,18 +174,19 @@
     
                                         {#  - - - - - - - - - - SUCCESS - - - - - - - - - - #}
                                     {% elif task.state == "SUCCESS" %}
-                                        <h5 class="app-title green-text"><i class="material-icons">done</i>
+                                        <h5 class="app-title blue-grey-text"><i class="material-icons">done</i>
                                             {{ task.name }}</h5>
                                         <div class="progress">
-                                            <div class="determinate green" style="width: 100%"></div>
+                                            <div class="determinate blue-grey" style="width: 100%"></div>
                                         </div>
                                         <p class="blue-grey-text center">EXECUTION COMPLETE</p>
+                                        <p class="yellow-text center" title="{{ task.task_result }}" style="pointer-events: none;"></p>
                                         <p class="grey-text">Started: {{ task.created_at }}</p>
                                         <p class="grey-text">Last check: {{ task.updated_at }}</p>
                                         {% if task.category == 2 %}
                                             <div class="center ">
                                                 <a target="_blank" href="{{ task.task_result }}"
-                                                   class="btn-flat green-text waves-effect">View Result</a>
+                                                   class="btn-flat blue-grey-text waves-effect">View Result</a>
                                             </div>
                                         {% endif %}
     
@@ -195,6 +221,8 @@
                                 </div>
                             </div>
                         {% endfor %}
+
+                        <script>window.showTaskResults()</script>
     
                         <!-- Bottom Buttons-->
                         <br>
@@ -205,26 +233,63 @@
                                 <a class="waves-effect waves-light btn" href="{% url "tasks" %}">
                                     All Tasks
                                 </a>
+                                <button class="waves-effect waves-light btn" id="helpButtonBottom" onclick="window.showHelp()">
+                                    Show Help
+                                </button>
                                 <!--
                                     <button class="btn-flat blue-text waves-effect waves-light" onclick="window.location.reload()">Click here for refresh</button>
                                     <a href="{% url "tasks" %}" class="btn-flat teal-text waves-effect waves-light">View all Tasks</a>
                                 -->
-                        </div>
+                        </div>    
                     </div>
-                {% else %}
+                    
+                    {% else %}
                     <div class="center section">
                         <h5 class="blue-text light">Don't have task yet</h5>
                     </div>
-                {% endif %}
-                <div class="col s1">
-                    <!--
+                    {% endif %}
+                    
+                    <!-- Show/Hide Help Panel-->
+                   <script>
+                       function showHelp()
+                       {
+                           var helpDiv = document.getElementById("help-div");
+                           var buttonText = document.getElementById("helpButton");
+                           var buttonTextBottom = document.getElementById("helpButtonBottom");
+
+                           if (helpDiv.style.display === "none")
+                           {
+                             helpDiv.style.display = "block";
+                             buttonText.textContent = "Hide Help";
+                             buttonTextBottom.textContent = "Hide Help";
+                             helpDiv.scrollIntoView({ behavior: "smooth", block: "start" });
+                           } 
+                           else 
+                           {
+                             helpDiv.style.display = "none";
+                             buttonText.textContent = "Show Help";
+                             buttonTextBottom.textContent = "Show Help";
+                             window.scrollTo({ top: 0, behavior: "smooth" });
+                           }                         
+                       }
+                   </script>
+
+                   <div id="help-div" class="col s13" style="display: none;">
+                       <br>
+                       <div class="center"> 
+                           <h4 class="blue-grey-text light">How to Section</h4>
+                       </div>
+                       {% include "first-steps.html" %}
+                   </div>
+               <!-- <div class="col s1">
+                    
                         Space between tasks and the help panel
-                    -->
-                </div>
+                    
+                </div> --> 
                 
                 <!--Help Content-->
-                <!--
-                <div class="col s2">
+                
+               <!-- <div class="col s2">
                         <div>
                             <div class="center">
                                 <div class=" waves-effect waves-light btn">
@@ -256,11 +321,14 @@
                             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt et illum quo aliquid eum voluptate? Enim, expedita hic cumque itaque sapiente alias sit dolorem deserunt, incidunt facilis temporibus odio in!</p>
                         </div>
                 </div>
-                -->
-            </div>     
+                
+            </div>
+
+         -->
+
 {% endblock %}
 
-{% load staticfiles %}
+{% load static %}
 {% load compress %}
 
 {% block extraStyles %}
